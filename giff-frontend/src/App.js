@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField } from '@mui/material';
-import axios from 'axios';
-import Gif from './gifs/scrolling_animation.gif'
 import './App.css'
+import GifGenerator from './component/GifGenerator';
+import { Box, Button } from '@mui/material';
+import Gif from './gifs/scrolling_animation.gif';
+import axios from 'axios';
+import GeneratedGif from './component/GeneratedGif';
 
 function App() {
   const [gifGenerated, setGifGenerated] = useState(false);
   const [generatedGifUrl, setGeneratedGifUrl] = useState('');
   const [url, setUrl] = useState('');
+
+  function handleOnChangeUrl(value) {
+    setUrl(value);
+    console.log('url', value);
+  }
 
   const generateGif = async () => {
     try {
@@ -34,30 +41,30 @@ function App() {
       document.body.removeChild(link);
     }
   }
-
-  function handleOnChangeUrl(event) {
-    setUrl(event?.target?.value)
-  }
-
   return (
     <div className="App">
-      <Box className="header-content">
-        <div className="header">Gif-t</div>
-        <div className="sub-header">Give the perfect gif</div>
-      </Box>
-      <Box className="text-field-content">
-        <div className="text-field-header">Add any* url</div>
-        <TextField onChange={(event) => handleOnChangeUrl(event)} />
-      </Box>
+      {gifGenerated ? (
+          <GeneratedGif gifGenerated={gifGenerated} />
+        ) : (
+          <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
+        )
+        }
       <Box className="btn-content">
-        <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
-        {gifGenerated && <Button className="action-btn" onClick={handleDownloadClick}>Download GIF</Button>}
+        {gifGenerated ? (
+          <Box className="generated-gif-btn-box">
+            <Button className="btn download" onClick={handleDownloadClick}>Download GIF</Button>
+            <Button className="btn share" onClick={handleDownloadClick}>Share in email</Button>
+          </Box>
+        ): (
+          <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
+        )
+        }
       </Box>
-      <div className="gifs">
-        {gifGenerated && <img src={Gif} alt="Generated GIF" />}
-      </div>
+      <Box className="go-back-content">
+        WANT TO CREATE ANOTHER GIF? GO BACK TO HOME PAGE HERE
+      </Box>
     </div>
-  );
+  )
 }
 
 export default App;
