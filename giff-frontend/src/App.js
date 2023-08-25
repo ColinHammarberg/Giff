@@ -10,6 +10,7 @@ function App() {
   const [gifGenerated, setGifGenerated] = useState(false);
   const [generatedGifUrl, setGeneratedGifUrl] = useState('');
   const [url, setUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleOnChangeUrl(value) {
     setUrl(value);
@@ -18,10 +19,12 @@ function App() {
 
   const generateGif = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.post('http://127.0.0.1:5000/generate-gif', {url});
       console.log('response', response);
       if (response.data.message === 'GIF generated successfully') {
         setGeneratedGifUrl(Gif);
+        setIsLoading(false);
         setGifGenerated(true);
       }
     } catch (error) {
@@ -41,10 +44,12 @@ function App() {
       document.body.removeChild(link);
     }
   }
+
+  console.log('isLoading', isLoading);
   return (
     <div className="App">
-      {gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} />
+      {isLoading || gifGenerated ? (
+          <GeneratedGif gifGenerated={gifGenerated} isLoading={isLoading} />
         ) : (
           <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
         )
@@ -60,9 +65,11 @@ function App() {
         )
         }
       </Box>
-      <Box className="go-back-content">
-        WANT TO CREATE ANOTHER GIF? GO BACK TO HOME PAGE HERE
-      </Box>
+      {gifGenerated && (
+        <Box className="go-back-content">
+          WANT TO CREATE ANOTHER GIF? <span onClick={() => {setGifGenerated(null)}}>GO BACK TO HOME PAGE HERE</span>
+        </Box>
+      )}
     </div>
   )
 }

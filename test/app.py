@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, send_file
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import imageio
 import time
 import os
@@ -16,10 +17,14 @@ def index():
 
 def generate_gif():
     data = request.get_json()
-    URL = data.get('url') # Get the URL from the request JSON
+    URL = data.get('url')
 
-    # Create a new Chrome session
-    driver = webdriver.Chrome()
+    # Create ChromeOptions for headless mode
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')  # Add this line for headless mode
+
+    # Create a new Chrome session in headless mode
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(URL)
 
     # Get the scroll height

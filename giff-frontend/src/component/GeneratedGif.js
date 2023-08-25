@@ -4,7 +4,15 @@ import Gif from '../gifs/scrolling_animation.gif';
 import './GeneratedGif.scss';
 
 function GeneratedGif(props) {
-  const { gifGenerated } = props;
+  const { gifGenerated, isLoading } = props;
+
+  if (isLoading) {
+    return (
+      <Box className="loading-container">
+          Creating your gif...
+      </Box>
+    )
+  }
 
   return (
     <div className="generated-gif">
