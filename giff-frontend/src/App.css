@@ -30,6 +30,10 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+.back-btn {
+  cursor: pointer;
+}
+
 .btn {
   width: 180px !important;
   height: 40px !important;

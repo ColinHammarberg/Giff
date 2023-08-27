@@ -1,0 +1,15 @@
+.popover {
+    .MuiPaper-root {
+        width: 266px;
+        height: 149px;
+        padding: 44px;
+        background-color: rgba(244, 20, 155, 1);
+
+        .content {
+            width: 100%;
+            font-family: 'Staatliches';
+            font-weight: 700;
+            font-size: 12px;
+        }
+    }
+}

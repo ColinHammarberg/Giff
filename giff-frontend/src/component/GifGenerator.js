@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, TextField } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
 import Gif from '../gifs/scrolling_animation.gif';
 import './GifGenerator.scss';
+import InfoButton from './InfoButton';
 
 function GifGenerator(props) {
   const { onChange, gifGenerated } = props;
@@ -21,7 +21,7 @@ function GifGenerator(props) {
         <div className="sub-header">Give the perfect gif</div>
       </Box>
       <Box className="text-field-content">
-        <div className="text-field-header">Add any* url <InfoIcon/></div>
+        <div className="text-field-header">Add any* url <InfoButton/></div>
         <TextField onChange={(event) => handleOnChangeUrl(event)} />
       </Box>
       <div className="gifs">
