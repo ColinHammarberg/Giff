@@ -5,6 +5,7 @@ import { Box, Button } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
 import axios from 'axios';
 import GeneratedGif from './GeneratedGif';
+import './GifLanding.scss';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -49,36 +50,34 @@ function GifLanding() {
   }
 
   return (
-    <div className="App">
+    <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} isLoading={isLoading} />
+          <GeneratedGif gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
           <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
         )
         }
         {!isLoading && (
             <Box className="btn-content">
+                {!gifGenerated && (
+                    <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
+                )}
+            </Box>
+        )}
+        {!isLoading && (
+            <Box className="">
                 {gifGenerated ? (
-                <Box className="generated-gif-btn-box">
-                    <Button className="btn download" onClick={handleDownloadClick}>Download GIF</Button>
-                    <Button className="btn share" onClick={handleDownloadClick}>Share in email</Button>
-                </Box>
+                    <Box className="go-back-content">
+                        Wand to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
+                    </Box>
                 ) : (
-                <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
+                    <Box className="go-back-content">
+                        [number of] gifs already created 
+                    </Box>
                 )
                 }
             </Box>
         )}
-      {gifGenerated ? (
-        <Box className="go-back-content">
-          Wand to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
-        </Box>
-      ) : (
-        <Box className="go-back-content">
-          [number of] gifs already created 
-        </Box>
-      )
-    }
     </div>
   )
 }

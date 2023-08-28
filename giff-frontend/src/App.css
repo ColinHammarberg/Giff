@@ -12,28 +12,6 @@
   align-items: center;
 }
 
-.btn-content {
-  margin-top: 25px;
-}
-
-.generated-gif-btn-box {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-}
-
-.go-back-content {
-  font-size: 15px;
-  font-family: 'Staatliches';
-  font-weight: 700;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.back-btn {
-  cursor: pointer;
-}
-
 .btn {
   width: 180px !important;
   height: 40px !important;
@@ -49,8 +27,8 @@
   background-color: rgba(254, 201, 1, 1) !important;
   color: #000 !important;
   font-family: 'Staatliches' !important;
-  width: 225px !important;
-  height: 60px;
+  width: 450px !important;
+  height: 80px;
   border-radius: 50px !important;
   font-size: 20px !important;
   font-weight: 700 !important;

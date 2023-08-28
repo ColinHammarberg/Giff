@@ -1,28 +1,33 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
 import './GeneratedGif.scss';
+import CircularWithValueLabel from './Loading';
+import Header from './Header';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading } = props;
-
-  if (isLoading) {
-    return (
-      <Box className="loading-container">
-          Creating your gif...
-      </Box>
-    )
-  }
+  const { gifGenerated, isLoading, onDownload } = props;
 
   return (
     <div className="generated-gif">
-      <Box className="header-content">
-        <div className="header">Gif-t</div>
-        <div className="sub-header">Give the perfect gif</div>
-      </Box>
-      <Box className="gif">
-        {gifGenerated && <img src={Gif} alt="Generated GIF" />}
-      </Box>
+      <Header />
+      {isLoading ? (
+        <Box className="loading-container">
+          <CircularWithValueLabel />
+          Creating your gif...
+        </Box>
+      ) : (
+        <>
+          <Box className="gif">
+            {gifGenerated && <img src={Gif} alt="Generated GIF" />}
+          </Box>
+          <Box className="generated-gif-btn-box">
+            <Button className="btn download" onClick={onDownload}>Download GIF</Button>
+            <Button className="btn share">Share in email</Button>
+          </Box>
+        </>
+      )
+    }
     </div>
   );
 }

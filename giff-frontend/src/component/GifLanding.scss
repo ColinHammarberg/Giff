@@ -1,0 +1,23 @@
+.gif-landing {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .go-back-content {
+        font-size: 15px;
+        font-family: 'Staatliches';
+        font-weight: 700;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .back-btn {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}

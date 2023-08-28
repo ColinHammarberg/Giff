@@ -1,0 +1,33 @@
+.header-content {
+    width: 100vw;
+    height: 300px;
+    padding: 24px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+
+    .header-text {
+        height: 100px;
+        position: relative;
+    }
+
+    .header {
+        color: #fff;
+        text-transform: uppercase;
+        font-family: 'Staatliches';
+        font-size: 50px;
+        font-weight: 700;
+    }
+
+    .sub-header {
+        font-size: 20px;
+        font-family: 'Staatliches';
+        text-transform: uppercase;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .menu-btn {
+        right: 40px;
+    }
+}

@@ -4,9 +4,7 @@ import GifLanding from './component/GifLanding';
 
 function App() {
   return (
-    <div className="App">
       <GifLanding />
-    </div>
   )
 }
 
