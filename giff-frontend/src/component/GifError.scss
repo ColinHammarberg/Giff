@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css?family=Staatliches&display=swap');
+
+.gif-error {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+
+    .error-container {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+
+        .error-description-box {
+            background-color: #fff;
+            width: 410px;
+            height: 178px;
+            display: grid;
+            margin: auto;
+
+            .error-description {
+                font-family: 'Staatliches';
+                font-size: 10px;
+                font-weight: 400;
+                margin-top: 30px;
+            }
+
+            .orange-divider {
+                background-color: #FE6B01;
+                width: 410px;
+                height: 40px;
+                font-size: 20px;
+                line-height: 25px;
+                color: #000;
+                display: flex;
+                font-family: 'Staatliches';
+                font-weight: 400;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .use-another-url-btn {
+            width: 459px;
+            height: 80px;
+            background-color: #FEC901;
+            color: #000;
+            font-size: 38px;
+            font-family: 'Staatliches';
+            font-weight: 400;
+            border-radius: 50px;
+        }
+    }
+}

@@ -9,6 +9,7 @@
     .header-text {
         height: 100px;
         position: relative;
+        left: 40px;
     }
 
     .header {
@@ -16,7 +17,7 @@
         text-transform: uppercase;
         font-family: 'Staatliches';
         font-size: 50px;
-        font-weight: 700;
+        font-weight: 400;
     }
 
     .sub-header {
@@ -24,7 +25,7 @@
         font-family: 'Staatliches';
         text-transform: uppercase;
         color: #fff;
-        font-weight: 700;
+        font-weight: 400;
     }
 
     .menu-btn {

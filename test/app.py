@@ -30,12 +30,27 @@ def generate_gif():
     # Get the scroll height
     scroll_height = driver.execute_script("return document.body.scrollHeight")
 
+    if scroll_height < 1000:
+        return jsonify({ 'error': 'Invalid scroll height' })
+    
+    elif 1000 <= scroll_height < 3000:
+        timer = 200
+    
+    elif 3000 <= scroll_height < 5000:
+        timer = 300
+    
+    elif 5000 <= scroll_height < 9000:
+        timer = 400
+    
+    else:
+        timer = 500
+
     # Create a directory to store individual screenshots
     screenshots_dir = 'screenshots'
     os.makedirs(screenshots_dir, exist_ok=True)
 
     # Take screenshots while scrolling
-    for i in range(0, scroll_height, 200):
+    for i in range(0, scroll_height, timer):
         driver.execute_script(f"window.scrollTo(0, {i})")
         time.sleep(1)  # Allow time for the page to render
         screenshot_path = os.path.join(screenshots_dir, f'screenshot_{i}.png')

@@ -6,12 +6,14 @@ import Gif from '../gifs/scrolling_animation.gif';
 import axios from 'axios';
 import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
+import GifError from './GifError';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
   const [generatedGifUrl, setGeneratedGifUrl] = useState('');
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   function handleOnChangeUrl(value) {
     if (!value.startsWith("https://")) {
@@ -28,6 +30,8 @@ function GifLanding() {
       console.log('response', response);
       if (response.data.error) {
         console.error('Error generating GIF:');
+        setError(response.data.error);
+        setIsLoading(false);
       } else if (response.data.message === 'GIF generated successfully') {
         setGeneratedGifUrl(Gif);
         setIsLoading(false);
@@ -51,6 +55,14 @@ function GifLanding() {
     }
   }
 
+  if (error) {
+    return (
+      <div className="gif-landing">
+        <GifError setGifGenerated={setGifGenerated} setError={setError} />
+      </div>
+    )
+  }
+
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
@@ -67,13 +79,13 @@ function GifLanding() {
             </Box>
         )}
         {!isLoading && (
-            <Box className="">
+            <Box className="bottom-content">
                 {gifGenerated ? (
                     <Box className="go-back-content">
-                        Wand to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
+                        Want to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
                     </Box>
                 ) : (
-                    <Box className="go-back-content">
+                    <Box className="number-of-gifs-created">
                         [number of] gifs already created 
                     </Box>
                 )
