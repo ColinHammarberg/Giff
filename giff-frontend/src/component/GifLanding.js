@@ -26,7 +26,9 @@ function GifLanding() {
       setIsLoading(true);
       const response = await axios.post('http://127.0.0.1:5000/generate-gif', {url});
       console.log('response', response);
-      if (response.data.message === 'GIF generated successfully') {
+      if (response.data.error) {
+        console.error('Error generating GIF:');
+      } else if (response.data.message === 'GIF generated successfully') {
         setGeneratedGifUrl(Gif);
         setIsLoading(false);
         setGifGenerated(true);

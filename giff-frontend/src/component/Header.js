@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
 import './Header.scss';
-import Menu from './Menu';
+import MenuButton from './MenuButton';
 
 function Header({ generator }) {
     console.log('generator', generator);
@@ -11,7 +11,7 @@ function Header({ generator }) {
                 <div className="header">Gif-t</div>
                 <div className="sub-header">Give the perfect gif</div>
             </div>
-                <Menu />
+                <MenuButton />
         </Box>
     )
 }

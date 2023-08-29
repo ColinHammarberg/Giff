@@ -11,4 +11,8 @@
     font-family: 'Staatliches' !important;
     font-weight: 700 !important;
     position: relative;
+    &.hide {
+        background-color: transparent !important;
+        color: transparent !important;
+    }
 }
