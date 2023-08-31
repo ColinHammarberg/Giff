@@ -9,4 +9,6 @@
 
 ### Record the screenshots: We'll save each screenshot as a frame for our GIF. 
 
-### Create the GIF: We'll combine the frames into a GIF using the imageio library. 
+### Create the GIF: We'll combine the frames into a GIF using the imageio library.
+
+### pip install -r requirements.txt
