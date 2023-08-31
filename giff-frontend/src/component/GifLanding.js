@@ -3,6 +3,7 @@ import '../App.css'
 import GifGenerator from './GifGenerator';
 import { Box, Button } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
+import GifPdf from '../gifs/pdf_animation.gif';
 import axios from 'axios';
 import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
@@ -26,21 +27,25 @@ function GifLanding() {
   const generateGif = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.post('http://127.0.0.1:5000/generate-gif', {url});
-      console.log('response', response);
+  
+      const endpoint = url.endsWith('.pdf') ? 'generate-pdf-gif' : 'generate-gif';
+      const response = await axios.post(`http://127.0.0.1:5000/${endpoint}`, { url });
+  
       if (response.data.error) {
-        console.error('Error generating GIF:');
+        console.error('Error generating GIF:', response.data.error);
         setError(response.data.error);
-        setIsLoading(false);
       } else if (response.data.message === 'GIF generated successfully') {
-        setGeneratedGifUrl(Gif);
-        setIsLoading(false);
+        const generatedGifUrl = url.endsWith('.pdf') ? GifPdf : Gif;
+        console.log('generatedGifUrl', generatedGifUrl);
+        setGeneratedGifUrl(generatedGifUrl);
         setGifGenerated(true);
       }
+      setIsLoading(false);
     } catch (error) {
       console.error('Error generating GIF:', error);
+      setIsLoading(false);
     }
-  };
+  };  
 
   function handleDownloadClick() {
     if (gifGenerated) {
@@ -66,7 +71,7 @@ function GifLanding() {
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
+          <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
           <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
         )
