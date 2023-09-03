@@ -8,6 +8,7 @@ import axios from 'axios';
 import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
 import GifError from './GifError';
+import EmailAddressPopover from './EmailAddressPopover';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -15,6 +16,8 @@ function GifLanding() {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [emailValue, setEmailValue] = useState('');
 
   function handleOnChangeUrl(value) {
     if (!value.startsWith("https://")) {
@@ -45,6 +48,28 @@ function GifLanding() {
       console.error('Error generating GIF:', error);
       setIsLoading(false);
     }
+  };
+
+  const sendGif = async () => {
+    try {
+      setIsLoading(true);
+  
+      const endpoint = 'send_gif';
+      const emailData = {
+        email: emailValue,
+      };
+  
+      const response = await axios.post(`http://127.0.0.1:5000/${endpoint}`, emailData);
+  
+      if (response.data.error) {
+        console.error('Error generating GIF:', response.data.error);
+        setError(response.data.error);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error generating GIF:', error);
+      setIsLoading(false);
+    }
   };  
 
   function handleDownloadClick() {
@@ -60,6 +85,18 @@ function GifLanding() {
     }
   }
 
+  const onClosePopup = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOnClickEmailPopover = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleOnChange = (value) => {
+    setEmailValue(value.target.value);
+  }
+
   if (error) {
     return (
       <div className="gif-landing">
@@ -71,7 +108,7 @@ function GifLanding() {
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} />
+          <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} handleOnClickEmailPopover={handleOnClickEmailPopover} />
         ) : (
           <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
         )
@@ -82,6 +119,9 @@ function GifLanding() {
                     <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
                 )}
             </Box>
+        )}
+        {anchorEl && (
+          <EmailAddressPopover anchorEl={anchorEl} onClosePopup={onClosePopup} sendGif={sendGif} onChange={handleOnChange} />
         )}
         {!isLoading && (
             <Box className="bottom-content">

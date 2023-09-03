@@ -8,6 +8,9 @@ from flask_cors import CORS
 from PIL import Image
 import fitz  # Import the PyMuPDF library
 import requests
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment
+import base64
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the entire app
@@ -16,6 +19,57 @@ CORS(app)  # Enable CORS for the entire app
 def index():
     return render_template('index.html')
 
+# Send email
+
+@app.route('/send_gif', methods=['POST'])
+
+def send_email():
+    attachment_file = './gifs/scrolling_animation.gif'
+    data = request.get_json()
+    email = data.get('email')
+    print('email', email)
+    message = Mail(
+        from_email='colin.hammarberg2@gmail.com',
+        to_emails=email,
+        subject='Generated Gif from GIF-T',
+        html_content='<strong>This email contains your generated gif from GIF-T</strong>')
+
+    try:
+        sendgrid_api_key = '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'
+        print('sendgrid_api_key', sendgrid_api_key)
+        sg = SendGridAPIClient(sendgrid_api_key)
+        print('attached', attachment_file)
+
+        # Read the file content
+        with open(attachment_file, 'rb') as file:
+            attachment_file = file.read()
+
+        # Create an attachment
+        attachment = Attachment()
+        attachment.file_content = base64.b64encode(attachment_file).decode('utf-8')
+        attachment.file_type = 'application/gif'
+        attachment.file_name = 'scrolling_animation.gif'
+
+        # Add the attachment to the message
+        message.attachment = attachment
+
+        # Send the email
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+
+        # Email sent successfully, return a success response
+        return jsonify({'message': 'Email sent successfully'}), 200
+    except Exception as e:
+        if hasattr(e, 'body') and e.body:
+            error_message = e.body.decode()
+            print(error_message)
+            # Return an error response with the error message
+            return jsonify({'error': error_message}), 500  # 500 is the HTTP status code for Internal Server Error
+        else:
+            # Return a generic error response if there is no error message
+            return jsonify({'error': 'An error occurred'}), 500
 
 # Endpoint for generating gif out of webpages
 
@@ -70,12 +124,18 @@ def generate_gif():
     driver.quit()
 
     # Create a GIF from the screenshots
-    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    # frontend folder
+    gifs_frontend_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    # backend folder
+    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test', 'gifs')
+    os.makedirs(gifs_frontend_folder, exist_ok=True)
     os.makedirs(gifs_folder, exist_ok=True)
-    output_path = os.path.join(gifs_folder, 'scrolling_animation.gif')
+    output_path = os.path.join(gifs_frontend_folder, 'scrolling_animation.gif')
+    output_backend_path = os.path.join(gifs_folder, 'scrolling_animation.gif')
     screenshots = sorted(os.listdir(screenshots_dir))
     frames = [imageio.imread(os.path.join(screenshots_dir, screenshot)) for screenshot in screenshots]
     imageio.mimsave(output_path, frames, duration=0.08, loop=0) # Set duration and loop
+    imageio.mimsave(output_backend_path, frames, duration=0.08, loop=0) # Set duration and loop
     print(f"GIF saved at {output_path}")
 
     # Clean up: Delete individual screenshots

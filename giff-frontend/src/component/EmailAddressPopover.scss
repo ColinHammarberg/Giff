@@ -1,0 +1,47 @@
+.email-popover {
+    .MuiPaper-root {
+        width: 266px;
+        height: 149px;
+        padding: 24px;
+        background-color: #fff;
+
+        .content {
+            width: 100%;
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Staatliches';
+            font-weight: 400;
+            font-size: 12px;
+            gap: 20px;
+            height: 100%;
+
+            .MuiInputBase-root {
+                background-color: #fff;
+                border: 2px solid #000;
+                width: 240px;
+                border-radius: 4px;
+                height: 40px;
+
+                .MuiOutlinedInput-notchedOutline {
+                    border: none;
+                    border-color: transparent;
+                }
+            }
+
+            .buttons {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .MuiButtonBase-root {
+                    background-color: #FE6B01;
+                    border-radius: 20px;
+                    font-family: 'Staatliches';
+                    color: #000;
+                    width: 100px;
+                }
+            }
+        }
+    }
+}

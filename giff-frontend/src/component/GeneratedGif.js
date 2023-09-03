@@ -5,7 +5,7 @@ import CircularWithValueLabel from './Loading';
 import Header from './Header';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload, generatedGifUrl } = props;
+  const { gifGenerated, isLoading, onDownload, generatedGifUrl, handleOnClickEmailPopover } = props;
 
   return (
     <div className="generated-gif">
@@ -22,7 +22,7 @@ function GeneratedGif(props) {
           </Box>
           <Box className="generated-gif-btn-box">
             <Button className="btn download" onClick={onDownload}>Download GIF</Button>
-            <Button className="btn share">Share in email</Button>
+            <Button className="btn share" onClick={handleOnClickEmailPopover}>Share in email</Button>
           </Box>
         </>
       )
