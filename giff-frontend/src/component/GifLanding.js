@@ -30,10 +30,8 @@ function GifLanding() {
   const generateGif = async () => {
     try {
       setIsLoading(true);
-  
       const endpoint = url.endsWith('.pdf') ? 'generate-pdf-gif' : 'generate-gif';
       const response = await axios.post(`http://127.0.0.1:5000/${endpoint}`, { url });
-  
       if (response.data.error) {
         console.error('Error generating GIF:', response.data.error);
         setError(response.data.error);
@@ -97,9 +95,16 @@ function GifLanding() {
     setEmailValue(value.target.value);
   }
 
-  const handleKeyPress = (event) => {
+  const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {
       generateGif();
+    }
+  };
+
+  const handleKeyPressSendGif = (event) => {
+    if (event.key === 'Enter') {
+      sendGif();
+      setAnchorEl(null);
     }
   };
 
@@ -116,7 +121,7 @@ function GifLanding() {
       {isLoading || gifGenerated ? (
           <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} handleOnClickEmailPopover={handleOnClickEmailPopover} />
         ) : (
-          <GifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPress} gifGenerated={gifGenerated} />
+          <GifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} gifGenerated={gifGenerated} />
         )
         }
         {!isLoading && (
@@ -127,7 +132,7 @@ function GifLanding() {
             </Box>
         )}
         {anchorEl && (
-          <EmailAddressPopover anchorEl={anchorEl} onClosePopup={onClosePopup} sendGif={sendGif} onChange={handleOnChange} />
+          <EmailAddressPopover anchorEl={anchorEl} onKeyPress={handleKeyPressSendGif} onClosePopup={onClosePopup} sendGif={sendGif} onChange={handleOnChange} />
         )}
         {!isLoading && (
             <Box className="bottom-content">
