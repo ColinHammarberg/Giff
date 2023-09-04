@@ -97,6 +97,12 @@ function GifLanding() {
     setEmailValue(value.target.value);
   }
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      generateGif();
+    }
+  };
+
   if (error) {
     return (
       <div className="gif-landing">
@@ -110,7 +116,7 @@ function GifLanding() {
       {isLoading || gifGenerated ? (
           <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} handleOnClickEmailPopover={handleOnClickEmailPopover} />
         ) : (
-          <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
+          <GifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPress} gifGenerated={gifGenerated} />
         )
         }
         {!isLoading && (

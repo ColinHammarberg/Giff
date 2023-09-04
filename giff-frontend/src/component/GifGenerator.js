@@ -6,7 +6,7 @@ import InfoButton from './InfoButton';
 import Header from './Header';
 
 function GifGenerator(props) {
-  const { onChange, gifGenerated } = props;
+  const { onChange, gifGenerated, onKeyPress } = props;
 
   function handleOnChangeUrl(event) {
     if (onChange) {
@@ -20,7 +20,15 @@ function GifGenerator(props) {
       <Header generator />
       <Box className="text-field-content">
         <div className="text-field-header">Add any* url <InfoButton/></div>
-        <TextField onChange={(event) => handleOnChangeUrl(event)} placeholder='https://spce.com' />
+        <TextField
+          onChange={(event) => handleOnChangeUrl(event)}
+          onKeyPress={(event) => {
+            if (onKeyPress) {
+              onKeyPress(event);
+            }
+          }}
+          placeholder='https://spce.com'
+        />
       </Box>
       <div className="gifs">
         {gifGenerated && <img src={Gif} alt="Generated GIF" />}
