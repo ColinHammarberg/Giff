@@ -31,14 +31,15 @@
     }
 
     .generated-gif-btn-box {
-        display: flex;
-        gap: 40px;
+        display: grid;
+        gap: 20px;
         justify-content: center;
         margin-top: 50px;
 
         .btn {
-            width: 130px !important;
-            font-size: 12px !important;
+            width: 311px !important;
+            font-size: 15px !important;
+            height: 40px !important;
 
             &.download {
                 background-color: rgba(254, 201, 1, 1) !important;
@@ -48,6 +49,11 @@
             &.share {
                 background-color: rgba(185, 241, 64, 1);
                 color: #000;
+            }
+
+            &.share-else-where {
+                color: #000;
+                background-color: #F4149B !important;
             }
         }
     }

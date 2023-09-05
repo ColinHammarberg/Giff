@@ -90,6 +90,8 @@ def generate_gif():
     # Get the scroll height
     scroll_height = driver.execute_script("return document.body.scrollHeight")
 
+    print('scroll_height', scroll_height)
+
     if scroll_height < 1000:
         return jsonify({ 'error': 'Invalid scroll height' })
     
