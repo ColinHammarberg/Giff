@@ -26,15 +26,18 @@ def index():
 def send_email():
     attachment_file = './gifs/scrolling_animation.gif'
     data = request.get_json()
-    email = data.get('email')
-    print('email', email)
+    if not isinstance(data, dict):
+        return jsonify({'error': 'Invalid JSON data'}), 400  # Return a Bad Request response
+    emailAddresses = data.get('emailAddresses', [])
+    global_substitutions = data.get('global_substitutions', {})
     message = Mail(
         from_email='colin.hammarberg2@gmail.com',
-        to_emails=email,
-        subject='Generated Gif from GIF-T',
-        html_content='<strong>This email contains your generated gif from GIF-T</strong>')
+        to_emails=emailAddresses,
+        subject=global_substitutions,
+        )
 
     try:
+        dynamic_template_id = 'd-f56806a93be04440b772bd40029cbd82'
         sendgrid_api_key = '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'
         print('sendgrid_api_key', sendgrid_api_key)
         sg = SendGridAPIClient(sendgrid_api_key)
@@ -52,6 +55,11 @@ def send_email():
 
         # Add the attachment to the message
         message.attachment = attachment
+
+        # Specify template id
+        message.template_id = dynamic_template_id
+
+        print('message', message)
 
         # Send the email
         response = sg.send(message)
