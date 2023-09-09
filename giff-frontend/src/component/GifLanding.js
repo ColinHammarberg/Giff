@@ -8,7 +8,7 @@ import axios from 'axios';
 import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
 import GifError from './GifError';
-import EmailAddressPopover from './EmailAddressPopover';
+// import EmailAddressPopover from './EmailAddressPopover';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -16,8 +16,8 @@ function GifLanding() {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [emailValue, setEmailValue] = useState('');
+  // const [anchorEl, setAnchorEl] = useState(null);
+  // const [emailValue, setEmailValue] = useState('');
 
   function handleOnChangeUrl(value) {
     if (!value.startsWith("https://")) {
@@ -48,28 +48,6 @@ function GifLanding() {
     }
   };
 
-  const sendGif = async () => {
-    try {
-      setIsLoading(true);
-  
-      const endpoint = 'send_gif';
-      const emailData = {
-        email: emailValue,
-      };
-  
-      const response = await axios.post(`http://127.0.0.1:5000/${endpoint}`, emailData);
-  
-      if (response.data.error) {
-        console.error('Error generating GIF:', response.data.error);
-        setError(response.data.error);
-      }
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error generating GIF:', error);
-      setIsLoading(false);
-    }
-  };  
-
   function handleDownloadClick() {
     if (gifGenerated) {
       // Create a virtual anchor element and trigger the download
@@ -83,28 +61,21 @@ function GifLanding() {
     }
   }
 
-  const onClosePopup = () => {
-    setAnchorEl(null);
-  };
+  // const onClosePopup = () => {
+  //   setAnchorEl(null);
+  // };
 
-  const handleOnClickEmailPopover = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleOnClickEmailPopover = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
-  const handleOnChange = (value) => {
-    setEmailValue(value.target.value);
-  }
+  // const handleOnChange = (value) => {
+  //   setEmailValue(value.target.value);
+  // }
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {
       generateGif();
-    }
-  };
-
-  const handleKeyPressSendGif = (event) => {
-    if (event.key === 'Enter') {
-      sendGif();
-      setAnchorEl(null);
     }
   };
 
@@ -119,7 +90,7 @@ function GifLanding() {
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} handleOnClickEmailPopover={handleOnClickEmailPopover} />
+          <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
           <GifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} gifGenerated={gifGenerated} />
         )
@@ -131,9 +102,9 @@ function GifLanding() {
                 )}
             </Box>
         )}
-        {anchorEl && (
+        {/* {anchorEl && (
           <EmailAddressPopover anchorEl={anchorEl} onKeyPress={handleKeyPressSendGif} onClosePopup={onClosePopup} sendGif={sendGif} onChange={handleOnChange} />
-        )}
+        )} */}
         {!isLoading && (
             <Box className="bottom-content">
                 {gifGenerated ? (

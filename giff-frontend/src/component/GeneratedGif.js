@@ -6,7 +6,7 @@ import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload, generatedGifUrl, handleOnClickEmailPopover } = props;
+  const { gifGenerated, isLoading, onDownload, generatedGifUrl } = props;
 
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ function GeneratedGif(props) {
           </Box>
           <Box className="generated-gif-btn-box">
             <Button className="btn download" onClick={onDownload}>Download GIF</Button>
-            <Button className="btn share" onClick={handleOnClickEmailPopover}>Share in email</Button>
+            <Button className="btn share" onClick={() => navigate('send-email')}>Share in email</Button>
             <Button className="btn share-else-where" onClick={() => navigate('send-email')}>Share gif elsewhere</Button>
           </Box>
         </>

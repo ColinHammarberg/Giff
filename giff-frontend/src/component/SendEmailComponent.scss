@@ -17,6 +17,12 @@
         gap: 20px;
         margin: auto;
 
+        .input {
+            .MuiFormLabel-root {
+                text-align: left;
+            }
+        }
+
         .info-box {
             display: flex;
             gap: 20px;
@@ -28,17 +34,23 @@
         }
 
         .email-text-box {
+            .MuiFormControl-root {
+                width: 100%;
+            }
             .MuiInputBase-input {
                 background-color: #fff;
-                width: 269px;
+                width: 100%;
                 height: 113px;
             }
         }
 
         .email-address-box {
+            .MuiFormControl-root {
+                width: 100%;
+            }
             .MuiInputBase-input {
                 background-color: #fff;
-                width: 269px;
+                width: 100%;
             }
         }
     }

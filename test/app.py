@@ -30,10 +30,12 @@ def send_email():
         return jsonify({'error': 'Invalid JSON data'}), 400  # Return a Bad Request response
     emailAddresses = data.get('emailAddresses', [])
     global_substitutions = data.get('global_substitutions', {})
+    plain_text_content = data.get('plain_text_content', {})
     message = Mail(
         from_email='colin.hammarberg2@gmail.com',
         to_emails=emailAddresses,
         subject=global_substitutions,
+        plain_text_content=plain_text_content
         )
 
     try:
@@ -58,6 +60,10 @@ def send_email():
 
         # Specify template id
         message.template_id = dynamic_template_id
+
+        message.from_email = 'colin.hammarberg2@gmail.com'
+
+        message.subject = global_substitutions
 
         print('message', message)
 
