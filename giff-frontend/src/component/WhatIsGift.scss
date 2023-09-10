@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .what-is-gift {
     width: 100%;
     text-align: center;
@@ -24,6 +26,23 @@
         span {
             color: #fff;
             font-family: 'Staatliches';
+        }
+    }
+}
+
+@include media(phone) {
+    .what-is-gift {
+        .gift-info {
+            width: unset;
+            height: unset;
+            padding: 24px;
+            margin-bottom: 24px;
+            .title {
+                font-size: 24px;
+            }
+            span {
+                font-size: 13px;
+            }
         }
     }
 }

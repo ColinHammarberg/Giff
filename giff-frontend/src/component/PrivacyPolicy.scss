@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .privacy-policy {
     width: 100%;
     text-align: center;
@@ -24,6 +26,22 @@
         span {
             color: #fff;
             font-family: 'Staatliches';
+        }
+    }
+}
+
+@include media(phone) {
+    .privacy-policy {
+        .privacy-policy-info {
+            width: unset;
+            height: unset;
+            padding: 24px;
+            .title {
+                font-size: 20px;
+            }
+            span {
+                font-size: 15px;
+            }
         }
     }
 }
