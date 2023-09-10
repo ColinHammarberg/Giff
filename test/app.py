@@ -58,6 +58,21 @@ def send_email():
         # Add the attachment to the message
         message.attachment = attachment
 
+        # email_html_content = f'''
+        # <!DOCTYPE html>
+        # <html>
+        # <body>
+        #     <p>Click the GIF below to open the link in a new tab:</p>
+        #     <a href="{attachment}" target="_blank">
+        #         <img src="{attachment}" alt="Clickable GIF" width="300" height="200">
+        #     </a>
+        # </body>
+        # </html>
+        # '''
+
+        # # Set the HTML content
+        # message.html_content = email_html_content
+
         # Specify template id
         message.template_id = dynamic_template_id
 

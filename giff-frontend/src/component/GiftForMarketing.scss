@@ -1,0 +1,39 @@
+.gift-for-marketing {
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .gift-for-marketing-info {
+        width: 841px;
+        height: 474px;
+        display: grid;
+        gap: 24px;
+        margin: auto;
+
+        .spinner-container {
+            margin: auto;
+            cursor: pointer;
+        }
+
+        .title {
+            color: #FEC901;
+            font-size: 40px;
+            font-family: 'Staatliches';
+            text-align: left;
+        }
+
+        span {
+            color: #fff;
+            font-family: 'Staatliches';
+            text-align: left;
+
+            span {
+                color: #FEC901;
+            }
+        }
+    }
+}

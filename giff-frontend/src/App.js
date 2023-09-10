@@ -5,6 +5,10 @@ import GifLanding from './component/GifLanding';
 import GiftContextProvider from './context/GiftContextProvider';
 import WhatIsGift from './component/WhatIsGift';
 import SendEmailComponent from './component/SendEmailComponent';
+import GiftForSale from './component/GiftForSale';
+import GiftForMarketing from './component/GiftForMarketing';
+import GiftSpiration from './component/GiftSpiration';
+import RightsAndPrivacy from './component/RightsAndPrivacy';
 
 function App() {
   return (
@@ -20,8 +24,24 @@ function App() {
             element={<WhatIsGift />}
           />
           <Route
+            path={`${process.env.REACT_APP_BASEURL}/gift-for-sales`}
+            element={<GiftForSale />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/gift-for-marketing`}
+            element={<GiftForMarketing />}
+          />
+          <Route
             path={`${process.env.REACT_APP_BASEURL}/send-email`}
             element={<SendEmailComponent />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/gift-spiration`}
+            element={<GiftSpiration />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/rights-and-privacy`}
+            element={<RightsAndPrivacy />}
           />
         </Routes>
       </BrowserRouter>

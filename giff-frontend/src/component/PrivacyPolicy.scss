@@ -1,0 +1,29 @@
+.privacy-policy {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .privacy-policy-info {
+        width: 608px;
+        height: 474px;
+        display: grid;
+        gap: 24px;
+        margin: auto;
+
+        .title {
+            color: #FEC901;
+            font-size: 40px;
+            font-family: 'Staatliches';
+        }
+
+        span {
+            color: #fff;
+            font-family: 'Staatliches';
+        }
+    }
+}

@@ -1,0 +1,34 @@
+.content-seo {
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .box-container {
+        color: #000;
+        font-size: 20px;
+        font-family: 'Staatliches';
+        width: calc(33.33% - 10px);
+        box-sizing: border-box;
+        justify-content: center;
+        align-items: center;
+        display: grid;
+        .title {
+            width: 193px;
+            font-family: 'Staatliches';
+        }
+    }
+
+    .content-boxes {
+        width: 186px;
+        height: 166px;
+        background-color: #000;
+    }
+}
