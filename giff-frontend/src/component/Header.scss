@@ -37,7 +37,7 @@
 }
 
 @include media(phone) {
-
-}.header-content {
-    height: 150px;
+    .header-content {
+        height: 150px;
+    }
 }
