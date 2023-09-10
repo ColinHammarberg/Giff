@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { NotificationContainer } from 'react-notifications';
 import './App.css'
 import GifLanding from './component/GifLanding';
 import GiftContextProvider from './context/GiftContextProvider';
@@ -13,6 +14,7 @@ import RightsAndPrivacy from './component/RightsAndPrivacy';
 function App() {
   return (
     <GiftContextProvider>
+      <NotificationContainer />
       <BrowserRouter>
         <Routes>
           <Route

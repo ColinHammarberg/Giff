@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Staatliches&display=swap');
+@import '../utils/responsiveUtils.scss';
 
 .gif-error {
     display: grid;
@@ -49,6 +50,29 @@
             font-family: 'Staatliches';
             font-weight: 400;
             border-radius: 50px;
+        }
+    }
+}
+
+@include media(phone) {
+    .gif-error {
+        .error-container {
+            .error-description-box {
+                width: 276px;
+                .error-description {
+                    width: 249px;
+                    margin: auto;
+                }
+                .orange-divider {
+                    width: 276px;
+                    font-size: 13px;
+                }
+            }
+            .use-another-url-btn {
+                width: 286px;
+                height: 50px;
+                font-size: 30px;
+            }
         }
     }
 }

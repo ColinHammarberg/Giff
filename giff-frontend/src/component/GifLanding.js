@@ -14,8 +14,8 @@ function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
   const [generatedGifUrl, setGeneratedGifUrl] = useState('');
   const [url, setUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   // const [anchorEl, setAnchorEl] = useState(null);
   // const [emailValue, setEmailValue] = useState('');
 
