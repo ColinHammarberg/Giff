@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
+@import '../utils/responsiveUtils.scss';
 
 .gif-generator {
     text-align: center;
@@ -65,5 +66,14 @@
         width: 400px;
         height: 400px;
         border-radius: 25px;
+    }
+}
+
+@include media(phone) {
+    .gif-generator {
+        .MuiFormControl-root {
+            width: 276px;
+            height: 55px;
+        }
     }
 }

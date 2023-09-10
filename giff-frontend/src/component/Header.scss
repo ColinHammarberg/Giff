@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .header-content {
     width: 100vw;
     height: 300px;
@@ -32,4 +34,10 @@
     .menu-btn {
         right: 40px;
     }
+}
+
+@include media(phone) {
+
+}.header-content {
+    height: 150px;
 }
