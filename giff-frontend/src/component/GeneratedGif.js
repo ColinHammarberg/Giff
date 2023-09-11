@@ -10,6 +10,13 @@ function GeneratedGif(props) {
 
   const navigate = useNavigate();
 
+  const shareGifByEmail = () => {
+    const subject = "Check out this GIF!";
+    const body = "I thought you might enjoy this GIF I created. Check it out: " + generatedGifUrl;
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+  };
+
   return (
     <div className="generated-gif">
       <Header />
@@ -26,11 +33,11 @@ function GeneratedGif(props) {
           <Box className="generated-gif-btn-box">
             <Button className="btn download" onClick={onDownload}>Download GIF</Button>
             <Button className="btn share" onClick={() => navigate('send-email')}>Share in email</Button>
-            <Button className="btn share-else-where" onClick={() => navigate('send-email')}>Share gif elsewhere</Button>
+            <Button className="btn share-else-where" onClick={shareGifByEmail}>Share gif elsewhere</Button>
+            <Button className="btn share-else-where" onClick={() => navigate('mrs-gift')}>Mrs Gif-t</Button>
           </Box>
         </>
-      )
-    }
+      )}
     </div>
   );
 }

@@ -1,0 +1,95 @@
+.open-ai-generator {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .title {
+        color: #fff;
+        font-family: 'Staatliches';
+        font-size: 30px;
+        width: 284px;
+        margin: auto;
+    }
+
+    .fields {
+        justify-content: center;
+        align-items: center;
+
+        .field {
+            display: grid;
+
+            .text {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .circle {
+                    background-color: rgba(244, 20, 155, 1);
+                    width: 71px;
+                    left: 10px;
+                    height: 71px;
+                    border-radius: 100px;
+                    position: relative;
+                    z-index: 1399;
+                    border: 2px solid #000;
+                    justify-content: center;
+                    display: flex;
+                    align-items: center;
+
+                    .text {
+                        width: 53px;
+                        font-size: 12px;
+                        font-family: 'Staatliches';
+                    }
+                }
+            }
+
+            .MuiFormControl-root {
+                width: 402px;
+                background-color: #fff;
+                height: 40px;
+                border: 2px solid rgba(244, 20, 155, 1);
+
+                .MuiInputBase-root {
+                    height: 40px;
+                    .MuiInputBase-input {
+                        font-size: 12px;
+                        font-family: 'Staatliches';
+                    }
+                }
+            }
+
+            &.third {
+                .text {
+                    .circle {
+                        background-color: rgba(185, 241, 64, 1);
+                    }
+                }
+
+                .MuiFormControl-root {
+                    border: 2px solid rgba(185, 241, 64, 1);
+                }
+            }
+        }
+    }
+    .action {
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .next-step-btn {
+            width: 459px !important;
+            height: 47px !important;
+            background-color: rgba(254, 201, 1, 1);
+            border-radius: 50px;
+            color: #000 !important;
+            font-size: 20px;
+            font-family: 'Staatliches';
+        }
+    }
+}

@@ -10,6 +10,7 @@ import GiftForSale from './component/GiftForSale';
 import GiftForMarketing from './component/GiftForMarketing';
 import GiftSpiration from './component/GiftSpiration';
 import RightsAndPrivacy from './component/RightsAndPrivacy';
+import OpenAiGenerator from './openai/OpenAiGenerator';
 
 function App() {
   return (
@@ -44,6 +45,10 @@ function App() {
           <Route
             path={`${process.env.REACT_APP_BASEURL}/rights-and-privacy`}
             element={<RightsAndPrivacy />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/mrs-gift`}
+            element={<OpenAiGenerator />}
           />
         </Routes>
       </BrowserRouter>
