@@ -11,6 +11,8 @@ import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment
 import base64
+import openai
+from decouple import config
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the entire app
@@ -20,6 +22,45 @@ def index():
     return render_template('index.html')
 
 # Send email
+
+openai.api_key = os.environ.get('OPENAI_API_KEY')
+openai.api_key = config('OPENAI_API_KEY')
+
+# Flask route for handling GPT-3 requests
+
+@app.route('/chat', methods=['POST'])
+# Flask route for handling GPT-3 requests
+
+@app.route('/chat', methods=['POST'])
+def chat_with_gpt():
+    data = request.get_json()
+    print('user_query', data)
+    if 'description' not in data:
+        return jsonify({'error': 'User query not provided'}), 400
+
+    user_query = data['description']
+
+    try:
+        # Construct a prompt that includes the user's query
+        prompt = f"User asks: '{user_query}'\nChatGPT responds:"
+        # Make a request to GPT-3 with the constructed prompt
+        response = openai.Completion.create(
+            engine="text-davinci-002",
+            prompt=prompt,
+            max_tokens=500, # Adjust the max_tokens as needed
+            n=1,
+            stop=None,
+            temperature=0.7
+        )
+        # Extract the generated text from the response
+        generated_text = response.choices[0].text.strip()
+
+        return jsonify({'response': generated_text}), 200
+
+    except Exception as e:
+        # Log the error message for debugging
+        print('Error:', str(e))
+        return jsonify({'error': 'An error occurred while generating a response'}), 500
 
 @app.route('/send_gif', methods=['POST'])
 
