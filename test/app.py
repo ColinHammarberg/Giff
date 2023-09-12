@@ -227,6 +227,23 @@ def generate_gif():
 
 # Endpoint for generating gif out of online pdfs
 
+@app.route('/generate-gifs-from-list', methods=['POST'])
+def generate_gifs_from_list():
+    data = request.get_json()
+    urls = data.get('urls')  # Assuming 'urls' is a list of URLs
+
+    if not urls:
+        return jsonify({'error': 'No URLs provided'})
+
+    for URL in urls:
+        # Call the '/generate-gif' endpoint for each URL in the list
+        response = requests.post('http://localhost:5000/generate-gif', json={'url': URL})
+        
+        if response.status_code != 200:
+            return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
+
+    return jsonify({'message': 'GIFs generated successfully for all URLs'})
+
 @app.route('/generate-pdf-gif', methods=['POST'])
 def generate_pdf_gif():
     data = request.get_json()

@@ -11,6 +11,7 @@ import GiftForMarketing from './component/GiftForMarketing';
 import GiftSpiration from './component/GiftSpiration';
 import RightsAndPrivacy from './component/RightsAndPrivacy';
 import OpenAiGenerator from './openai/OpenAiGenerator';
+import Landing from './component/Landing';
 
 function App() {
   return (
@@ -18,8 +19,16 @@ function App() {
       <NotificationContainer />
       <BrowserRouter>
         <Routes>
-          <Route
+        <Route
             path={process.env.REACT_APP_BASEURL}
+            element={<Landing />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/single-gif-creation`}
+            element={<GifLanding />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/multiple-gif-creation`}
             element={<GifLanding />}
           />
           <Route
