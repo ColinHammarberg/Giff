@@ -1,10 +1,10 @@
 import React from 'react';
 
-function UserAvatar({instance}) {
+function UserAvatar({instance, user}) {
     return (
-            <div className="circle">
+            <div className={`circle ${user ? 'user' : 'open-ai'}`}>
                 <div className="text">
-                    {instance}
+                    {user ? 'You (Aka champ)' : 'Mrs. Gif-t (AKA The AI)'}
                 </div>
             </div>
     )

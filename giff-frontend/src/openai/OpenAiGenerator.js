@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
-import { Button, InputLabel, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import './OpenAiGenerator.scss';
 import Header from '../component/Header';
 import UserAvatar from './UserAvatar';
 
 const OpenAiGenerator = () => {
-  const [description, setDescription] = useState('');
+  const [message, setMessage] = useState('');
   const [response, setResponse] = useState('');
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [showUserMessage, setShowUserMessage] = useState(false);
 
-  const handleDescriptionChange = (event) => {
-    setDescription(event.target.value);
+  const messages = [
+    "Hey, champ. Tell me a little bit about the email you want to send. Who’s it for?",
+    "What industry are they in? If you could dream, what would your gif achieve? Etc.",
+  ];
+
+  const handleMessageChange = (event) => {
+    setMessage(event.target.value);
   };
 
   const handleGenerateClick = () => {
-    // Make an API request to your Flask backend
+    setShowUserMessage(true);
     axios
-      .post('http://127.0.0.1:5000/chat', { description })
+      .post('http://127.0.0.1:5000/chat', { message })
       .then((res) => {
         const generatedResponse = res.data.response;
         setResponse(generatedResponse);
@@ -27,61 +34,63 @@ const OpenAiGenerator = () => {
       });
   };
 
+  useEffect(() => {
+    if (messageIndex < messages.length) {
+      const timeoutId = setTimeout(() => {
+        setMessageIndex(messageIndex + 1);
+      }, 3000); // Adjust the delay (in milliseconds) as needed
+      return () => clearTimeout(timeoutId);
+    }
+  }, [messageIndex, messages.length]);
+
   return (
     <div className="open-ai-generator">
-        <Header />
-        <div className="title">Talk to mrs. Gif-t, your friendly neighborhood AI</div>
+      <Header />
+      <div className="title">Talk to mrs. Gif-t, your friendly neighborhood AI</div>
+      <div className="chat-bot">
         <div className="fields">
-            <div className="field first">
-                <InputLabel shrink htmlFor="text-input">
-                    Name
-                </InputLabel>
+            {messages.slice(0, messageIndex).map((message, index) => (
+            <div className="field" key={index}>
                 <div className="text">
-                    <UserAvatar instance=" Mrs. Gif-t (AKA The AI)" />
-                    <TextField
-                        variant="outlined"
-                        value="Hey, champ. Tell me a little bit about the email you want to send. Who’s it for?"
-                        // value={description}
-                        // onChange={handleDescriptionChange}
-                    />
+                    <UserAvatar openAi />
+                    <TextField variant="outlined" value={message} disabled />
                 </div>
             </div>
-            <div className="field second">
-                <InputLabel shrink htmlFor="text-input">
-                    Name
-                </InputLabel>
+            ))}
+            {showUserMessage && (
+                <div className="field">
+                    <div className="text">
+                        <UserAvatar user />
+                        <TextField variant="outlined" value={message} disabled />
+                    </div>
+                </div>
+            )}
+            {response && (
+            <div className="field generated-answer">
                 <div className="text">
-                    <UserAvatar instance=" Mrs. Gif-t (AKA The AI)" />
-                    <TextField
-                        variant="outlined"
-                        value="What industry are they in? If you could dream, what would your gif achieve? Etc."
-                        // onChange={handleDescriptionChange}
-                    />
+                <UserAvatar instance="Mrs. Gif-t (AKA The AI)" />
+                <div className="response">{response || 'tell me'}</div>
                 </div>
             </div>
-        <div className="field third">
-            <InputLabel shrink htmlFor="text-input">
-                Name
-            </InputLabel>
-            <div className="text">
-                <UserAvatar instance="You (Aka champ)" />
+            )}
+        </div>
+        {messageIndex >= messages.length && (
+            <div className="message-input" style={{ flex: '0 0 auto' }}>
                 <TextField
                     variant="outlined"
-                    value={description}
-                    onChange={handleDescriptionChange}
+                    value={message}
+                    onChange={handleMessageChange}
                 />
             </div>
-        </div>
-        <div className="generated-answer">
-            <strong>Response:</strong>
-            <p style={{ color: '#fff'}}>{response}</p>
-        </div>
-    </div>
-         <div className="action">
-            <Button variant="contained" onClick={handleGenerateClick} className="next-step-btn">
-                Go to next step
-            </Button>
-        </div>
+        )}
+      </div>
+      <div className="action">
+        {messageIndex >= messages.length && (
+          <Button variant="contained" onClick={handleGenerateClick} className="next-step-btn">
+            Go to next step
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
