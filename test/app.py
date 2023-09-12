@@ -35,14 +35,21 @@ openai.api_key = config('OPENAI_API_KEY')
 def chat_with_gpt():
     data = request.get_json()
     print('user_query', data)
-    if 'description' not in data:
+    
+    if 'message' not in data:
         return jsonify({'error': 'User query not provided'}), 400
 
-    user_query = data['description']
+    message = data['message']
 
     try:
-        # Construct a prompt that includes the user's query
-        prompt = f"User asks: '{user_query}'\nChatGPT responds:"
+        # Construct a prompt that includes the user's query and additional instructions/rules
+        prompt = f"User asks: '{message}'\nChatGPT responds: Generate an email with the following rules and information:\n"
+        prompt += "- Start the email with a friendly greeting.\n"
+        prompt += "- Include the recipient's name and mention the purpose of the email.\n"
+        prompt += "- Ask a follow-up question to engage the recipient.\n"
+        prompt += "- End the email politely.\n"
+        prompt += "Email content:"
+        
         # Make a request to GPT-3 with the constructed prompt
         response = openai.Completion.create(
             engine="text-davinci-002",
@@ -52,6 +59,7 @@ def chat_with_gpt():
             stop=None,
             temperature=0.7
         )
+        
         # Extract the generated text from the response
         generated_text = response.choices[0].text.strip()
 
