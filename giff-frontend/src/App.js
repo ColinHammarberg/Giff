@@ -12,6 +12,8 @@ import GiftSpiration from './component/GiftSpiration';
 import RightsAndPrivacy from './component/RightsAndPrivacy';
 import OpenAiGenerator from './openai/OpenAiGenerator';
 import Landing from './component/Landing';
+import ChooseOptionCreate from './component/ChooseOptionCreate';
+import MultipleGifGenerator from './component/MultipleGifCreation';
 
 function App() {
   return (
@@ -28,8 +30,12 @@ function App() {
             element={<GifLanding />}
           />
           <Route
+            path={`${process.env.REACT_APP_BASEURL}/choose-option-create`}
+            element={<ChooseOptionCreate />}
+          />
+          <Route
             path={`${process.env.REACT_APP_BASEURL}/multiple-gif-creation`}
-            element={<GifLanding />}
+            element={<MultipleGifGenerator />}
           />
           <Route
             path={`${process.env.REACT_APP_BASEURL}/what-is-gift`}

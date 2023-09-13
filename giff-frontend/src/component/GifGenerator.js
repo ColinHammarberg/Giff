@@ -8,6 +8,12 @@ import Header from './Header';
 function GifGenerator(props) {
   const { onChange, gifGenerated, onKeyPress } = props;
 
+  const infoButtonText = [
+    {text: 'With Gif-t, you can create a gif from an online pdf, web page or presentation. Simply add the url and click Create gif.'},
+    {text: 'Our gif-machine (AKA the Gif-ter) will scroll through the place your url leads to, create a gif and make it ready for you to share.'},
+    {text: 'Your url needs to lead somewhere scrollable (it can’t just be one page, like google.com), and it cannot be locked behind a login or verification (like a sharepoint or a pay-walled magazine).'}
+  ]          
+
   function handleOnChangeUrl(event) {
     if (onChange) {
       console.log('event', event);
@@ -19,7 +25,7 @@ function GifGenerator(props) {
     <div className="gif-generator">
       <Header generator />
       <Box className="text-field-content">
-        <div className="text-field-header">Add any* url <InfoButton/></div>
+        <div className="text-field-header">Add any* url <InfoButton infoButtonText={infoButtonText} /></div>
         <TextField
           onChange={(event) => handleOnChangeUrl(event)}
           onKeyPress={(event) => {

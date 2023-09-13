@@ -12,7 +12,6 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment
 import base64
 import openai
-from decouple import config
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the entire app
@@ -24,7 +23,6 @@ def index():
 # Send email
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
-openai.api_key = config('OPENAI_API_KEY')
 
 # Flask route for handling GPT-3 requests
 
@@ -293,6 +291,23 @@ def generate_pdf_gif():
     print(f"PDF GIF saved at {output_path}")
     
     return jsonify({'message': 'GIF generated successfully'})
+
+@app.route('/generate-pdf-gifs-from-list', methods=['POST'])
+def generate_pdf_gifs_from_list():
+    data = request.get_json()
+    urls = data.get('urls')  # Assuming 'urls' is a list of URLs
+
+    if not urls:
+        return jsonify({'error': 'No URLs provided'})
+
+    for URL in urls:
+        # Call the '/generate-gif' endpoint for each URL in the list
+        response = requests.post('http://localhost:5000/generate-pdf-gif', json={'url': URL})
+        
+        if response.status_code != 200:
+            return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
+
+    return jsonify({'message': 'GIFs generated successfully for all URLs'})
 
 
 @app.route('/download-gif', methods=['GET'])

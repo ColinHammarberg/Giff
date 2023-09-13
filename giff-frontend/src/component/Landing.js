@@ -20,7 +20,7 @@ function Landing() {
                     </div>
                 </Box>
                 <Box className="enter-btn">
-                    <Button onClick={() => setTimeout(() => navigate('/single-gif-creation'), 2000)}>Create your gif now</Button>
+                    <Button onClick={() => setTimeout(() => navigate('/choose-option-create'), 2000)}>Create your gif now</Button>
                 </Box>
             </Box>
         </div>
