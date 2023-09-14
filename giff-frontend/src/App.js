@@ -55,7 +55,7 @@ function App() {
             element={<EmailChoice />}
           />
           <Route
-            path={`${process.env.REACT_APP_BASEURL}/send-email`}
+            path={`${process.env.REACT_APP_BASEURL}/send-gift-email`}
             element={<SendEmailComponent />}
           />
           <Route

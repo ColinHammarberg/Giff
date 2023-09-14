@@ -10,6 +10,15 @@
             color: #fff;
             width: 254px;
             margin: auto;
+
+            &.ai {
+                display: flex;
+                gap: 8px;
+
+                div {
+                    height: 24px;
+                }
+            }
         }
     }
 
