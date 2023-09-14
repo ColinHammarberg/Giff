@@ -1,0 +1,50 @@
+.choose-email-choice-info {
+    display: grid;
+    justify-content: center;
+    gap: 50px;
+    font-family: 'Staatliches';
+
+    .container {
+        .sub-title {
+            font-size: 30px;
+            color: #fff;
+            width: 254px;
+            margin: auto;
+        }
+    }
+
+
+    .choose-btns {
+        display: grid;
+        gap: 24px;
+
+        .MuiButton-root {
+            color: #000;
+            border-radius: 50px;
+            font-size: 20px;
+            height: 43px;
+            width: 459px;
+            font-family: 'Staatliches';
+
+            &.create-one {
+                background-color: rgba(254, 201, 1, 1);
+            }
+
+            &.create-several {
+                background-color: rgba(244, 20, 155, 1);
+            }
+        }
+    }
+
+    .save-my-choice {
+        display: flex;
+        color: #fff;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+
+        .MuiButtonBase-root {
+            color: rgba(244, 20, 155, 1);
+        }
+    }
+}

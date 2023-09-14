@@ -12,7 +12,6 @@ function ChooseOptionCreate() {
     {text: 'Create one gif if you have something specific you want to share with someone right away. If you want, our friendly AI Mrs. Gif-t can even help you with your emails.'}
   ]
   return (
-    <>
         <div className="choose-option-create">
             <Header generator />
             <Box className="choose-option-create-info">
@@ -30,7 +29,6 @@ function ChooseOptionCreate() {
                 </Box>
             </Box>
         </div>
-    </>
   );
 }
 

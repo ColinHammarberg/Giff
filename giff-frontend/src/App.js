@@ -14,6 +14,7 @@ import OpenAiGenerator from './openai/OpenAiGenerator';
 import Landing from './component/Landing';
 import ChooseOptionCreate from './component/ChooseOptionCreate';
 import MultipleGifGenerator from './component/MultipleGifCreation';
+import EmailChoice from './component/EmailChoice';
 
 function App() {
   return (
@@ -48,6 +49,10 @@ function App() {
           <Route
             path={`${process.env.REACT_APP_BASEURL}/gift-for-marketing`}
             element={<GiftForMarketing />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/email-choice`}
+            element={<EmailChoice />}
           />
           <Route
             path={`${process.env.REACT_APP_BASEURL}/send-email`}
