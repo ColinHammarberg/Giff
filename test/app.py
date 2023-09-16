@@ -154,6 +154,7 @@ def send_email():
 def generate_gif():
     data = request.get_json()
     URL = data.get('url')
+    NAME = data.get('name', 'scrolling_animation.gif') # default name if name isn't passed as a value
 
     # Create ChromeOptions for headless mode
     chrome_options = Options()
@@ -187,6 +188,9 @@ def generate_gif():
         timer = 500
         # duration = 0.08
 
+    if not NAME.endswith('.gif'):
+        NAME += '.gif'
+
     # Create a directory to store individual screenshots
     screenshots_dir = 'screenshots'
     os.makedirs(screenshots_dir, exist_ok=True)
@@ -208,8 +212,8 @@ def generate_gif():
     gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test', 'gifs')
     os.makedirs(gifs_frontend_folder, exist_ok=True)
     os.makedirs(gifs_folder, exist_ok=True)
-    output_path = os.path.join(gifs_frontend_folder, 'scrolling_animation.gif')
-    output_backend_path = os.path.join(gifs_folder, 'scrolling_animation.gif')
+    output_path = os.path.join(gifs_frontend_folder, NAME)
+    output_backend_path = os.path.join(gifs_folder, NAME)
     screenshots = sorted(os.listdir(screenshots_dir))
     frames = [imageio.imread(os.path.join(screenshots_dir, screenshot)) for screenshot in screenshots]
     imageio.mimsave(output_path, frames, duration=0.08, loop=0) # Set duration and loop
@@ -228,19 +232,24 @@ def generate_gif():
 @app.route('/generate-gifs-from-list', methods=['POST'])
 def generate_gifs_from_list():
     data = request.get_json()
-    urls = data.get('urls')  # Assuming 'urls' is a list of URLs
+    gifData = data['gifData']
+    print('data', gifData)
+    
+    # Check if 'gifData' key exists in the JSON data
+    if 'gifData' not in data:
+        return jsonify({'error': 'No GIF data provided'})
 
-    if not urls:
-        return jsonify({'error': 'No URLs provided'})
+    for gif in gifData:
+        URL = gif['url']
+        name = gif['name']
 
-    for URL in urls:
-        # Call the '/generate-gif' endpoint for each URL in the list
-        response = requests.post('http://localhost:5000/generate-gif', json={'url': URL})
-        
+        response = requests.post('http://localhost:5000/generate-single-gif', json={'url': URL, 'name': name})
+    
         if response.status_code != 200:
             return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
-
+    
     return jsonify({'message': 'GIFs generated successfully for all URLs'})
+
 
 @app.route('/generate-pdf-gif', methods=['POST'])
 def generate_pdf_gif():
