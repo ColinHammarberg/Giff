@@ -1,0 +1,38 @@
+.multiple-generated-gif {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .multiple-gifs {
+        display: flex;
+        margin: auto;
+        gap: 16px;
+        justify-content: center;
+
+        .gif {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+            gap: 24px;
+            font-family: 'Staatliches';
+            width: 100%;
+
+            img {
+                width: 143px;
+                height: 98px;
+                border-radius: 4px;
+            }
+
+            .file-info {
+                color: #fff;
+                text-align: left;
+            }
+        }
+    }
+}

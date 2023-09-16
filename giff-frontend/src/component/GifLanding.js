@@ -54,7 +54,6 @@ function GifLanding() {
     }
   };
   
-
   function handleDownloadClick() {
     if (gifGenerated) {
       // Create a virtual anchor element and trigger the download

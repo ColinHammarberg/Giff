@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Box, Button } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
 import GifPdf from '../gifs/pdf_animation.gif';
-import GeneratedGif from './GeneratedGif';
 import MultipleGifGenerator from './MultipleGifGenerator';
 import './GifLanding.scss';
 import GifError from './GifError';
-import { GenerateMultipleGifs, GenerateMultiplePdfGifs } from '../endpoints/Apis';
+import { DownloadFolder, GenerateMultipleGifs, GenerateMultiplePdfGifs } from '../endpoints/Apis';
 import MultipleGeneratedGifs from './MultipleGeneratedGifs';
 
 function MultipleGifLanding() {
@@ -18,8 +17,6 @@ function MultipleGifLanding() {
     { name: '', url: '' },
     { name: '', url: '' },
   ]);
-
-  console.log('urlList', urlList);
 
   const generateMultipleGifs = async () => {
     try {
@@ -54,16 +51,23 @@ function MultipleGifLanding() {
     }
   };
 
-  function handleDownloadClick() {
+  async function handleDownloadClick() {
     if (gifGenerated) {
-      // Create a virtual anchor element and trigger the download
-      const link = document.createElement('a');
-      link.href = generatedGifUrl; // Use the actual URL here
-      link.target = '_blank';
-      link.download = 'generated_gif.gif';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Make a GET request to the Flask route that generates the ZIP file
+        const response = await DownloadFolder();
+        console.log('response', response);
+        // Create a virtual anchor element and trigger the download
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.download = 'all_gifs.zip';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Error downloading ZIP file:', error);
+      }
     }
   }
 
@@ -86,9 +90,10 @@ function MultipleGifLanding() {
       {isLoading || gifGenerated ? (
         <MultipleGeneratedGifs
           gifGenerated={gifGenerated}
-          generatedGifUrl={generatedGifUrl}
+          importedGifs={generatedGifUrl}
           isLoading={isLoading}
           onDownload={handleDownloadClick}
+          urlList={urlList}
         />
       ) : (
         <MultipleGifGenerator

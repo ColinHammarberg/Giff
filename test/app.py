@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 import imageio
 import time
 import os
+import io
 from flask_cors import CORS
 from PIL import Image
 import fitz  # Import the PyMuPDF library
@@ -12,6 +13,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment
 import base64
 import openai
+import zipfile
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the entire app
@@ -255,9 +257,12 @@ def generate_gifs_from_list():
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
+    NAME = data.get('name', 'pdf_animation.gif') # default name if name isn't passed as a value
     
     # Create a temporary directory to store individual images
     images_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pdf_images')
+    if not NAME.endswith('.gif'):
+        NAME += '.gif'
     os.makedirs(images_dir, exist_ok=True)
 
     # Download the PDF content
@@ -284,7 +289,7 @@ def generate_pdf_gif():
     # Create a GIF from the images
     gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
     os.makedirs(gifs_folder, exist_ok=True)
-    output_path = os.path.join(gifs_folder, 'pdf_animation.gif')
+    output_path = os.path.join(gifs_folder, NAME)
 
     image_paths = sorted(os.listdir(images_dir))
     frames = [Image.open(os.path.join(images_dir, img_path)) for img_path in image_paths if img_path.endswith('.png')]
@@ -304,15 +309,19 @@ def generate_pdf_gif():
 @app.route('/generate-pdf-gifs-from-list', methods=['POST'])
 def generate_pdf_gifs_from_list():
     data = request.get_json()
-    urls = data.get('urls')  # Assuming 'urls' is a list of URLs
+    gifData = data['gifData']
+    print('data', gifData)
+    
+    # Check if 'gifData' key exists in the JSON data
+    if 'gifData' not in data:
+        return jsonify({'error': 'No GIF data provided'})
 
-    if not urls:
-        return jsonify({'error': 'No URLs provided'})
+    for gif in gifData:
+        URL = gif['url']
+        name = gif['name']
 
-    for URL in urls:
-        # Call the '/generate-gif' endpoint for each URL in the list
-        response = requests.post('http://localhost:5000/generate-pdf-gif', json={'url': URL})
-        
+        response = requests.post('http://localhost:5000/generate-pdf-gif', json={'url': URL, 'name': name})
+    
         if response.status_code != 200:
             return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
 
@@ -326,6 +335,34 @@ def download_gif():
     gif_filename = 'scrolling_animation.gif'
     gif_path = os.path.join(gifs_folder, gif_filename)
     return send_file(gif_path, as_attachment=True, attachment_filename=gif_filename)
+
+@app.route('/download-all-gifs', methods=['GET'])
+
+@app.route('/download-all-gifs', methods=['GET'])
+def download_all_gifs():
+    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+
+    # Create an in-memory file for the ZIP archive
+    zip_buffer = io.BytesIO()
+
+    # Create a zip archive containing all files in the gifs_folder using ZIP_STORED compression method
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
+        for root, _, files in os.walk(gifs_folder):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, gifs_folder)
+                zipf.write(file_path, arcname=arcname)
+
+    # Set the position to the beginning of the in-memory file
+    zip_buffer.seek(0)
+
+    # Send the in-memory ZIP file as a response
+    return send_file(
+        zip_buffer,
+        as_attachment=True,
+        download_name='all_gifs.zip',
+        mimetype='application/zip'
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
