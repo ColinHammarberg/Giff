@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_file
+from flask import Flask, render_template, jsonify, request, send_file, send_from_directory
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import imageio
@@ -25,6 +25,7 @@ def index():
 # Send email
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
+backend_gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test', 'gifs')
 
 # Flask route for handling GPT-3 requests
 
@@ -363,6 +364,20 @@ def download_all_gifs():
         download_name='all_gifs.zip',
         mimetype='application/zip'
     )
+
+@app.route('/gifs/<path:filename>')
+def serve_gif(filename):
+    return send_from_directory(backend_gifs_folder, filename)
+
+@app.route('/api/get-gifs')
+def get_gifs():
+    gif_list = []
+
+    for filename in os.listdir(backend_gifs_folder):
+        if filename.endswith('.gif'):
+            gif_list.append({'filename': filename})
+
+    return jsonify({'gifs': gif_list})
 
 if __name__ == '__main__':
     app.run(debug=True)
