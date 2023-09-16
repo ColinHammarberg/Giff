@@ -17,8 +17,9 @@ export async function GeneratePdfGifs(url) {
     return response;
 }
 
-export async function GenerateMultipleGifs(urls) {
-    const response = await axios.post(`http://127.0.0.1:5000/generate-gifs-from-list`, { urls });
+export async function GenerateMultipleGifs(gifData) {
+  console.log('gifData', gifData);
+    const response = await axios.post(`http://127.0.0.1:5000/generate-gifs-from-list`, {gifData});
     return response;
 }
 
