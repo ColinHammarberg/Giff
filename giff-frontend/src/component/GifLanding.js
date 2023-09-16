@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import '../App.css'
-import GifGenerator from './GifGenerator';
+import SingleGifGenerator from './SingleGifGenerator';
 import { Box, Button } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
 import GifPdf from '../gifs/pdf_animation.gif';
-import axios from 'axios';
 import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
 import GifError from './GifError';
+import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
 // import EmailAddressPopover from './EmailAddressPopover';
 
 function GifLanding() {
@@ -27,12 +27,17 @@ function GifLanding() {
     console.log('url', value);
   }
 
-  const generateGif = async () => {
+  const generateSingleGif = async () => {
     try {
       setIsLoading(true);
-      const endpoint = url.endsWith('.pdf') ? 'generate-pdf-gif' : 'generate-gif';
-      const response = await axios.post(`http://127.0.0.1:5000/${endpoint}`, { url });
-      if (response.data.error) {
+      const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url) : GenerateSingleGif(url));
+      console.log('response', response);
+  
+      if (!response || !response.data) {
+        // Check if response or response.data is undefined
+        console.error('Response or response.data is undefined');
+        setError('An error occurred while generating GIF.');
+      } else if (response.data.error) {
         console.error('Error generating GIF:', response.data.error);
         setError(response.data.error);
       } else if (response.data.message === 'GIF generated successfully') {
@@ -44,9 +49,11 @@ function GifLanding() {
       setIsLoading(false);
     } catch (error) {
       console.error('Error generating GIF:', error);
+      setError('An error occurred while generating GIF.');
       setIsLoading(false);
     }
   };
+  
 
   function handleDownloadClick() {
     if (gifGenerated) {
@@ -75,7 +82,7 @@ function GifLanding() {
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {
-      generateGif();
+      generateSingleGif();
     }
   };
 
@@ -92,13 +99,13 @@ function GifLanding() {
       {isLoading || gifGenerated ? (
           <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
-          <GifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} gifGenerated={gifGenerated} />
+          <SingleGifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} gifGenerated={gifGenerated} />
         )
         }
         {!isLoading && (
             <Box className="btn-content">
                 {!gifGenerated && (
-                    <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
+                    <Button className="action-btn" onClick={generateSingleGif}>Create GIF</Button>
                 )}
             </Box>
         )}

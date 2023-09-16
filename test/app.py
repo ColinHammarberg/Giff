@@ -149,7 +149,7 @@ def send_email():
 
 # Endpoint for generating gif out of webpages
 
-@app.route('/generate-gif', methods=['POST'])
+@app.route('/generate-single-gif', methods=['POST'])
 
 def generate_gif():
     data = request.get_json()

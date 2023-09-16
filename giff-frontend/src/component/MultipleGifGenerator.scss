@@ -1,0 +1,36 @@
+.multiple-gif-generator {
+    .text-field-content {
+        background-color: #575757;
+        height: 500px;
+        width: 60%;
+        margin: auto;
+
+        .url-inputs {
+            display: grid;
+            gap: 16px;
+            justify-content: center;
+
+            .MuiBox-root {
+                display: flex;
+                gap: 16px;
+
+                div {
+                    .MuiFormLabel-root {
+                        text-align: left;
+                    }
+
+                    .MuiFormControl-root {
+                        width: 225px;
+                        height: 45px;
+                    }
+
+                    .MuiInputBase-root {
+                        background-color: #fff;
+                        border-radius: 0 !important;
+                        height: 86px;
+                    }
+                }
+            }
+        }
+    }
+}

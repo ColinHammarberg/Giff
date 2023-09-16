@@ -25,7 +25,7 @@ function ChooseOptionCreate() {
                 </Box>
                 <Box className="enter-btn">
                     <Button className="create-one" onClick={(() => setTimeout(() => navigate('/single-gif-creation')))}>Create one gif</Button>
-                    <Button className="create-several" onClick={(() => setTimeout(() => navigate('multiple-gif-creation')))} >Create several gifs</Button>
+                    <Button className="create-several" onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} >Create several gifs</Button>
                 </Box>
             </Box>
         </div>

@@ -5,7 +5,7 @@ import './GifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
 
-function GifGenerator(props) {
+function SingleGifGenerator(props) {
   const { onChange, gifGenerated, onKeyPress } = props;
 
   const infoButtonText = [
@@ -43,4 +43,4 @@ function GifGenerator(props) {
   );
 }
 
-export default GifGenerator;
+export default SingleGifGenerator;
