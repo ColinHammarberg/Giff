@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, InputLabel, TextField, IconButton, Tooltip } from '@mui/material';
+import { Box, InputLabel, TextField, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Gif from '../gifs/scrolling_animation.gif';
 import './MultipleGifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
+import { showNotification } from './Notification';
+import LightTooltip from './LightToolTip';
 
 function MultipleGifGenerator(props) {
   const { urlList, setUrlList, gifGenerated } = props;
@@ -42,7 +44,12 @@ function MultipleGifGenerator(props) {
   }
 
   function addUrl() {
-    setUrlList((prevList) => [...prevList, { name: '', url: '' }]);
+    if (urlList.length < 4) {
+      setUrlList((prevList) => [...prevList, { name: '', url: '' }]);
+    } else {
+      showNotification('error', "You can't create more than 8 gifs at once.")
+    }
+    console.log('urlList', urlList);
   }
 
   return (
@@ -56,6 +63,17 @@ function MultipleGifGenerator(props) {
           {urlList.map((item, index) => (
             <Box key={index}>
               <div>
+                <InputLabel shrink htmlFor={`url-input-${index}`}>
+                  URL
+                </InputLabel>
+                <TextField
+                  id={`url-input-${index}`}
+                  onChange={(event) => handleOnChangeUrl(event, index)}
+                  value={item.url}
+                  placeholder="The url goes here..."
+                />
+              </div>
+              <div>
                 <InputLabel shrink htmlFor={`name-input-${index}`}>
                   Name of file
                 </InputLabel>
@@ -67,23 +85,14 @@ function MultipleGifGenerator(props) {
                   placeholder="The name goes here..."
                 />
               </div>
-              <div>
-                <InputLabel shrink htmlFor={`url-input-${index}`}>
-                  URL
-                </InputLabel>
-                <TextField
-                  id={`url-input-${index}`}
-                  onChange={(event) => handleOnChangeUrl(event, index)}
-                  value={item.url}
-                  placeholder="The url goes here..."
-                />
-              </div>
             </Box>
           ))}
           <div className="add-btn">
-            <Tooltip title="Add field">
-              <IconButton onClick={addUrl}><AddIcon /></IconButton>
-            </Tooltip>
+            <LightTooltip title="Add field">
+              <div>
+                <IconButton onClick={addUrl}><AddIcon /></IconButton>
+              </div>
+            </LightTooltip>
           </div>
         </Box>
       </Box>
