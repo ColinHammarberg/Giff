@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, InputLabel, TextField, Button } from '@mui/material';
+import { Box, InputLabel, TextField, IconButton, Tooltip } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import Gif from '../gifs/scrolling_animation.gif';
 import './MultipleGifGenerator.scss';
 import InfoButton from './InfoButton';
@@ -49,7 +50,7 @@ function MultipleGifGenerator(props) {
       <Header generator />
       <Box className="text-field-content">
         <div className="text-field-header">
-          Add any* urls <InfoButton infoButtonText={infoButtonText} />
+          Add your urls and name them <InfoButton infoButtonText={infoButtonText} />
         </div>
         <Box className="url-inputs">
           {urlList.map((item, index) => (
@@ -60,9 +61,10 @@ function MultipleGifGenerator(props) {
                 </InputLabel>
                 <TextField
                   id={`name-input-${index}`}
+                  className="name-input"
                   onChange={(event) => handleNameChange(event, index)}
                   value={item.name}
-                  placeholder="Name of gif"
+                  placeholder="The name goes here..."
                 />
               </div>
               <div>
@@ -73,12 +75,16 @@ function MultipleGifGenerator(props) {
                   id={`url-input-${index}`}
                   onChange={(event) => handleOnChangeUrl(event, index)}
                   value={item.url}
-                  placeholder="https://give-a-gif-t.com"
+                  placeholder="The url goes here..."
                 />
               </div>
             </Box>
           ))}
-          <Button onClick={addUrl}>Add URL</Button>
+          <div className="add-btn">
+            <Tooltip title="Add field">
+              <IconButton onClick={addUrl}><AddIcon /></IconButton>
+            </Tooltip>
+          </div>
         </Box>
       </Box>
       <div className="gifs">{gifGenerated && <img src={Gif} alt="Generated GIF" />}</div>

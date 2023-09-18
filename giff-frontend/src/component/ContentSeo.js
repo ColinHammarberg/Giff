@@ -10,10 +10,10 @@ const ContentSeo = forwardRef((props, ref) => {
         return (
             <div className="box-container">
                 <Box className="content-boxes">
+                  <div className="title">
+                      {item.title}
+                  </div>
                 </Box>
-                <div className="title">
-                    {item.title}
-                </div>
             </div>
         )
       })}

@@ -15,20 +15,28 @@
         color: #000;
         font-size: 20px;
         font-family: 'Staatliches';
-        width: calc(33.33% - 10px);
+        width: calc(33.33%);
         box-sizing: border-box;
         justify-content: center;
         align-items: center;
         display: grid;
-        .title {
-            width: 193px;
-            font-family: 'Staatliches';
-        }
+        justify-content: center;
+        align-items: flex-end;
     }
 
     .content-boxes {
         width: 186px;
         height: 166px;
         background-color: #000;
+        position: relative;
+        .title {
+            width: 168px;
+            height: 30px;
+            font-family: 'Staatliches';
+            color: rgba(254, 201, 1, 1);
+            font-size: 12px;
+            position: absolute;
+            bottom: 0;
+        }
     }
 }

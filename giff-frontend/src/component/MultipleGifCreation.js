@@ -16,6 +16,7 @@ function MultipleGifLanding() {
   const [urlList, setUrlList] = useState([
     { name: '', url: '' },
     { name: '', url: '' },
+    { name: '', url: '' },
   ]);
 
   const generateMultipleGifs = async () => {

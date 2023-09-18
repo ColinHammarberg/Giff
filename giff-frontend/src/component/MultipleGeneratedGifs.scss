@@ -9,23 +9,25 @@
     overflow-x: hidden;
 
     .multiple-gifs {
-        display: flex;
+        display: grid;
         margin: auto;
         gap: 16px;
         justify-content: center;
+        grid-template-columns: repeat(2, 1fr); // Two columns per row
 
         .gif {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-top: 50px;
+            flex-direction: column;
             gap: 24px;
             font-family: 'Staatliches';
             width: 100%;
 
             img {
-                width: 143px;
-                height: 98px;
+                width: 243px;
+                height: 188px;
                 border-radius: 4px;
             }
 

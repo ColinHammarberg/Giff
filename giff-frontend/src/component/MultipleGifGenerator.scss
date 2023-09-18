@@ -1,8 +1,9 @@
 .multiple-gif-generator {
+    margin: 0;
     .text-field-content {
-        background-color: #575757;
         height: 500px;
-        width: 60%;
+        padding: 40px;
+        width: 80%;
         margin: auto;
         font-family: 'Staatliches';
 
@@ -11,7 +12,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            height: 40px;
+            font-size: 30px;
             color: #fff;
 
             div {
@@ -21,26 +22,56 @@
         }
 
         .url-inputs {
-            display: grid;
-            gap: 16px;
             justify-content: center;
+            width: 100%;
+            margin: auto;
+            display: grid;
+            margin-top: 40px;
 
             .MuiBox-root {
                 display: flex;
-                gap: 16px;
+                gap: 50px;
+                width: 100%;
 
                 div {
+                    min-width: 45%;
+
                     .MuiFormLabel-root {
                         text-align: left;
+                        color: #fff;
                     }
+
                     .MuiFormControl-root {
-                        width: 225px;
+                        width: 290px;
                         height: 45px;
                     }
+
                     .MuiInputBase-root {
                         background-color: #fff;
                         border-radius: 0 !important;
-                        height: 86px;
+                        height: 40px;
+                        font-family: 'Staatliches';
+                    }
+
+                    .name-input {
+                        .MuiInputBase-root {
+                            .MuiOutlinedInput-input {
+                                color: rgba(244, 20, 155, 0.5);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .add-btn {
+                margin-top: 50px;
+
+                .MuiButtonBase-root {
+                    background-color: rgba(254, 201, 1, 1);
+
+                    svg {
+                        color: #000;
+                        font-size: 30px;
                     }
                 }
             }

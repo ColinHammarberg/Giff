@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import './MultipleGeneratedGifs.scss';
 import CircularWithValueLabel from './Loading';
 import Header from './Header';
@@ -7,7 +7,6 @@ import Header from './Header';
 function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload, urlList } = props;
   const [importedGifs, setImportedGifs] = useState([]);
-  console.log('importedGifs', importedGifs);
 
   React.useEffect(() => {
     // Dynamically import the GIFs when the component mounts
