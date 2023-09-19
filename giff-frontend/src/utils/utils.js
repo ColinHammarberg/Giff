@@ -5,3 +5,4 @@ export const MenuItems = [
     {title: 'Gif-spiration', url: 'gift-spiration', key: 4},
     {title: 'Rights & Privacy', url: 'rights-and-privacy', key: 5},
 ]
+

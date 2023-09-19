@@ -4,6 +4,7 @@ import Header from './Header';
 import { Box } from '@mui/material';
 import Spinner from './Spinner';
 import ContentSeo from './ContentSeo';
+import { salesArticles } from '../articles/ArticlesData';
 
 const freeContentSeo = [
     {title: 'Why your sales outreach won’t convert'}, 
@@ -58,7 +59,7 @@ const handleClick = async () => {
         </div>
         {showContent && (
             <div className="gift-for-sale-content">
-                <ContentSeo data={freeContentSeo} ref={targetRef} />
+                <ContentSeo data={freeContentSeo} ref={targetRef} articles={salesArticles} />
             </div>
         )}
     </>

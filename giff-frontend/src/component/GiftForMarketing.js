@@ -4,6 +4,7 @@ import Header from './Header';
 import { Box } from '@mui/material';
 import Spinner from './Spinner';
 import ContentSeo from './ContentSeo';
+import { marketingArticles } from '../articles/ArticlesData';
 
 const freeContentSeo = [
     {title: 'Why is my email marketing not converting?'}, 
@@ -60,7 +61,7 @@ const handleClick = async () => {
         </div>
         {showContent && (
             <div className="gift-for-sale-content">
-                <ContentSeo data={freeContentSeo} ref={targetRef} />
+                <ContentSeo data={freeContentSeo} articles={marketingArticles} ref={targetRef} />
             </div>
         )}
     </>

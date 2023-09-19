@@ -1,10 +1,17 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import './ContentSeo.scss';
 import { Box, Button } from '@mui/material';
+import ArticleShowcase from './ArticleShowcase';
 
 const ContentSeo = forwardRef((props, ref) => {
+  const [article, setArticle] = useState(null);
+
   function handleOnClickArticle(index) {
-    return;
+    setArticle(props.articles[index]);
+  }
+
+  function handleOnClose() {
+    setArticle(null);
   }
   return (
     <div ref={ref} className="content-seo">
@@ -23,6 +30,9 @@ const ContentSeo = forwardRef((props, ref) => {
             </>
         )
       })}
+      {article && (
+        <ArticleShowcase article={article} onClose={handleOnClose} />
+      )}
     </div>
   );
 });
