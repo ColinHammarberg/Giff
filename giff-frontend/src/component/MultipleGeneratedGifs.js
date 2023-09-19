@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Grid, Button } from '@mui/material';
 import './MultipleGeneratedGifs.scss';
 import CircularWithValueLabel from './Loading';
 import Header from './Header';
@@ -25,17 +25,16 @@ function MultipleGeneratedGifs(props) {
 
   const renderImportedGifs = () => {
     return importedGifs.map((gif, index) => (
-      <Box className="gif">
+      <Box className="gif" key={index}>
         <div>
           <img
-            key={index}
             src={gif.default} // Use the 'default' property to get the actual imported image URL
             alt={`Generated GIF ${index}`}
             className="generated-gif"
           />
         </div>
         <div className="file-info">
-          <p className="gif-url">{urlList[index].url}</p>
+          {/* <p className="gif-url">{urlList[index].url}</p> */}
           <p className="gif-url">{urlList[index].name}</p>
         </div>
       </Box>
@@ -51,11 +50,12 @@ function MultipleGeneratedGifs(props) {
           Creating your gif...
         </Box>
       ) : (
-        <>
-          <Box className="multiple-gifs">
-            {gifGenerated && renderImportedGifs()}
+        <Grid container spacing={2} className="multiple-gifs">
+          {gifGenerated && renderImportedGifs()}
+          <Box>
+            <Button onClick={onDownload}>Download Gifs</Button>
           </Box>
-        </>
+        </Grid>
       )}
     </div>
   );

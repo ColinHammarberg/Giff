@@ -26,10 +26,20 @@ function MultipleGifLanding() {
       const isPdf = urlList.some((item) => item.url.endsWith('.pdf'));
       const gifData = urlList.map((item) => ({ url: item.url, name: item.name }));
 
-      const response = await (isPdf
-        ? GenerateMultiplePdfGifs(gifData)
-        : GenerateMultipleGifs(gifData));
-
+      let response;
+      
+      if (isPdf) {
+        // Filter URLs that are PDFs
+        console.log('isPdf', isPdf);
+        const pdfUrls = gifData.filter((item) => item.url.endsWith('.pdf'));
+        response = await GenerateMultiplePdfGifs(pdfUrls);
+      } if (gifData) {
+        console.log('gifData', gifData);
+        // Filter URLs that are not PDFs
+        const nonPdfUrls = gifData.filter((item) => !item.url.endsWith('.pdf'));
+        response = await GenerateMultipleGifs(nonPdfUrls);
+      }
+    
       console.log('response', response);
 
       if (!response || !response.data) {

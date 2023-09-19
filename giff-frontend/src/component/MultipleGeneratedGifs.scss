@@ -9,11 +9,9 @@
     overflow-x: hidden;
 
     .multiple-gifs {
-        display: grid;
-        margin: auto;
-        gap: 16px;
+        display: flex;
+        flex-wrap: wrap;
         justify-content: center;
-        grid-template-columns: repeat(2, 1fr); // Two columns per row
 
         .gif {
             display: flex;
@@ -23,7 +21,7 @@
             flex-direction: column;
             gap: 24px;
             font-family: 'Staatliches';
-            width: 100%;
+            width: 33%;
 
             img {
                 width: 243px;
@@ -34,6 +32,18 @@
             .file-info {
                 color: #fff;
                 text-align: left;
+            }
+        }
+
+        .MuiBox-root {
+            margin-top: 24px;
+            .MuiButton-root {
+                background-color: rgba(254, 201, 1, 1);
+                width: 459px;
+                font-family: 'Staatliches';
+                color: #000;
+                border-radius: 50px;
+                font-size: 20px;
             }
         }
     }

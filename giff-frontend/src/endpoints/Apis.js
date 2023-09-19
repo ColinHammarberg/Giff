@@ -18,12 +18,13 @@ export async function GeneratePdfGifs(url) {
 }
 
 export async function GenerateMultipleGifs(gifData) {
-  console.log('gifData', gifData);
+  console.log('gifData1', gifData);
     const response = await axios.post(`http://127.0.0.1:5000/generate-gifs-from-list`, {gifData});
     return response;
 }
 
 export async function GenerateMultiplePdfGifs(gifData) {
+    console.log('gifData2', gifData);
     const response = await axios.post(`http://127.0.0.1:5000/generate-pdf-gifs-from-list`, {gifData});
     return response;
 }
