@@ -56,7 +56,9 @@ const handleClick = async () => {
                         Simply create a gif from the thing you want to share in your email, like a web page, a whitepaper or a blog post. Then,  add the gif directly to an email (or sms) and do what you always do.
                     </span>
                 </Box>
-                <Spinner onClick={handleClick} title="Content" />
+                <Box className="spinner-box">
+                    <Spinner onClick={handleClick} title="Content" />
+                </Box>
             </Box>
         </div>
         {showContent && (

@@ -23,8 +23,16 @@ function MultipleGifLanding() {
     try {
       setIsLoading(true);
       // Determine the GIF type (PDF or regular)
-      const isPdf = urlList.some((item) => item.url.endsWith('.pdf'));
-      const gifData = urlList.map((item) => ({ url: item.url, name: item.name }));
+      const sanitizedUrlList = urlList.map((item) => ({
+        url: item.url.startsWith('http://') || item.url.startsWith('https://')
+          ? item.url
+          : `https://${item.url}`,
+        name: item.name,
+      }));
+  
+      // Determine the GIF type (PDF or regular)
+      const isPdf = sanitizedUrlList.some((item) => item.url.endsWith('.pdf'));
+      const gifData = sanitizedUrlList.map((item) => ({ url: item.url, name: item.name }));
 
       let response;
       

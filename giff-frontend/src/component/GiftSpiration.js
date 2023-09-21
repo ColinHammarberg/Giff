@@ -49,7 +49,9 @@ const handleClick = async () => {
                         Wanna see how your gif can look? Scroll to see some cool examples of how gif-t takes a page and creates the perfect gif from it.
                     </span>
                 </Box>
-                <Spinner onClick={handleClick} title="Content" />
+                <Box className="spinner-box">
+                    <Spinner onClick={handleClick} title="Content" />
+                </Box>
             </Box>
         </div>
         {showContent && (

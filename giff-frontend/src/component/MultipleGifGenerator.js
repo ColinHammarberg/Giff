@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, InputLabel, TextField, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import Gif from '../gifs/scrolling_animation.gif';
 import './MultipleGifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
@@ -9,7 +8,7 @@ import { showNotification } from './Notification';
 import LightTooltip from './LightToolTip';
 
 function MultipleGifGenerator(props) {
-  const { urlList, setUrlList, gifGenerated } = props;
+  const { urlList, setUrlList } = props;
 
   const infoButtonText = [
     {
@@ -25,7 +24,6 @@ function MultipleGifGenerator(props) {
 
   function handleOnChangeUrl(event, index) {
     const { value } = event.target;
-
     setUrlList((prevList) => {
       const updatedList = [...prevList];
       updatedList[index] = { ...updatedList[index], url: value };
@@ -96,7 +94,6 @@ function MultipleGifGenerator(props) {
           </div>
         </Box>
       </Box>
-      <div className="gifs">{gifGenerated && <img src={Gif} alt="Generated GIF" />}</div>
     </div>
   );
 }

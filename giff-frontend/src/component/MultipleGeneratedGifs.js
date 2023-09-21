@@ -47,7 +47,6 @@ function MultipleGeneratedGifs(props) {
       {isLoading ? (
         <Box className="loading-container">
           <CircularWithValueLabel />
-          Creating your gif...
         </Box>
       ) : (
         <Grid container spacing={2} className="multiple-gifs">

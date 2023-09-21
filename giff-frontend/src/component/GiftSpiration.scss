@@ -16,6 +16,11 @@
         gap: 24px;
         margin: auto;
 
+        .spinner-box {
+            display: flex;
+            justify-content: center;
+        }
+
         .spinner-container {
             margin: auto;
             cursor: pointer;
