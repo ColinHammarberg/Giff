@@ -3,6 +3,7 @@ import { Box, Grid, Button } from '@mui/material';
 import './MultipleGeneratedGifs.scss';
 import CircularWithValueLabel from './Loading';
 import Header from './Header';
+import LoadingGif from './LoadingGif';
 
 function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload, urlList } = props;
@@ -46,7 +47,7 @@ function MultipleGeneratedGifs(props) {
       <Header />
       {isLoading ? (
         <Box className="loading-container">
-          <CircularWithValueLabel />
+          <LoadingGif />
         </Box>
       ) : (
         <Grid container spacing={2} className="multiple-gifs">

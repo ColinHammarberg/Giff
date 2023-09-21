@@ -4,6 +4,7 @@ import './GeneratedGif.scss';
 import CircularWithValueLabel from './Loading';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
+import LoadingGif from './LoadingGif';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, onDownload, generatedGifUrl } = props;
@@ -21,8 +22,7 @@ function GeneratedGif(props) {
       <Header />
       {isLoading ? (
         <Box className="loading-container">
-          <CircularWithValueLabel />
-          Creating your gif...
+          <LoadingGif singleGif />
         </Box>
       ) : (
         <>

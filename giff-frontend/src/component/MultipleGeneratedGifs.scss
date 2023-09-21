@@ -8,6 +8,13 @@
     overflow-y: auto;
     overflow-x: hidden;
 
+    .loading-container {
+        img {
+            width: 1000px;
+            height: 500px;
+        }
+    }
+
     .multiple-gifs {
         display: flex;
         flex-wrap: wrap;
@@ -37,6 +44,7 @@
 
         .MuiBox-root {
             margin-top: 24px;
+
             .MuiButton-root {
                 background-color: rgba(254, 201, 1, 1);
                 width: 459px;

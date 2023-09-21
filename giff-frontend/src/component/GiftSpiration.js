@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import './GiftSpiration.scss';
 import Header from './Header';
 import { Box } from '@mui/material';
-import Spinner from './Spinner';
 import ContentSeo from './ContentSeo';
+import ScrollDown from './ScrollDown';
 
 const freeContentSeo = [
     {title: 'Sales presentation gif'}, 
@@ -17,7 +17,7 @@ const freeContentSeo = [
 function GiftSpiration() {
 const targetRef = useRef(null);
 const [scrolledUp, setScrolledUp] = useState(false);
-const [showContent, setShowContent] = useState(true);
+const [showContent, setShowContent] = useState(false);
 useEffect(() => {
     const handleScroll = () => {
         setScrolledUp(window.scrollY);
@@ -49,14 +49,12 @@ const handleClick = async () => {
                         Wanna see how your gif can look? Scroll to see some cool examples of how gif-t takes a page and creates the perfect gif from it.
                     </span>
                 </Box>
-                <Box className="spinner-box">
-                    <Spinner onClick={handleClick} title="Content" />
-                </Box>
+                <ScrollDown onClick={handleClick} />
             </Box>
         </div>
         {showContent && (
             <div className="gift-spiration-content">
-                <ContentSeo data={freeContentSeo} ref={targetRef} />
+                <ContentSeo title="Gif-spiration and how-tos" data={freeContentSeo} ref={targetRef} />
             </div>
         )}
     </>

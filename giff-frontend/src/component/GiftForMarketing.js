@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import './GiftForMarketing.scss';
 import Header from './Header';
 import { Box } from '@mui/material';
-import Spinner from './Spinner';
 import ContentSeo from './ContentSeo';
 import { marketingArticles } from '../articles/ArticlesData';
+import ScrollDown from './ScrollDown';
 
 const freeContentSeo = [
     {title: 'Why is my email marketing not converting?'}, 
@@ -18,7 +18,7 @@ const freeContentSeo = [
 function GiftForMarketing() {
 const targetRef = useRef(null);
 const [scrolledUp, setScrolledUp] = useState(false);
-const [showContent, setShowContent] = useState(true);
+const [showContent, setShowContent] = useState(false);
 useEffect(() => {
     const handleScroll = () => {
         setScrolledUp(window.scrollY);
@@ -56,14 +56,12 @@ const handleClick = async () => {
                         Simply create a gif from the thing you want to share in your email, like a web page, a whitepaper or a blog post. Then,  add the gif directly to an email (or sms) and do what you always do.
                     </span>
                 </Box>
-                <Box className="spinner-box">
-                    <Spinner onClick={handleClick} title="Content" />
-                </Box>
+                <ScrollDown onClick={handleClick} />
             </Box>
         </div>
         {showContent && (
             <div className="gift-for-sale-content">
-                <ContentSeo data={freeContentSeo} articles={marketingArticles} ref={targetRef} />
+                <ContentSeo title="Free marketing Content" data={freeContentSeo} articles={marketingArticles} ref={targetRef} />
             </div>
         )}
     </>
