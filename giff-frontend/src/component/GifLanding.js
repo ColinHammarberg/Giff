@@ -31,28 +31,30 @@ function GifLanding() {
     try {
       setIsLoading(true);
       const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url) : GenerateSingleGif(url));
-      console.log('response', response);
   
-      if (!response || !response.data) {
-        // Check if response or response.data is undefined
-        console.error('Response or response.data is undefined');
-        setError('An error occurred while generating GIF.');
-      } else if (response.data.error) {
-        console.error('Error generating GIF:', response.data.error);
-        setError(response.data.error);
+      if (response.data.error) {
+        const errorMessage = response.data.error;
+        if (errorMessage.includes("Invalid scroll height")) {
+          setError('Invalid scroll height error: ' + errorMessage);
+        } else if (errorMessage.includes("video")) {
+          setError('Video URL error: ' + errorMessage);
+        } else {
+          setError('An error occurred while generating GIF.');
+        }
       } else if (response.data.message === 'GIF generated successfully') {
         const generatedGifUrl = url.endsWith('.pdf') ? GifPdf : Gif;
-        console.log('generatedGifUrl', generatedGifUrl);
         setGeneratedGifUrl(generatedGifUrl);
         setGifGenerated(true);
       }
       setIsLoading(false);
     } catch (error) {
-      console.error('Error generating GIF:', error);
       setError('An error occurred while generating GIF.');
       setIsLoading(false);
     }
   };
+
+  console.log('error', error);
+  
   
   function handleDownloadClick() {
     if (gifGenerated) {

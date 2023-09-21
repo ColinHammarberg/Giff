@@ -152,12 +152,20 @@ def send_email():
 
 # Endpoint for generating gif out of webpages
 
+def is_video_url(URL):
+    # Check if the URL includes "youtube" or "vimeo"
+    return "youtube" in URL or "vimeo" in URL
+
 @app.route('/generate-single-gif', methods=['POST'])
 
 def generate_gif():
     data = request.get_json()
     URL = data.get('url')
-    NAME = data.get('name', 'scrolling_animation.gif') # default name if name isn't passed as a value
+    NAME = data.get('name', 'scrolling_animation.gif')  # default name if name isn't passed as a value
+
+    # Check if the URL is a YouTube or Vimeo link
+    if is_video_url(URL):
+        return jsonify({'error': 'video url'})
 
     # Create ChromeOptions for headless mode
     chrome_options = Options()
@@ -229,6 +237,7 @@ def generate_gif():
     os.rmdir(screenshots_dir)
 
     return jsonify({'message': 'GIF generated successfully'})
+
 
 # Endpoint for generating gif out of online pdfs
 
