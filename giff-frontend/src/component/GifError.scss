@@ -14,21 +14,28 @@
 
         .error-description-box {
             background-color: #fff;
-            width: 410px;
+            width: 500px;
             height: 178px;
             display: grid;
             margin: auto;
+
+            &.video-error {
+                .orange-divider {
+                    background-color: rgba(254, 201, 1, 1);
+                }
+            }
 
             .error-description {
                 font-family: 'Staatliches';
                 font-size: 10px;
                 font-weight: 400;
                 margin-top: 30px;
+                padding: 4px;
             }
 
             .orange-divider {
                 background-color: #FE6B01;
-                width: 410px;
+                width: 500px;
                 height: 40px;
                 font-size: 20px;
                 line-height: 25px;
@@ -58,14 +65,14 @@
     .gif-error {
         .error-container {
             .error-description-box {
-                width: 276px;
+                width: 300px;
                 .error-description {
                     width: 249px;
                     margin: auto;
                 }
                 .orange-divider {
-                    width: 276px;
-                    font-size: 13px;
+                    width: 300px;
+                    font-size: 11px;
                 }
             }
             .use-another-url-btn {

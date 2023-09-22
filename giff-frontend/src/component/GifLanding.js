@@ -35,11 +35,11 @@ function GifLanding() {
       if (response.data.error) {
         const errorMessage = response.data.error;
         if (errorMessage.includes("Invalid scroll height")) {
-          setError('Invalid scroll height error: ' + errorMessage);
+          setError('height error');
         } else if (errorMessage.includes("video")) {
-          setError('Video URL error: ' + errorMessage);
+          setError('video error');
         } else {
-          setError('An error occurred while generating GIF.');
+          setError('general error');
         }
       } else if (response.data.message === 'GIF generated successfully') {
         const generatedGifUrl = url.endsWith('.pdf') ? GifPdf : Gif;
@@ -90,7 +90,7 @@ function GifLanding() {
   if (error) {
     return (
       <div className="gif-landing">
-        <GifError setGifGenerated={setGifGenerated} setError={setError} />
+        <GifError setGifGenerated={setGifGenerated} variant={error} setError={setError} />
       </div>
     )
   }
