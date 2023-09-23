@@ -68,7 +68,7 @@ function MultipleGifLanding() {
       setIsLoading(false);
     } catch (error) {
       console.error('Error generating GIF:', error);
-      setError('An error occurred while generating GIF.');
+      setError('general error');
       setIsLoading(false);
     }
   };

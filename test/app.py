@@ -14,9 +14,11 @@ from sendgrid.helpers.mail import Mail, Attachment
 import base64
 import openai
 import zipfile
+from PIL import Image
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the entire app
+
 
 @app.route('/')
 def index():
@@ -24,19 +26,21 @@ def index():
 
 # Send email
 
+
 openai.api_key = os.environ.get('OPENAI_API_KEY')
-backend_gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test', 'gifs')
+backend_gifs_folder = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), '..', 'test', 'gifs')
 
 # Flask route for handling GPT-3 requests
+
 
 @app.route('/chat', methods=['POST'])
 # Flask route for handling GPT-3 requests
-
 @app.route('/chat', methods=['POST'])
 def chat_with_gpt():
     data = request.get_json()
     print('user_query', data)
-    
+
     if 'message' not in data:
         return jsonify({'error': 'User query not provided'}), 400
 
@@ -50,17 +54,17 @@ def chat_with_gpt():
         prompt += "- Ask a follow-up question to engage the recipient.\n"
         prompt += "- End the email politely.\n"
         prompt += "Email content:"
-        
+
         # Make a request to GPT-3 with the constructed prompt
         response = openai.Completion.create(
             engine="text-davinci-002",
             prompt=prompt,
-            max_tokens=500, # Adjust the max_tokens as needed
+            max_tokens=500,  # Adjust the max_tokens as needed
             n=1,
             stop=None,
             temperature=0.7
         )
-        
+
         # Extract the generated text from the response
         generated_text = response.choices[0].text.strip()
 
@@ -71,13 +75,14 @@ def chat_with_gpt():
         print('Error:', str(e))
         return jsonify({'error': 'An error occurred while generating a response'}), 500
 
-@app.route('/send_gif', methods=['POST'])
 
+@app.route('/send_gif', methods=['POST'])
 def send_email():
     attachment_file = './gifs/scrolling_animation.gif'
     data = request.get_json()
     if not isinstance(data, dict):
-        return jsonify({'error': 'Invalid JSON data'}), 400  # Return a Bad Request response
+        # Return a Bad Request response
+        return jsonify({'error': 'Invalid JSON data'}), 400
     emailAddresses = data.get('emailAddresses', [])
     global_substitutions = data.get('global_substitutions', {})
     plain_text_content = data.get('plain_text_content', {})
@@ -86,7 +91,7 @@ def send_email():
         to_emails=emailAddresses,
         subject=global_substitutions,
         plain_text_content=plain_text_content
-        )
+    )
 
     try:
         dynamic_template_id = 'd-f56806a93be04440b772bd40029cbd82'
@@ -101,7 +106,8 @@ def send_email():
 
         # Create an attachment
         attachment = Attachment()
-        attachment.file_content = base64.b64encode(attachment_file).decode('utf-8')
+        attachment.file_content = base64.b64encode(
+            attachment_file).decode('utf-8')
         attachment.file_type = 'application/gif'
         attachment.file_name = 'scrolling_animation.gif'
 
@@ -145,23 +151,26 @@ def send_email():
             error_message = e.body.decode()
             print(error_message)
             # Return an error response with the error message
-            return jsonify({'error': error_message}), 500  # 500 is the HTTP status code for Internal Server Error
+            # 500 is the HTTP status code for Internal Server Error
+            return jsonify({'error': error_message}), 500
         else:
             # Return a generic error response if there is no error message
             return jsonify({'error': 'An error occurred'}), 500
 
 # Endpoint for generating gif out of webpages
 
+
 def is_video_url(URL):
     # Check if the URL includes "youtube" or "vimeo"
     return "youtube" in URL or "vimeo" in URL
 
-@app.route('/generate-single-gif', methods=['POST'])
 
+@app.route('/generate-single-gif', methods=['POST'])
 def generate_gif():
     data = request.get_json()
     URL = data.get('url')
-    NAME = data.get('name', 'scrolling_animation.gif')  # default name if name isn't passed as a value
+    # default name if name isn't passed as a value
+    NAME = data.get('name', 'scrolling_animation.gif')
 
     # Check if the URL is a YouTube or Vimeo link
     if is_video_url(URL):
@@ -169,7 +178,8 @@ def generate_gif():
 
     # Create ChromeOptions for headless mode
     chrome_options = Options()
-    chrome_options.add_argument('--headless')  # Add this line for headless mode
+    # Add this line for headless mode
+    chrome_options.add_argument('--headless')
 
     # Create a new Chrome session in headless mode
     driver = webdriver.Chrome(options=chrome_options)
@@ -181,23 +191,29 @@ def generate_gif():
     print('scroll_height', scroll_height)
 
     if scroll_height < 1000:
-        return jsonify({ 'error': 'Invalid scroll height' })
-    
+        return jsonify({'error': 'Invalid scroll height'})
+
     elif 1000 <= scroll_height < 3000:
         timer = 200
+        duration = timer / 1000.0
         # duration = 0.10
-    
+
     elif 3000 <= scroll_height < 5000:
         timer = 300
+        duration = timer / 1500.0
         # duration = 0.08
-    
+
     elif 5000 <= scroll_height < 9000:
         timer = 400
+        duration = timer / 1500.0
         # duration = 0.07
-    
+
     else:
         timer = 500
+        duration = timer / 2000.0
         # duration = 0.08
+
+    print('duration', duration)
 
     if not NAME.endswith('.gif'):
         NAME += '.gif'
@@ -205,6 +221,8 @@ def generate_gif():
     # Create a directory to store individual screenshots
     screenshots_dir = 'screenshots'
     os.makedirs(screenshots_dir, exist_ok=True)
+
+    driver.execute_script("document.body.style.overflow = 'hidden'")
 
     # Take screenshots while scrolling
     for i in range(0, scroll_height, timer):
@@ -216,23 +234,43 @@ def generate_gif():
     # Close the driver
     driver.quit()
 
-    # Create a GIF from the screenshots
-    # frontend folder
-    gifs_frontend_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    # backend folder
-    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test', 'gifs')
+    # Create a list to store frames with adjusted durations
+    frames_with_durations = []
+
+    # Load each frame and set the duration
+    for screenshot in os.listdir(screenshots_dir):
+        screenshot_path = os.path.join(screenshots_dir, screenshot)
+        frame = Image.open(screenshot_path)
+        frames_with_durations.append((frame, duration))
+
+    # Create GIF output paths
+    gifs_frontend_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    gifs_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'test', 'gifs')
     os.makedirs(gifs_frontend_folder, exist_ok=True)
     os.makedirs(gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_frontend_folder, NAME)
     output_backend_path = os.path.join(gifs_folder, NAME)
-    screenshots = sorted(os.listdir(screenshots_dir))
-    frames = [imageio.imread(os.path.join(screenshots_dir, screenshot)) for screenshot in screenshots]
-    imageio.mimsave(output_path, frames, duration=0.08, loop=0) # Set duration and loop
-    imageio.mimsave(output_backend_path, frames, duration=0.08, loop=0) # Set duration and loop
-    print(f"GIF saved at {output_path}")
+
+    # Create a GIF from the frames with adjusted durations
+    frames_with_durations[0][0].save(
+        output_path,
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[int(d * 1000) for _, d in frames_with_durations],
+        loop=0
+    )
+    frames_with_durations[0][0].save(
+        output_backend_path,
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[int(d * 1000) for _, d in frames_with_durations],
+        loop=0
+    )
 
     # Clean up: Delete individual screenshots
-    for screenshot in screenshots:
+    for screenshot in os.listdir(screenshots_dir):
         os.remove(os.path.join(screenshots_dir, screenshot))
     os.rmdir(screenshots_dir)
 
@@ -242,10 +280,10 @@ def generate_gif():
 # Endpoint for generating gif out of online pdfs
 
 @app.route('/generate-gifs-from-list', methods=['POST'])
-@app.route('/generate-gifs-from-list', methods=['POST'])
 def generate_gifs_from_list():
     data = request.get_json()
-    gifData = data.get('gifData', [])  # Use get method with a default value to handle missing 'gifData'
+    # Use get method with a default value to handle missing 'gifData'
+    gifData = data.get('gifData', [])
 
     if not gifData:
         return jsonify({'error': 'No GIF data provided'})
@@ -263,9 +301,11 @@ def generate_gifs_from_list():
             if is_video_url(URL):
                 error_messages.add("video")
             else:
-                response = requests.post('http://localhost:5000/generate-single-gif', json={'url': URL, 'name': name})
+                response = requests.post(
+                    'http://localhost:5000/generate-single-gif', json={'url': URL, 'name': name})
                 if response.status_code != 200:
-                    error_messages.add(f"Failed to generate GIF for URL: {URL}")
+                    error_messages.add(
+                        f"Failed to generate GIF for URL: {URL}")
 
                 # Check the scroll_height error for each URL
                 single_gif_data = response.json()
@@ -274,9 +314,8 @@ def generate_gifs_from_list():
 
     if error_messages:
         return jsonify({'error': '\n'.join(error_messages)})
-    
-    return jsonify({'message': 'GIFs generated successfully for all URLs'})
 
+    return jsonify({'message': 'GIFs generated successfully for all URLs'})
 
 
 @app.route('/generate-pdf-gif', methods=['POST'])
@@ -332,12 +371,13 @@ def generate_pdf_gif():
     
     return jsonify({'message': 'GIF generated successfully'})
 
+
 @app.route('/generate-pdf-gifs-from-list', methods=['POST'])
 def generate_pdf_gifs_from_list():
     data = request.get_json()
     gifData = data['gifData']
     print('data', gifData)
-    
+
     # Check if 'gifData' key exists in the JSON data
     if 'gifData' not in data:
         return jsonify({'error': 'No GIF data provided'})
@@ -346,8 +386,9 @@ def generate_pdf_gifs_from_list():
         URL = gif['url']
         name = gif['name']
 
-        response = requests.post('http://localhost:5000/generate-pdf-gif', json={'url': URL, 'name': name})
-    
+        response = requests.post(
+            'http://localhost:5000/generate-pdf-gif', json={'url': URL, 'name': name})
+
         if response.status_code != 200:
             return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
 
@@ -355,18 +396,19 @@ def generate_pdf_gifs_from_list():
 
 
 @app.route('/download-gif', methods=['GET'])
-
 def download_gif():
-    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    gifs_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
     gif_filename = 'scrolling_animation.gif'
     gif_path = os.path.join(gifs_folder, gif_filename)
     return send_file(gif_path, as_attachment=True, attachment_filename=gif_filename)
 
-@app.route('/download-all-gifs', methods=['GET'])
 
 @app.route('/download-all-gifs', methods=['GET'])
+@app.route('/download-all-gifs', methods=['GET'])
 def download_all_gifs():
-    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    gifs_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
 
     # Create an in-memory file for the ZIP archive
     zip_buffer = io.BytesIO()
@@ -390,9 +432,11 @@ def download_all_gifs():
         mimetype='application/zip'
     )
 
+
 @app.route('/gifs/<path:filename>')
 def serve_gif(filename):
     return send_from_directory(backend_gifs_folder, filename)
+
 
 @app.route('/api/get-gifs')
 def get_gifs():
@@ -403,6 +447,7 @@ def get_gifs():
             gif_list.append({'filename': filename})
 
     return jsonify({'gifs': gif_list})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
