@@ -16,7 +16,6 @@ function MultipleGifLanding() {
   const [urlList, setUrlList] = useState([
     { name: '', url: '' },
     { name: '', url: '' },
-    { name: '', url: '' },
   ]);
 
   const generateMultipleGifs = async () => {
@@ -50,18 +49,22 @@ function MultipleGifLanding() {
     
       console.log('response', response);
 
-      if (!response || !response.data) {
-        console.error('Response or response.data is undefined');
-        setError('An error occurred while generating GIF.');
-      } else if (response.data.error) {
+      if (response.data.error) {
         console.error('Error generating GIF:', response.data.error);
-        setError(response.data.error);
-      } else if (response.data.message === 'GIF generated successfully') {
+        const errorMessage = response.data.error;
+        if (errorMessage.includes("Invalid scroll height")) {
+            console.log('errorMessage', errorMessage);
+            setError('height error');
+        } else if (errorMessage.includes("video")) {
+            setError('video error');
+        } else {
+            setError('general error');
+        }
+      } else if (response.data.message === 'GIFs generated successfully for all URLs') {
         const generatedGifUrl = isPdf ? GifPdf : Gif;
-        console.log('generatedGifUrl', generatedGifUrl);
+        setGifGenerated(true);
         setGeneratedGifUrl(generatedGifUrl);
       }
-      setGifGenerated(true);
       setIsLoading(false);
     } catch (error) {
       console.error('Error generating GIF:', error);
@@ -99,7 +102,7 @@ function MultipleGifLanding() {
   if (error) {
     return (
       <div className="gif-landing">
-        <GifError setGifGenerated={setGifGenerated} setError={setError} />
+        <GifError setGifGenerated={setGifGenerated} variant={error} setError={setError} />
       </div>
     );
   }

@@ -242,25 +242,41 @@ def generate_gif():
 # Endpoint for generating gif out of online pdfs
 
 @app.route('/generate-gifs-from-list', methods=['POST'])
+@app.route('/generate-gifs-from-list', methods=['POST'])
 def generate_gifs_from_list():
     data = request.get_json()
-    gifData = data['gifData']
-    print('data', gifData)
-    
-    # Check if 'gifData' key exists in the JSON data
-    if 'gifData' not in data:
+    gifData = data.get('gifData', [])  # Use get method with a default value to handle missing 'gifData'
+
+    if not gifData:
         return jsonify({'error': 'No GIF data provided'})
 
-    for gif in gifData:
-        URL = gif['url']
-        name = gif['name']
+    error_messages = set()  # Use a set to store unique error messages
 
-        response = requests.post('http://localhost:5000/generate-single-gif', json={'url': URL, 'name': name})
-    
-        if response.status_code != 200:
-            return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
+    for gif in gifData:
+        URL = gif.get('url')
+        name = gif.get('name')
+
+        if not URL:
+            error_messages.add("Missing URL")
+        else:
+            # Check if the URL is a YouTube or Vimeo link
+            if is_video_url(URL):
+                error_messages.add("video")
+            else:
+                response = requests.post('http://localhost:5000/generate-single-gif', json={'url': URL, 'name': name})
+                if response.status_code != 200:
+                    error_messages.add(f"Failed to generate GIF for URL: {URL}")
+
+                # Check the scroll_height error for each URL
+                single_gif_data = response.json()
+                if 'error' in single_gif_data and single_gif_data['error'] == 'Invalid scroll height':
+                    error_messages.add("Invalid scroll height")
+
+    if error_messages:
+        return jsonify({'error': '\n'.join(error_messages)})
     
     return jsonify({'message': 'GIFs generated successfully for all URLs'})
+
 
 
 @app.route('/generate-pdf-gif', methods=['POST'])
