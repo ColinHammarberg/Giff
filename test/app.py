@@ -29,7 +29,7 @@ def index():
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 backend_gifs_folder = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), '..', 'test', 'gifs')
+    os.path.abspath(__file__)), 'gifs')
 
 # Flask route for handling GPT-3 requests
 
@@ -195,23 +195,19 @@ def generate_gif():
 
     elif 1000 <= scroll_height < 3000:
         timer = 200
-        duration = timer / 1000.0
-        # duration = 0.10
+        duration = timer / 600.0 #0.333s / per screenshot
 
     elif 3000 <= scroll_height < 5000:
         timer = 300
-        duration = timer / 1500.0
-        # duration = 0.08
+        duration = timer / 800.0 #0.375s / per screenshot
 
     elif 5000 <= scroll_height < 9000:
         timer = 400
-        duration = timer / 1500.0
-        # duration = 0.07
+        duration = timer / 1500.0 #0.266s / per screenshot
 
     else:
         timer = 500
-        duration = timer / 2000.0
-        # duration = 0.08
+        duration = timer / 2000.0 #0.25s / per screenshot
 
     print('duration', duration)
 
@@ -403,34 +399,38 @@ def download_gif():
     gif_path = os.path.join(gifs_folder, gif_filename)
     return send_file(gif_path, as_attachment=True, attachment_filename=gif_filename)
 
-
-@app.route('/download-all-gifs', methods=['GET'])
 @app.route('/download-all-gifs', methods=['GET'])
 def download_all_gifs():
-    gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    gifs_folder = backend_gifs_folder
+    print('backend_gifs_folder', backend_gifs_folder)
 
-    # Create an in-memory file for the ZIP archive
-    zip_buffer = io.BytesIO()
+    try:
+        # Create an in-memory file for the ZIP archive
+        zip_buffer = io.BytesIO()
 
-    # Create a zip archive containing all files in the gifs_folder using ZIP_STORED compression method
-    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
-        for root, _, files in os.walk(gifs_folder):
-            for file in files:
-                file_path = os.path.join(root, file)
-                arcname = os.path.relpath(file_path, gifs_folder)
-                zipf.write(file_path, arcname=arcname)
+        # Create a zip archive containing all files in the gifs_folder using ZIP_STORED compression method
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
+            for root, _, files in os.walk(gifs_folder):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, gifs_folder)
+                    zipf.write(file_path, arcname=arcname)
 
-    # Set the position to the beginning of the in-memory file
-    zip_buffer.seek(0)
+        # Set the position to the beginning of the in-memory file
+        zip_buffer.seek(0)
 
-    # Send the in-memory ZIP file as a response
-    return send_file(
-        zip_buffer,
-        as_attachment=True,
-        download_name='all_gifs.zip',
-        mimetype='application/zip'
-    )
+        # Send the in-memory ZIP file as a response
+        return send_file(
+            zip_buffer,
+            as_attachment=True,
+            download_name='all_gifs.zip',
+            mimetype='application/zip'
+        )
+    except Exception as e:
+        # Log the error message (you can replace this with proper logging)
+        print(f"Error creating ZIP file: {str(e)}")
+        # Optionally, you can return an error response to the client
+        return "An error occurred while creating the ZIP file", 500
 
 
 @app.route('/gifs/<path:filename>')

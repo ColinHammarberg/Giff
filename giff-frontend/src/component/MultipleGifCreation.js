@@ -76,7 +76,6 @@ function MultipleGifLanding() {
   async function handleDownloadClick() {
     if (gifGenerated) {
       try {
-        // Make a GET request to the Flask route that generates the ZIP file
         const response = await DownloadFolder();
         console.log('response', response);
         // Create a virtual anchor element and trigger the download
