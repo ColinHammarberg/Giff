@@ -8,8 +8,8 @@ import { showNotification } from './Notification';
 import LightTooltip from './LightToolTip';
 
 function MultipleGifGenerator(props) {
-  const { urlList, setUrlList } = props;
-
+  const { urlList, setUrlList, setDuplicateNames, duplicateNames } = props;
+  
   const infoButtonText = [
     {
       text: 'With Gif-t, you can create a gif from an online pdf, web page or presentation. Simply add the url and click Create gif.',
@@ -32,22 +32,30 @@ function MultipleGifGenerator(props) {
   }
 
   function handleNameChange(event, index) {
-    const { value } = event.target;
-
+    const newName = event.target.value;
+    const isDuplicate = urlList.some((item, idx) => idx !== index && item.name === newName);
+  
+    // Update duplicateNames state
+    setDuplicateNames(prev => ({
+      ...prev,
+      [index]: isDuplicate
+    }));
+  
+    // Update the list
     setUrlList((prevList) => {
       const updatedList = [...prevList];
-      updatedList[index] = { ...updatedList[index], name: value };
+      updatedList[index] = { ...updatedList[index], name: newName };
       return updatedList;
     });
   }
+  
 
   function addUrl() {
-    if (urlList.length < 4) {
+    if (urlList.length < 10) {
       setUrlList((prevList) => [...prevList, { name: '', url: '' }]);
     } else {
       showNotification('error', "You can't create more than 8 gifs at once.")
     }
-    console.log('urlList', urlList);
   }
 
   return (
@@ -77,11 +85,13 @@ function MultipleGifGenerator(props) {
                 </InputLabel>
                 <TextField
                   id={`name-input-${index}`}
+                  error={duplicateNames[index]}
+                  helperText={duplicateNames[index] ? "Name already exists" : ""}
                   className="name-input"
                   onChange={(event) => handleNameChange(event, index)}
                   value={item.name}
                   placeholder="The name goes here..."
-                />
+              />
               </div>
             </Box>
           ))}

@@ -13,64 +13,63 @@ function MultipleGifLanding() {
   const [generatedGifUrl, setGeneratedGifUrl] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [duplicateNames, setDuplicateNames] = React.useState({});
   const [urlList, setUrlList] = useState([
     { name: '', url: '' },
     { name: '', url: '' },
   ]);
 
   const generateMultipleGifs = async () => {
-    try {
-      setIsLoading(true);
-      // Determine the GIF type (PDF or regular)
-      const sanitizedUrlList = urlList.map((item) => ({
-        url: item.url.startsWith('http://') || item.url.startsWith('https://')
-          ? item.url
-          : `https://${item.url}`,
-        name: item.name,
-      }));
-  
-      // Determine the GIF type (PDF or regular)
-      const isPdf = sanitizedUrlList.some((item) => item.url.endsWith('.pdf'));
-      const gifData = sanitizedUrlList.map((item) => ({ url: item.url, name: item.name }));
-
-      let response;
+    console.log('duplicateNames', duplicateNames);
+    if (Object.values(duplicateNames).some(value => value === true)) {
+      return;
+    } else {
+        try {
+          setIsLoading(true);
+          // Determine the GIF type (PDF or regular)
+          const sanitizedUrlList = urlList.map((item) => ({
+            url: item.url.startsWith('http://') || item.url.startsWith('https://')
+              ? item.url
+              : `https://${item.url}`,
+            name: item.name,
+          }));
       
-      if (isPdf) {
-        // Filter URLs that are PDFs
-        console.log('isPdf', isPdf);
-        const pdfUrls = gifData.filter((item) => item.url.endsWith('.pdf'));
-        response = await GenerateMultiplePdfGifs(pdfUrls);
-      } if (gifData) {
-        console.log('gifData', gifData);
-        // Filter URLs that are not PDFs
-        const nonPdfUrls = gifData.filter((item) => !item.url.endsWith('.pdf'));
-        response = await GenerateMultipleGifs(nonPdfUrls);
-      }
-    
-      console.log('response', response);
+          // Determine the GIF type (PDF or regular)
+          const isPdf = sanitizedUrlList.some((item) => item.url.endsWith('.pdf'));
+          const gifData = sanitizedUrlList.map((item) => ({ url: item.url, name: item.name }));
 
-      if (response.data.error) {
-        console.error('Error generating GIF:', response.data.error);
-        const errorMessage = response.data.error;
-        if (errorMessage.includes("Invalid scroll height")) {
-            console.log('errorMessage', errorMessage);
-            setError('height error');
-        } else if (errorMessage.includes("video")) {
-            setError('video error');
-        } else {
-            setError('general error');
+          let response;
+          
+          if (isPdf) {
+            // Filter URLs that are PDFs
+            const pdfUrls = gifData.filter((item) => item.url.endsWith('.pdf'));
+            response = await GenerateMultiplePdfGifs(pdfUrls);
+          } if (gifData) {
+            // Filter URLs that are not PDFs
+            const nonPdfUrls = gifData.filter((item) => !item.url.endsWith('.pdf'));
+            response = await GenerateMultipleGifs(nonPdfUrls);
+          }
+        
+          if (response.data.error) {
+            const errorMessage = response.data.error;
+            if (errorMessage.includes("Invalid scroll height")) {
+              setError('height error');
+            } else if (errorMessage.includes("video")) {
+                setError('video error');
+            } else {
+                setError('general error');
+            }
+          } else if (response.data.message === 'GIFs generated successfully for all URLs') {
+            const generatedGifUrl = isPdf ? GifPdf : Gif;
+            setGifGenerated(true);
+            setGeneratedGifUrl(generatedGifUrl);
+          }
+          setIsLoading(false);
+        } catch (error) {
+          setError('general error');
+          setIsLoading(false);
         }
-      } else if (response.data.message === 'GIFs generated successfully for all URLs') {
-        const generatedGifUrl = isPdf ? GifPdf : Gif;
-        setGifGenerated(true);
-        setGeneratedGifUrl(generatedGifUrl);
       }
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error generating GIF:', error);
-      setError('general error');
-      setIsLoading(false);
-    }
   };
 
   async function handleDownloadClick() {
@@ -122,6 +121,8 @@ function MultipleGifLanding() {
           setUrlList={setUrlList}
           onKeyPress={handleKeyPressGenerateGif}
           gifGenerated={gifGenerated}
+          duplicateNames={duplicateNames}
+          setDuplicateNames={setDuplicateNames}
         />
       )}
       {!isLoading && (
