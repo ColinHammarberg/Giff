@@ -48,15 +48,22 @@
             }
         }
 
-        .use-another-url-btn {
-            width: 459px;
+        .btn {
+            width: 459px !important;
             height: 80px;
-            background-color: #FEC901;
-            color: #000;
             font-size: 38px;
             font-family: 'Staatliches';
             font-weight: 400;
             border-radius: 50px;
+            color: #000;
+
+            &.video {
+                background-color: rgba(185, 241, 64, 1);
+            }
+
+            &.use-another-url-btn {
+                background-color: rgba(244, 20, 155, 1) !important;
+            }
         }
     }
 }
@@ -66,15 +73,18 @@
         .error-container {
             .error-description-box {
                 width: 300px;
+
                 .error-description {
                     width: 249px;
                     margin: auto;
                 }
+
                 .orange-divider {
                     width: 300px;
                     font-size: 11px;
                 }
             }
+
             .use-another-url-btn {
                 width: 286px;
                 height: 50px;

@@ -51,10 +51,7 @@ function GifLanding() {
       setError('An error occurred while generating GIF.');
       setIsLoading(false);
     }
-  };
-
-  console.log('error', error);
-  
+  };  
   
   function handleDownloadClick() {
     if (gifGenerated) {
