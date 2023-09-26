@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .multiple-generated-gif {
     width: 100%;
     text-align: center;
@@ -52,6 +54,16 @@
                 color: #000;
                 border-radius: 50px;
                 font-size: 20px;
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .multiple-generated-gif {
+        .multiple-gifs {
+            .gif {
+                width: 100%;
             }
         }
     }

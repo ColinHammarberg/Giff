@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .landing {
     width: 100%;
     text-align: center;
@@ -33,6 +35,19 @@
                 font-size: 30px;
                 height: 80px;
                 width: 459px;
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .landing {
+        .landing-info {
+            padding: 24px;
+            .enter-btn {
+                .MuiButton-root {
+                    width: 100%;
+                }
             }
         }
     }

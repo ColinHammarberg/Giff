@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .multiple-gif-generator {
     margin: 0;
     .text-field-content {
@@ -73,6 +75,19 @@
                         color: #000;
                         font-size: 30px;
                     }
+                }
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .multiple-gif-generator {
+        .text-field-content {
+            .url-inputs {
+                .MuiBox-root {
+                    gap: 8px;
+                    display: unset;
                 }
             }
         }
