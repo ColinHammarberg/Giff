@@ -27,14 +27,10 @@ def index():
 # Send email
 
 
-openai.api_key = os.environ.get('OPENAI_API_KEY')
+openai.api_key = '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'
 backend_gifs_folder = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'gifs')
 
-# Flask route for handling GPT-3 requests
-
-
-@app.route('/chat', methods=['POST'])
 # Flask route for handling GPT-3 requests
 @app.route('/chat', methods=['POST'])
 def chat_with_gpt():

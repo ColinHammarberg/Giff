@@ -20,7 +20,7 @@
         justify-content: center;
         align-items: center;
         background-color: rgba(27, 26, 25, 1);
-        width: 533px;
+        width: 827px;
         height: 500px;
         flex-direction: column;
         margin: auto;
@@ -52,6 +52,7 @@
 
             .field {
                 display: grid;
+                margin-bottom: 24px;
 
                 .text {
                     display: flex;
@@ -87,13 +88,17 @@
                 }
 
                 .MuiFormControl-root {
-                    width: 402px;
+                    width: 692px;
                     background-color: #fff;
-                    height: 40px;
+                    height: 28px;
                     border: 2px solid rgba(254, 201, 1, 1);
 
+                    .MuiOutlinedInput-input.Mui-disabled {
+                        -webkit-text-fill-color: #000;
+                    }
+
                     .MuiInputBase-root {
-                        height: 40px;
+                        height: 28px;
 
                         .MuiInputBase-input {
                             font-size: 12px;
@@ -114,22 +119,55 @@
                     .text {
                         display: flex;
 
-                        .response {
-                            height: 150px;
-                            width: 402px;
+                        .MuiFormControl-root {
+                            width: 692px;
                             background-color: #fff;
-                            border-radius: 4px;
-                            overflow: auto;
-                            overflow-x: auto;
-                            margin: auto;
-                            border: 2px solid rgba(185, 241, 64, 1);
-                        }
-
-                        .circle {
-                            background-color: rgba(185, 241, 64, 1);
-                        }
+                            border: 2px solid rgba(254, 201, 1, 1);
+                            height: auto;
+                            
+                            .MuiOutlinedInput-input.Mui-disabled {
+                              -webkit-text-fill-color: #000;
+                            }
+                          
+                            .MuiInputBase-root {
+                              height: auto;
+                          
+                              .MuiInputBase-input {
+                                font-size: 12px;
+                                font-family: 'Staatliches';
+                                word-break: break-all;
+                                overflow-wrap: break-word;  /* Add this */
+                                white-space: normal;  /* Add this */
+                              }
+                            }
+                          }
+                          
                     }
                 }
+                // &.generated-answer {
+                //     justify-content: center;
+
+                //     .text {
+                //         display: flex;
+
+                //         .response {
+                //             max-height: 150px;
+                //             max-width: 692px;
+                //             background-color: #fff;
+                //             font-family: 'Staatliches';
+                //             border-radius: 4px;
+                //             font-size: 13px;
+                //             overflow: auto;
+                //             overflow-x: auto;
+                //             margin: auto;
+                //             border: 2px solid rgba(254, 201, 1, 1);
+                //         }
+
+                //         .circle {
+                //             background-color: rgba(254, 201, 1, 1);
+                //         }
+                //     }
+                // }
             }
         }
     }
