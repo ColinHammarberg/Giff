@@ -60,7 +60,7 @@ function MultipleGifGenerator(props) {
 
   return (
     <div className="multiple-gif-generator">
-      <Header generator />
+      <Header menu />
       <Box className="text-field-content">
         <div className="text-field-header">
           Add your urls and name them <InfoButton infoButtonText={infoButtonText} />

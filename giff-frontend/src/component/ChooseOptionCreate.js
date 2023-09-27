@@ -13,7 +13,7 @@ function ChooseOptionCreate() {
   ]
   return (
         <div className="choose-option-create">
-            <Header generator />
+            <Header menu />
             <Box className="choose-option-create-info">
                 <Box className="container">
                     <div className="title">

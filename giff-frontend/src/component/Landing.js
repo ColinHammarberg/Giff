@@ -9,7 +9,7 @@ function Landing() {
   return (
     <>
         <div className="landing">
-            <Header generator />
+            <Header />
             <Box className="landing-info">
                 <Box className="container">
                     <div className="title">

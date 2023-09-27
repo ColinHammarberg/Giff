@@ -15,6 +15,7 @@ import Landing from './component/Landing';
 import ChooseOptionCreate from './component/ChooseOptionCreate';
 import EmailChoice from './component/EmailChoice';
 import MultipleGifLanding from './component/MultipleGifCreation';
+import SendViaOwnEmail from './component/SendViaOwnEmail';
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
             element={<ChooseOptionCreate />}
           />
           <Route
+            path={`${process.env.REACT_APP_BASEURL}/send-via-own-email`}
+            element={<SendViaOwnEmail />}
+          />
+          <Route
             path={`${process.env.REACT_APP_BASEURL}/multiple-gif-creation`}
             element={<MultipleGifLanding />}
           />
@@ -51,16 +56,16 @@ function App() {
             element={<GiftForMarketing />}
           />
           <Route
+            path={`${process.env.REACT_APP_BASEURL}/gift-spiration`}
+            element={<GiftSpiration />}
+          />
+          <Route
             path={`${process.env.REACT_APP_BASEURL}/email-choice`}
             element={<EmailChoice />}
           />
           <Route
             path={`${process.env.REACT_APP_BASEURL}/send-gift-email`}
             element={<SendEmailComponent />}
-          />
-          <Route
-            path={`${process.env.REACT_APP_BASEURL}/gift-spiration`}
-            element={<GiftSpiration />}
           />
           <Route
             path={`${process.env.REACT_APP_BASEURL}/rights-and-privacy`}

@@ -4,8 +4,7 @@ import './Header.scss';
 import MenuButton from './MenuButton';
 import { useNavigate } from 'react-router-dom';
 
-function Header({ generator }) {
-    console.log('generator', generator);
+function Header({ menu }) {
     const navigate = useNavigate();
     return (
         <Box className="header-content">
@@ -13,7 +12,9 @@ function Header({ generator }) {
                 <div className="header" onClick={() => navigate('/')}>Gif-t</div>
                 <div className="sub-header">Give the perfect gif</div>
             </div>
+            {menu && (
                 <MenuButton />
+            )}
         </Box>
     )
 }

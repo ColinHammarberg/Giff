@@ -58,7 +58,7 @@ function EmailChoice() {
                     <Button className="create-one" onClick={() => navigate('/mrs-gift')}>
                         YES, I want to use AI
                     </Button>
-                    <Button className="create-several" onClick={() => shareGifByEmail}>
+                    <Button className="create-several" onClick={() => navigate('/send-via-own-email')}>
                         No, I dont want to use AI
                     </Button>
                 </Box>

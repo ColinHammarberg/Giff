@@ -23,7 +23,7 @@ function SingleGifGenerator(props) {
 
   return (
     <div className="gif-generator">
-      <Header generator />
+      <Header menu />
       <Box className="text-field-content">
         <div className="text-field-header">Add any* url <InfoButton infoButtonText={infoButtonText} /></div>
         <TextField
