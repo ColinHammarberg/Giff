@@ -15,10 +15,9 @@ const GiftContextProvider = ({ children }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [singleGif, setSingleGif] = useState(null);
 
-  // Define a shared onChange function that updates the state
   const onChange = (fieldIdentifier, value) => {
-    // Use the spread operator to update the specific field
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
       [fieldIdentifier]: value,
@@ -51,6 +50,21 @@ const GiftContextProvider = ({ children }) => {
     }
   };
 
+  function handleDownloadClick() {
+    const singleGif = localStorage.getItem('singleGif');
+    console.log('singleGif', singleGif);
+    if (singleGif) {
+      // Create a virtual anchor element and trigger the download
+      const link = document.createElement('a');
+      link.href = singleGif; // Use the actual URL here
+      link.target = '_blank';
+      link.download = 'generated_gif.gif';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   return (
     <GiftContext.Provider
       value={{
@@ -59,7 +73,10 @@ const GiftContextProvider = ({ children }) => {
         isLoading,
         setIsLoading,
         sendGif,
-        error
+        error,
+        setSingleGif,
+        singleGif,
+        handleDownloadClick
       }}
     >
       {children}

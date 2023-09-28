@@ -75,14 +75,12 @@ function MultipleGifLanding() {
   async function handleDownloadClick() {
     if (gifGenerated) {
       try {
-        const response = await DownloadFolder();
-        console.log('response', response);
-        // Create a virtual anchor element and trigger the download
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const response = await DownloadFolder(); // Make sure DownloadFolder sets responseType to 'blob'
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
         const link = document.createElement('a');
         link.href = url;
         link.target = '_blank';
-        link.download = 'all_gifs.zip';
+        link.download = 'your-gift-bag.zip';
         link.click();
         window.URL.revokeObjectURL(url);
       } catch (error) {
@@ -90,6 +88,7 @@ function MultipleGifLanding() {
       }
     }
   }
+  
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {

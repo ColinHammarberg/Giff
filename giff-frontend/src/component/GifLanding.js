@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import '../App.css'
 import SingleGifGenerator from './SingleGifGenerator';
 import { Box, Button } from '@mui/material';
@@ -8,11 +8,12 @@ import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
 import GifError from './GifError';
 import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
-// import EmailAddressPopover from './EmailAddressPopover';
+import { GiftContext } from '../context/GiftContextProvider';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
   const [generatedGifUrl, setGeneratedGifUrl] = useState('');
+  const { handleDownloadClick } = useContext(GiftContext); // Get the context value
   const [url, setUrl] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,7 @@ function GifLanding() {
       } else if (response.data.message === 'GIF generated successfully') {
         const generatedGifUrl = url.endsWith('.pdf') ? GifPdf : Gif;
         setGeneratedGifUrl(generatedGifUrl);
+        localStorage.setItem('singleGif', generatedGifUrl);  // Storing to localStorage
         setGifGenerated(true);
       }
       setIsLoading(false);
@@ -51,32 +53,7 @@ function GifLanding() {
       setError('An error occurred while generating GIF.');
       setIsLoading(false);
     }
-  };  
-  
-  function handleDownloadClick() {
-    if (gifGenerated) {
-      // Create a virtual anchor element and trigger the download
-      const link = document.createElement('a');
-      link.href = generatedGifUrl; // Use the actual URL here
-      link.target = '_blank';
-      link.download = 'generated_gif.gif';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }
-
-  // const onClosePopup = () => {
-  //   setAnchorEl(null);
-  // };
-
-  // const handleOnClickEmailPopover = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
-
-  // const handleOnChange = (value) => {
-  //   setEmailValue(value.target.value);
-  // }
+  };
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {

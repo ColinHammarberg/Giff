@@ -29,13 +29,6 @@ function EmailChoice() {
         navigate(choice === 'create-one' ? '/send-own-email' : '/send-gift-email');
     };
 
-    const shareGifByEmail = () => {
-        const subject = "Check out this GIF!";
-        const body = "I thought you might enjoy this GIF I created. Check it out: ";
-        const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = mailtoLink;
-    };
-
     const handleChange = (event) => {
         const newValue = event.target.checked;
         setChecked(newValue);

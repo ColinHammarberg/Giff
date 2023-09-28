@@ -20,7 +20,6 @@
     .multiple-gifs {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
 
         .gif {
             display: flex;
@@ -43,18 +42,18 @@
                 text-align: left;
             }
         }
+    }
 
-        .MuiBox-root {
-            margin-top: 24px;
+    .MuiBox-root {
+        margin-top: 24px;
 
-            .MuiButton-root {
-                background-color: rgba(254, 201, 1, 1);
-                width: 459px;
-                font-family: 'Staatliches';
-                color: #000;
-                border-radius: 50px;
-                font-size: 20px;
-            }
+        .MuiButton-root {
+            background-color: rgba(254, 201, 1, 1);
+            width: 459px;
+            font-family: 'Staatliches';
+            color: #000;
+            border-radius: 50px;
+            font-size: 20px;
         }
     }
 }

@@ -30,6 +30,8 @@ export async function GenerateMultiplePdfGifs(gifData) {
 }
 
 export async function DownloadFolder() {
-  const response = await axios.get(`http://127.0.0.1:5000/download-all-gifs`);
+  const response = await axios.get(`http://127.0.0.1:5000/download-all-gifs`, {
+    responseType: 'blob'
+  });
   return response;
 }

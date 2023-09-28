@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Grid, Button } from '@mui/material';
 import './MultipleGeneratedGifs.scss';
-import CircularWithValueLabel from './Loading';
 import Header from './Header';
 import LoadingGif from './LoadingGif';
 
@@ -50,12 +49,14 @@ function MultipleGeneratedGifs(props) {
           <LoadingGif />
         </Box>
       ) : (
-        <Grid container spacing={2} className="multiple-gifs">
-          {gifGenerated && renderImportedGifs()}
+        <>
+          <Grid container spacing={2} className="multiple-gifs">
+            {gifGenerated && renderImportedGifs()}
+          </Grid>
           <Box>
             <Button onClick={onDownload}>Download Gifs</Button>
           </Box>
-        </Grid>
+        </>
       )}
     </div>
   );

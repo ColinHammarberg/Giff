@@ -398,35 +398,29 @@ def download_gif():
 @app.route('/download-all-gifs', methods=['GET'])
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
-    print('backend_gifs_folder', backend_gifs_folder)
-
+    
     try:
-        # Create an in-memory file for the ZIP archive
         zip_buffer = io.BytesIO()
-
-        # Create a zip archive containing all files in the gifs_folder using ZIP_STORED compression method
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
             for root, _, files in os.walk(gifs_folder):
                 for file in files:
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, gifs_folder)
-                    zipf.write(file_path, arcname=arcname)
-
-        # Set the position to the beginning of the in-memory file
+                    print('file', file)
+                    if file.lower().endswith('.gif'):  # Confirm it's a GIF
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, gifs_folder)
+                        zipf.write(file_path, arcname=arcname)
+        
         zip_buffer.seek(0)
-
-        # Send the in-memory ZIP file as a response
+        
         return send_file(
             zip_buffer,
             as_attachment=True,
-            download_name='all_gifs.zip',
+            download_name='your-gift-bag.zip',
             mimetype='application/zip'
         )
     except Exception as e:
-        # Log the error message (you can replace this with proper logging)
-        print(f"Error creating ZIP file: {str(e)}")
-        # Optionally, you can return an error response to the client
-        return "An error occurred while creating the ZIP file", 500
+        print(f"Error creating ZIP file: {e}")
+        return "An error occurred", 500
 
 
 @app.route('/gifs/<path:filename>')
