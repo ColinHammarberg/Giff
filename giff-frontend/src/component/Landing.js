@@ -1,29 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Landing.scss';
-import Header from './Header';
-import { Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import GiftIntroduction from '../resources/Gift-introduction.gif';
 
 function Landing() {
+  const [countdown, setCountdown] = useState(null);
   const navigate = useNavigate();
+//   const isShowCountDown = localStorage.getItem('count-down')
+
+  useEffect(() => {
+    // Start the 12-second delay
+    const initialDelay = setTimeout(() => {
+      // Initialize the countdown at 3
+      setCountdown(3);
+    }, 6700);
+
+    return () => clearTimeout(initialDelay); // Cleanup timeout if component is unmounted
+  }, []);
+
+  useEffect(() => {
+    let countdownTimer;
+    if (countdown > 0) {
+      // If countdown is between 1 and 3, set a timer to decrement it each second
+      countdownTimer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      localStorage.setItem('show-count-down', false);  // Storing to localStorage
+      navigate('/choose-option-create')
+    }
+
+    return () => clearTimeout(countdownTimer); // Cleanup timeout if component is unmounted
+  }, [countdown]);
+
   return (
     <>
-        <div className="landing">
-            <Header />
-            <Box className="landing-info">
-                <Box className="container">
-                    <div className="title">
-                        Gif-t
-                    </div>
-                    <div className="sub-title">
-                        Give the perfect gif
-                    </div>
-                </Box>
-                <Box className="enter-btn">
-                    <Button onClick={() => setTimeout(() => navigate('/choose-option-create'), 2000)}>Create your gif now</Button>
-                </Box>
-            </Box>
-        </div>
+      <div className="landing">
+        {countdown === null ? (
+          <img src={GiftIntroduction} />
+        ) : (
+          <div 
+            className="countdown"
+            style={{ color: countdown === 3 ? '#F4149B' : countdown === 2 ? '#B9F140' : '#FE6B01' }}
+          >
+            {countdown}
+          </div>
+        )}
+      </div>
     </>
   );
 }

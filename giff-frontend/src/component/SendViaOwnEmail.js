@@ -16,7 +16,7 @@ function SendViaOwnEmail() {
       const body = "I thought you might enjoy this GIF I created. Check it out: ";
       const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       window.location.href = mailtoLink;
-      navigate('/')
+      navigate('/choose-option-create')
     }, 4000)
   }
   return (
