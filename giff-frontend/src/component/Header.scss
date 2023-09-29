@@ -38,5 +38,28 @@
 @include media(phone) {
     .header-content {
         height: 150px;
+        padding: 12px;
+
+        .MuiIconButton-root {
+            right: 20px;
+            width: 40px;
+            height: 40px;
+
+            .MuiSvgIcon-root {
+                font-size: 40px;
+
+                path {
+                    color: rgba(254, 201, 1, 1);
+                }
+            }
+        }
+
+        .header-text {
+            left: 20px;
+        }
+
+        .header {
+            font-size: 35px;
+        }
     }
 }

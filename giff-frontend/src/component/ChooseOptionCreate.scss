@@ -59,15 +59,23 @@
     .choose-option-create {
         .choose-option-create-info {
             padding: 24px;
+
             .container {
-                width: 100%;
+                width: 234px;
+                margin: auto;
                 .title {
                     font-size: 50px;
                 }
             }
+
             .enter-btn {
+                display: unset;
+
                 .MuiButton-root {
                     width: 100%;
+                    font-size: 25px;
+                    margin-bottom: 24px;
+                    height: 50px;
                 }
             }
         }

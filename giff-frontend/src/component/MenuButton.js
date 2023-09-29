@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import './MenuButton.scss';
-import { Button } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Button, IconButton } from '@mui/material';
 import MenuPopOver from './MenuPopOver';
 import { useNavigate } from 'react-router-dom';
+import useMobileQuery from '../queries/useMobileQuery';
 
 function MenuButton() {
     const [anchorEl, setAnchorEl] = useState(null);
+    const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
 
 
@@ -24,7 +27,13 @@ function MenuButton() {
     return (
         <>
             <div>
+              {isMobile ? (
+                <IconButton className={`${anchorEl && 'hide'}`} onClick={onClick}>
+                  <MenuIcon />
+                </IconButton>
+              ) : (
                 <Button className={`menu-btn ${anchorEl && 'hide'}`} onClick={onClick}>Menu</Button>
+              )}
             </div>
             <MenuPopOver anchorEl={anchorEl} onClosePopup={onClosePopup} handleNavigation={handleNavigation} />
         </>

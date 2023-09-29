@@ -4,9 +4,11 @@ import Header from './Header';
 import { Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
+import useMobileQuery from '../queries/useMobileQuery';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
+  const { isMobile } = useMobileQuery();
   const infoButtonText = [
     {text: 'Create several gifs at once to download a catalog of gifs to share. It’s an awesome way to save time if you have a couple of pages, blog posts or whitepapers that you want to share with different people.'},
     {text: 'Create one gif if you have something specific you want to share with someone right away. If you want, our friendly AI Mrs. Gif-t can even help you with your emails.'}
@@ -20,7 +22,7 @@ function ChooseOptionCreate() {
                         Hey, CHAMP. 
                     </div>
                     <div className="sub-title">
-                        DO YO WANT TO create one or several gifs today? <InfoButton infoButtonText={infoButtonText} />
+                        DO YO WANT TO create one or several gifs today? {!isMobile && (<InfoButton infoButtonText={infoButtonText} />)}
                     </div>
                 </Box>
                 <Box className="enter-btn">

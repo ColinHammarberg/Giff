@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import '../App.css'
 import SingleGifGenerator from './SingleGifGenerator';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
 import GifPdf from '../gifs/pdf_animation.gif';
 import GeneratedGif from './GeneratedGif';
@@ -74,19 +74,9 @@ function GifLanding() {
       {isLoading || gifGenerated ? (
           <GeneratedGif gifGenerated={gifGenerated} generatedGifUrl={generatedGifUrl} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
-          <SingleGifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} gifGenerated={gifGenerated} />
+          <SingleGifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} generateSingleGif={generateSingleGif} gifGenerated={gifGenerated} />
         )
         }
-        {!isLoading && (
-            <Box className="btn-content">
-                {!gifGenerated && (
-                    <Button className="action-btn" onClick={generateSingleGif}>Create GIF</Button>
-                )}
-            </Box>
-        )}
-        {/* {anchorEl && (
-          <EmailAddressPopover anchorEl={anchorEl} onKeyPress={handleKeyPressSendGif} onClosePopup={onClosePopup} sendGif={sendGif} onChange={handleOnChange} />
-        )} */}
         {!isLoading && (
             <Box className="bottom-content">
                 {gifGenerated ? (

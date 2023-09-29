@@ -10,7 +10,6 @@ function Header({ menu }) {
         <Box className="header-content">
             <div className='header-text'>
                 <div className="header" onClick={() => navigate('/')}>Gif-t</div>
-                <div className="sub-header">Give the perfect gif</div>
             </div>
             {menu && (
                 <MenuButton />

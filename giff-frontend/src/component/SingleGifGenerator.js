@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import Gif from '../gifs/scrolling_animation.gif';
 import './GifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
 
 function SingleGifGenerator(props) {
-  const { onChange, gifGenerated, onKeyPress } = props;
+  const { onChange, gifGenerated, onKeyPress, generateSingleGif } = props;
 
   const infoButtonText = [
     {text: 'With Gif-t, you can create a gif from an online pdf, web page or presentation. Simply add the url and click Create gif.'},
@@ -35,6 +35,11 @@ function SingleGifGenerator(props) {
           }}
           placeholder='https://spce.com'
         />
+        <Box className="btn-content">
+          {!gifGenerated && (
+            <Button className="action-btn" onClick={generateSingleGif}>Create GIF</Button>
+          )}
+        </Box>
       </Box>
       <div className="gifs">
         {gifGenerated && <img src={Gif} alt="Generated GIF" />}

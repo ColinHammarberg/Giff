@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .choose-email-choice-info {
     display: grid;
     justify-content: center;
@@ -54,6 +56,21 @@
 
         .MuiButtonBase-root {
             color: rgba(244, 20, 155, 1);
+        }
+    }
+}
+
+@include media(phone) {
+    .choose-email-choice-info {
+        .container {
+            .sub-title {
+                font-size: 20px;
+            }
+        }
+        .choose-btns {
+            .MuiButton-root {
+                width: 286px;
+            }
         }
     }
 }
