@@ -26,18 +26,18 @@ function Landing() {
         setCountdown(countdown - 1);
       }, 1000);
     } else if (countdown === 0) {
-      localStorage.setItem('show-count-down', false);  // Storing to localStorage
+      localStorage.setItem('show-count-down', false); // Storing to localStorage
       navigate('/choose-option-create')
     }
 
     return () => clearTimeout(countdownTimer); // Cleanup timeout if component is unmounted
-  }, [countdown]);
+  }, [countdown, navigate]);
 
   return (
     <>
       <div className="landing">
         {countdown === null ? (
-          <img src={GiftIntroduction} />
+          <img src={GiftIntroduction} alt="" />
         ) : (
           <div 
             className="countdown"

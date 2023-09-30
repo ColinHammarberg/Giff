@@ -37,8 +37,13 @@ class MenuPopOver extends PureComponent {
       >
         <Box className="gif-menu-items">
             {MenuItems.map((item) => (
-              <Box key={item.key} onClick={() => this.props.handleNavigation(item.url)}>{item.title}</Box>
+              <Box key={item.key} onClick={() => this.props.handleNavigation(item.url)}>
+                {item.title}
+              </Box>
             ))}
+            {this.props.sessionId && (
+              <Box onClick={this.props.handleOnClickSignOut}>Sign Out</Box>
+            )}
         </Box>
         <Button onClick={this.handleClose} className="close-menu">CLOSE MENU</Button>
       </Popover>

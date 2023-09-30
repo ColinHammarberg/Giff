@@ -35,3 +35,22 @@ export async function DownloadFolder() {
   });
   return response;
 }
+
+export async function Signin(userCredentials) {
+  const response = await axios.post(`http://127.0.0.1:5000/signin`, { username: userCredentials.username, password: userCredentials.password });
+  return response;
+}
+
+export async function Signup(newUserCredentials) {
+  try {
+    const response = await axios.post(`http://127.0.0.1:5000/signup`, newUserCredentials);
+    return response;
+  } catch (error) {
+    return { status: error.response?.status, data: error.response?.data };
+  }
+}
+
+export async function Signout() {
+  const response = await axios.get(`http://127.0.0.1:5000/signout`);
+  return response;
+}

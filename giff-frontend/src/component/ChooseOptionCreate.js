@@ -19,7 +19,7 @@ function ChooseOptionCreate() {
             <Box className="choose-option-create-info">
                 <Box className="container">
                     <div className="title">
-                        Hey, CHAMP. 
+                        Hey, CHAMP.
                     </div>
                     <div className="sub-title">
                         DO YO WANT TO create one or several gifs today? {!isMobile && (<InfoButton infoButtonText={infoButtonText} />)}

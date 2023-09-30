@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_file, send_from_directory
+from flask import Flask, session, render_template, jsonify, request, send_file, send_from_directory
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import imageio
@@ -15,23 +15,89 @@ import base64
 import openai
 import zipfile
 from PIL import Image
+from flask_login import LoginManager
+from flask_login import UserMixin
+from flask_login import login_user, logout_user
+from flask_login import login_required
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash
+import uuid
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the entire app
+app.secret_key = 'gift_secret_key_123'
+login_manager = LoginManager()
+login_manager.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
+db = SQLAlchemy(app)
 
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+
+with app.app_context():
+    db.create_all()
+    db.session.commit()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Send email
-
-
 openai.api_key = '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'
 backend_gifs_folder = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'gifs')
 
+# Signin user credentials endpoint
+
+@app.route('/signin', methods=['POST'])
+def signin():
+    data = request.get_json()
+    user = User.query.filter_by(username=data['username']).first()
+    if user and user.password == data['password']:
+        login_user(user)
+        session_id = str(uuid.uuid4())
+        session['session_id'] = session_id
+        return jsonify({"status": "Login successful", "session_id": session_id})
+    return jsonify({"status": "Login failed"}), 401
+
+# Signup credentials endpoint
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    existing_user = User.query.filter((User.username == data['username']) | (User.email == data['email'])).first()
+
+    if existing_user:
+        return jsonify({"status": "Username or Email already exists", "message": "Choose another username or email"}), 409
+
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+    new_user = User(username=data['username'], email=data['email'], password=hashed_password)  # Add email here
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    login_user(new_user)
+    session_id = str(uuid.uuid4())
+    session['session_id'] = session_id
+
+    return jsonify({"status": "Signup and login successful", "session_id": session_id}), 200
+
+
+# Signout user endpoint
+
+@app.route('/signout', methods=['GET', 'POST'])
+def logout():
+    logout_user()
+    return jsonify({"status": "Signed out"}), 200
+
 # Flask route for handling GPT-3 requests
+
 @app.route('/chat', methods=['POST'])
 def chat_with_gpt():
     data = request.get_json()
@@ -191,19 +257,19 @@ def generate_gif():
 
     elif 1000 <= scroll_height < 3000:
         timer = 200
-        duration = timer / 600.0 #0.333s / per screenshot
+        duration = timer / 600.0  # 0.333s / per screenshot
 
     elif 3000 <= scroll_height < 5000:
         timer = 300
-        duration = timer / 800.0 #0.375s / per screenshot
+        duration = timer / 800.0  # 0.375s / per screenshot
 
     elif 5000 <= scroll_height < 9000:
         timer = 400
-        duration = timer / 1500.0 #0.266s / per screenshot
+        duration = timer / 1500.0  # 0.266s / per screenshot
 
     else:
         timer = 500
-        duration = timer / 2000.0 #0.25s / per screenshot
+        duration = timer / 2000.0  # 0.25s / per screenshot
 
     print('duration', duration)
 
@@ -314,10 +380,12 @@ def generate_gifs_from_list():
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
-    NAME = data.get('name', 'pdf_animation.gif') # default name if name isn't passed as a value
-    
+    # default name if name isn't passed as a value
+    NAME = data.get('name', 'pdf_animation.gif')
+
     # Create a temporary directory to store individual images
-    images_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pdf_images')
+    images_dir = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), 'pdf_images')
     if not NAME.endswith('.gif'):
         NAME += '.gif'
     os.makedirs(images_dir, exist_ok=True)
@@ -333,26 +401,30 @@ def generate_pdf_gif():
     pdf_document = fitz.open(pdf_path)
 
     print('pdf_document.page_count', pdf_document.page_count)
-    
+
     for page_number in range(pdf_document.page_count):
         page = pdf_document[page_number]
         image_list = page.get_pixmap()
-        img = Image.frombytes("RGB", [image_list.width, image_list.height], image_list.samples)
+        img = Image.frombytes(
+            "RGB", [image_list.width, image_list.height], image_list.samples)
         img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
         img.save(img_path, 'PNG')
 
     pdf_document.close()
 
     # Create a GIF from the images
-    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    gifs_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
     os.makedirs(gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_folder, NAME)
 
     image_paths = sorted(os.listdir(images_dir))
-    frames = [Image.open(os.path.join(images_dir, img_path)) for img_path in image_paths if img_path.endswith('.png')]
+    frames = [Image.open(os.path.join(images_dir, img_path))
+              for img_path in image_paths if img_path.endswith('.png')]
     frame_durations = [0.5] * len(frames)
     print('frame_durations', frame_durations)
-    imageio.mimsave(output_path, frames, duration=frame_durations, loop=0)  # Adjust duration as needed
+    imageio.mimsave(output_path, frames, duration=frame_durations,
+                    loop=0)  # Adjust duration as needed
 
     # Clean up: Delete individual images and temporary PDF
     for img_path in image_paths:
@@ -360,7 +432,7 @@ def generate_pdf_gif():
     os.rmdir(images_dir)
 
     print(f"PDF GIF saved at {output_path}")
-    
+
     return jsonify({'message': 'GIF generated successfully'})
 
 
@@ -395,10 +467,11 @@ def download_gif():
     gif_path = os.path.join(gifs_folder, gif_filename)
     return send_file(gif_path, as_attachment=True, attachment_filename=gif_filename)
 
+
 @app.route('/download-all-gifs', methods=['GET'])
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
-    
+
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
@@ -409,9 +482,9 @@ def download_all_gifs():
                         file_path = os.path.join(root, file)
                         arcname = os.path.relpath(file_path, gifs_folder)
                         zipf.write(file_path, arcname=arcname)
-        
+
         zip_buffer.seek(0)
-        
+
         return send_file(
             zip_buffer,
             as_attachment=True,

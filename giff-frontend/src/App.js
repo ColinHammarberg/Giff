@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
 import { NotificationContainer } from 'react-notifications';
 import './App.css'
 import GifLanding from './component/GifLanding';
@@ -16,15 +16,41 @@ import ChooseOptionCreate from './component/ChooseOptionCreate';
 import EmailChoice from './component/EmailChoice';
 import MultipleGifLanding from './component/MultipleGifCreation';
 import SendViaOwnEmail from './component/SendViaOwnEmail';
+import UserSignin from './component/authorization/Signin';
+import UserSignup from './component/authorization/Signup';
+
+function Navigator() {
+  const navigate = useNavigate();
+  const sessionId = localStorage.getItem('sessionId');
+  const [initialRedirectDone, setInitialRedirectDone] = useState(false);
+
+  useEffect(() => {
+    if (sessionId && !initialRedirectDone) {
+      navigate('/gift');
+      setInitialRedirectDone(true);
+    }
+  }, [sessionId, navigate, initialRedirectDone]);
+
+  return null;
+}
 
 function App() {
   return (
     <GiftContextProvider>
       <NotificationContainer />
       <BrowserRouter>
+        <Navigator />
         <Routes>
-        <Route
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/signup`}
+            element={<UserSignup />}
+          />
+          <Route
             path={process.env.REACT_APP_BASEURL}
+            element={<UserSignin />}
+          />
+          <Route
+            path={`${process.env.REACT_APP_BASEURL}/gift`}
             element={<Landing />}
           />
           <Route

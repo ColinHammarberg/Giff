@@ -5,10 +5,12 @@ import { Button, IconButton } from '@mui/material';
 import MenuPopOver from './MenuPopOver';
 import { useNavigate } from 'react-router-dom';
 import useMobileQuery from '../queries/useMobileQuery';
+import { Signout } from '../endpoints/Apis';
 
 function MenuButton() {
     const [anchorEl, setAnchorEl] = useState(null);
     const { isMobile } = useMobileQuery();
+    const sessionId = localStorage.getItem('sessionId');
     const navigate = useNavigate();
 
 
@@ -18,6 +20,11 @@ function MenuButton() {
 
     function handleNavigation(url) {
       navigate(`/${url}`)
+    }
+
+    async function handleOnClickSignOut() {
+      await Signout();
+      localStorage.removeItem('sessionId');
     }
   
     const onClosePopup = () => {
@@ -35,7 +42,9 @@ function MenuButton() {
                 <Button className={`menu-btn ${anchorEl && 'hide'}`} onClick={onClick}>Menu</Button>
               )}
             </div>
-            <MenuPopOver anchorEl={anchorEl} onClosePopup={onClosePopup} handleNavigation={handleNavigation} />
+            <MenuPopOver anchorEl={anchorEl} onClosePopup={onClosePopup} handleNavigation={handleNavigation} 
+              sessionId={sessionId} handleOnClickSignOut={handleOnClickSignOut} 
+            />
         </>
     )
 }
