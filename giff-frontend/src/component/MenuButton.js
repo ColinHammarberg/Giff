@@ -23,8 +23,16 @@ function MenuButton() {
     }
 
     async function handleOnClickSignOut() {
-      await Signout();
-      localStorage.removeItem('sessionId');
+      try {
+        const response = await Signout();
+        console.log('response', response);
+        if (response.status === 200) {
+          localStorage.removeItem('sessionId');
+          navigate('/');
+        }
+      } catch (error) {
+        console.log('Signout error', error);
+      }
     }
   
     const onClosePopup = () => {

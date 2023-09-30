@@ -15,10 +15,8 @@ import base64
 import openai
 import zipfile
 from PIL import Image
-from flask_login import LoginManager
-from flask_login import UserMixin
-from flask_login import login_user, logout_user
-from flask_login import login_required
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
+
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 import uuid
@@ -93,8 +91,31 @@ def signup():
 
 @app.route('/signout', methods=['GET', 'POST'])
 def logout():
-    logout_user()
-    return jsonify({"status": "Signed out"}), 200
+    try:
+        session_id = request.headers.get('Authorization', '').replace('Bearer ', '')
+        print(f"Extracted session_id: {session_id}")
+        
+        stored_session_id = session.get('session_id', None)
+        print(f"Stored session_id: {stored_session_id}")
+        
+        print(f"Is user authenticated? {current_user.is_authenticated}")
+
+        if not current_user.is_authenticated:
+            return jsonify({"status": "Already signed out"}), 200
+        
+        if stored_session_id is None or session_id != stored_session_id:
+            return jsonify({"status": "Unauthorized"}), 401
+
+        logout_user()
+        session.pop('session_id', None)
+        
+        return jsonify({"status": "Signed out"}), 200
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"status": "Internal Server Error"}), 500
+
+
 
 # Flask route for handling GPT-3 requests
 

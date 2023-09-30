@@ -51,6 +51,11 @@ export async function Signup(newUserCredentials) {
 }
 
 export async function Signout() {
-  const response = await axios.get(`http://127.0.0.1:5000/signout`);
+  const sessionId = localStorage.getItem('sessionId');
+  const response = await axios.get(`http://127.0.0.1:5000/signout`, {
+    headers: {
+      'Authorization': `Bearer ${sessionId}`
+    }
+  });
   return response;
 }
