@@ -11,13 +11,13 @@ function UserSignin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [password, setPassword] = useState('');
-  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
   // const [anchorEl, setAnchorEl] = useState(null);
   // const [emailValue, setEmailValue] = useState('');
 
-  function handleOnChangeUserName(event) {
-    setUserName(event.target.value);
+  function handleOnChangeEmail(event) {
+    setEmail(event.target.value);
   }
 
   function handleOnChangePassword(event) {
@@ -27,7 +27,7 @@ function UserSignin() {
   const signInUserCredentials = async () => {
     setIsLoading(true);
     try {
-      const response = await Signin({ username: userName, password: password });
+      const response = await Signin({ email: email, password: password });
       if (response.status === 200) {
         localStorage.setItem('sessionId', response.data.session_id);
         navigate('/choose-option-create')
@@ -58,14 +58,14 @@ function UserSignin() {
           <InputLabel>
             Username
           </InputLabel>
-          <TextField value={userName} name="username-field" onChange={handleOnChangeUserName} />
+          <TextField value={email} name="email-field" onChange={handleOnChangeEmail} />
         </div>
         <div>
           <InputLabel>
             Password
           </InputLabel>
           <PasswordField value={password} name="password-field" onChange={handleOnChangePassword} 
-            error={error} helperText={error ? 'Sorry, champ. Your password or username is wrong. Please give it another try.' : ''}
+            error={error} helperText={error ? 'Sorry, champ. Your password or email is wrong. Please give it another try.' : ''}
           />
         </div>
         <div className="buttons">

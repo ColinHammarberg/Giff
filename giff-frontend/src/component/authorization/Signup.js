@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, InputLabel, TextField } from '@mui/material';
+import { Box, Button, Checkbox, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signup } from '../../endpoints/Apis';
@@ -9,29 +9,39 @@ import Header from '../Header';
 
 function UserSignup() {
   const [isLoading, setIsLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [error, setError] = useState(false);
   const [formData, setFormData] = useState({
-    userName: '',
     email: '',
     password: '',
-    confirmPassword: ''
   });
   const navigate = useNavigate();
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const [emailValue, setEmailValue] = useState('');
+  const handleOnChangeCheckbox = (event) => {
+    const newValue = event.target.checked;
+    setChecked(newValue);    
+  };
 
   function handleOnChange(event) {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   }
 
+  console.log('checked', checked);
+
   const signUpUserCredentials = async () => {
     setIsLoading(true);
+    if (!checked) {
+        setError(true);
+        return;
+    }
     try {
-      const response = await Signup({ username: formData.userName, email: formData.email, password: formData.password });
+      const response = await Signup({ email: formData.email, password: formData.password });
       if (response.status === 200) {
-        localStorage.setItem('sessionId', response.data.session_id);
-        navigate('/choose-option-create');
-        showNotification('success', 'Successfully signed up');
+        setTimeout(() => {
+            localStorage.setItem('sessionId', response.data.session_id);
+            navigate('/choose-option-create');
+            showNotification('success', 'Successfully signed up');
+        }, 2000)
       } else {
         console.log("Signup failed", response.data);
         showNotification('error', response.data.message || "Signup failed for some reason");
@@ -55,40 +65,33 @@ function UserSignup() {
       <Header />
       <Box className="user-authentication">
         <div className="user-details">
-            <div>
-                <InputLabel>
-                    Username
-                </InputLabel>
-                <TextField value={formData.userName}  name="userName" onChange={handleOnChange} />
-            </div>
-            <div>
-                <InputLabel>
-                    Email
-                </InputLabel>
-                <TextField value={formData.email}  name="email" onChange={handleOnChange} />
-            </div>
+            <InputLabel>
+                Email
+            </InputLabel>
+            <TextField value={formData.email}  name="email" onChange={handleOnChange} />
         </div>
         <div className="password-details">
-            <div>
-                <InputLabel>
-                    Password
-                </InputLabel>
-                <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
-            </div>
-            <div>
-                <InputLabel>
-                    Password
-                </InputLabel>
-                <PasswordField value={formData.confirmPassword} name="confirmPassword" onChange={handleOnChange} />
-            </div>
+            <InputLabel>
+                Password
+            </InputLabel>
+            <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
         </div>
         <div className="buttons">
           <Button onClick={signUpUserCredentials} onKeyDown={(event) => {handleKeyPressGenerateGif(event)}}>
             Sign Up
           </Button>
         </div>
-      </Box>
-    </div>
+        <Box className="checkbox">
+            <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
+            <div>I agree that GiF-T can store my email and send me information, marketing and newsletters.</div>
+        </Box>
+        {error && (
+            <Box className="error">
+                Sorry, champ. Before you can sign up, You need to check the box and agree that we store your information and send you stuff.
+            </Box>
+        )}
+    </Box>
+</div>
   )
 }
 

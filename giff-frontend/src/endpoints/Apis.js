@@ -37,7 +37,7 @@ export async function DownloadFolder() {
 }
 
 export async function Signin(userCredentials) {
-  const response = await axios.post(`http://127.0.0.1:5000/signin`, { username: userCredentials.username, password: userCredentials.password });
+  const response = await axios.post(`http://127.0.0.1:5000/signin`, { email: userCredentials.email, password: userCredentials.password });
   return response;
 }
 

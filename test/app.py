@@ -18,7 +18,7 @@ from PIL import Image
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 
 app = Flask(__name__)
@@ -31,7 +31,6 @@ db = SQLAlchemy(app)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
 
@@ -56,12 +55,14 @@ backend_gifs_folder = os.path.join(os.path.dirname(
 @app.route('/signin', methods=['POST'])
 def signin():
     data = request.get_json()
-    user = User.query.filter_by(username=data['username']).first()
-    if user and user.password == data['password']:
+    user = User.query.filter_by(email=data['email']).first()
+
+    if user and check_password_hash(user.password, data['password']):
         login_user(user)
         session_id = str(uuid.uuid4())
         session['session_id'] = session_id
-        return jsonify({"status": "Login successful", "session_id": session_id})
+        return jsonify({"status": "Login successful", "session_id": session_id}), 200
+
     return jsonify({"status": "Login failed"}), 401
 
 # Signup credentials endpoint
@@ -69,13 +70,13 @@ def signin():
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    existing_user = User.query.filter((User.username == data['username']) | (User.email == data['email'])).first()
+    existing_user = User.query.filter((User.email == data['email'])).first()
 
     if existing_user:
-        return jsonify({"status": "Username or Email already exists", "message": "Choose another username or email"}), 409
+        return jsonify({"status": "Email already exists", "message": "Choose another email"}), 409
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(username=data['username'], email=data['email'], password=hashed_password)  # Add email here
+    new_user = User(email=data['email'], password=hashed_password) # Add email here
 
     db.session.add(new_user)
     db.session.commit()
@@ -85,7 +86,6 @@ def signup():
     session['session_id'] = session_id
 
     return jsonify({"status": "Signup and login successful", "session_id": session_id}), 200
-
 
 # Signout user endpoint
 
@@ -114,8 +114,6 @@ def logout():
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
-
-
 
 # Flask route for handling GPT-3 requests
 
