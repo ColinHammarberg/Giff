@@ -9,7 +9,7 @@ function Header({ menu }) {
     return (
         <Box className="header-content">
             <div className='header-text'>
-                <div className="header" onClick={() => navigate('/')}>Gif-t</div>
+                <div className="header" onClick={() => navigate('/choose-option-create')}>Gif-t</div>
             </div>
             {menu && (
                 <MenuButton />

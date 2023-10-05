@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Button, TextField } from '@mui/material';
-import Gif from '../gifs/scrolling_animation.gif';
 import './GifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
@@ -41,9 +40,6 @@ function SingleGifGenerator(props) {
           )}
         </Box>
       </Box>
-      <div className="gifs">
-        {gifGenerated && <img src={Gif} alt="Generated GIF" />}
-      </div>
     </div>
   );
 }

@@ -31,28 +31,25 @@ function UserSignup() {
   const signUpUserCredentials = async () => {
     setIsLoading(true);
     if (!checked) {
-        setError(true);
-        return;
+      setError(true);
+      return;
     }
     try {
       const response = await Signup({ email: formData.email, password: formData.password });
       if (response.status === 200) {
         setTimeout(() => {
-            localStorage.setItem('sessionId', response.data.session_id);
-            navigate('/choose-option-create');
-            showNotification('success', 'Successfully signed up');
-        }, 2000)
+          localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
+          navigate('/choose-option-create');
+          showNotification('success', 'Successfully signed up');
+        }, 2000);
       } else {
-        console.log("Signup failed", response.data);
         showNotification('error', response.data.message || "Signup failed for some reason");
       }
     } catch (error) {
-      console.log("Signup error", error);
       showNotification('error', error.response?.data?.message || "Signup failed");
     }
     setIsLoading(false);
   };
-  
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {

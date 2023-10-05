@@ -29,19 +29,18 @@ function UserSignin() {
     try {
       const response = await Signin({ email: email, password: password });
       if (response.status === 200) {
-        localStorage.setItem('sessionId', response.data.session_id);
-        navigate('/choose-option-create')
+        localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
+        navigate('/choose-option-create');
         showNotification('success', 'Successfully signed in');
       } else {
-        console.log("Signin failed", response.data);
-        setError('error', response.data.message)
+        setError('error', response.data.message);
       }
     } catch (error) {
-      setError('error', "Signin failed")
-      console.log("Signin error", error);
+      setError('error', "Signin failed");
     }
     setIsLoading(false);
   };
+  
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {

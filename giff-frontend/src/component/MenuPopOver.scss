@@ -1,6 +1,6 @@
 .menu-popover {
     .MuiPaper-root {
-        min-height: 300px;
+        height: 344px;
         width: 207px;
         border-radius: 20px;
         background-color: #FEC901;
@@ -10,7 +10,7 @@
         .gif-menu-items {
             display: grid;
             padding: 24px;
-            gap: 15px;
+            gap: 10px;
             cursor: pointer;
 
             .MuiBox-root {

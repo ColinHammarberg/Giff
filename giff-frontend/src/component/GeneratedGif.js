@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from './Header';
@@ -6,8 +6,21 @@ import { useNavigate } from 'react-router-dom';
 import LoadingGif from './LoadingGif';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload, generatedGifUrl } = props;
+  const { gifGenerated, isLoading, onDownload } = props;
+  const [importedGif, setImportedGif] = useState(null);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const importSingleGif = async () => {
+        const importedGif = await import(`${gifGenerated}`);
+        console.log('importedGif', importedGif);
+        setImportedGif(importedGif);
+    };
+  
+    if (gifGenerated) {
+      importSingleGif();
+    }
+  }, [gifGenerated]);
 
   return (
     <div className="generated-gif">
@@ -19,7 +32,7 @@ function GeneratedGif(props) {
       ) : (
         <>
           <Box className="gif">
-            {gifGenerated && <img src={generatedGifUrl} alt="Generated GIF" />}
+            {gifGenerated && <img src={importedGif} alt="Generated GIF" />}
           </Box>
           <Box className="generated-gif-btn-box">
             <Button className="btn download" onClick={onDownload}>Download GIF</Button>

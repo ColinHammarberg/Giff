@@ -5,14 +5,12 @@ import { Button, IconButton } from '@mui/material';
 import MenuPopOver from './MenuPopOver';
 import { useNavigate } from 'react-router-dom';
 import useMobileQuery from '../queries/useMobileQuery';
-import { Signout } from '../endpoints/Apis';
 
 function MenuButton() {
     const [anchorEl, setAnchorEl] = useState(null);
     const { isMobile } = useMobileQuery();
-    const sessionId = localStorage.getItem('sessionId');
+    const access_token = localStorage.getItem('access_token');
     const navigate = useNavigate();
-
 
     const onClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -24,12 +22,10 @@ function MenuButton() {
 
     async function handleOnClickSignOut() {
       try {
-        const response = await Signout();
-        console.log('response', response);
-        if (response.status === 200) {
-          localStorage.removeItem('sessionId');
-          navigate('/');
-        }
+        // Remove JWT and user state
+        localStorage.removeItem('access_token');
+        // Redirect to login page
+        navigate('/');
       } catch (error) {
         console.log('Signout error', error);
       }
@@ -51,7 +47,7 @@ function MenuButton() {
               )}
             </div>
             <MenuPopOver anchorEl={anchorEl} onClosePopup={onClosePopup} handleNavigation={handleNavigation} 
-              sessionId={sessionId} handleOnClickSignOut={handleOnClickSignOut} 
+              access_token={access_token} handleOnClickSignOut={handleOnClickSignOut} 
             />
         </>
     )

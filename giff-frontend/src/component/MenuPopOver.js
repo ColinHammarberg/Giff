@@ -41,7 +41,7 @@ class MenuPopOver extends PureComponent {
                 {item.title}
               </Box>
             ))}
-            {this.props.sessionId && (
+            {this.props.access_token && (
               <Box onClick={this.props.handleOnClickSignOut}>Sign Out</Box>
             )}
         </Box>

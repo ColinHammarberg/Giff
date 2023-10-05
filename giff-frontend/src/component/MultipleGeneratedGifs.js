@@ -10,7 +10,6 @@ function MultipleGeneratedGifs(props) {
 
   React.useEffect(() => {
     // Dynamically import the GIFs when the component mounts
-    console.log('urlList', urlList);
     const importGifs = async () => {
       const importedGifs = await Promise.all(
         urlList.map((item) => import(`../gifs/${item.name}.gif`))

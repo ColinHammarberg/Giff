@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Button } from '@mui/material';
-import Gif from '../gifs/scrolling_animation.gif';
-import GifPdf from '../gifs/pdf_animation.gif';
 import MultipleGifGenerator from './MultipleGifGenerator';
 import './GifLanding.scss';
 import GifError from './GifError';
@@ -10,7 +8,6 @@ import MultipleGeneratedGifs from './MultipleGeneratedGifs';
 
 function MultipleGifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
-  const [generatedGifUrl, setGeneratedGifUrl] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [duplicateNames, setDuplicateNames] = React.useState({});
@@ -49,6 +46,7 @@ function MultipleGifLanding() {
             const nonPdfUrls = gifData.filter((item) => !item.url.endsWith('.pdf'));
             response = await GenerateMultipleGifs(nonPdfUrls);
           }
+          console.log('response', response);
         
           if (response.data.error) {
             const errorMessage = response.data.error;
@@ -60,9 +58,7 @@ function MultipleGifLanding() {
                 setError('general error');
             }
           } else if (response.data.message === 'GIFs generated successfully for all URLs') {
-            const generatedGifUrl = isPdf ? GifPdf : Gif;
             setGifGenerated(true);
-            setGeneratedGifUrl(generatedGifUrl);
           }
           setIsLoading(false);
         } catch (error) {
@@ -109,7 +105,6 @@ function MultipleGifLanding() {
       {isLoading || gifGenerated ? (
         <MultipleGeneratedGifs
           gifGenerated={gifGenerated}
-          importedGifs={generatedGifUrl}
           isLoading={isLoading}
           onDownload={handleDownloadClick}
           urlList={urlList}

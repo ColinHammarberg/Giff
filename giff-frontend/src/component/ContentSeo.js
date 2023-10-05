@@ -2,6 +2,7 @@ import React, { forwardRef, useState } from 'react';
 import './ContentSeo.scss';
 import { Box, Button } from '@mui/material';
 import ArticleShowcase from './ArticleShowcase';
+import Article from '../resources/Article.png';
 
 const ContentSeo = forwardRef((props, ref) => {
   const [article, setArticle] = useState(null);
@@ -22,6 +23,9 @@ const ContentSeo = forwardRef((props, ref) => {
               <>
                 <div className="box-container">
                     <Box className="content-boxes">
+                      <div className="img">
+                        <img src={Article} alt="" />
+                      </div>
                       <div className="title">
                           {item.title}
                       </div>
