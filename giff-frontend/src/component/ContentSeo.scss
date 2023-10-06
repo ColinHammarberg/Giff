@@ -1,3 +1,5 @@
+@import '../utils/responsiveUtils.scss';
+
 .content-seo {
     width: 100%;
     height: 100vh;
@@ -7,7 +9,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     font-family: 'Staatliches';
-    background-color: #fff;
+    background-color: #D9D9D9;
 
     .title {
         width: 100%;
@@ -78,6 +80,16 @@
             height: 27px;
             border-radius: 50px;
             margin-top: 10px;
+        }
+    }
+}
+
+@include media(phone) {
+    .content-seo {
+        .content-map {
+            .box-container {
+                width: 100%;
+            }
         }
     }
 }

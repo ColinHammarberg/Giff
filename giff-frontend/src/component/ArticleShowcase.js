@@ -1,22 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Dialog, DialogContent, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Button, Dialog, DialogContent } from '@mui/material';
 import './ArticleShowcase.scss';
+import { useNavigate } from 'react-router-dom';
 
 const ArticleShowcase = ({ article, onClose, open }) => {
-  function renderTitle() {
-    return (
-      <div className="responsive-dialog-title">
-        {article?.title}
-      </div>
-    );
-  }
+  const navigate = useNavigate();
 
   function renderContent() {
     return article?.content.map((part, index) => (
       <div key={index}>
-        <strong>{part.titlePart}</strong>
+        <strong className={`header-${index}`}>{part.titlePart}</strong>
         <br />
         <p>{part.text}</p>
         <br /><br />
@@ -30,27 +24,24 @@ const ArticleShowcase = ({ article, onClose, open }) => {
       open={open}
       transitionDuration={400}
     >
-      <DialogContent className="dialog-content styled-scrollbar">
-        <IconButton
+      <div
           className="close-button"
           color="secondary"
           onClick={onClose}
         >
-          <CloseIcon className="close-icon" />
-        </IconButton>
+          Close
+        </div>
+      <DialogContent className="dialog-content styled-scrollbar">
         <Box className="article-header">
-          <Box className="left">
-            <img src={article?.photo} alt="" />
-          </Box>
-          <Box className="right">
-            <div>
-              {renderTitle()}
-            </div>
-          </Box>
+          <img src={article?.photo} alt="" />
         </Box>
         <Box className="article-content">
           <h1>{article?.title}</h1>
           {renderContent()}
+        </Box>
+        <Box className="article-btn">
+          <Button className="create-btn" onClick={() => navigate('/single-gif-creation')}>Create your own gif now</Button>
+          <Button className="read-more-btn">Read more marketing posts</Button>
         </Box>
       </DialogContent>
     </Dialog>
