@@ -1,0 +1,50 @@
+.tabs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding: 0;
+    margin-left: 24px;
+
+    .tab-item {
+        list-style: disc;
+        color: transparent;
+        font-size: 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    &.tabs-level-2 {
+        padding: 0;
+        gap: 24px;
+        display: flex;
+        border-bottom: 1px solid #ECEEEF;
+        padding: 8px 24px 0;
+        margin: 0;
+        height: 60px;
+
+        .tab-item {
+            background-color: transparent;
+
+            .tab-wrapper {
+                background-color: transparent;
+                color: rgba(0, 0, 0, 0.6);
+                padding: 0;
+                min-height: 32px;
+                font-family: "Staatliches";
+            }
+
+            &.active .tab-wrapper {
+                color: #000;
+                border-bottom: 2px solid #FEC901;
+                font-family: "Staatliches";
+                font-weight: bold;
+            }
+
+            &:hover .tab-wrapper {
+                color: #000;
+            }
+        }
+    }
+}

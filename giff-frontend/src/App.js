@@ -7,9 +7,6 @@ import GifLanding from './component/GifLanding';
 import GiftContextProvider from './context/GiftContextProvider';
 import WhatIsGift from './component/WhatIsGift';
 import SendEmailComponent from './component/SendEmailComponent';
-import GiftForSale from './component/GiftForSale';
-import GiftForMarketing from './component/GiftForMarketing';
-import GiftSpiration from './component/GiftSpiration';
 import RightsAndPrivacy from './component/RightsAndPrivacy';
 import OpenAiGenerator from './openai/OpenAiGenerator';
 import Landing from './component/Landing';
@@ -20,6 +17,7 @@ import SendViaOwnEmail from './component/SendViaOwnEmail';
 import UserSignin from './component/authorization/Signin';
 import UserSignup from './component/authorization/Signup';
 import Profile from './component/Profile';
+import Articles from './component/GiftForSale';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -82,16 +80,8 @@ function App() {
               element={<WhatIsGift />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/gift-for-sales`}
-              element={<GiftForSale />}
-            />
-            <Route
-              path={`${process.env.REACT_APP_BASEURL}/gift-for-marketing`}
-              element={<GiftForMarketing />}
-            />
-            <Route
-              path={`${process.env.REACT_APP_BASEURL}/gift-spiration`}
-              element={<GiftSpiration />}
+              path={`${process.env.REACT_APP_BASEURL}/articles`}
+              element={<Articles />}
             />
             <Route
               path={`${process.env.REACT_APP_BASEURL}/email-choice`}

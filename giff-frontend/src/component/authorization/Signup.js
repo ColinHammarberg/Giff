@@ -65,7 +65,14 @@ function UserSignup() {
             <InputLabel>
                 Email
             </InputLabel>
-            <TextField value={formData.email}  name="email" onChange={handleOnChange} />
+            <TextField 
+              value={formData.email} 
+              name="email" 
+              onKeyPress={(event) => {
+                handleKeyPressGenerateGif(event);
+              }}
+              onChange={handleOnChange} 
+            />
         </div>
         <div className="password-details">
             <InputLabel>
@@ -74,7 +81,7 @@ function UserSignup() {
             <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
         </div>
         <div className="buttons">
-          <Button onClick={signUpUserCredentials} onKeyDown={(event) => {handleKeyPressGenerateGif(event)}}>
+          <Button onClick={signUpUserCredentials}>
             Sign Up
           </Button>
         </div>
