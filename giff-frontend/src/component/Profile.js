@@ -2,14 +2,50 @@ import React, { useEffect, useState } from 'react';
 import './Profile.scss';
 import Header from './Header';
 import { Box, Button, TextField } from '@mui/material';
-import { DeleteUserProfile, FetchUserGifs, FetchUserInfo } from '../endpoints/Apis';
+import { DeleteUserProfile, FetchUserGifs, FetchUserInfo, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
+import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [changeUserDetails, setChangeUserDetails] = useState(null);
+    const [password, setPassword] = useState({
+      currentPassword: '',
+      newPassword: '',
+    });
+    const handleOnClickChangePasswordButton = (event) => {
+      const access_token = localStorage.getItem('access_token');
+      console.log('event', event, changeUserDetails);
+      setAnchorEl(event?.currentTarget);
+      setChangeUserDetails(event?.target?.name);
+    }
+    const handleOnChangePassword = (e, field) => {
+      setPassword({
+        ...password,
+        [field]: e.target.value,
+      });
+    };
+    
+    const handleOnClose = () => {
+      setAnchorEl(null);
+    }
+
+    async function requestChangeUserPassword() {
+      try {
+        const response = await UpdatePassword(password);
+        console.log('response', response);
+        if (response.data.status === 'Password updated successfully') {
+          showNotification('success', 'Password updated successfully');
+        }
+      } catch (error) {
+        showNotification('error', 'Failed to update password');
+      }
+    }
+
     const handleOnClickDeleteAccount = async () => {
       const access_token = localStorage.getItem('access_token');
       const { hasConfirmed } = await DeleteProfileDialog.show();
@@ -31,17 +67,6 @@ function Profile() {
         }
       }
     }
-    // const [userGifs, setUserGifs] = useState(null);
-    // const access_token = localStorage.getItem('access_token');
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     const response = await FetchUserGifs(access_token);
-    //     if (response) {
-    //       setUserGifs(response.data);
-    //     }
-    //   };
-    //   fetchData();
-    // }, []);
     useEffect(() => {
         const fetchData = async () => {
           const response = await FetchUserInfo();
@@ -58,6 +83,12 @@ function Profile() {
       <Header menu />
         <Box className="title">Profile</Box>
         <Box className="profile-info">
+          <ResetUserDetailsPopover
+            requestChangeUserPassword={requestChangeUserPassword} 
+            onChange={handleOnChangePassword} 
+            onClosePopover={handleOnClose}
+            anchorEl={anchorEl} 
+          />
           <Box className="email-details">
               <div className="text">
                 <span>Email address</span>
@@ -68,7 +99,7 @@ function Profile() {
           <Box className="password-details">
             <div className="text">
               <span>password</span>
-              <Button>Edit Password</Button>
+              <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
             </div>
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
           </Box>

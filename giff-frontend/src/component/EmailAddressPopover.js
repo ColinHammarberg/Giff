@@ -48,13 +48,14 @@ class EmailAddressPopover extends PureComponent {
         <div className="content">
             <div className="email-content">
                 <TextField 
-                placeholder="Email" type="email" 
-                onKeyPress={(event) => {
-                  if (onKeyPress) {
-                    onKeyPress(event);
-                  }
-                }} 
-                onChange={(value) => this.handleOnChange(value)} />
+                  placeholder="Email" type="email" 
+                  onKeyPress={(event) => {
+                    if (onKeyPress) {
+                      onKeyPress(event);
+                    }
+                  }} 
+                  onChange={(value) => this.handleOnChange(value)} 
+                />
             </div>
             <div className="buttons">
                 <Button onClick={this.handleContinue}>Continue</Button>

@@ -6,6 +6,8 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Fetch user info endpoint
+
+
 @jwt_required()
 def fetch_user_info():
     user_id = get_jwt_identity()
@@ -20,6 +22,7 @@ def fetch_user_info():
     else:
         return jsonify({"status": "User not found"}), 404
 
+
 def signin():
     data = request.get_json()
     if 'email' not in data or 'password' not in data:
@@ -33,6 +36,7 @@ def signin():
     return jsonify({"status": "Login failed"}), 401
 
 # Signup endpoint
+
 
 def signup():
     data = request.get_json()
@@ -55,6 +59,8 @@ def signup():
     return jsonify(access_token=access_token, status="Signup successful"), 200
 
 # Signout user endpoint
+
+
 def signout():
     try:
         # Invalidate token on client-side.
@@ -62,13 +68,15 @@ def signout():
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
-    
+
 # Delete user endpoint
+
+
 @jwt_required()
 def delete_user_profile():
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
-    
+
     if not current_user:
         return jsonify({"status": "User not found"}), 404
 
@@ -79,4 +87,24 @@ def delete_user_profile():
     except Exception as e:
         print(f"Error occurred: {e}")
         db.session.rollback()
+        return jsonify({"status": "Internal Server Error"}), 500
+
+
+@jwt_required()
+def update_password():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    current_user = User.query.get(user_id)
+    print(f"Current user: {current_user.password}")
+    try:
+        if not check_password_hash(current_user.password, data['currentPassword']):
+            return jsonify({"status": "Incorrect current password"}), 401
+        # Fallback to 'sha256'
+        new_password_hash = generate_password_hash(data['newPassword'], method='sha256')
+        print('new_password_hash', new_password_hash)
+        current_user.password = new_password_hash
+        db.session.commit()
+        return jsonify({"status": "Password updated successfully"}), 200
+    except Exception as e:
+        print(f"Exception: {e}")
         return jsonify({"status": "Internal Server Error"}), 500

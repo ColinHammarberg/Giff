@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from './Header';
@@ -6,24 +6,27 @@ import { useNavigate } from 'react-router-dom';
 import LoadingGif from './LoadingGif';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload } = props;
-  const [importedGif, setImportedGif] = useState(null);
+  const { gifGenerated, isLoading, onDownload, key, url } = props;
   const navigate = useNavigate();
+  const [gifSrc, setGifSrc] = useState(null);
 
-  React.useEffect(() => {
-    const importSingleGif = async () => {
-        const importedGif = await import(`${gifGenerated}`);
-        console.log('importedGif', importedGif);
-        setImportedGif(importedGif);
+  useEffect(() => {
+    const fetchGif = async () => {
+      try {
+        const gifModule = await import(
+          `../gifs/${gifGenerated}`
+        );
+        setGifSrc(gifModule.default);
+      } catch (error) {
+        console.error("Could not load GIF:", error);
+      }
     };
-  
-    if (gifGenerated) {
-      importSingleGif();
-    }
-  }, [gifGenerated]);
+
+    fetchGif();
+  }, [url]);
 
   return (
-    <div className="generated-gif">
+    <div className="generated-gif" key={key}>
       <Header />
       {isLoading ? (
         <Box className="loading-container">
@@ -32,7 +35,7 @@ function GeneratedGif(props) {
       ) : (
         <>
           <Box className="gif">
-            {gifGenerated && <img src={importedGif} alt="Generated GIF" />}
+            {gifGenerated && <img src={gifSrc} alt="Generated GIF" />}
           </Box>
           <Box className="generated-gif-btn-box">
             <Button className="btn download" onClick={onDownload}>Download GIF</Button>

@@ -1,3 +1,5 @@
+@import '../../utils/responsiveUtils.scss';
+
 .authorization {
     width: 100%;
     text-align: center;
@@ -23,7 +25,7 @@
             gap: 8px;
         }
 
-        .signin-title {
+        .user-title {
             color: #fff;
             margin: auto;
             font-size: 30px;
@@ -101,8 +103,19 @@
                 font-size: 12px;
             }
         }
+
         .error {
             color: #F4149B;
+        }
+    }
+}
+
+@include media(phone) {
+    .authorization {
+        .user-authentication {
+            width: 100%;
+            display: grid;
+            justify-content: center;
         }
     }
 }

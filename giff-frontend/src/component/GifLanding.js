@@ -44,9 +44,7 @@ function GifLanding() {
       if (response?.data?.error) {
         handleErrors(response.data.error);
       } else if (response.data.message === 'GIF generated and uploaded!') {
-          const gifPath = `../gifs/${response.data.name}`;
-          localStorage.setItem('singleGif', gifPath);
-          setGifGenerated(gifPath);
+        setGifGenerated(response.data.name);
       }
       setIsLoading(false);
     } catch (error) {
@@ -72,7 +70,7 @@ function GifLanding() {
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
+          <GeneratedGif key={gifGenerated} url={url} gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
           <SingleGifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} generateSingleGif={generateSingleGif} gifGenerated={gifGenerated} />
         )

@@ -8,7 +8,7 @@ import uuid
 from models import UserGif
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, get_user_gifs
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -16,6 +16,7 @@ import requests
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from PIL import Image
+from flask_mail import Mail
 import os
 
 app = Flask(__name__)
@@ -28,6 +29,7 @@ db.init_app(app)
 app.secret_key = 'gift_secret_key_123'
 jwt = JWTManager(app)
 migrate = Migrate(app, db)
+mail = Mail(app)
 
 
 @app.route('/fetch_user_gifs', methods=['GET'])
@@ -64,14 +66,22 @@ def delete_user():
     print('generate')
     return delete_user_profile()
 
+@app.route('/update_user_password', methods=['POST'])
+def update_user_password():
+    update_password()
 
 @app.route('/generate-single-gif', methods=['POST'])
-@jwt_required()
 def generate_gif():
     data = request.get_json()
-    user_id = data.get('user_id', get_jwt_identity())
+    user_id = data.get('user_id', None)
+
+    if user_id is None:
+        try:
+            user_id = get_jwt_identity()
+        except RuntimeError:
+            pass  # If JWT is not present, user_id remains None
     URL = data.get('url')
-    NAME = data.get('name', f'your_gift-{user_id}')
+    NAME = data.get('name', f'your_gift-{user_id}.gif') if user_id else "your_gif-t.gif"
 
     if is_video_url(URL):
         return jsonify({'error': 'video url'})
@@ -191,7 +201,6 @@ def generate_gifs_from_list():
     return jsonify({'message': 'GIFs generated successfully for all URLs'})
 
 @app.route('/generate-pdf-gif', methods=['POST'])
-@jwt_required()
 def generate_pdf():
     print('generate')
     return generate_pdf_gif()
@@ -225,7 +234,6 @@ def send_gif_email():
 def open_ai_generate():
     print('generate')
     return chat_with_gpt()
-
 
 if __name__ == '__main__':
     app.run()

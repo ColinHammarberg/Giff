@@ -66,6 +66,7 @@ function UserSignup() {
     <div className="authorization">
       <Header />
       <Box className="user-authentication">
+      <Box className="user-title">Become a gif-ter</Box>
         <div className="user-details">
             <InputLabel>
                 Email

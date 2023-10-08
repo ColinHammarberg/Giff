@@ -84,6 +84,21 @@ export async function Signup(newUserCredentials) {
   }
 }
 
+export async function UpdatePassword(passwordCredentials) {
+  const access_token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(`http://127.0.0.1:5000/update_user_password`, passwordCredentials, 
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return response;
+  } catch (error) {
+    return { status: error.response?.status, data: error.response?.data };
+  }
+}
+
 export async function Signout() {
   const access_token = localStorage.getItem('access_token');
   const response = await axios.get(`http://127.0.0.1:5000/signout`, {

@@ -176,13 +176,19 @@ def get_user_gifs():
 
 # Endpoint for generating gif out of online pdfs
 
-@jwt_required()
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
-    user_id = get_jwt_identity()
+    user_id = data.get('user_id', None)
+
+    if user_id is None:
+        try:
+            user_id = get_jwt_identity()
+        except RuntimeError:
+            pass  # If JWT is not present, user_id remains None
+
     # default name if name isn't passed as a value
-    NAME = data.get('name', f'pdf_animation-{user_id}.gif')
+    NAME = data.get('name', f'pdf_animation-{user_id}.gif') if user_id else "your_pdf_gif-t.gif"
     # Create a temporary directory to store individual images
     images_dir = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), 'pdf_images')

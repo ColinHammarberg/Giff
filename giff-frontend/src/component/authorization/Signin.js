@@ -52,7 +52,7 @@ function UserSignin() {
     <div className="authorization">
       <Header />
       <Box className="user-authentication">
-        <Box className="signin-title">Welcome back, Champ</Box>
+        <Box className="user-title">Welcome back, Champ</Box>
         <div>
           <InputLabel>
             Username

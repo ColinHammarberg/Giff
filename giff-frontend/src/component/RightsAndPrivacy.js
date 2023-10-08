@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 function RightsAndPrivacy() {
   return (
     <div className="privacy-policy">
-      <Header generator />
+      <Header menu />
         <Box className="privacy-policy-info">
             <Box>
                 <div className="title">Privacy</div>
