@@ -5,6 +5,7 @@ import { Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
 import useMobileQuery from '../queries/useMobileQuery';
+import Footer from './Footer';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ function ChooseOptionCreate() {
                     <Button className="create-several" onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} >Create several gifs</Button>
                 </Box>
             </Box>
+            <Footer />
         </div>
   );
 }

@@ -48,9 +48,19 @@
             min-width: 300px;
             height: 250px;
             border-radius: 4px;
-            background-color: #FEC901;
+            background-color: #000;
             position: relative;
             padding: 8px;
+            &.gift-for-marketing {
+                .title {
+                    color: #B9F140;
+                }
+            }
+            &.gift-for-sales {
+                .title {
+                    color: #F4149B;
+                }
+            }
 
             .img {
                 height: 80%;
@@ -67,19 +77,26 @@
                 color: #000;
                 font-size: 15px;
                 padding: 4px;
+                color: #FEC901;
                 position: absolute;
                 bottom: 0;
             }
         }
 
         .article-btn {
-            background-color: rgba(254, 201, 1, 1);
             color: #000;
             font-family: 'Staatliches';
             border: 1px solid #000;
             height: 27px;
             border-radius: 50px;
             margin-top: 10px;
+            background-color: #FEC901;
+            &.gift-for-sales {
+                background-color: #F4149B;
+            }
+            &.gift-for-marketing {
+                background-color: #B9F140;
+            }
         }
     }
 }

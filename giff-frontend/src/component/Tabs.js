@@ -29,13 +29,13 @@ export const useTabs = (initialTabs, defaultActiveIndex = 0) => {
   };
 };
 
-const Tabs = ({ tabs, onChange, variant }) => {
+const Tabs = ({ tabs, onChange, variant, className }) => {
   return (
     <ul className={`tabs ${variant} `}>
       {tabs?.map((e, i) => (
         <li
           key={i}
-          className={`tab-item ${e.active === true ? 'active' : ''} ${
+          className={`tab-item ${e.active === true ? 'active' : ''} ${className} ${
             !e.label ? 'tab-item-hidden' : ''
           }`}
         >

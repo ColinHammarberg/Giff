@@ -1,0 +1,23 @@
+.footer-container {
+    height: 100px;
+    bottom: 0;
+    position: absolute;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+    .MuiBox-root {
+        color: #fff;
+        font-size: 20px;
+        font-family: 'Staatliches';
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        &.rights {
+            cursor: pointer;
+            display: flex;
+        }
+    }
+}

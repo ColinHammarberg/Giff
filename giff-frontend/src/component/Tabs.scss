@@ -35,11 +35,30 @@
                 font-family: "Staatliches";
             }
 
-            &.active .tab-wrapper {
-                color: #000;
-                border-bottom: 2px solid #FEC901;
-                font-family: "Staatliches";
-                font-weight: bold;
+            &.active {
+                &.what-is-gift {
+                    .tab-wrapper {
+                        border-bottom: 2px solid #FEC901;
+                    }
+                }
+
+                &.gift-for-marketing {
+                    .tab-wrapper {
+                        border-bottom: 2px solid #B9F140;
+                    }
+                }
+
+                &.gift-for-sales {
+                    .tab-wrapper {
+                        border-bottom: 2px solid #F4149B;
+                    }
+                }
+
+                .tab-wrapper {
+                    color: #000;
+                    font-family: "Staatliches";
+                    font-weight: bold;
+                }
             }
 
             &:hover .tab-wrapper {

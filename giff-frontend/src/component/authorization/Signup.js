@@ -6,6 +6,7 @@ import { Signup } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '../Notification';
 import Header from '../Header';
+import { isValidEmail } from '../../utils/utils';
 
 function UserSignup() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +33,10 @@ function UserSignup() {
     setIsLoading(true);
     if (!checked) {
       setError(true);
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setError('Invalid email address');
       return;
     }
     try {
@@ -68,6 +73,8 @@ function UserSignup() {
             <TextField 
               value={formData.email} 
               name="email" 
+              error={error === 'Invalid email address'}
+              helperText={error === 'Invalid email address' && 'Please enter a valid email address'}
               onKeyPress={(event) => {
                 handleKeyPressGenerateGif(event);
               }}
@@ -76,7 +83,7 @@ function UserSignup() {
         </div>
         <div className="password-details">
             <InputLabel>
-                Password
+              Password
             </InputLabel>
             <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
         </div>

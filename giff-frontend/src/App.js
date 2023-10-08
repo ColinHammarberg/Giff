@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.css'
 import GifLanding from './component/GifLanding';
 import GiftContextProvider from './context/GiftContextProvider';
-import WhatIsGift from './component/WhatIsGift';
 import SendEmailComponent from './component/SendEmailComponent';
 import RightsAndPrivacy from './component/RightsAndPrivacy';
 import OpenAiGenerator from './openai/OpenAiGenerator';
@@ -17,19 +16,19 @@ import SendViaOwnEmail from './component/SendViaOwnEmail';
 import UserSignin from './component/authorization/Signin';
 import UserSignup from './component/authorization/Signup';
 import Profile from './component/Profile';
-import Articles from './component/GiftForSale';
+import Articles from './component/Articles';
 
 function Navigator() {
   const navigate = useNavigate();
   const access_token = localStorage.getItem('access_token');
   const [initialRedirectDone, setInitialRedirectDone] = useState(false);
 
-  // useEffect(() => {
-  //   if (access_token && !initialRedirectDone) {
-  //     navigate('/gift');
-  //     setInitialRedirectDone(true);
-  //   }
-  // }, [access_token, navigate, initialRedirectDone]);
+  useEffect(() => {
+    if (access_token && !initialRedirectDone) {
+      navigate('/gift');
+      setInitialRedirectDone(true);
+    }
+  }, [access_token, navigate, initialRedirectDone]);
 
   return null;
 }
@@ -74,10 +73,6 @@ function App() {
             <Route
               path={`${process.env.REACT_APP_BASEURL}/multiple-gif-creation`}
               element={<MultipleGifLanding />}
-            />
-            <Route
-              path={`${process.env.REACT_APP_BASEURL}/what-is-gift`}
-              element={<WhatIsGift />}
             />
             <Route
               path={`${process.env.REACT_APP_BASEURL}/articles`}

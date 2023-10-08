@@ -1,6 +1,7 @@
 .menu-popover {
     .MuiPaper-root {
-        height: 344px;
+        max-height: 344px;
+        min-height: 260px;
         width: 207px;
         border-radius: 20px;
         background-color: #FEC901;

@@ -140,13 +140,14 @@ def generate_gif():
     resource_id = str(uuid.uuid4())
     print('resource_id2', resource_id)
     folder_name = f"{user_id}/"
-    upload_to_s3(output_path, 'gift-resources',
+    if user_id:
+        upload_to_s3(output_path, 'gift-resources',
                  f"{folder_name}{NAME}", resource_id)
-    # Database Entry Here
-    print('user-id', user_id)
-    db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                   gif_url=output_path, resourceId=resource_id))
-    db.session.commit()
+        # Database Entry Here
+        print('user-id', user_id)
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
+                    gif_url=output_path, resourceId=resource_id))
+        db.session.commit()
 
     for screenshot in os.listdir(screenshots_dir):
         os.remove(os.path.join(screenshots_dir, screenshot))

@@ -7,6 +7,7 @@ function Landing() {
   const [countdown, setCountdown] = useState(null);
   const navigate = useNavigate();
 //   const isShowCountDown = localStorage.getItem('count-down')
+  const access_token = localStorage.getItem('access_token');
 
   useEffect(() => {
     // Start the 12-second delay
@@ -27,11 +28,11 @@ function Landing() {
       }, 1000);
     } else if (countdown === 0) {
       localStorage.setItem('show-count-down', false); // Storing to localStorage
-      navigate('/choose-option-create')
+      navigate(access_token ? '/choose-option-create' : 'single-gif-creation')
     }
 
     return () => clearTimeout(countdownTimer); // Cleanup timeout if component is unmounted
-  }, [countdown, navigate]);
+  }, [countdown, navigate, access_token]);
 
   return (
     <>

@@ -58,9 +58,9 @@ function UserSignin() {
             Username
           </InputLabel>
           <TextField 
-            value={email} 
-            name="email-field" 
-            onChange={handleOnChangeEmail} 
+            value={email}
+            name="email-field"
+            onChange={handleOnChangeEmail}
             onKeyPress={(event) => {
               handleKeyPressGenerateGif(event);
             }} />

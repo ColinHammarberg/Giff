@@ -22,7 +22,7 @@ const ContentSeo = forwardRef((props, ref) => {
             return (
               <>
                 <div className="box-container">
-                    <Box className="content-boxes">
+                    <Box className={`content-boxes`}>
                       <div className="img">
                         <img src={Article} alt="" />
                       </div>
@@ -30,9 +30,9 @@ const ContentSeo = forwardRef((props, ref) => {
                           {item.title}
                       </div>
                     </Box>
-                    <Button onClick={() => handleOnClickArticle(index)} className="article-btn">Click to read article</Button>
+                    <Button onClick={() => handleOnClickArticle(index)} className={`article-btn`}>Click to read article</Button>
                 </div>
-                </>
+              </>
             )
           })}
         </div>

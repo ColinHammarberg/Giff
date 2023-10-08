@@ -2,15 +2,13 @@
 
 .header-content {
     height: 200px;
-    padding: 24px;
     position: relative;
     display: flex;
     justify-content: space-between;
 
     .header-text {
-        height: 100px;
         position: relative;
-        left: 40px;
+        left: 20px;
     }
 
     .header {
@@ -20,6 +18,10 @@
         font-size: 50px;
         font-weight: 400;
         cursor: pointer;
+
+        img {
+            width: 200px;
+        }
     }
 
     .sub-header {
@@ -32,6 +34,7 @@
 
     .menu-btn {
         right: 40px;
+        top: 24px;
     }
 }
 
@@ -55,11 +58,15 @@
         }
 
         .header-text {
-            left: 20px;
+            left: 0;
         }
 
         .header {
             font-size: 35px;
+
+            img {
+                width: 80px;
+            }
         }
     }
 }
