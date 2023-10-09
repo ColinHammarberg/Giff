@@ -30,6 +30,10 @@ function MenuButton() {
         console.log('Signout error', error);
       }
     }
+
+    function handleOnClickSignIn() {
+      navigate('/');
+    }
   
     const onClosePopup = () => {
       setAnchorEl(null);
@@ -46,8 +50,13 @@ function MenuButton() {
                 <Button className={`menu-btn ${anchorEl && 'hide'}`} onClick={onClick}>Menu</Button>
               )}
             </div>
-            <MenuPopOver anchorEl={anchorEl} onClosePopup={onClosePopup} handleNavigation={handleNavigation} 
-              access_token={access_token} handleOnClickSignOut={handleOnClickSignOut} 
+            <MenuPopOver 
+              anchorEl={anchorEl} 
+              onClosePopup={onClosePopup} 
+              handleNavigation={handleNavigation} 
+              access_token={access_token} 
+              handleOnClickSignOut={handleOnClickSignOut}
+              handleOnClickSignIn={handleOnClickSignIn} 
             />
         </>
     )

@@ -17,6 +17,7 @@ import UserSignin from './component/authorization/Signin';
 import UserSignup from './component/authorization/Signup';
 import Profile from './component/Profile';
 import Articles from './component/Articles';
+import GifLibrary from './component/GifLibrary';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -53,6 +54,10 @@ function App() {
             <Route
               path={`${process.env.REACT_APP_BASEURL}/profile`}
               element={<Profile />}
+            />
+            <Route
+              path={`${process.env.REACT_APP_BASEURL}/gif-library`}
+              element={<GifLibrary />}
             />
             <Route
               path={`${process.env.REACT_APP_BASEURL}/gift`}

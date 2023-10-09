@@ -43,9 +43,12 @@ class MenuPopOver extends PureComponent {
               </Box>
               )
             ))}
-            {this.props.access_token && (
+            {this.props.access_token ? (
               <Box onClick={this.props.handleOnClickSignOut}>Sign Out</Box>
-            )}
+            ) : (
+              <Box onClick={this.props.handleOnClickSignIn}>Sign In</Box>
+            )
+          }
         </Box>
         <Button onClick={this.handleClose} className="close-menu">CLOSE MENU</Button>
       </Popover>
