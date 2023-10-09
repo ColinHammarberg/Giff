@@ -1,0 +1,105 @@
+@import '../utils/responsiveUtils.scss';
+
+.profile {
+    font-family: 'Staatliches';
+
+    .title {
+        font-size: 30px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .profile-info {
+        padding: 24px;
+        color: #fff;
+        text-align: center;
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+
+        .MuiFormControl-root {
+            background-color: #fff;
+            width: 343px;
+
+            .MuiInputBase-root {
+                font-family: 'Staatliches';
+                font-size: 25px;
+            }
+        }
+
+        .MuiButton-root {
+            font-size: 8px;
+            border: 1px solid #fff;
+            border-radius: 50px;
+            height: 15px;
+            color: #fff;
+            width: 50px;
+            font-family: 'Staatliches';
+        }
+
+        .text {
+            font-size: 25px;
+            font-family: 'Staatliches';
+            width: 146px;
+            display: grid;
+            text-align: left;
+        }
+
+        .email-details {
+            display: flex;
+            gap: 24px;
+
+            .text {
+                color: #B9F140;
+            }
+        }
+
+        .password-details {
+            display: flex;
+            gap: 24px;
+
+            .text {
+                color: #F4149B;
+            }
+        }
+    }
+
+    .delete-account {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 100px;
+
+        .MuiButton-root {
+            border: 1px solid #fff;
+            border-radius: 50px;
+            color: #fff;
+            font-family: 'Staatliches';
+            font-size: 10px;
+            height: 32px;
+            width: 110px;
+        }
+    }
+}
+
+@include media(phone) {
+    .profile {
+        .profile-info {
+            .email-details {
+                display: grid;
+            }
+
+            .password-details {
+                display: grid;
+            }
+        }
+
+        .delete-account {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+    }
+}

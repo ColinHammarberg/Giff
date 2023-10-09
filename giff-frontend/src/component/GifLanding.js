@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import '../App.css'
-import GifGenerator from './GifGenerator';
-import { Box, Button } from '@mui/material';
-import Gif from '../gifs/scrolling_animation.gif';
-import axios from 'axios';
+import SingleGifGenerator from './SingleGifGenerator';
+import { Box } from '@mui/material';
 import GeneratedGif from './GeneratedGif';
 import './GifLanding.scss';
+import GifError from './GifError';
+import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
+import { GiftContext } from '../context/GiftContextProvider';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
-  const [generatedGifUrl, setGeneratedGifUrl] = useState('');
+  const { handleDownloadClick } = useContext(GiftContext); // Get the context value
   const [url, setUrl] = useState('');
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  // const [anchorEl, setAnchorEl] = useState(null);
+  // const [emailValue, setEmailValue] = useState('');
 
   function handleOnChangeUrl(value) {
     if (!value.startsWith("https://")) {
@@ -21,59 +25,64 @@ function GifLanding() {
     console.log('url', value);
   }
 
-  const generateGif = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.post('http://127.0.0.1:5000/generate-gif', {url});
-      console.log('response', response);
-      if (response.data.error) {
-        console.error('Error generating GIF:');
-      } else if (response.data.message === 'GIF generated successfully') {
-        setGeneratedGifUrl(Gif);
-        setIsLoading(false);
-        setGifGenerated(true);
-      }
-    } catch (error) {
-      console.error('Error generating GIF:', error);
+  const handleErrors = (errorMessage) => {
+    if (errorMessage.includes("Invalid scroll height")) {
+      setError('height error');
+    } else if (errorMessage.includes("video")) {
+      setError('video error');
+    } else {
+      setError('general error');
     }
   };
 
-  function handleDownloadClick() {
-    if (gifGenerated) {
-      // Create a virtual anchor element and trigger the download
-      const link = document.createElement('a');
-      link.href = generatedGifUrl; // Use the actual URL here
-      link.target = '_blank';
-      link.download = 'generated_gif.gif';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  const generateSingleGif = async () => {
+    const access_token = localStorage.getItem('access_token');
+    try {
+      setIsLoading(true);
+      const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url, access_token) : GenerateSingleGif(url));
+      console.log('response', response);
+      if (response?.data?.error) {
+        handleErrors(response.data.error);
+      } else if (response.data.message === 'GIF generated and uploaded!') {
+        setGifGenerated(response.data.name);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setError('An error occurred while generating GIF.');
+      setIsLoading(false);
     }
+  };
+
+  const handleKeyPressGenerateGif = (event) => {
+    if (event.key === 'Enter') {
+      generateSingleGif();
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="gif-landing">
+        <GifError setGifGenerated={setGifGenerated} variant={error} setError={setError} />
+      </div>
+    )
   }
 
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
+          <GeneratedGif key={gifGenerated} url={url} gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
         ) : (
-          <GifGenerator onChange={handleOnChangeUrl} gifGenerated={gifGenerated} />
+          <SingleGifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} generateSingleGif={generateSingleGif} gifGenerated={gifGenerated} />
         )
         }
         {!isLoading && (
-            <Box className="btn-content">
-                {!gifGenerated && (
-                    <Button className="action-btn" onClick={generateGif}>Create GIF</Button>
-                )}
-            </Box>
-        )}
-        {!isLoading && (
-            <Box className="">
+            <Box className="bottom-content">
                 {gifGenerated ? (
                     <Box className="go-back-content">
-                        Wand to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
+                        Want to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
                     </Box>
                 ) : (
-                    <Box className="go-back-content">
+                    <Box className="number-of-gifs-created">
                         [number of] gifs already created 
                     </Box>
                 )

@@ -1,0 +1,83 @@
+@import '../utils/responsiveUtils.scss';
+
+.choose-option-create {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .choose-option-create-info {
+        display: grid;
+        gap: 50px;
+        justify-content: center;
+
+        .container {
+            font-family: 'Staatliches';
+            color: #fff;
+
+            .title {
+                font-size: 100px;
+            }
+
+            .sub-title {
+                font-size: 30px;
+                display: flex;
+                gap: 8px;
+            }
+        }
+
+        .enter-btn {
+            display: grid;
+            gap: 24px;
+            margin: auto;
+
+            .MuiButton-root {
+                color: #000;
+                border-radius: 50px;
+                font-family: 'Staatliches';
+                font-size: 30px;
+                height: 80px;
+                width: 459px;
+
+                &.create-one {
+                    background-color: rgba(254, 201, 1, 1);
+                }
+
+                &.create-several {
+                    background-color: rgba(244, 20, 155, 1);
+                }
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .choose-option-create {
+        .choose-option-create-info {
+            padding: 24px;
+
+            .container {
+                width: 234px;
+                margin: auto;
+                .title {
+                    font-size: 50px;
+                }
+            }
+
+            .enter-btn {
+                display: unset;
+
+                .MuiButton-root {
+                    width: 100%;
+                    font-size: 25px;
+                    margin-bottom: 24px;
+                    height: 50px;
+                }
+            }
+        }
+    }
+}

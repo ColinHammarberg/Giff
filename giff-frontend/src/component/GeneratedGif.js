@@ -1,33 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import Gif from '../gifs/scrolling_animation.gif';
 import './GeneratedGif.scss';
-import CircularWithValueLabel from './Loading';
 import Header from './Header';
+import { useNavigate } from 'react-router-dom';
+import LoadingGif from './LoadingGif';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload } = props;
+  const { gifGenerated, isLoading, onDownload, key, url } = props;
+  const navigate = useNavigate();
+  const [gifSrc, setGifSrc] = useState(null);
+
+  useEffect(() => {
+    const fetchGif = async () => {
+      try {
+        const gifModule = await import(
+          `../gifs/${gifGenerated}`
+        );
+        setGifSrc(gifModule.default);
+      } catch (error) {
+        console.error("Could not load GIF:", error);
+      }
+    };
+
+    fetchGif();
+  }, [url]);
 
   return (
-    <div className="generated-gif">
+    <div className="generated-gif" key={key}>
       <Header />
       {isLoading ? (
         <Box className="loading-container">
-          <CircularWithValueLabel />
-          Creating your gif...
+          <LoadingGif singleGif />
         </Box>
       ) : (
         <>
           <Box className="gif">
-            {gifGenerated && <img src={Gif} alt="Generated GIF" />}
+            {gifGenerated && <img src={gifSrc} alt="Generated GIF" />}
           </Box>
           <Box className="generated-gif-btn-box">
             <Button className="btn download" onClick={onDownload}>Download GIF</Button>
-            <Button className="btn share">Share in email</Button>
+            <Button className="btn share" onClick={() => navigate('/email-choice')}>Share gif in email</Button>
+            <Button className="btn share-else-where">Share gif elsewhere</Button>
           </Box>
         </>
-      )
-    }
+      )}
     </div>
   );
 }

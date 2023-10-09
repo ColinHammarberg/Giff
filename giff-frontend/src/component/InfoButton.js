@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import InfoDialog from './InfoDialog';
 
-function InfoButton() {
+function InfoButton({ infoButtonText }) {
     const [anchorEl, setAnchorEl] = useState(null);
 
 
@@ -19,7 +19,7 @@ function InfoButton() {
             <div>
                 <InfoIcon onClick={onClick} />
             </div>
-            <InfoDialog onClosePopup={onClosePopup} anchorEl={anchorEl} />
+            <InfoDialog onClosePopup={onClosePopup} anchorEl={anchorEl} infoButtonText={infoButtonText} />
         </>
     )
     

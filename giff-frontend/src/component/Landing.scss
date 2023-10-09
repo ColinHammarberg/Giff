@@ -1,0 +1,30 @@
+@import '../utils/responsiveUtils.scss';
+
+.landing {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    img {
+        width: 800px;
+    }
+    .countdown {
+        color: #fff;
+        font-size: 150px;
+        font-family: 'Staatliches';
+    }
+}
+
+@include media(phone) {
+    .landing {
+        img {
+            width: 420px;
+        }
+    }
+}

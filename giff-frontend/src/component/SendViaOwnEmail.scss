@@ -1,0 +1,48 @@
+.send-via-own-email {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .container {
+        display: grid;
+        gap: 24px;
+
+        .text-field-content {
+            justify-content: center;
+            margin: auto;
+
+            div {
+                color: rgba(255, 255, 255, 0.5);
+                width: 474px;
+                font-family: 'Staatliches';
+                font-size: 20px;
+
+                span {
+                    color: rgba(255, 255, 255, 1);
+                }
+            }
+        }
+
+        .action-box {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 47px;
+
+            .MuiButton-root {
+                width: 459px !important;
+                height: 47px !important;
+                background-color: rgba(254, 201, 1, 1) !important;
+                font-family: 'Staatliches' !important;
+                color: #000;
+                font-size: 20px !important;
+            }
+        }
+    }
+}

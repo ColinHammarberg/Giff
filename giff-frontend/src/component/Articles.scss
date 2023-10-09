@@ -1,0 +1,72 @@
+@import '../utils/responsiveUtils.scss';
+
+.article-showcase {
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+      
+    .gift-for-sale-info {
+        width: 841px;
+        height: 600px;
+        display: grid;
+        gap: 24px;
+        margin: auto;
+
+        .spinner-box {
+            display: flex;
+            justify-content: center;
+        }
+
+        .spinner-container {
+            margin: auto;
+            cursor: pointer;
+        }
+
+        .title {
+            font-size: 40px;
+            font-family: 'Staatliches';
+            text-align: left;
+            &.gift-for-sales {
+                color: #F4149B;
+            }
+            &.gift-for-marketing {
+                color: #B9F140;
+            }
+            &.what-is-gift {
+                color: #FEC901;
+            }
+        }
+
+        span {
+            color: #fff;
+            font-family: 'Staatliches';
+            text-align: left;
+            h1 {
+                color: #FEC901;
+            }
+            .what-is-gift {
+                color: #FEC901;
+            }
+            .gift-for-sales {
+                color: #F4149B;
+            }
+            .marketing {
+                color: #B9F140;
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .gift-for-sale {
+        .gift-for-sale-info {
+            width: unset;
+            height: unset;
+            padding: 24px;
+        }
+    }
+}

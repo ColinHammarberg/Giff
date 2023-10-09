@@ -1,11 +1,15 @@
 .loading {
     .MuiCircularProgress-root {
-        width: 100px !important;
-        height: 100px !important;
+        width: 200px !important;
+        height: 200px !important;
+        display: flex;
+        justify-content: center;
+
         .MuiCircularProgress-svg {
-            color: rgba(254, 201, 1, 1) !important;
+            color: rgba(244, 20, 155, 1) !important;
         }
     }
+
     .MuiTypography-root {
         color: #fff !important;
         font-size: 30px;

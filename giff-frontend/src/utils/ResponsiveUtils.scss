@@ -1,0 +1,28 @@
+@mixin media($keys...) {
+    @each $breakpoint in $keys {
+      @if $breakpoint == phone {
+          // @media (max-width: 600px) and (max-aspect-ratio: 13/9) {@content}; //600px
+          @media (max-width: 900px) and (max-aspect-ratio: 13/9) {@content};  //900px
+          @media (max-width: 926px) and (min-aspect-ratio: 13/9) {
+            @content;
+          }
+      }
+      @if $breakpoint == phone-land {
+        @media (max-width: 926px) and (min-aspect-ratio: 13/9) {
+          @content;
+        }
+      }
+      @if $breakpoint == tab {
+          @media (max-width: 900px) and (max-aspect-ratio: 13/9) {@content};  //900px
+      }
+      @if $breakpoint == tab-land {
+        @media (max-width: 1200px) and (min-aspect-ratio: 13/9) {
+          @content;
+        }
+      }
+      @if $breakpoint == big-desktop {
+          @media (min-width: 1800px) {@content}; //1800px
+      }
+    }
+  }
+  

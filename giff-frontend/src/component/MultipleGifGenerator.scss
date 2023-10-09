@@ -1,0 +1,95 @@
+@import '../utils/responsiveUtils.scss';
+
+.multiple-gif-generator {
+    margin: 0;
+    .text-field-content {
+        height: 500px;
+        padding: 40px;
+        width: 80%;
+        margin: auto;
+        font-family: 'Staatliches';
+
+        .text-field-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 30px;
+            color: #fff;
+
+            div {
+                align-items: center;
+                display: flex;
+            }
+        }
+
+        .url-inputs {
+            justify-content: center;
+            width: 100%;
+            margin: auto;
+            display: grid;
+            margin-top: 40px;
+
+            .MuiBox-root {
+                display: flex;
+                gap: 50px;
+                width: 100%;
+
+                div {
+                    min-width: 45%;
+
+                    .MuiFormLabel-root {
+                        text-align: left;
+                        color: #fff;
+                    }
+
+                    .MuiFormControl-root {
+                        width: 290px;
+                        height: 45px;
+                    }
+
+                    .MuiInputBase-root {
+                        background-color: #fff;
+                        border-radius: 0 !important;
+                        height: 40px;
+                        font-family: 'Staatliches';
+                    }
+
+                    .name-input {
+                        .MuiInputBase-root {
+                            .MuiOutlinedInput-input {
+                                color: rgba(244, 20, 155, 0.5);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .add-btn {
+                margin-top: 50px;
+
+                .MuiButtonBase-root {
+                    background-color: #fec901;
+
+                    svg {
+                        color: #000;
+                        font-size: 30px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .multiple-gif-generator {
+        .text-field-content {
+            .url-inputs {
+                .MuiBox-root {
+                    gap: 8px;
+                    display: unset;
+                }
+            }
+        }
+    }
+}

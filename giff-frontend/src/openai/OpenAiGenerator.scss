@@ -1,0 +1,191 @@
+.open-ai-generator {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .title {
+        color: #fff;
+        font-family: 'Staatliches';
+        font-size: 30px;
+        width: 284px;
+        margin: auto;
+    }
+
+    .chat-bot {
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(27, 26, 25, 1);
+        width: 827px;
+        height: 500px;
+        flex-direction: column;
+        margin: auto;
+        border-radius: 4px;
+
+        .message-input {
+            bottom: 0;
+            height: 65px;
+
+            .MuiFormControl-root {
+                width: 100%;
+                height: 100%;
+                background-color: #fff;
+
+                .MuiInputBase-root {
+                    height: 100%;
+                    border-radius: 0;
+
+                    .MuiInputBase-input {
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+
+        .fields {
+            height: 400px;
+            padding: 24px;
+
+            .field {
+                display: grid;
+                margin-bottom: 24px;
+
+                .text {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    .circle {
+                        width: 71px;
+                        left: 10px;
+                        height: 71px;
+                        border-radius: 100px;
+                        position: relative;
+                        z-index: 1399;
+                        border: 2px solid #000;
+                        justify-content: center;
+                        display: flex;
+                        align-items: center;
+
+                        &.user {
+                            background-color: rgba(244, 20, 155, 1);
+                        }
+
+                        &.open-ai {
+                            background-color: rgba(254, 201, 1, 1);
+                        }
+
+                        .text {
+                            width: 53px;
+                            font-size: 12px;
+                            font-family: 'Staatliches';
+                        }
+                    }
+                }
+
+                .MuiFormControl-root {
+                    width: 692px;
+                    background-color: #fff;
+                    height: 28px;
+                    border: 2px solid rgba(254, 201, 1, 1);
+
+                    .MuiOutlinedInput-input.Mui-disabled {
+                        -webkit-text-fill-color: #000;
+                    }
+
+                    .MuiInputBase-root {
+                        height: 28px;
+
+                        .MuiInputBase-input {
+                            font-size: 12px;
+                            font-family: 'Staatliches';
+                        }
+                    }
+                }
+
+                &.third {
+                    .MuiFormControl-root {
+                        border: 2px solid rgba(254, 201, 1, 1);
+                    }
+                }
+
+                &.generated-answer {
+                    justify-content: center;
+
+                    .text {
+                        display: flex;
+
+                        .MuiFormControl-root {
+                            width: 692px;
+                            background-color: #fff;
+                            border: 2px solid rgba(254, 201, 1, 1);
+                            height: auto;
+                            
+                            .MuiOutlinedInput-input.Mui-disabled {
+                              -webkit-text-fill-color: #000;
+                            }
+                          
+                            .MuiInputBase-root {
+                              height: auto;
+                          
+                              .MuiInputBase-input {
+                                font-size: 12px;
+                                font-family: 'Staatliches';
+                                word-break: break-all;
+                                overflow-wrap: break-word;  /* Add this */
+                                white-space: normal;  /* Add this */
+                              }
+                            }
+                          }
+                          
+                    }
+                }
+                // &.generated-answer {
+                //     justify-content: center;
+
+                //     .text {
+                //         display: flex;
+
+                //         .response {
+                //             max-height: 150px;
+                //             max-width: 692px;
+                //             background-color: #fff;
+                //             font-family: 'Staatliches';
+                //             border-radius: 4px;
+                //             font-size: 13px;
+                //             overflow: auto;
+                //             overflow-x: auto;
+                //             margin: auto;
+                //             border: 2px solid rgba(254, 201, 1, 1);
+                //         }
+
+                //         .circle {
+                //             background-color: rgba(254, 201, 1, 1);
+                //         }
+                //     }
+                // }
+            }
+        }
+    }
+
+    .action {
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .next-step-btn {
+            width: 459px !important;
+            height: 47px !important;
+            background-color: rgba(254, 201, 1, 1);
+            border-radius: 50px;
+            color: #000 !important;
+            font-size: 20px;
+            font-family: 'Staatliches';
+        }
+    }
+}

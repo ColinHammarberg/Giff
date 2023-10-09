@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Box, Button, Popover } from '@mui/material';
 import './MenuPopOver.scss';
+import { MenuItems } from '../utils/utils';
 
 class MenuPopOver extends PureComponent {
   constructor(props) {
@@ -35,11 +36,19 @@ class MenuPopOver extends PureComponent {
         onClose={this.handleClose}
       >
         <Box className="gif-menu-items">
-            <Box>What is gif-t?</Box>
-            <Box>Gif-t for sales</Box>
-            <Box>Gif-t for marketing</Box>
-            <Box>Gif-spiration</Box>
-            <Box>Rights & Privacy</Box>
+            {MenuItems.map((item) => (
+              item.isShow && (
+                <Box key={item.key} onClick={() => this.props.handleNavigation(item.url)}>
+                {item.title}
+              </Box>
+              )
+            ))}
+            {this.props.access_token ? (
+              <Box onClick={this.props.handleOnClickSignOut}>Sign Out</Box>
+            ) : (
+              <Box onClick={this.props.handleOnClickSignIn}>Sign In</Box>
+            )
+          }
         </Box>
         <Button onClick={this.handleClose} className="close-menu">CLOSE MENU</Button>
       </Popover>

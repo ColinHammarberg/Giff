@@ -1,0 +1,12 @@
+.spinner-box {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+
+    img {
+        width: 150px;
+        height: 150px;
+        cursor: pointer;
+    }
+}

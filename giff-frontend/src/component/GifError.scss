@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css?family=Staatliches&display=swap');
+@import '../utils/responsiveUtils.scss';
+
+.gif-error {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+
+    .error-container {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+
+        .error-description-box {
+            background-color: #fff;
+            width: 500px;
+            height: 178px;
+            display: grid;
+            margin: auto;
+
+            &.video-error {
+                .orange-divider {
+                    background-color: rgba(254, 201, 1, 1);
+                }
+            }
+
+            .error-description {
+                font-family: 'Staatliches';
+                font-size: 10px;
+                font-weight: 400;
+                margin-top: 30px;
+                padding: 4px;
+            }
+
+            .orange-divider {
+                background-color: #FE6B01;
+                width: 500px;
+                height: 40px;
+                font-size: 20px;
+                line-height: 25px;
+                color: #000;
+                display: flex;
+                font-family: 'Staatliches';
+                font-weight: 400;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .btn {
+            width: 459px !important;
+            height: 80px;
+            font-size: 38px;
+            font-family: 'Staatliches';
+            font-weight: 400;
+            border-radius: 50px;
+            color: #000;
+
+            &.video {
+                background-color: rgba(185, 241, 64, 1);
+            }
+
+            &.use-another-url-btn {
+                background-color: rgba(244, 20, 155, 1) !important;
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .gif-error {
+        .error-container {
+            .error-description-box {
+                width: 300px;
+
+                .error-description {
+                    width: 249px;
+                    margin: auto;
+                }
+
+                .orange-divider {
+                    width: 300px;
+                    font-size: 11px;
+                }
+            }
+
+            .use-another-url-btn {
+                width: 286px;
+                height: 50px;
+                font-size: 30px;
+            }
+        }
+    }
+}

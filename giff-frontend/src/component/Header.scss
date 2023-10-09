@@ -1,14 +1,14 @@
+@import '../utils/responsiveUtils.scss';
+
 .header-content {
-    width: 100vw;
-    height: 300px;
-    padding: 24px;
+    height: 200px;
     position: relative;
     display: flex;
     justify-content: space-between;
 
     .header-text {
-        height: 100px;
         position: relative;
+        left: 20px;
     }
 
     .header {
@@ -16,7 +16,13 @@
         text-transform: uppercase;
         font-family: 'Staatliches';
         font-size: 50px;
-        font-weight: 700;
+        font-weight: 400;
+        cursor: pointer;
+
+        img {
+            width: 200px;
+            height: 100px;
+        }
     }
 
     .sub-header {
@@ -24,10 +30,46 @@
         font-family: 'Staatliches';
         text-transform: uppercase;
         color: #fff;
-        font-weight: 700;
+        font-weight: 400;
     }
 
     .menu-btn {
         right: 40px;
+        top: 24px;
+    }
+}
+
+@include media(phone) {
+    .header-content {
+        height: 150px;
+
+        .MuiIconButton-root {
+            right: 20px;
+            top: 12px;
+            width: 40px;
+            height: 40px;
+
+            .MuiSvgIcon-root {
+                font-size: 40px;
+
+                path {
+                    color: rgba(254, 201, 1, 1);
+                }
+            }
+        }
+
+        .header-text {
+            left: 0;
+        }
+
+        .header {
+            font-size: 35px;
+            height: 70px;
+
+            img {
+                width: 100px;
+                height: 70px;
+            }
+        }
     }
 }

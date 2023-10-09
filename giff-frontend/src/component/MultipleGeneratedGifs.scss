@@ -1,0 +1,69 @@
+@import '../utils/responsiveUtils.scss';
+
+.multiple-generated-gif {
+    width: 100%;
+    text-align: center;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .loading-container {
+        img {
+            width: 1000px;
+            height: 500px;
+        }
+    }
+
+    .multiple-gifs {
+        display: flex;
+        flex-wrap: wrap;
+
+        .gif {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+            flex-direction: column;
+            gap: 24px;
+            font-family: 'Staatliches';
+            width: 50%;
+
+            img {
+                width: 300px;
+                height: 250px;
+                border-radius: 4px;
+            }
+
+            .file-info {
+                color: #fff;
+                text-align: left;
+            }
+        }
+    }
+
+    .MuiBox-root {
+        margin-top: 24px;
+
+        .MuiButton-root {
+            background-color: rgba(254, 201, 1, 1);
+            width: 459px;
+            font-family: 'Staatliches';
+            color: #000;
+            border-radius: 50px;
+            font-size: 20px;
+        }
+    }
+}
+
+@include media(phone) {
+    .multiple-generated-gif {
+        .multiple-gifs {
+            .gif {
+                width: 100%;
+            }
+        }
+    }
+}
