@@ -45,5 +45,7 @@ def fetch_user_gifs():
         gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId})
     
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
+
+
     
 

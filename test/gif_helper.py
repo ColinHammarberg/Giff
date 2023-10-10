@@ -294,3 +294,34 @@ def download_all_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+
+@jwt_required()
+def download_all_library_gifs():
+    data = request.get_json()
+    print('gif_urls', data)
+    gif_urls = data.get('gifUrls', [])
+    try:
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for idx, gif_url in enumerate(gif_urls):
+                # Download the GIF
+                response = requests.get(gif_url)
+                
+                if response.status_code == 200:
+                    # Convert the GIF to a BytesIO object
+                    gif_data = io.BytesIO(response.content)
+                    
+                    # Add the GIF data to ZIP
+                    zipf.writestr(f'gif_{idx + 1}.gif', gif_data.getvalue())
+                    
+        zip_buffer.seek(0)
+
+        return send_file(
+            zip_buffer,
+            as_attachment=True,
+            download_name='your-gift-bag.zip',
+            mimetype='application/zip'
+        )
+    except Exception as e:
+        print(f"Error creating ZIP file: {e}")
+        return "An error occurred", 500
