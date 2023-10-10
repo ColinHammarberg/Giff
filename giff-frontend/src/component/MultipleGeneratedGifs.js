@@ -42,7 +42,7 @@ function MultipleGeneratedGifs(props) {
 
   return (
     <div className="multiple-generated-gif">
-      <Header />
+      <Header menu />
       {isLoading ? (
         <Box className="loading-container">
           <LoadingGif />

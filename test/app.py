@@ -3,11 +3,11 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db  # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3
+from s3_helper import upload_to_s3, fetch_user_gifs
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, get_user_gifs
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -35,8 +35,7 @@ mail = Mail(app)
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():
     print('generate')
-    get_user_gifs()
-
+    return fetch_user_gifs()
 
 @app.route('/fetch_user_info', methods=['GET'])
 def fetch_user():
@@ -68,7 +67,7 @@ def delete_user():
 
 @app.route('/update_user_password', methods=['POST'])
 def update_user_password():
-    update_password()
+    return update_password()
 
 @app.route('/generate-single-gif', methods=['POST'])
 def generate_gif():
@@ -134,13 +133,21 @@ def generate_gif():
 
     gifs_frontend_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'test', 'gifs')
+    backend_gifs_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), 'gifs')
     os.makedirs(gifs_frontend_folder, exist_ok=True)
-    os.makedirs(gifs_folder, exist_ok=True)
+    os.makedirs(backend_gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_frontend_folder, NAME)
+    backend_output_path = os.path.join(backend_gifs_folder, NAME)
     frames_with_durations[0][0].save(
         output_path,
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[int(d * 1000) for _, d in frames_with_durations],
+        loop=0
+    )
+    frames_with_durations[0][0].save(
+        backend_output_path,
         save_all=True,
         append_images=[frame for frame, _ in frames_with_durations[1:]],
         duration=[int(d * 1000) for _, d in frames_with_durations],
@@ -164,7 +171,6 @@ def generate_gif():
     os.rmdir(screenshots_dir)
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME})
-
 
 @app.route('/generate-gif-from-list', methods=['POST'])
 @jwt_required()

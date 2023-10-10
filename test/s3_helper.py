@@ -1,7 +1,8 @@
 import boto3
-from flask_login import current_user
 from flask import jsonify
 from models import UserGif
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
     aws_secret_access_key='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', region_name='eu-north-1')
@@ -21,23 +22,28 @@ def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
         print(f"Upload Failed: {e}")
         return False
     return True
-    
-def get_gif(gif_name):
-    if current_user.is_authenticated:
-        user_id = current_user.id
-    else:
-        return jsonify({"status": "Not Authenticated"}), 401
-    
-    user_gif = UserGif.query.filter_by(user_id=user_id, gif_name=gif_name).first()
-    if user_gif:
-        return jsonify({"gif_url": user_gif.gif_url}), 200
-    else:
-        return jsonify({"status": "GIF not found"}), 404
 
-def fetch_from_s3(file_name, bucket, resource_id):
-    try:
-        s3.download_file(bucket, file_name, file_name)
-    except Exception as e:
-        print(f"Download Failed: {e}")
-        return False
-    return True
+@jwt_required()
+def fetch_user_gifs():
+    user_id = get_jwt_identity()
+    print('user_id', user_id)
+    if user_id is None:
+        return jsonify({'error': 'User not authenticated'}), 401
+    
+    # Fetch user GIFs from the database
+    user_gifs = UserGif.query.filter_by(user_id=user_id).all()
+    print('user_gifs', user_gifs)
+    s3_client = s3
+    bucket_name = 'gift-resources'
+    
+    gifs_list = []
+    for gif in user_gifs:
+        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                         Params={'Bucket': bucket_name,
+                                                                 'Key': f"{user_id}/{gif.gif_name}"},
+                                                         ExpiresIn=3600)  # URL expires in 1 hour
+        gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId})
+    
+    return jsonify({'message': 'Success', 'data': gifs_list}), 200
+    
+

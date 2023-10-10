@@ -2,6 +2,7 @@
 
 .multiple-gif-generator {
     margin: 0;
+
     .text-field-content {
         height: 500px;
         padding: 40px;
@@ -32,33 +33,45 @@
 
             .MuiBox-root {
                 display: flex;
-                gap: 50px;
                 width: 100%;
 
-                div {
-                    min-width: 45%;
+                .MuiIconButton-root {
+                    top: 10px;
 
-                    .MuiFormLabel-root {
-                        text-align: left;
-                        color: #fff;
+                    .MuiSvgIcon-root {
+                        color: #F4149B;
                     }
+                }
 
-                    .MuiFormControl-root {
-                        width: 290px;
-                        height: 45px;
-                    }
+                .inputs {
+                    display: flex;
+                    gap: 50px;
 
-                    .MuiInputBase-root {
-                        background-color: #fff;
-                        border-radius: 0 !important;
-                        height: 40px;
-                        font-family: 'Staatliches';
-                    }
+                    div {
+                        min-width: 45%;
 
-                    .name-input {
+                        .MuiFormLabel-root {
+                            text-align: left;
+                            color: #fff;
+                        }
+
+                        .MuiFormControl-root {
+                            width: 290px;
+                            height: 45px;
+                        }
+
                         .MuiInputBase-root {
-                            .MuiOutlinedInput-input {
-                                color: rgba(244, 20, 155, 0.5);
+                            background-color: #fff;
+                            border-radius: 0 !important;
+                            height: 40px;
+                            font-family: 'Staatliches';
+                        }
+
+                        .name-input {
+                            .MuiInputBase-root {
+                                .MuiOutlinedInput-input {
+                                    color: rgba(244, 20, 155, 0.5);
+                                }
                             }
                         }
                     }
@@ -77,6 +90,10 @@
                     }
                 }
             }
+        }
+
+        .btn-content {
+            margin-top: 50px;
         }
     }
 }
