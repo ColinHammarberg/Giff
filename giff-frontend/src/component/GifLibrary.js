@@ -5,7 +5,7 @@ import { Box, Button } from '@mui/material';
 import { FetchUserGifs, FetchUserInfo } from '../endpoints/Apis';
 
 function GifLibrary() {
-    const [userInfo, setUserInfo] = useState(null);
+    const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
     const gifDummyData = [
       {url: 'https://gift-resources.s3.eu-north-1.amazonaws.com/13/your_gift-13.gif', name: 'www.gif-t.com'},
@@ -22,16 +22,17 @@ function GifLibrary() {
       {url: 'https://gift-resources.s3.eu-north-1.amazonaws.com/13/your_gift-13.gif', name: 'www.gif-t.com'},
     ]
     useEffect(() => {
-        const fetchData = async () => {
-          const response = await FetchUserInfo();
-          console.log('response', response);
-          if (response) {
-            setUserInfo(response.data);
-          }
-        };
-        fetchData();
+      const access_token = localStorage.getItem('access_token');
+      const fetchData = async () => {
+        const response = await FetchUserGifs(access_token);
+        console.log('response', response);
+        if (response.data) {
+          setGifs(response.data);
+        }
+      };
+      fetchData();
       }, []);
-    console.log('userInfo', userInfo);
+    console.log('gifs', gifs);
   return (
     <div className="gif-library">
       <Header menu />
@@ -41,7 +42,7 @@ function GifLibrary() {
           <Box className="download"><Button>Download all gifs</Button></Box>
         </Box>
           <Box className="gif-wrapper">
-            {gifDummyData.map((item, index) => {
+            {gifs?.data?.map((item, index) => {
               return (
                 <Box
                   className="gif-box" 
