@@ -7,7 +7,7 @@ from s3_helper import upload_to_s3, fetch_user_gifs
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -171,6 +171,10 @@ def generate_gif():
     os.rmdir(screenshots_dir)
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME})
+
+@app.route('/download_library_gifs', methods=['POST'])
+def download_library_gifs():
+    return download_all_library_gifs()
 
 @app.route('/generate-gif-from-list', methods=['POST'])
 @jwt_required()
