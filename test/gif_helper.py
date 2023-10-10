@@ -14,6 +14,7 @@ from PIL import Image
 from s3_helper import upload_to_s3
 import uuid
 from models import UserGif
+import os
 
 backend_gifs_folder = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'gifs')
