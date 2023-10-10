@@ -128,6 +128,17 @@ export async function FetchUserGifs(access_token) {
   return response;
 }
 
+export async function DownloadAllLibraryGifs(gifUrls) {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.post(`http://127.0.0.1:5000/download_library_gifs`, {
+    'gifUrls': gifUrls,
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+  return response;
+}
+
 export async function DeleteUserProfile(access_token) {
   const response = await axios.get(`http://127.0.0.1:5000/delete_user`, {
     headers: {
