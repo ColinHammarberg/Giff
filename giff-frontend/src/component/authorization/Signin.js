@@ -30,8 +30,10 @@ function UserSignin() {
       const response = await Signin({ email: email, password: password });
       if (response.status === 200) {
         localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
-        navigate('/choose-option-create');
-        showNotification('success', 'Successfully signed in');
+        setTimeout(() => {
+          navigate('/choose-option-create');
+          showNotification('success', 'Successfully signed in');
+        }, 3000)
       } else {
         setError('error', response.data.message);
       }
@@ -69,7 +71,13 @@ function UserSignin() {
           <InputLabel>
             Password
           </InputLabel>
-          <PasswordField value={password} name="password-field" onChange={handleOnChangePassword} 
+          <PasswordField 
+            value={password} 
+            name="password-field" 
+            onKeyPress={(event) => {
+              handleKeyPressGenerateGif(event);
+            }}
+            onChange={handleOnChangePassword} 
             error={error} helperText={error ? 'Sorry, champ. Your password or email is wrong. Please give it another try.' : ''}
           />
         </div>

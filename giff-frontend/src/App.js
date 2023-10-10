@@ -41,7 +41,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <NotificationContainer />
         <BrowserRouter>
-          <Navigator />
+          {/* <Navigator /> */}
           <Routes>
             <Route
               path={`${process.env.REACT_APP_BASEURL}/signup`}

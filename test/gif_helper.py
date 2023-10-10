@@ -142,7 +142,6 @@ def generate_gifs_from_list():
                 single_gif_data = response.json()
                 if 'error' in single_gif_data and single_gif_data['error'] == 'Invalid scroll height':
                     error_messages.add("Invalid scroll height")
-
     if error_messages:
         return jsonify({'error': '\n'.join(error_messages)})
 

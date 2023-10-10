@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, InputLabel, TextField, IconButton } from '@mui/material';
+import { Box, InputLabel, TextField, IconButton, Button, Icon } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './MultipleGifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
@@ -8,7 +9,7 @@ import { showNotification } from './Notification';
 import LightTooltip from './LightToolTip';
 
 function MultipleGifGenerator(props) {
-  const { urlList, setUrlList, setDuplicateNames, duplicateNames } = props;
+  const { urlList, setUrlList, setDuplicateNames, duplicateNames, gifGenerated, generateMultipleGifs } = props;
   
   const infoButtonText = [
     {
@@ -58,6 +59,12 @@ function MultipleGifGenerator(props) {
     }
   }
 
+  function removeItem(indexToRemove) {
+    setUrlList((prevList) => {
+      return prevList.filter((_, index) => index !== indexToRemove);
+    });
+  }
+
   return (
     <div className="multiple-gif-generator">
       <Header menu />
@@ -67,32 +74,39 @@ function MultipleGifGenerator(props) {
         </div>
         <Box className="url-inputs">
           {urlList.map((item, index) => (
-            <Box key={index}>
-              <div>
-                <InputLabel shrink htmlFor={`url-input-${index}`}>
-                  URL
-                </InputLabel>
-                <TextField
-                  id={`url-input-${index}`}
-                  onChange={(event) => handleOnChangeUrl(event, index)}
-                  value={item.url}
-                  placeholder="The url goes here..."
-                />
-              </div>
-              <div>
-                <InputLabel shrink htmlFor={`name-input-${index}`}>
-                  Name of file
-                </InputLabel>
-                <TextField
-                  id={`name-input-${index}`}
-                  error={duplicateNames[index]}
-                  helperText={duplicateNames[index] ? "Name already exists" : ""}
-                  className="name-input"
-                  onChange={(event) => handleNameChange(event, index)}
-                  value={item.name}
-                  placeholder="The name goes here..."
-              />
-              </div>
+            <Box key={index} className="input-fields">
+              <div className="inputs">
+                <div>
+                    <InputLabel shrink htmlFor={`url-input-${index}`}>
+                      URL
+                    </InputLabel>
+                    <TextField
+                      id={`url-input-${index}`}
+                      onChange={(event) => handleOnChangeUrl(event, index)}
+                      value={item.url}
+                      placeholder="The url goes here..."
+                    />
+                  </div>
+                    <div>
+                      <InputLabel shrink htmlFor={`name-input-${index}`}>
+                        Name of file
+                      </InputLabel>
+                      <TextField
+                        id={`name-input-${index}`}
+                        error={duplicateNames[index]}
+                        helperText={duplicateNames[index] ? "Name already exists" : ""}
+                        className="name-input"
+                        onChange={(event) => handleNameChange(event, index)}
+                        value={item.name}
+                        placeholder="The name goes here..."
+                    />
+                  </div>
+                </div>
+                <LightTooltip title="Remove item">
+                <IconButton onClick={() => removeItem(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </LightTooltip>
             </Box>
           ))}
           <div className="add-btn">
@@ -103,6 +117,13 @@ function MultipleGifGenerator(props) {
             </LightTooltip>
           </div>
         </Box>
+        <Box className="btn-content">
+          {!gifGenerated && (
+            <Button className="action-btn" onClick={generateMultipleGifs}>
+              Create {urlList.length} GIFS
+            </Button>
+          )}
+      </Box>
       </Box>
     </div>
   );

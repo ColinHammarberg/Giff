@@ -117,16 +117,8 @@ function MultipleGifLanding() {
           gifGenerated={gifGenerated}
           duplicateNames={duplicateNames}
           setDuplicateNames={setDuplicateNames}
+          generateMultipleGifs={generateMultipleGifs}
         />
-      )}
-      {!isLoading && (
-        <Box className="btn-content">
-          {!gifGenerated && (
-            <Button className="action-btn" onClick={generateMultipleGifs}>
-              Create {urlList.length} GIFS
-            </Button>
-          )}
-        </Box>
       )}
       {!isLoading && (
         <Box className="bottom-content">

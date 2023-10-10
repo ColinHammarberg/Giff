@@ -133,13 +133,21 @@ def generate_gif():
 
     gifs_frontend_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'test', 'gifs')
+    backend_gifs_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), 'gifs')
     os.makedirs(gifs_frontend_folder, exist_ok=True)
-    os.makedirs(gifs_folder, exist_ok=True)
+    os.makedirs(backend_gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_frontend_folder, NAME)
+    backend_output_path = os.path.join(backend_gifs_folder, NAME)
     frames_with_durations[0][0].save(
         output_path,
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[int(d * 1000) for _, d in frames_with_durations],
+        loop=0
+    )
+    frames_with_durations[0][0].save(
+        backend_output_path,
         save_all=True,
         append_images=[frame for frame, _ in frames_with_durations[1:]],
         duration=[int(d * 1000) for _, d in frames_with_durations],
@@ -163,7 +171,6 @@ def generate_gif():
     os.rmdir(screenshots_dir)
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME})
-
 
 @app.route('/generate-gif-from-list', methods=['POST'])
 @jwt_required()
