@@ -20,14 +20,29 @@ function GifLibrary() {
       };
       fetchData();
       }, []);
-    const handleDownloadLibraryGifs = async () => {
-      if (!gifs) {
-        return;
-      }
-      const gifUrls = gifs.data.map(gif => gif.url);
-      const response = await DownloadAllLibraryGifs(gifUrls);
-      console.log('response', response);
-    }
+      const handleDownloadLibraryGifs = async () => {
+        if (!gifs) {
+          return;
+        }
+        const gifUrls = gifs.data.map(gif => gif.url);
+        try {
+          const response = await DownloadAllLibraryGifs(gifUrls);
+          
+          // Create a blob from the response data
+          const blob = new Blob([response.data], { type: 'application/zip' });
+          
+          // Create a URL for the blob and trigger the download
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = 'your-gift-bag.zip';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (error) {
+          console.error('Error downloading ZIP file:', error);
+        }
+      };
     console.log('gifs', gifs);
   return (
     <div className="gif-library">

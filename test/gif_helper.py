@@ -271,7 +271,6 @@ def download_gif():
 
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
-
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
@@ -302,7 +301,7 @@ def download_all_library_gifs():
     gif_urls = data.get('gifUrls', [])
     try:
         zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
             for idx, gif_url in enumerate(gif_urls):
                 # Download the GIF
                 response = requests.get(gif_url)
