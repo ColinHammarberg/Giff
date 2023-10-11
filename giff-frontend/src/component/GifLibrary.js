@@ -3,10 +3,12 @@ import './GifLibrary.scss';
 import Header from './Header';
 import { Box, Button } from '@mui/material';
 import { DownloadAllLibraryGifs, FetchUserGifs, FetchUserInfo } from '../endpoints/Apis';
+import { useNavigate } from 'react-router-dom';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
+    const navigate = useNavigate();
     useEffect(() => {
       const access_token = localStorage.getItem('access_token');
       const fetchData = async () => {
@@ -33,7 +35,7 @@ function GifLibrary() {
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
           <Box className="title"><span>This is your library.</span> download all gifs at once <span>or</span> hover over the gif you want to download or share.</Box>
-          <Box className="download"><Button onClick={handleDownloadLibraryGifs}>Download all gifs</Button></Box>
+          <Box className="download">{gifs.length > 0 ? <Button onClick={handleDownloadLibraryGifs}>Download all gifs</Button> : <Button onClick={() => navigate('/choose-option-create')}>Create gifs</Button> }</Box>
         </Box>
           <Box className="gif-wrapper">
             {gifs?.data?.map((item, index) => {
