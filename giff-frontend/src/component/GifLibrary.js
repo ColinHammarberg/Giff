@@ -13,7 +13,6 @@ function GifLibrary() {
       const access_token = localStorage.getItem('access_token');
       const fetchData = async () => {
         const response = await FetchUserGifs(access_token);
-        console.log('response', response);
         if (response.data) {
           setGifs(response.data);
         }
@@ -24,14 +23,11 @@ function GifLibrary() {
         if (!gifs) {
           return;
         }
-        const gifUrls = gifs.data.map(gif => gif.url);
+        const gifData = gifs.data.map(gif => ({ url: gif.url, name: gif.name }));
         try {
-          const response = await DownloadAllLibraryGifs(gifUrls);
-          
-          // Create a blob from the response data
+          const response = await DownloadAllLibraryGifs(gifData);
+          // Create blob
           const blob = new Blob([response.data], { type: 'application/zip' });
-          
-          // Create a URL for the blob and trigger the download
           const downloadUrl = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = downloadUrl;
@@ -43,7 +39,6 @@ function GifLibrary() {
           console.error('Error downloading ZIP file:', error);
         }
       };
-    console.log('gifs', gifs);
   return (
     <div className="gif-library">
       <Header menu />
