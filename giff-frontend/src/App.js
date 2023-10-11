@@ -19,6 +19,7 @@ import Profile from './component/Profile';
 import Articles from './component/Articles';
 import GifLibrary from './component/GifLibrary';
 import { KeepAccessAlive } from './endpoints/Apis';
+import KeepAliveComponent from './component/KeepAlive';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -35,31 +36,16 @@ function Navigator() {
   return null;
 }
 
-const sendKeepAlive = async () => {
-  try {
-    const response = await KeepAccessAlive();
-    console.log('response', response);
-    const newAccessToken = response.data.access_token;
-    localStorage.setItem('access_token', newAccessToken);
-  } catch (error) {
-    // Handle errors (e.g., user needs to log in again)
-    console.error('Error during keep-alive:', error);
-  }
-};
-
 function App() {
   const queryClient = new QueryClient();
   const REACT_APP_BASEURL = process.env.REACT_APP_BASEURL || '/';
-  useEffect(() => {
-    const keepAliveInterval = setInterval(sendKeepAlive, 1 * 60 * 1000);
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(keepAliveInterval);
-  }, []);
+
   return (
     <GiftContextProvider>
       <QueryClientProvider client={queryClient}>
         <NotificationContainer />
         <BrowserRouter>
+          <KeepAliveComponent />
           {/* <Navigator /> */}
           <Routes>
             <Route

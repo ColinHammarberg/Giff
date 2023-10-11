@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './GifLibrary.scss';
 import Header from './Header';
 import { Box, Button } from '@mui/material';
-import { DownloadAllLibraryGifs, FetchUserGifs, FetchUserInfo } from '../endpoints/Apis';
+import { DownloadAllLibraryGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 
 function GifLibrary() {
