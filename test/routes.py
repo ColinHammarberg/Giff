@@ -35,8 +35,14 @@ def signin():
         return jsonify(access_token=access_token, status="Login successful"), 200
     return jsonify({"status": "Login failed"}), 401
 
-# Signup endpoint
+@jwt_required()
+def keep_access_alive():
+    current_user = get_jwt_identity()
+    # Extend the expiration time of the current access token
+    new_access_token = create_access_token(identity=current_user)
+    return jsonify(access_token=new_access_token), 200
 
+# Signup endpoint
 
 def signup():
     data = request.get_json()

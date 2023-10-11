@@ -8,7 +8,7 @@ import uuid
 from models import UserGif
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -54,6 +54,9 @@ def signout_user():
     print('generate')
     return signout()
 
+@app.route('/keep_access_alive', methods=['GET'])
+def keep_user_access_alive():
+    return keep_access_alive()
 
 @app.route('/signup', methods=['POST'])
 def signup_user():
