@@ -139,10 +139,10 @@ export async function KeepAccessAlive() {
 }
 
 
-export async function DownloadAllLibraryGifs(gifUrls) {
+export async function DownloadAllLibraryGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
   const response = await axios.post(`http://127.0.0.1:5000/download_library_gifs`,
-  { gifUrls },
+  { gifData },
   {
     headers: {
       'Authorization': `Bearer ${access_token}`

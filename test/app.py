@@ -108,11 +108,11 @@ def generate_gif():
 
     elif 5000 <= scroll_height < 9000:
         timer = 400
-        duration = timer / 1500.0  # 0.266s / per screenshot
+        duration = timer / 800.0  # 0.266s / per screenshot
 
     else:
         timer = 500
-        duration = timer / 2000.0  # 0.25s / per screenshot
+        duration = timer / 800.0  # 0.25s / per screenshot
 
     if not NAME.endswith('.gif'):
         NAME += '.gif'

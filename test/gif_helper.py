@@ -297,21 +297,21 @@ def download_all_gifs():
 @jwt_required()
 def download_all_library_gifs():
     data = request.get_json()
-    print('gif_urls', data)
-    gif_urls = data.get('gifUrls', [])
+    print('gif_data', data)
+    gif_data = data.get('gifData', [])
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
-            for idx, gif_url in enumerate(gif_urls):
+            for gif_info in gif_data:
+                gif_url = gif_info['url']
+                gif_name = gif_info['name']
                 # Download the GIF
                 response = requests.get(gif_url)
-                
                 if response.status_code == 200:
                     # Convert the GIF to a BytesIO object
-                    gif_data = io.BytesIO(response.content)
-                    
+                    gif_bytes = io.BytesIO(response.content)
                     # Add the GIF data to ZIP
-                    zipf.writestr(f'gif_{idx + 1}.gif', gif_data.getvalue())
+                    zipf.writestr(f'{gif_name}.gif', gif_bytes.getvalue())
                     
         zip_buffer.seek(0)
 
@@ -324,3 +324,4 @@ def download_all_library_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+
