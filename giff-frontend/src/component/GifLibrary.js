@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
       const access_token = localStorage.getItem('access_token');
@@ -24,21 +25,24 @@ function GifLibrary() {
           return;
         }
         const gifData = gifs.data.map(gif => ({ url: gif.url, name: gif.name }));
-        try {
-          const response = await DownloadAllLibraryGifs(gifData);
-          // Create blob
-          const blob = new Blob([response.data], { type: 'application/zip' });
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = downloadUrl;
-          a.download = 'your-gift-bag.zip';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } catch (error) {
-          console.error('Error downloading ZIP file:', error);
-        }
-      };
+        setLoading(true);
+        setTimeout(() => {
+          try {
+            const response = await DownloadAllLibraryGifs(gifData);
+            // Create blob
+            const blob = new Blob([response.data], { type: 'application/zip' });
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = 'your-gift-bag.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } catch (error) {
+            console.error('Error downloading ZIP file:', error);
+          }
+          setLoading(false);
+        }, 3000)
   return (
     <div className="gif-library">
       <Header menu />
