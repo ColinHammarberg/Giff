@@ -27,7 +27,7 @@ function GeneratedGif(props) {
 
   return (
     <div className="generated-gif" key={key}>
-      <Header />
+      <Header menu />
       {isLoading ? (
         <Box className="loading-container">
           <LoadingGif singleGif />

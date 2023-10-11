@@ -70,6 +70,7 @@ def update_user_password():
     return update_password()
 
 @app.route('/generate-single-gif', methods=['POST'])
+@jwt_required(optional=True)
 def generate_gif():
     data = request.get_json()
     user_id = data.get('user_id', None)
@@ -155,7 +156,7 @@ def generate_gif():
     )
 
     resource_id = str(uuid.uuid4())
-    print('resource_id2', resource_id)
+    print('user_id', user_id)
     folder_name = f"{user_id}/"
     if user_id:
         upload_to_s3(output_path, 'gift-resources',
