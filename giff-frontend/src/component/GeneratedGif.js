@@ -23,7 +23,7 @@ function GeneratedGif(props) {
     };
 
     fetchGif();
-  }, [url]);
+  }, [url, gifGenerated]);
 
   return (
     <div className="generated-gif" key={key}>
