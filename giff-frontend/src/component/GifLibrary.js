@@ -5,6 +5,7 @@ import { Box, Button } from '@mui/material';
 import { DownloadAllLibraryGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from './DesignGifDialog';
+import { useTabs } from './Tabs';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -12,6 +13,7 @@ function GifLibrary() {
     const [designChanges, setDesignChanges] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
+    const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
     const navigate = useNavigate();
     useEffect(() => {
@@ -74,6 +76,9 @@ function GifLibrary() {
         isOpen={isDesignOpen}
         selectedGif={selectedDesignGif}
         setDesignChanges={setDesignChanges}
+        tabs={tabs}
+        changeTab={changeTab}
+        activeTab={activeTab}
         onClickOk={() => {
           handleOpenDesign();
         }}
