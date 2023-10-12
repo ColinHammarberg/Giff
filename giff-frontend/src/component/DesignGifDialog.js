@@ -74,7 +74,7 @@ class DesignGifDialog extends PureComponent {
   }
 
   render() {
-    const { selectedColor, selectedFilter } = this.state;
+    const { selectedColor } = this.state;
     const { selectedGif, isOpen, tabs, activeTab } = this.props;
     const colorSelection = [
       { color: '#FEC901' },
@@ -82,6 +82,17 @@ class DesignGifDialog extends PureComponent {
       { color: '#ffffff' },
       { color: '#FD95A7' },
       { color: '#F4149B' },
+      { color: '#FD3333' },
+      { color: '#0157FE' },
+      { color: '#52DE68' },
+      { color: '#83CEF8' },
+      { color: '#5BFDAF' },
+      { color: '#0E0B80' },
+      { color: '#110946' },
+      { color: '#626262' },
+      { color: '#1B1A19' },
+      { color: '#F5F5F5' },
+      { color: '#FEC901' },
     ];
 
     return (
@@ -103,71 +114,33 @@ class DesignGifDialog extends PureComponent {
               <div className="title">
                 <span>Choose a</span> good <span>frame,</span> see how it looks <span>and click save.</span>
               </div>
-              <div style={{ display: 'flex', gap: '30px', justifyContent: 'center' }}>
-                {colorSelection.map((item, index) => (
-                  <Box
-                    key={index}
-                    onClick={() => this.handleColorClick(item.color)}
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      border: `3px solid ${item.color}`,
-                      cursor: 'pointer',
-                      boxShadow: selectedColor === item.color ? '0 0 10px 5px rgba(0, 0, 0, 0.3)' : 'none',
-                    }}
-                  ></Box>
-                ))}
+              <div className="container">
+                <div>
+                  <div className="image">
+                    <img src={selectedGif.url} alt="" style={{ border: `7px solid ${selectedColor || 'transparent'}` }} />
+                  </div>
+                </div>
+                <div className="select-color-container">
+                    {colorSelection.map((item, index) => (
+                      <Box
+                        key={index}
+                        onClick={() => this.handleColorClick(item.color)}
+                        style={{
+                          backgroundColor: item.color,
+                          cursor: 'pointer',
+                          boxShadow: selectedColor === item.color ? '0 0 10px 5px rgba(0, 0, 0, 0.3)' : 'none',
+                        }}
+                      ></Box>
+                    ))}
+                </div>
               </div>
-              <div className="image">
-                <img src={selectedGif.url} alt="" style={{ border: `4px solid ${selectedColor || 'transparent'}` }} />
+              <div className="action-content">
+                <div className="buttons">
+                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
+                </div>
               </div>
             </>
-          ) 
-          // : 
-          // (
-          //   <>
-          //     <div className="title">
-          //       <span>Choose a</span> good <span>filter,</span> see how it looks <span>and click save.</span>
-          //     </div>
-          //     <div style={{ display: 'flex', gap: '30px', justifyContent: 'center' }}>
-          //       {colorSelection.map((item, index) => (
-          //         <Box
-          //           key={index}
-          //           onClick={() => this.handleFilterClick(item.color)}
-          //           style={{
-          //             width: '100px',
-          //             height: '100px',
-          //             border: `3px solid ${item.color}`,
-          //             cursor: 'pointer',
-          //             boxShadow: selectedFilter === item.color ? '0 0 10px 5px rgba(0, 0, 0, 0.3)' : 'none',
-          //           }}
-          //         ></Box>
-          //       ))}
-          //     </div>
-          //     <div className="image">
-          //     {selectedFilter && (
-          //         <div
-          //           style={{
-          //             position: 'absolute',
-          //             top: 0,
-          //             left: 0,
-          //             width: '100%',
-          //             height: '100%',
-          //             background: selectedFilter,
-          //             opacity: 0.5, // Adjust opacity as needed
-          //           }}
-          //         />
-          //       )}
-          //       <img src={selectedGif.url} alt="" style={{ width: '100%', height: 'auto' }} />
-          //     </div>
-          //   </>
-          // )
-          }
-          <div className="action-content">
-            <div className="buttons">
-              <Button onClick={this.handleSaveGif}>Save Gif</Button>
-            </div>
-          </div>
+          )}
         </div>
       </DialogWrapper>
     );

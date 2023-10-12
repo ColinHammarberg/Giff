@@ -30,12 +30,19 @@
         gap: 40px;
         margin: auto;
 
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
         .tabs-level-2 {
             border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+
             .tab-item {
                 .tab-wrapper {
                     color: #FEC901;
                 }
+
                 &.active {
                     .tab-wrapper {
                         border-bottom: 2px solid #FEC901;
@@ -57,14 +64,29 @@
             }
         }
 
+        .select-color-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 240px;
+            height: 240px;
+
+            >div {
+                min-width: 60px;
+                cursor: pointer;
+                box-sizing: border-box;
+                flex: 1 0 calc(25% - 30px);
+            }
+        }
+
         .image {
             width: 100%;
             display: flex;
             justify-content: center;
 
             img {
-                width: 255px;
-                height: 191px;
+                width: 288px;
+                height: 240px;
             }
         }
 
