@@ -8,7 +8,7 @@ s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
     aws_secret_access_key='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', region_name='eu-north-1')
 
 def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
-    print('resource_id1', resource_id)
+    print('file_name', file_name)
     try:
         s3.upload_file(
             file_name, 
@@ -42,7 +42,7 @@ def fetch_user_gifs():
                                                          Params={'Bucket': bucket_name,
                                                                  'Key': f"{user_id}/{gif.gif_name}"},
                                                          ExpiresIn=3600)  # URL expires in 1 hour
-        gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId})
+        gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId, "selectedColor": gif.selectedColor})
     
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
 

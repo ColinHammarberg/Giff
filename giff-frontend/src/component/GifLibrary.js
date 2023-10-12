@@ -4,11 +4,14 @@ import Header from './Header';
 import { Box, Button } from '@mui/material';
 import { DownloadAllLibraryGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
+import DesignGifDialog from './DesignGifDialog';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isDesignOpen, setIsDesignOpen] = useState(false);
+    const [selectedDesignGif, setSelectedDesignGif] = useState({});
     const navigate = useNavigate();
     useEffect(() => {
       const access_token = localStorage.getItem('access_token');
@@ -26,26 +29,55 @@ function GifLibrary() {
         }
         const gifData = gifs.data.map(gif => ({ url: gif.url, name: gif.name }));
         setLoading(true);
-        setTimeout(() => {
-          try {
-            const response = await DownloadAllLibraryGifs(gifData);
-            // Create blob
-            const blob = new Blob([response.data], { type: 'application/zip' });
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = 'your-gift-bag.zip';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          } catch (error) {
-            console.error('Error downloading ZIP file:', error);
-          }
-          setLoading(false);
-        }, 3000)
+        try {
+          const response = await DownloadAllLibraryGifs(gifData);
+          // Create blob
+          const blob = new Blob([response.data], { type: 'application/zip' });
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = 'your-gift-bag.zip';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (error) {
+          console.error('Error downloading ZIP file:', error);
+        }
+        setLoading(false);
+      };
+      const shareGif = (gifUrl, resourceId) => {
+        console.log('Sharing GIF:', gifUrl);
+        console.log('Resource ID:', resourceId);
+        setIsDesignOpen(true);
+        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId});
+      };
+      const handleShareButtonClick = () => {
+        if (selectedGif !== null) {
+          const hoveredGif = gifs.data[selectedGif];
+          shareGif(hoveredGif.url, hoveredGif.resourceId);
+        }
+      };
+      console.log('gifs', gifs);
+      const handleOpenDesign = () => {
+        setIsDesignOpen(true);
+      };
+    
+      const handleCloseDesign = () => {
+        setIsDesignOpen(false);
+      };
   return (
     <div className="gif-library">
       <Header menu />
+      <DesignGifDialog
+        isOpen={isDesignOpen}
+        selectedGif={selectedDesignGif}
+        onClickOk={() => {
+          handleOpenDesign();
+        }}
+        onClickCancel={() => {
+          handleCloseDesign();
+        }} 
+      />
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
           <Box className="title"><span>This is your library.</span> download all gifs at once <span>or</span> hover over the gif you want to download or share.</Box>
@@ -55,17 +87,17 @@ function GifLibrary() {
             {gifs?.data?.map((item, index) => {
               return (
                 <Box
-                  className="gif-box" 
+                  className="gif-box"
                 >
-                  <Box 
+                  <Box
                     className={`gif-container ${selectedGif === index ? 'hovered' : ''}`} 
                     onMouseEnter={() => setSelectedGif(index)}
                     onMouseLeave={() => setSelectedGif(null)}
                   >
-                    <img src={item.url} alt="" />
+                    <img src={item.url} alt="" style={{ border: `4px solid ${item.selectedColor}`}} />
                     <Box className="gif-buttons">
                       <Button className="download">Download</Button>
-                      <Button className="share">Share</Button>
+                      <Button className="share" onClick={handleShareButtonClick}>Share</Button>
                     </Box>
                   </Box>
                   <span>{item.name}</span>

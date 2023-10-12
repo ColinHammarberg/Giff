@@ -7,7 +7,7 @@ from s3_helper import upload_to_s3, fetch_user_gifs
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -31,6 +31,10 @@ jwt = JWTManager(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 
+@app.route('/update_selected_color', methods=['POST'])
+def update_gif_color():
+    print('generate')
+    return update_selected_color()
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():

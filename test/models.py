@@ -15,6 +15,7 @@ class UserGif(db.Model):
     gif_name = db.Column(db.String)
     gif_url = db.Column(db.String)
     resourceId = db.Column(db.String, unique=True)
+    selectedColor = db.Column(db.String)
     user = db.relationship('User', back_populates='gifs')
 
 User.gifs = db.relationship('UserGif', back_populates='user')
