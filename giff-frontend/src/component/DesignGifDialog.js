@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import './DesignGifDialog.scss';
-import { ThemeProvider } from '@emotion/react';
 import DialogWrapper from './DialogWrapper';
 import { Box, Button } from '@mui/material';
 import { ApplyGifDesign } from '../endpoints/Apis';
@@ -61,6 +60,7 @@ class DesignGifDialog extends PureComponent {
       console.log('response.data.message', response.data.message);
       if (response.data.message === 'Selected color updated successfully') {
         this.handleCancel()
+        this.props.setDesignChanges(true);
         showNotification('success', "You can't create more than 8 gifs at once.")
       }
       // Handle success, e.g., show a success message

@@ -9,6 +9,7 @@ import DesignGifDialog from './DesignGifDialog';
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
+    const [designChanges, setDesignChanges] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
@@ -22,7 +23,7 @@ function GifLibrary() {
         }
       };
       fetchData();
-      }, []);
+      }, [designChanges]);
       const handleDownloadLibraryGifs = async () => {
         if (!gifs) {
           return;
@@ -55,6 +56,7 @@ function GifLibrary() {
         if (selectedGif !== null) {
           const hoveredGif = gifs.data[selectedGif];
           shareGif(hoveredGif.url, hoveredGif.resourceId);
+          setDesignChanges(false);
         }
       };
       console.log('gifs', gifs);
@@ -71,12 +73,13 @@ function GifLibrary() {
       <DesignGifDialog
         isOpen={isDesignOpen}
         selectedGif={selectedDesignGif}
+        setDesignChanges={setDesignChanges}
         onClickOk={() => {
           handleOpenDesign();
         }}
         onClickCancel={() => {
           handleCloseDesign();
-        }} 
+        }}
       />
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
@@ -97,7 +100,7 @@ function GifLibrary() {
                     <img src={item.url} alt="" style={{ border: `4px solid ${item.selectedColor}`}} />
                     <Box className="gif-buttons">
                       <Button className="download">Download</Button>
-                      <Button className="share" onClick={handleShareButtonClick}>Share</Button>
+                      <Button className="share" onClick={handleShareButtonClick}>Edit</Button>
                     </Box>
                   </Box>
                   <span>{item.name}</span>
