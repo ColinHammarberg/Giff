@@ -8,6 +8,7 @@ import io
 import os
 import time
 import zipfile
+from PIL import Image
 import requests
 import fitz
 from PIL import Image
@@ -324,4 +325,21 @@ def download_all_library_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+
+@jwt_required()
+def update_selected_color():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    resource_id = data.get('resourceId')
+    selected_color = data.get('selectedColor')
+
+    # Update the selectedColor for the specified GIF
+    user_gif = UserGif.query.filter_by(user_id=user_id, resourceId=resource_id).first()
+
+    if user_gif:
+        user_gif.selectedColor = selected_color
+        db.session.commit()
+        return jsonify({'message': 'Selected color updated successfully'}), 200
+    else:
+        return jsonify({'error': 'GIF not found'}), 404
 

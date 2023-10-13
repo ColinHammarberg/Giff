@@ -122,16 +122,12 @@ function MultipleGifLanding() {
       )}
       {!isLoading && (
         <Box className="bottom-content">
-          {gifGenerated ? (
+          {gifGenerated && (
             <Box className="go-back-content">
               Want to create another gif?{' '}
               <span className="back-btn" onClick={() => setGifGenerated(false)}>
                 Go back to home page here
               </span>
-            </Box>
-          ) : (
-            <Box className="number-of-gifs-created">
-              [number of] gifs already created
             </Box>
           )}
         </Box>
