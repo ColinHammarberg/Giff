@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Staatliches&display=swap');
+@import '../utils/responsiveUtils.scss';
 
 .generated-gif {
     text-align: center;
@@ -50,6 +51,17 @@
             &.share-else-where {
                 color: #000;
                 background-color: #F4149B !important;
+            }
+        }
+    }
+}
+
+@include media(phone) {
+    .generated-gif {
+        .loading-container {
+            img {
+                width: 100%;
+                height: 100%;
             }
         }
     }
