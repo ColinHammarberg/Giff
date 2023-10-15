@@ -38,7 +38,7 @@ jobs:
         with:
           name: gift-app
           path: |
-            .
+            test
             !venv/
 
   deploy:
