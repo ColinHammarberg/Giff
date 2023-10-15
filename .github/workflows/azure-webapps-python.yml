@@ -36,7 +36,7 @@ jobs:
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
         with:
-          name: python-app
+          name: gift-app
           path: |
             src
             !venv/
@@ -52,13 +52,13 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
-          name: python-app
+          name: gift-app
           path: .
           
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'mywebapp-sample'
+          app-name: 'gift-server-eu-1'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_DEPLOYMENT_PROFILE }}
