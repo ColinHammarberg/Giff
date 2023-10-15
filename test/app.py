@@ -31,6 +31,7 @@ jwt = JWTManager(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 
+
 @app.route('/update_selected_color', methods=['POST'])
 def update_gif_color():
     print('generate')
