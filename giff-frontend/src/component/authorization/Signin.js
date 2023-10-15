@@ -72,13 +72,14 @@ function UserSignin() {
             Password
           </InputLabel>
           <PasswordField 
-            value={password} 
+            value={password}
             name="password-field" 
             onKeyPress={(event) => {
               handleKeyPressGenerateGif(event);
             }}
             onChange={handleOnChangePassword} 
-            error={error} helperText={error ? 'Sorry, champ. Your password or email is wrong. Please give it another try.' : ''}
+            error={error} 
+            helperText={error ? 'Sorry, champ. Your password or email is wrong. Please give it another try.' : ''}
           />
         </div>
         <div className="buttons">

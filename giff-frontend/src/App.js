@@ -18,6 +18,8 @@ import UserSignup from './component/authorization/Signup';
 import Profile from './component/Profile';
 import Articles from './component/Articles';
 import GifLibrary from './component/GifLibrary';
+import { KeepAccessAlive } from './endpoints/Apis';
+import KeepAliveComponent from './component/KeepAlive';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -36,67 +38,70 @@ function Navigator() {
 
 function App() {
   const queryClient = new QueryClient();
+  const REACT_APP_BASEURL = process.env.REACT_APP_BASEURL || '/';
+
   return (
     <GiftContextProvider>
       <QueryClientProvider client={queryClient}>
         <NotificationContainer />
         <BrowserRouter>
+          <KeepAliveComponent />
           {/* <Navigator /> */}
           <Routes>
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/signup`}
+              path={`${REACT_APP_BASEURL}/signup`}
               element={<UserSignup />}
             />
             <Route
-              path={process.env.REACT_APP_BASEURL}
+              path={'/'}
               element={<UserSignin />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/profile`}
+              path={`${REACT_APP_BASEURL}/profile`}
               element={<Profile />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/gif-library`}
+              path={`${REACT_APP_BASEURL}/gif-library`}
               element={<GifLibrary />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/gift`}
+              path={`${REACT_APP_BASEURL}/gift`}
               element={<Landing />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/single-gif-creation`}
+              path={`${REACT_APP_BASEURL}/single-gif-creation`}
               element={<GifLanding />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/choose-option-create`}
+              path={`${REACT_APP_BASEURL}/choose-option-create`}
               element={<ChooseOptionCreate />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/send-via-own-email`}
+              path={`${REACT_APP_BASEURL}/send-via-own-email`}
               element={<SendViaOwnEmail />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/multiple-gif-creation`}
+              path={`${REACT_APP_BASEURL}/multiple-gif-creation`}
               element={<MultipleGifLanding />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/articles`}
+              path={`${REACT_APP_BASEURL}/articles`}
               element={<Articles />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/email-choice`}
+              path={`${REACT_APP_BASEURL}/email-choice`}
               element={<EmailChoice />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/send-gift-email`}
+              path={`${REACT_APP_BASEURL}/send-gift-email`}
               element={<SendEmailComponent />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/rights-and-privacy`}
+              path={`${REACT_APP_BASEURL}/rights-and-privacy`}
               element={<RightsAndPrivacy />}
             />
             <Route
-              path={`${process.env.REACT_APP_BASEURL}/mrs-gift`}
+              path={`${REACT_APP_BASEURL}/mrs-gift`}
               element={<OpenAiGenerator />}
             />
           </Routes>

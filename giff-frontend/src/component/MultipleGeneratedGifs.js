@@ -52,8 +52,8 @@ function MultipleGeneratedGifs(props) {
           <Grid container spacing={2} className="multiple-gifs">
             {gifGenerated && renderImportedGifs()}
           </Grid>
-          <Box>
-            <Button onClick={onDownload}>Download Gifs</Button>
+          <Box className="button-container">
+            <Button className="download-gifs" onClick={onDownload}>Download Gifs</Button>
           </Box>
         </>
       )}

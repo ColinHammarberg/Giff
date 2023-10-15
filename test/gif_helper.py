@@ -8,6 +8,7 @@ import io
 import os
 import time
 import zipfile
+from PIL import Image
 import requests
 import fitz
 from PIL import Image
@@ -271,7 +272,6 @@ def download_gif():
 
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
-
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
@@ -298,21 +298,21 @@ def download_all_gifs():
 @jwt_required()
 def download_all_library_gifs():
     data = request.get_json()
-    print('gif_urls', data)
-    gif_urls = data.get('gifUrls', [])
+    print('gif_data', data)
+    gif_data = data.get('gifData', [])
     try:
         zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for idx, gif_url in enumerate(gif_urls):
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
+            for gif_info in gif_data:
+                gif_url = gif_info['url']
+                gif_name = gif_info['name']
                 # Download the GIF
                 response = requests.get(gif_url)
-                
                 if response.status_code == 200:
                     # Convert the GIF to a BytesIO object
-                    gif_data = io.BytesIO(response.content)
-                    
+                    gif_bytes = io.BytesIO(response.content)
                     # Add the GIF data to ZIP
-                    zipf.writestr(f'gif_{idx + 1}.gif', gif_data.getvalue())
+                    zipf.writestr(f'{gif_name}.gif', gif_bytes.getvalue())
                     
         zip_buffer.seek(0)
 
@@ -325,3 +325,21 @@ def download_all_library_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+
+@jwt_required()
+def update_selected_color():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    resource_id = data.get('resourceId')
+    selected_color = data.get('selectedColor')
+
+    # Update the selectedColor for the specified GIF
+    user_gif = UserGif.query.filter_by(user_id=user_id, resourceId=resource_id).first()
+
+    if user_gif:
+        user_gif.selectedColor = selected_color
+        db.session.commit()
+        return jsonify({'message': 'Selected color updated successfully'}), 200
+    else:
+        return jsonify({'error': 'GIF not found'}), 404
+

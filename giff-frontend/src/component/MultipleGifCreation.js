@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import MultipleGifGenerator from './MultipleGifGenerator';
 import './GifLanding.scss';
 import GifError from './GifError';
@@ -122,16 +122,12 @@ function MultipleGifLanding() {
       )}
       {!isLoading && (
         <Box className="bottom-content">
-          {gifGenerated ? (
+          {gifGenerated && (
             <Box className="go-back-content">
               Want to create another gif?{' '}
               <span className="back-btn" onClick={() => setGifGenerated(false)}>
                 Go back to home page here
               </span>
-            </Box>
-          ) : (
-            <Box className="number-of-gifs-created">
-              [number of] gifs already created
             </Box>
           )}
         </Box>

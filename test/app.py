@@ -7,8 +7,8 @@ from s3_helper import upload_to_s3, fetch_user_gifs
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -31,9 +31,11 @@ jwt = JWTManager(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 
-@app.route('/ping', methods=['GET'])
-def hello_world():
-    return jsonify(message="pong!!")
+
+@app.route('/update_selected_color', methods=['POST'])
+def update_gif_color():
+    print('generate')
+    return update_selected_color()
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():
@@ -57,6 +59,9 @@ def signout_user():
     print('generate')
     return signout()
 
+@app.route('/keep_access_alive', methods=['GET'])
+def keep_user_access_alive():
+    return keep_access_alive()
 
 @app.route('/signup', methods=['POST'])
 def signup_user():
@@ -73,6 +78,7 @@ def update_user_password():
     return update_password()
 
 @app.route('/generate-single-gif', methods=['POST'])
+@jwt_required(optional=True)
 def generate_gif():
     data = request.get_json()
     user_id = data.get('user_id', None)
@@ -107,11 +113,11 @@ def generate_gif():
 
     elif 5000 <= scroll_height < 9000:
         timer = 400
-        duration = timer / 1500.0  # 0.266s / per screenshot
+        duration = timer / 800.0  # 0.266s / per screenshot
 
     else:
         timer = 500
-        duration = timer / 2000.0  # 0.25s / per screenshot
+        duration = timer / 800.0  # 0.25s / per screenshot
 
     if not NAME.endswith('.gif'):
         NAME += '.gif'
@@ -158,7 +164,7 @@ def generate_gif():
     )
 
     resource_id = str(uuid.uuid4())
-    print('resource_id2', resource_id)
+    print('user_id', user_id)
     folder_name = f"{user_id}/"
     if user_id:
         upload_to_s3(output_path, 'gift-resources',

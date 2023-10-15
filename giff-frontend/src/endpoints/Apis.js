@@ -128,6 +128,49 @@ export async function FetchUserGifs(access_token) {
   return response;
 }
 
+export async function KeepAccessAlive() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.get('http://127.0.0.1:5000/keep_access_alive', {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  });
+  return response;
+}
+
+export async function ApplyGifDesign(selectedGif, selectedColor) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('access_token', access_token);
+  const response = await axios.post(
+    'http://127.0.0.1:5000/update_selected_color',
+    {
+      selectedColor,
+      resourceId: selectedGif.resourceId,
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    }
+  );
+
+  return response;
+}
+
+
+export async function DownloadAllLibraryGifs(gifData) {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.post(`http://127.0.0.1:5000/download_library_gifs`,
+  { gifData },
+  {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    },
+    responseType: 'arraybuffer'
+  });
+  return response;
+}
+
 export async function DeleteUserProfile(access_token) {
   const response = await axios.get(`http://127.0.0.1:5000/delete_user`, {
     headers: {
