@@ -33,7 +33,7 @@ mail = Mail(app)
 
 @app.route('/ping', methods=['GET'])
 def hello_world():
-    return jsonify(message="pong!")
+    return jsonify(message="pong!!")
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():
