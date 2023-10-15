@@ -26,6 +26,20 @@ function GifLibrary() {
       };
       fetchData();
       }, [designChanges]);
+
+      const handleDownloadIndividualGifs = async () => {
+        if (selectedGif !== null) {
+          const hoveredGif = gifs.data[selectedGif];
+          const link = document.createElement('a');
+          link.href = hoveredGif.url; // Use the actual URL here
+          link.target = '_blank';
+          link.download = hoveredGif.name;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+
       const handleDownloadLibraryGifs = async () => {
         if (!gifs) {
           return;
@@ -104,7 +118,7 @@ function GifLibrary() {
                   >
                     <img src={item.url} alt="" style={{ border: `4px solid ${item.selectedColor}`}} />
                     <Box className="gif-buttons">
-                      <Button className="download">Download</Button>
+                      <Button className="download" onClick={handleDownloadIndividualGifs}>Download</Button>
                       <Button className="share" onClick={handleShareButtonClick}>Edit</Button>
                     </Box>
                   </Box>
