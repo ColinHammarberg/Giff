@@ -21,15 +21,34 @@ function GifLibrary() {
       const fetchData = async () => {
         const response = await FetchUserGifs(access_token);
         if (response.data) {
-          setGifs(response.data);
+          console.log('response', response.data);
+  
+          // Sort the gifs based on the created_at field in descending order
+          const sortedGifs = response.data.sort((a, b) => {
+            const dateA = a.created_at ? new Date(a.created_at) : null;
+            const dateB = b.created_at ? new Date(b.created_at) : null;
+  
+            if (dateA && dateB) {
+              return dateB - dateA;
+            } else if (dateA) {
+              return -1;
+            } else if (dateB) {
+              return 1;
+            }
+            return 0;
+          });
+  
+          setGifs(sortedGifs);
         }
       };
       fetchData();
-      }, [designChanges]);
+    }, [designChanges]);
+
+      console.log('gifs', gifs);
 
       const handleDownloadIndividualGifs = async () => {
         if (selectedGif !== null) {
-          const hoveredGif = gifs.data[selectedGif];
+          const hoveredGif = gifs[selectedGif];
           const link = document.createElement('a');
           link.href = hoveredGif.url; // Use the actual URL here
           link.target = '_blank';
@@ -44,7 +63,7 @@ function GifLibrary() {
         if (!gifs) {
           return;
         }
-        const gifData = gifs.data.map(gif => ({ url: gif.url, name: gif.name }));
+        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name }));
         setLoading(true);
         try {
           const response = await DownloadAllLibraryGifs(gifData);
@@ -62,19 +81,22 @@ function GifLibrary() {
         }
         setLoading(false);
       };
+
       const shareGif = (gifUrl, resourceId) => {
         console.log('Sharing GIF:', gifUrl);
         console.log('Resource ID:', resourceId);
         setIsDesignOpen(true);
         setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId});
       };
-      const handleShareButtonClick = () => {
+
+      const handleEditButtonClick = () => {
         if (selectedGif !== null) {
-          const hoveredGif = gifs.data[selectedGif];
+          const hoveredGif = gifs[selectedGif];
           shareGif(hoveredGif.url, hoveredGif.resourceId);
           setDesignChanges(false);
         }
       };
+
       console.log('gifs', gifs);
       const handleOpenDesign = () => {
         setIsDesignOpen(true);
@@ -106,7 +128,7 @@ function GifLibrary() {
           <Box className="download">{gifs?.data?.length > 0 ? <Button onClick={handleDownloadLibraryGifs}>Download all gifs</Button> : <Button onClick={() => navigate('/choose-option-create')}>Create gifs</Button> }</Box>
         </Box>
           <Box className="gif-wrapper">
-            {gifs?.data?.map((item, index) => {
+            {gifs?.map((item, index) => {
               return (
                 <Box
                   className="gif-box"
@@ -119,7 +141,7 @@ function GifLibrary() {
                     <img src={item.url} alt="" style={{ border: `4px solid ${item.selectedColor}`}} />
                     <Box className="gif-buttons">
                       <Button className="download" onClick={handleDownloadIndividualGifs}>Download</Button>
-                      <Button className="share" onClick={handleShareButtonClick}>Edit</Button>
+                      <Button className="share" onClick={handleEditButtonClick}>Edit</Button>
                     </Box>
                   </Box>
                   <span>{item.name}</span>
