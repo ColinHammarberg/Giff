@@ -1,6 +1,6 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
-.responsive-dialog {
+.article-showcase-dialog {
     .MuiPaper-root {
         padding: 0px;
         border: 3px solid rgba(254, 201, 1, 1);
@@ -123,17 +123,17 @@
     }
 }
 
-@include media(phone) {
-    .responsive-dialog {
-        .MuiPaper-root {
-            .article-header {
-                height: 150px;
-            }
-            .article-btn {
-                .MuiButton-root {
-                    width: 100%;
-                }
-            }
-        }
-    }
-}
+// @include media(phone) {
+//     .responsive-dialog {
+//         .MuiPaper-root {
+//             .article-header {
+//                 height: 150px;
+//             }
+//             .article-btn {
+//                 .MuiButton-root {
+//                     width: 100%;
+//                 }
+//             }
+//         }
+//     }
+// }

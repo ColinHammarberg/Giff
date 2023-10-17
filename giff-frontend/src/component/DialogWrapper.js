@@ -1,8 +1,7 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import CloseIcon from '@mui/icons-material/Close';
-import { Dialog, DialogActions, DialogContent, IconButton } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import './DialogWrapper.scss';
 
 function DialogWrapper(props) {
@@ -37,14 +36,12 @@ function DialogWrapper(props) {
       <DialogContent className="dialog-content styled-scrollbar">
         {renderTitle()}
         {onClose && showCloseIcon ? (
-          <IconButton
-            aria-label="close"
+          <Button
             className="close-button"
-            color="secondary"
             onClick={onClose}
           >
-            <CloseIcon className="close-icon" />
-          </IconButton>
+            Close
+          </Button>
         ) : null}
 
         {children}

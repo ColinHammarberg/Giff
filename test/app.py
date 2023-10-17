@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from extensions import db  # Just import db, not app
+from extensions import db # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3, fetch_user_gifs
+from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs
 import uuid
 from models import UserGif
 import time
@@ -76,6 +76,10 @@ def delete_user():
 @app.route('/update_user_password', methods=['POST'])
 def update_user_password():
     return update_password()
+
+@app.route('/get_multiple_gifs', methods=['POST'])
+def get_multiple_gifs_by_request():
+    return get_multiple_gifs()
 
 @app.route('/generate-single-gif', methods=['POST'])
 @jwt_required(optional=True)
@@ -155,6 +159,7 @@ def generate_gif():
         duration=[int(d * 1000) for _, d in frames_with_durations],
         loop=0
     )
+
     frames_with_durations[0][0].save(
         backend_output_path,
         save_all=True,
@@ -171,6 +176,10 @@ def generate_gif():
                  f"{folder_name}{NAME}", resource_id)
         # Database Entry Here
         print('user-id', user_id)
+        gif_data = {
+            "name": NAME,
+            "resourceId": resource_id,
+        }
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
                     gif_url=output_path, resourceId=resource_id))
         db.session.commit()
@@ -179,7 +188,9 @@ def generate_gif():
         os.remove(os.path.join(screenshots_dir, screenshot))
     os.rmdir(screenshots_dir)
 
-    return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME})
+    # Return the generated GIF data as a list with a dictionary
+    return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
+
 
 @app.route('/download_library_gifs', methods=['POST'])
 def download_library_gifs():
@@ -199,6 +210,8 @@ def generate_gifs_from_list():
     error_messages = set()
     headers = {'Authorization': f'Bearer {access_token}'}
 
+    generated_gifs_data = []
+
     for gif in gifData:
         URL = gif.get('url')
         name = gif.get('name')
@@ -213,11 +226,14 @@ def generate_gifs_from_list():
             )
             if response.status_code != 200:
                 error_messages.add(f"Failed to generate GIF for URL: {URL}")
+            single_gif_data = response.json().get('data', [])
+            generated_gifs_data.extend(single_gif_data)
+            print('single_gif_data', single_gif_data)
 
     if error_messages:
         return jsonify({'error': '\n'.join(error_messages)})
 
-    return jsonify({'message': 'GIFs generated successfully for all URLs'})
+    return jsonify({'message': 'GIFs generated successfully for all URLs', 'data': generated_gifs_data})
 
 @app.route('/generate-pdf-gif', methods=['POST'])
 def generate_pdf():

@@ -58,7 +58,8 @@ function MultipleGifLanding() {
                 setError('general error');
             }
           } else if (response.data.message === 'GIFs generated successfully for all URLs') {
-            setGifGenerated(true);
+            setGifGenerated(response.data || true);
+            console.log('response112', gifGenerated);
           }
           setIsLoading(false);
         } catch (error) {

@@ -125,7 +125,7 @@ export async function FetchUserGifs(access_token) {
       'Authorization': `Bearer ${access_token}`
     }
   });
-  return response;
+  return response.data;
 }
 
 export async function KeepAccessAlive() {
@@ -136,6 +136,22 @@ export async function KeepAccessAlive() {
     }
   });
   return response;
+}
+
+export async function GetMultipleGifs(gifs) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('access_token', access_token);
+  const response = await axios.post(
+    'http://127.0.0.1:5000/get_multiple_gifs',
+    {'gifs': gifs},
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    }
+  );
+
+  return response.data;
 }
 
 export async function ApplyGifDesign(selectedGif, selectedColor) {
