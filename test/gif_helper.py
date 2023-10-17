@@ -8,6 +8,7 @@ import io
 import os
 import time
 import zipfile
+from PIL import Image
 import requests
 import fitz
 from PIL import Image
@@ -22,93 +23,6 @@ backend_gifs_folder = os.path.join(os.path.dirname(
 def is_video_url(URL):
     # Check if the URL includes "youtube" or "vimeo"
     return "youtube" in URL or "vimeo" in URL
-
-@jwt_required()
-def generate_gif():
-    data = request.get_json()
-    user_id = get_jwt_identity()
-    print('userId1', user_id)
-    URL = data.get('url')
-    NAME = data.get('name', 'scroll.gif')
-
-    if is_video_url(URL):
-        return jsonify({'error': 'video url'})
-
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.get(URL)
-
-    scroll_height = driver.execute_script("return document.body.scrollHeight")
-    if scroll_height < 1000:
-        return jsonify({'error': 'Invalid scroll height'})
-
-    elif 1000 <= scroll_height < 3000:
-        timer = 200
-        duration = timer / 600.0  # 0.333s / per screenshot
-
-    elif 3000 <= scroll_height < 5000:
-        timer = 300
-        duration = timer / 800.0  # 0.375s / per screenshot
-
-    elif 5000 <= scroll_height < 9000:
-        timer = 400
-        duration = timer / 1500.0  # 0.266s / per screenshot
-
-    else:
-        timer = 500
-        duration = timer / 2000.0  # 0.25s / per screenshot
-
-    if not NAME.endswith('.gif'):
-        NAME += '.gif'
-
-    screenshots_dir = 'screenshots'
-    os.makedirs(screenshots_dir, exist_ok=True)
-    driver.execute_script("document.body.style.overflow = 'hidden'")
-
-    for i in range(0, scroll_height, timer):
-        driver.execute_script(f"window.scrollTo(0, {i})")
-        time.sleep(1)
-        screenshot_path = os.path.join(screenshots_dir, f'screenshot_{i}.png')
-        driver.save_screenshot(screenshot_path)
-
-    driver.quit()
-
-    frames_with_durations = []
-    for screenshot in os.listdir(screenshots_dir):
-        screenshot_path = os.path.join(screenshots_dir, screenshot)
-        frame = Image.open(screenshot_path)
-        frames_with_durations.append((frame, duration))
-
-    gifs_frontend_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'test', 'gifs')
-    os.makedirs(gifs_frontend_folder, exist_ok=True)
-    os.makedirs(gifs_folder, exist_ok=True)
-    output_path = os.path.join(gifs_frontend_folder, NAME)
-    frames_with_durations[0][0].save(
-        output_path,
-        save_all=True,
-        append_images=[frame for frame, _ in frames_with_durations[1:]],
-        duration=[int(d * 1000) for _, d in frames_with_durations],
-        loop=0
-    )
-
-    resource_id = str(uuid.uuid4())
-    print('resource_id2', resource_id)
-    folder_name = f"{user_id}/"
-    upload_to_s3(output_path, 'gift-resources', f"{folder_name}{NAME}", resource_id)
-    # Database Entry Here
-    print('user-id', user_id)
-    db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id))
-    db.session.commit()
-
-    for screenshot in os.listdir(screenshots_dir):
-        os.remove(os.path.join(screenshots_dir, screenshot))
-    os.rmdir(screenshots_dir)
-
-    return jsonify({'message': 'GIF generated and uploaded!'})
 
 def generate_gifs_from_list():
     data = request.get_json()
@@ -140,12 +54,13 @@ def generate_gifs_from_list():
 
                 # Check the scroll_height error for each URL
                 single_gif_data = response.json()
+                print('single_gif_data', single_gif_data)
                 if 'error' in single_gif_data and single_gif_data['error'] == 'Invalid scroll height':
                     error_messages.add("Invalid scroll height")
     if error_messages:
         return jsonify({'error': '\n'.join(error_messages)})
 
-    return jsonify({'message': 'GIFs generated successfully for all URLs'})
+    return jsonify({'message': 'GIFs generated successfully for all URLs', 'data': single_gif_data})
 
 
 @jwt_required()
@@ -271,7 +186,6 @@ def download_gif():
 
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
-
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
@@ -298,21 +212,21 @@ def download_all_gifs():
 @jwt_required()
 def download_all_library_gifs():
     data = request.get_json()
-    print('gif_urls', data)
-    gif_urls = data.get('gifUrls', [])
+    print('gif_data', data)
+    gif_data = data.get('gifData', [])
     try:
         zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for idx, gif_url in enumerate(gif_urls):
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
+            for gif_info in gif_data:
+                gif_url = gif_info['url']
+                gif_name = gif_info['name']
                 # Download the GIF
                 response = requests.get(gif_url)
-                
                 if response.status_code == 200:
                     # Convert the GIF to a BytesIO object
-                    gif_data = io.BytesIO(response.content)
-                    
+                    gif_bytes = io.BytesIO(response.content)
                     # Add the GIF data to ZIP
-                    zipf.writestr(f'gif_{idx + 1}.gif', gif_data.getvalue())
+                    zipf.writestr(f'{gif_name}.gif', gif_bytes.getvalue())
                     
         zip_buffer.seek(0)
 
@@ -325,3 +239,21 @@ def download_all_library_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+
+@jwt_required()
+def update_selected_color():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    resource_id = data.get('resourceId')
+    selected_color = data.get('selectedColor')
+
+    # Update the selectedColor for the specified GIF
+    user_gif = UserGif.query.filter_by(user_id=user_id, resourceId=resource_id).first()
+
+    if user_gif:
+        user_gif.selectedColor = selected_color
+        db.session.commit()
+        return jsonify({'message': 'Selected color updated successfully'}), 200
+    else:
+        return jsonify({'error': 'GIF not found'}), 404
+

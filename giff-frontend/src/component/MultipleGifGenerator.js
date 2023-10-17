@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, InputLabel, TextField, IconButton, Button, Icon } from '@mui/material';
+import { Box, InputLabel, TextField, IconButton, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './MultipleGifGenerator.scss';
