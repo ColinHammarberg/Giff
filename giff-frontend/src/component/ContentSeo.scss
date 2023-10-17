@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .content-seo {
     width: 100%;
@@ -101,12 +101,12 @@
     }
 }
 
-@include media(phone) {
-    .content-seo {
-        .content-map {
-            .box-container {
-                width: 100%;
-            }
-        }
-    }
-}
+// @include media(phone) {
+//     .content-seo {
+//         .content-map {
+//             .box-container {
+//                 width: 100%;
+//             }
+//         }
+//     }
+// }

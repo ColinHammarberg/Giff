@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .article-showcase {
     width: 100%;
@@ -61,12 +61,12 @@
     }
 }
 
-@include media(phone) {
-    .gift-for-sale {
-        .gift-for-sale-info {
-            width: unset;
-            height: unset;
-            padding: 24px;
-        }
-    }
-}
+// @include media(phone) {
+//     .gift-for-sale {
+//         .gift-for-sale-info {
+//             width: unset;
+//             height: unset;
+//             padding: 24px;
+//         }
+//     }
+// }

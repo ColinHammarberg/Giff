@@ -1,4 +1,4 @@
-@import '../../utils/responsiveUtils.scss';
+// @import '../../utils/responsiveUtils.scss';
 
 .authorization {
     width: 100%;
@@ -110,12 +110,12 @@
     }
 }
 
-@include media(phone) {
-    .authorization {
-        .user-authentication {
-            width: 100%;
-            display: grid;
-            justify-content: center;
-        }
-    }
-}
+// @include media(phone) {
+//     .authorization {
+//         .user-authentication {
+//             width: 100%;
+//             display: grid;
+//             justify-content: center;
+//         }
+//     }
+// }

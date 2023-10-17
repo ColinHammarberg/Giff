@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .profile {
     font-family: 'Staatliches';
@@ -85,21 +85,21 @@
     }
 }
 
-@include media(phone) {
-    .profile {
-        .profile-info {
-            .email-details {
-                display: grid;
-            }
+// @include media(phone) {
+//     .profile {
+//         .profile-info {
+//             .email-details {
+//                 display: grid;
+//             }
 
-            .password-details {
-                display: grid;
-            }
-        }
+//             .password-details {
+//                 display: grid;
+//             }
+//         }
 
-        .delete-account {
-            margin-top: 50px;
-            margin-bottom: 50px;
-        }
-    }
-}
+//         .delete-account {
+//             margin-top: 50px;
+//             margin-bottom: 50px;
+//         }
+//     }
+// }

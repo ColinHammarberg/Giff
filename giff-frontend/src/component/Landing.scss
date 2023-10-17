@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .landing {
     width: 100%;
@@ -21,10 +21,10 @@
     }
 }
 
-@include media(phone) {
-    .landing {
-        img {
-            width: 420px;
-        }
-    }
-}
+// @include media(phone) {
+//     .landing {
+//         img {
+//             width: 420px;
+//         }
+//     }
+// }

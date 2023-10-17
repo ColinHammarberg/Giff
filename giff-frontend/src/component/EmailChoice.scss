@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .choose-email-choice-info {
     display: grid;
@@ -60,17 +60,17 @@
     }
 }
 
-@include media(phone) {
-    .choose-email-choice-info {
-        .container {
-            .sub-title {
-                font-size: 20px;
-            }
-        }
-        .choose-btns {
-            .MuiButton-root {
-                width: 286px;
-            }
-        }
-    }
-}
+// @include media(phone) {
+//     .choose-email-choice-info {
+//         .container {
+//             .sub-title {
+//                 font-size: 20px;
+//             }
+//         }
+//         .choose-btns {
+//             .MuiButton-root {
+//                 width: 286px;
+//             }
+//         }
+//     }
+// }

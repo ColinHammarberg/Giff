@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .choose-option-create {
     width: 100%;
@@ -55,29 +55,29 @@
     }
 }
 
-@include media(phone) {
-    .choose-option-create {
-        .choose-option-create-info {
-            padding: 24px;
+// @include media(phone) {
+//     .choose-option-create {
+//         .choose-option-create-info {
+//             padding: 24px;
 
-            .container {
-                width: 234px;
-                margin: auto;
-                .title {
-                    font-size: 50px;
-                }
-            }
+//             .container {
+//                 width: 234px;
+//                 margin: auto;
+//                 .title {
+//                     font-size: 50px;
+//                 }
+//             }
 
-            .enter-btn {
-                display: unset;
+//             .enter-btn {
+//                 display: unset;
 
-                .MuiButton-root {
-                    width: 100%;
-                    font-size: 25px;
-                    margin-bottom: 24px;
-                    height: 50px;
-                }
-            }
-        }
-    }
-}
+//                 .MuiButton-root {
+//                     width: 100%;
+//                     font-size: 25px;
+//                     margin-bottom: 24px;
+//                     height: 50px;
+//                 }
+//             }
+//         }
+//     }
+// }

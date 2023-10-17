@@ -1,4 +1,4 @@
-@import '../utils/responsiveUtils.scss';
+// @import '../utils/responsiveUtils.scss';
 
 .multiple-gif-generator {
     margin: 0;
@@ -98,34 +98,34 @@
     }
 }
 
-@include media(phone) {
-    .multiple-gif-generator {
-        .text-field-content {
-            padding: 8px;
-            width: 100%;
+// @include media(phone) {
+//     .multiple-gif-generator {
+//         .text-field-content {
+//             padding: 8px;
+//             width: 100%;
 
-            .url-inputs {
-                .MuiIconButton-root {
-                    right: 10px;
-                }
+//             .url-inputs {
+//                 .MuiIconButton-root {
+//                     right: 10px;
+//                 }
 
-                .input-fields {
-                    .inputs {
-                        gap: 8px;
+//                 .input-fields {
+//                     .inputs {
+//                         gap: 8px;
 
-                        div {
-                            .MuiFormControl-root {
-                                width: 90%;
-                            }
-                        }
+//                         div {
+//                             .MuiFormControl-root {
+//                                 width: 90%;
+//                             }
+//                         }
 
-                        .MuiBox-root {
-                            gap: 8px;
-                            display: unset;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+//                         .MuiBox-root {
+//                             gap: 8px;
+//                             display: unset;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
