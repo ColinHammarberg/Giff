@@ -1,8 +1,7 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import CloseIcon from '@mui/icons-material/Close';
-import { Button, Dialog, DialogActions, DialogContent, IconButton } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import './DialogWrapper.scss';
 
 function DialogWrapper(props) {

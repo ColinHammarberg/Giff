@@ -19,7 +19,7 @@ const KeepAliveComponent = () => {
   useEffect(() => {
     const keepAliveInterval = setInterval(sendKeepAlive, 1 * 60 * 1000);
 
-    return () => clearInterval(keepAliveInterval);
+    return () => clearInterval(keepAliveInterval, sendKeepAlive);
   }, [navigate]);
 
   return null;

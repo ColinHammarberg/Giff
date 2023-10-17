@@ -151,14 +151,14 @@ def generate_gif():
     os.makedirs(backend_gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_frontend_folder, NAME)
     backend_output_path = os.path.join(backend_gifs_folder, NAME)
-    if user_id is None:
-        frames_with_durations[0][0].save(
-            output_path,
-            save_all=True,
-            append_images=[frame for frame, _ in frames_with_durations[1:]],
-            duration=[int(d * 1000) for _, d in frames_with_durations],
-            loop=0
-        )
+    frames_with_durations[0][0].save(
+        output_path,
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[int(d * 1000) for _, d in frames_with_durations],
+        loop=0
+    )
+
     frames_with_durations[0][0].save(
         backend_output_path,
         save_all=True,

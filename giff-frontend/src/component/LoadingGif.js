@@ -4,7 +4,7 @@ import MultipleGif from '../resources/Multiplegif.gif';
 
 function LoadingGif({ singleGif }) {
     return (
-        <img src={singleGif ? SingleGif : MultipleGif} alt="" />
+        <img src={singleGif ? SingleGif : MultipleGif} alt="temp" />
     )
 }
 
