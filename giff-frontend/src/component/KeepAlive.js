@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KeepAccessAlive } from '../endpoints/Apis';
 
@@ -20,7 +20,7 @@ const KeepAliveComponent = () => {
     const keepAliveInterval = setInterval(sendKeepAlive, 1 * 60 * 1000);
 
     return () => clearInterval(keepAliveInterval, sendKeepAlive);
-  }, [navigate]);
+  }, [navigate, sendKeepAlive]);
 
   return null;
 };

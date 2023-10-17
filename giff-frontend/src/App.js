@@ -18,7 +18,6 @@ import UserSignup from './component/authorization/Signup';
 import Profile from './component/Profile';
 import Articles from './component/Articles';
 import GifLibrary from './component/GifLibrary';
-import { KeepAccessAlive } from './endpoints/Apis';
 import KeepAliveComponent from './component/KeepAlive';
 
 function Navigator() {
@@ -46,7 +45,7 @@ function App() {
         <NotificationContainer />
         <BrowserRouter>
           <KeepAliveComponent />
-          {/* <Navigator /> */}
+          <Navigator />
           <Routes>
             <Route
               path={`${REACT_APP_BASEURL}/signup`}

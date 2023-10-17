@@ -11,7 +11,6 @@ function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
     const [designChanges, setDesignChanges] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
@@ -64,7 +63,6 @@ function GifLibrary() {
           return;
         }
         const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name }));
-        setLoading(true);
         try {
           const response = await DownloadAllLibraryGifs(gifData);
           // Create blob
@@ -79,7 +77,6 @@ function GifLibrary() {
         } catch (error) {
           console.error('Error downloading ZIP file:', error);
         }
-        setLoading(false);
       };
 
       const shareGif = (gifUrl, resourceId) => {

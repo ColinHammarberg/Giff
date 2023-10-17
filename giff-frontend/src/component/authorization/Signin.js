@@ -8,7 +8,6 @@ import { showNotification } from '../Notification';
 import Header from '../Header';
 
 function UserSignin() {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -25,7 +24,6 @@ function UserSignin() {
   }
 
   const signInUserCredentials = async () => {
-    setIsLoading(true);
     try {
       const response = await Signin({ email: email, password: password });
       if (response.status === 200) {
@@ -40,7 +38,6 @@ function UserSignin() {
     } catch (error) {
       setError('error', "Signin failed");
     }
-    setIsLoading(false);
   };
   
 

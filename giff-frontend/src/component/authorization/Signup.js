@@ -9,7 +9,6 @@ import Header from '../Header';
 import { isValidEmail } from '../../utils/utils';
 
 function UserSignup() {
-  const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(false);
   const [error, setError] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,7 +29,6 @@ function UserSignup() {
   console.log('checked', checked);
 
   const signUpUserCredentials = async () => {
-    setIsLoading(true);
     if (!checked) {
       setError(true);
       return;
@@ -53,7 +51,6 @@ function UserSignup() {
     } catch (error) {
       showNotification('error', error.response?.data?.message || "Signup failed");
     }
-    setIsLoading(false);
   };
 
   const handleKeyPressGenerateGif = (event) => {

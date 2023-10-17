@@ -6,7 +6,7 @@ import './ScrollDown.scss';
 function ScrollDown({ onClick }) {
     return (
         <Box className="spinner-box">
-            <img onClick={onClick} src={Content} />
+            <img onClick={onClick} src={Content} alt="" />
         </Box>
     )
 }
