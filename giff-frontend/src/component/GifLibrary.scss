@@ -1,9 +1,10 @@
+@import '../utils/responsiveUtils.scss';
+
 .gif-library {
     font-family: 'Staatliches';
     overflow: hidden;
 
     .gif-showcase {
-
         .gif-showcase-info {
             max-width: 459px;
             margin: auto;
@@ -103,6 +104,21 @@
                         border: 1px solid #FEC901;
                     }
                 }
+            }
+        }
+    }
+}
+
+
+@include media(phone) {
+    .gif-library {
+        .gif-showcase {
+            .gif-showcase-info {
+                padding: 24px;
+            }
+            .gif-wrapper .gif-box {
+                display: unset;
+                width: 100%;
             }
         }
     }

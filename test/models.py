@@ -2,6 +2,7 @@ from extensions import db
 from flask_login import UserMixin
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,6 +16,8 @@ class UserGif(db.Model):
     gif_name = db.Column(db.String)
     gif_url = db.Column(db.String)
     resourceId = db.Column(db.String, unique=True)
+    selectedColor = db.Column(db.String)
     user = db.relationship('User', back_populates='gifs')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 User.gifs = db.relationship('UserGif', back_populates='user')

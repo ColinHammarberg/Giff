@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Popover, Button, TextField, InputLabel } from '@mui/material';
+import { Popover, Button, InputLabel } from '@mui/material';
 import './ResetUserDetailsPopover.scss';
 import PasswordField from './PasswordField';
 

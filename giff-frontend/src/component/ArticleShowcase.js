@@ -20,7 +20,7 @@ const ArticleShowcase = ({ article, onClose, open }) => {
 
   return (
     <Dialog
-      className={`responsive-dialog`}
+      className="article-showcase-dialog"
       open={open}
       transitionDuration={400}
     >

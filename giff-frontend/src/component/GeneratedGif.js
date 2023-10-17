@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingGif from './LoadingGif';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload, key, url } = props;
+  const { gifGenerated, isLoading, onDownload, key, url, edit } = props;
   const navigate = useNavigate();
   const [gifSrc, setGifSrc] = useState(null);
 
@@ -21,13 +21,16 @@ function GeneratedGif(props) {
         console.error("Could not load GIF:", error);
       }
     };
-
-    fetchGif();
-  }, [url]);
+    if (!edit) {
+      fetchGif();
+    } else {
+      // fetch resource from resourceId
+    }
+    }, [url, gifGenerated, edit]);
 
   return (
     <div className="generated-gif" key={key}>
-      <Header />
+      <Header menu />
       {isLoading ? (
         <Box className="loading-container">
           <LoadingGif singleGif />
