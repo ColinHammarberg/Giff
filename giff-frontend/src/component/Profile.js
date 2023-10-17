@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Profile.scss';
 import Header from './Header';
 import { Box, Button, TextField } from '@mui/material';
-import { DeleteUserProfile, FetchUserInfo, UpdatePassword } from '../endpoints/Apis';
+import { DeleteUserProfile, FetchUserGifs, FetchUserInfo, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
@@ -18,6 +18,7 @@ function Profile() {
       newPassword: '',
     });
     const handleOnClickChangePasswordButton = (event) => {
+      const access_token = localStorage.getItem('access_token');
       console.log('event', event, changeUserDetails);
       setAnchorEl(event?.currentTarget);
       setChangeUserDetails(event?.target?.name);

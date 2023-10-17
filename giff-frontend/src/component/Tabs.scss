@@ -55,14 +55,15 @@
                 }
 
                 .tab-wrapper {
+                    color: #000;
                     font-family: "Staatliches";
                     font-weight: bold;
                 }
             }
 
-            // &:hover .tab-wrapper {
-            //     color: #000;
-            // }
+            &:hover .tab-wrapper {
+                color: #000;
+            }
         }
     }
 }

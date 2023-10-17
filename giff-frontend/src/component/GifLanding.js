@@ -77,11 +77,16 @@ function GifLanding() {
         }
         {!isLoading && (
             <Box className="bottom-content">
-                {gifGenerated && (
-                  <Box className="go-back-content">
-                    Want to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
-                  </Box>
-                )}
+                {gifGenerated ? (
+                    <Box className="go-back-content">
+                        Want to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
+                    </Box>
+                ) : (
+                    <Box className="number-of-gifs-created">
+                        [number of] gifs already created 
+                    </Box>
+                )
+                }
             </Box>
         )}
     </div>

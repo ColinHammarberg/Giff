@@ -1,4 +1,3 @@
-// GifComponent.scss
 @import '../utils/responsiveUtils.scss';
 
 .multiple-generated-gif {
@@ -23,54 +22,32 @@
         flex-wrap: wrap;
 
         .gif {
-            position: relative; // Ensure relative positioning
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-top: 50px;
+            flex-direction: column;
+            gap: 24px;
+            font-family: 'Staatliches';
             width: 50%;
 
-            .gif-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                flex-direction: column;
-
-                .gif-buttons {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-end;
-                    position: absolute;
-
-                    .MuiButton-root {
-                        width: 69px;
-                        border-radius: 50px;
-                        color: #fff;
-                        font-family: 'Staatliches';
-                        border: 1px solid #fff;
-                        margin-top: 5px; // Adjust this value based on your design
-
-                        &.edit {
-                            background-color: #000;
-                        }
-                    }
-                }
-
-                img {
-                    width: 300px;
-                    height: 250px;
-                    border-radius: 4px;
-                }
+            img {
+                width: 300px;
+                height: 250px;
+                border-radius: 4px;
             }
 
             .file-info {
                 color: #fff;
-                font-family: 'Staatliches';
+                text-align: left;
             }
         }
     }
 
-    .button-container {
+    .MuiBox-root {
         margin-top: 24px;
 
-        .download-gifs {
+        .MuiButton-root {
             background-color: rgba(254, 201, 1, 1);
             width: 459px;
             font-family: 'Staatliches';
