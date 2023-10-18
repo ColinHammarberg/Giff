@@ -1,6 +1,13 @@
 import axios from "axios";
 
-const Api = 'https://gift-server-eu-1.azurewebsites.net';
+let Api;
+
+// Check if the app is running locally
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  Api = 'http://127.0.0.1:5000'; // Replace this with your local backend URL
+} else {
+  Api = 'https://gift-server-eu-1.azurewebsites.net';
+}
 
 export async function GenerateSingleGif(url) {
   console.log('url', url);
