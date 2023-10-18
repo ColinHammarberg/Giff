@@ -61,12 +61,12 @@
     }
 }
 
-// @include media(phone) {
-//     .gift-for-sale {
-//         .gift-for-sale-info {
-//             width: unset;
-//             height: unset;
-//             padding: 24px;
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .gift-for-sale {
+        .gift-for-sale-info {
+            width: unset;
+            height: unset;
+            padding: 24px;
+        }
+    }
+}

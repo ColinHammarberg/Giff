@@ -110,12 +110,12 @@
     }
 }
 
-// @include media(phone) {
-//     .authorization {
-//         .user-authentication {
-//             width: 100%;
-//             display: grid;
-//             justify-content: center;
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .authorization {
+        .user-authentication {
+            width: 100%;
+            display: grid;
+            justify-content: center;
+        }
+    }
+}

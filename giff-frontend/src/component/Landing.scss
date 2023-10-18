@@ -21,10 +21,10 @@
     }
 }
 
-// @include media(phone) {
-//     .landing {
-//         img {
-//             width: 420px;
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .landing {
+        img {
+            width: 420px;
+        }
+    }
+}

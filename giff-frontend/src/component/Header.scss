@@ -39,37 +39,37 @@
     }
 }
 
-// @include media(phone) {
-//     .header-content {
-//         height: 150px;
+@media (max-width: 600px) {
+    .header-content {
+        height: 150px;
 
-//         .MuiIconButton-root {
-//             right: 20px;
-//             top: 12px;
-//             width: 40px;
-//             height: 40px;
+        .MuiIconButton-root {
+            right: 20px;
+            top: 12px;
+            width: 40px;
+            height: 40px;
 
-//             .MuiSvgIcon-root {
-//                 font-size: 40px;
+            .MuiSvgIcon-root {
+                font-size: 40px;
 
-//                 path {
-//                     color: rgba(254, 201, 1, 1);
-//                 }
-//             }
-//         }
+                path {
+                    color: rgba(254, 201, 1, 1);
+                }
+            }
+        }
 
-//         .header-text {
-//             left: 0;
-//         }
+        .header-text {
+            left: 0;
+        }
 
-//         .header {
-//             font-size: 35px;
-//             height: 70px;
+        .header {
+            font-size: 35px;
+            height: 70px;
 
-//             img {
-//                 width: 100px;
-//                 height: 70px;
-//             }
-//         }
-//     }
-// }
+            img {
+                width: 100px;
+                height: 70px;
+            }
+        }
+    }
+}

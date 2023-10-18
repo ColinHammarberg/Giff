@@ -60,17 +60,17 @@
     }
 }
 
-// @include media(phone) {
-//     .choose-email-choice-info {
-//         .container {
-//             .sub-title {
-//                 font-size: 20px;
-//             }
-//         }
-//         .choose-btns {
-//             .MuiButton-root {
-//                 width: 286px;
-//             }
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .choose-email-choice-info {
+        .container {
+            .sub-title {
+                font-size: 20px;
+            }
+        }
+        .choose-btns {
+            .MuiButton-root {
+                width: 286px;
+            }
+        }
+    }
+}

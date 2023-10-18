@@ -70,11 +70,11 @@
     }
 }
 
-// @include media(phone) {
-//     .gif-generator {
-//         .MuiFormControl-root {
-//             width: 276px;
-//             height: 55px;
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .gif-generator {
+        .MuiFormControl-root {
+            width: 276px;
+            height: 55px;
+        }
+    }
+}

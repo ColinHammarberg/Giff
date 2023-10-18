@@ -101,12 +101,12 @@
     }
 }
 
-// @include media(phone) {
-//     .content-seo {
-//         .content-map {
-//             .box-container {
-//                 width: 100%;
-//             }
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .content-seo {
+        .content-map {
+            .box-container {
+                width: 100%;
+            }
+        }
+    }
+}

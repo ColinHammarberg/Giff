@@ -32,19 +32,19 @@
     }
 }
 
-// @include media(phone) {
-//     .gif-landing {
-//         .action-btn {
-//             width: 276px !important;
-//             height: 50px !important;
-//         }
-//         .bottom-content {
-//             .number-of-gifs-created {
-//                 font-size: 20px;
-//             }
-//             .go-back-content {
-//                 margin-bottom: 24px;
-//             }
-//         }
-//     }
-// }
+@media (max-width: 600px) {
+    .gif-landing {
+        .action-btn {
+            width: 276px !important;
+            height: 50px !important;
+        }
+        .bottom-content {
+            .number-of-gifs-created {
+                font-size: 20px;
+            }
+            .go-back-content {
+                margin-bottom: 24px;
+            }
+        }
+    }
+}
