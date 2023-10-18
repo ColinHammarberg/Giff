@@ -17,11 +17,17 @@ from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from PIL import Image
 from flask_mail import Mail
+from azure.appconfiguration.provider import (
+    load,
+    SettingSelector
+)
 import os
 
+azure_app_config = load(connection_string=os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING"))
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
+app.config.update(azure_app_config)
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://giftadmin:La47rnCz3MNjjxkVhnZWpcBAULzxEnQu@gift-db.postgres.database.azure.com/gift_user_db'
 
 # Initialize database with the app
 db.init_app(app)
