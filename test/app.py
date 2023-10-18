@@ -35,7 +35,7 @@ client = SecretClient(vault_url=KVUri, credential=credential)
 app = Flask(__name__)
 CORS(app)
 #app.config.update(azure_app_config)
-app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring")
+app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 
 # Initialize database with the app
 db.init_app(app)
