@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const Api = 'gift-server-eu-1.azurewebsites.net';
+const Api = 'https://gift-server-eu-1.azurewebsites.net';
 
 export async function GenerateSingleGif(url) {
   console.log('url', url);
