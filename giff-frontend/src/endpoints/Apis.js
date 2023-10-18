@@ -1,11 +1,13 @@
 import axios from "axios";
 
+const Api = 'gift-server-eu-1.azurewebsites.net';
+
 export async function GenerateSingleGif(url) {
   console.log('url', url);
   const token = localStorage.getItem('access_token'); // Retrieve the token from local storage
   
   try {
-    const response = await axios.post(`http://127.0.0.1:5000/generate-single-gif`, 
+    const response = await axios.post(`${Api}/generate-single-gif`, 
       { url },
       {
       headers: {
@@ -23,7 +25,7 @@ export async function GenerateSingleGif(url) {
 
 export async function GeneratePdfGifs(url, access_token) {
     console.log('access_token', access_token);
-    const response = await axios.post(`http://127.0.0.1:5000/generate-pdf-gif`, 
+    const response = await axios.post(`${Api}/generate-pdf-gif`, 
     { url },
     {
       headers: {
@@ -39,7 +41,7 @@ export async function GenerateMultipleGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
     try {
       const response = await axios.post(
-        `http://127.0.0.1:5000/generate-gif-from-list`, 
+        `${Api}/generate-gif-from-list`, 
         { gifData, access_token },
         {
           headers: {
@@ -59,25 +61,25 @@ export async function GenerateMultipleGifs(gifData) {
 
 export async function GenerateMultiplePdfGifs(gifData) {
     console.log('gifData2', gifData);
-    const response = await axios.post(`http://127.0.0.1:5000/generate-pdf-gifs-from-list`, {gifData});
+    const response = await axios.post(`${Api}/generate-pdf-gifs-from-list`, {gifData});
     return response;
 }
 
 export async function DownloadFolder() {
-  const response = await axios.get(`http://127.0.0.1:5000/download-all-gifs`, {
+  const response = await axios.get(`${Api}/download-all-gifs`, {
     responseType: 'blob'
   });
   return response;
 }
 
 export async function Signin(userCredentials) {
-  const response = await axios.post(`http://127.0.0.1:5000/signin`, { email: userCredentials.email, password: userCredentials.password });
+  const response = await axios.post(`${Api}/signin`, { email: userCredentials.email, password: userCredentials.password });
   return response;
 }
 
 export async function Signup(newUserCredentials) {
   try {
-    const response = await axios.post(`http://127.0.0.1:5000/signup`, newUserCredentials);
+    const response = await axios.post(`${Api}/signup`, newUserCredentials);
     return response;
   } catch (error) {
     return { status: error.response?.status, data: error.response?.data };
@@ -87,7 +89,7 @@ export async function Signup(newUserCredentials) {
 export async function UpdatePassword(passwordCredentials) {
   const access_token = localStorage.getItem('access_token');
   try {
-    const response = await axios.post(`http://127.0.0.1:5000/update_user_password`, passwordCredentials, 
+    const response = await axios.post(`${Api}/update_user_password`, passwordCredentials, 
     {
       headers: {
         'Authorization': `Bearer ${access_token}`
@@ -101,7 +103,7 @@ export async function UpdatePassword(passwordCredentials) {
 
 export async function Signout() {
   const access_token = localStorage.getItem('access_token');
-  const response = await axios.get(`http://127.0.0.1:5000/signout`, {
+  const response = await axios.get(`${Api}/signout`, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }
@@ -111,7 +113,7 @@ export async function Signout() {
 
 export async function FetchUserInfo() {
   const access_token = localStorage.getItem('access_token');
-  const response = await axios.get(`http://127.0.0.1:5000/fetch_user_info`, {
+  const response = await axios.get(`${Api}/fetch_user_info`, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }
@@ -120,7 +122,7 @@ export async function FetchUserInfo() {
 }
 
 export async function FetchUserGifs(access_token) {
-  const response = await axios.get(`http://127.0.0.1:5000/fetch_user_gifs`, {
+  const response = await axios.get(`${Api}/fetch_user_gifs`, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }
@@ -130,7 +132,7 @@ export async function FetchUserGifs(access_token) {
 
 export async function KeepAccessAlive() {
   const access_token = localStorage.getItem('access_token');
-  const response = await axios.get('http://127.0.0.1:5000/keep_access_alive', {
+  const response = await axios.get(`${Api}/keep_access_alive`, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }
@@ -142,7 +144,7 @@ export async function GetMultipleGifs(gifs) {
   const access_token = localStorage.getItem('access_token');
   console.log('access_token', access_token);
   const response = await axios.post(
-    'http://127.0.0.1:5000/get_multiple_gifs',
+    `${Api}/get_multiple_gifs`,
     {'gifs': gifs},
     {
       headers: {
@@ -158,7 +160,7 @@ export async function ApplyGifDesign(selectedGif, selectedColor) {
   const access_token = localStorage.getItem('access_token');
   console.log('access_token', access_token);
   const response = await axios.post(
-    'http://127.0.0.1:5000/update_selected_color',
+    `${Api}/update_selected_color`,
     {
       selectedColor,
       resourceId: selectedGif.resourceId,
@@ -176,7 +178,7 @@ export async function ApplyGifDesign(selectedGif, selectedColor) {
 
 export async function DownloadAllLibraryGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
-  const response = await axios.post(`http://127.0.0.1:5000/download_library_gifs`,
+  const response = await axios.post(`${Api}/download_library_gifs`,
   { gifData },
   {
     headers: {
@@ -188,7 +190,7 @@ export async function DownloadAllLibraryGifs(gifData) {
 }
 
 export async function DeleteUserProfile(access_token) {
-  const response = await axios.get(`http://127.0.0.1:5000/delete_user`, {
+  const response = await axios.get(`${Api}/delete_user`, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }
