@@ -12,8 +12,6 @@ from routes import signin, signout, signup, fetch_user_info, delete_user_profile
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
-import asyncio
-from webdriver_manager.chrome import ChromeDriverManager
 import requests
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
@@ -33,11 +31,11 @@ KVUri = "https://gift-app-keys.vault.azure.net"
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
+
 app = Flask(__name__)
 CORS(app)
 #app.config.update(azure_app_config)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
-
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
 
 # Initialize database with the app
@@ -116,7 +114,7 @@ def generate_gif():
 
     chrome_options = Options()
     chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(URL)
 
     scroll_height = driver.execute_script("return document.body.scrollHeight")
@@ -236,7 +234,7 @@ def generate_gifs_from_list():
             error_messages.add("Missing URL")
         else:
             response = requests.post(
-                'http://127.0.0.1:5000/generate-single-gif',
+                'https://gift-server-eu-1.azurewebsites.net/generate-single-gif',
                 json={'url': URL, 'name': name, 'user_id': user_id},
                 headers=headers
             )

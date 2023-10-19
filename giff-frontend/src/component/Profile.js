@@ -7,6 +7,7 @@ import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
+import giftUser from '../access/GiftUser';
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
@@ -46,7 +47,7 @@ function Profile() {
     }
 
     const handleOnClickDeleteAccount = async () => {
-      const access_token = localStorage.getItem('access_token');
+      const isLoggedIn = giftUser.isLoggedIn();
       const { hasConfirmed } = await DeleteProfileDialog.show();
       console.log('hasConfirmed', hasConfirmed);
       let response;
@@ -54,7 +55,7 @@ function Profile() {
         return;
       } else {
         try {
-          response = await DeleteUserProfile(access_token);
+          response = await DeleteUserProfile(isLoggedIn);
           if (response.data.status === 'Profile deleted') {
             localStorage.removeItem('access_token');
             // Redirect to login page

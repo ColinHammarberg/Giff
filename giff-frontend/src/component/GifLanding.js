@@ -7,6 +7,7 @@ import './GifLanding.scss';
 import GifError from './GifError';
 import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
 import { GiftContext } from '../context/GiftContextProvider';
+import giftUser from '../access/GiftUser';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -36,10 +37,10 @@ function GifLanding() {
   };
 
   const generateSingleGif = async () => {
-    const access_token = localStorage.getItem('access_token');
+    const isLoggedIn = giftUser.isLoggedIn();
     try {
       setIsLoading(true);
-      const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url, access_token) : GenerateSingleGif(url));
+      const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url, isLoggedIn) : GenerateSingleGif(url));
       console.log('response', response);
       if (response?.data?.error) {
         handleErrors(response.data.error);

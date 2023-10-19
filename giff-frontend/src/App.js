@@ -19,17 +19,17 @@ import Profile from './component/Profile';
 import Articles from './component/Articles';
 import GifLibrary from './component/GifLibrary';
 import KeepAliveComponent from './component/KeepAlive';
+import giftUser from './access/GiftUser';
 
 function Navigator() {
   const navigate = useNavigate();
-  const access_token = localStorage.getItem('access_token');
+  const isLoggedIn = giftUser.isLoggedIn();
   const initialRedirectDone = localStorage.getItem('initialRedirectDone');
 
   useEffect(() => {
     let isMounted = true;
-
     const redirectTimeout = setTimeout(() => {
-      if (access_token && !initialRedirectDone && isMounted) {
+      if (isLoggedIn && !initialRedirectDone && isMounted) {
         navigate('/gift');
       }
     }, 500); // Adjust the delay as needed (in milliseconds)
@@ -42,7 +42,7 @@ function Navigator() {
         localStorage.setItem('initialRedirectDone', true);
       }
     };
-  }, [access_token, navigate, initialRedirectDone]);
+  }, [isLoggedIn, navigate, initialRedirectDone]);
 
   return null;
 }

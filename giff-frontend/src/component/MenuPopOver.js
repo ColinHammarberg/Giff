@@ -43,7 +43,7 @@ class MenuPopOver extends PureComponent {
               </Box>
               )
             ))}
-            {this.props.access_token ? (
+            {this.props.isLoggedIn ? (
               <Box onClick={this.props.handleOnClickSignOut}>Sign Out</Box>
             ) : (
               <Box onClick={this.props.handleOnClickSignIn}>Sign In</Box>

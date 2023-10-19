@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 
 const PasswordField = React.forwardRef((props, ref) => {
   const classes = useStyles();
-  const { name, onChange, placeholder, error, helperText } = props;
+  const { name, onChange, placeholder, error, helperText, onKeyPress } = props;
   const [showPassword, setShowPassword] = React.useState(false);
 
   return (
@@ -26,6 +26,7 @@ const PasswordField = React.forwardRef((props, ref) => {
       error={error}
       helperText={helperText}
       onChange={onChange}
+      onKeyPress={onKeyPress}
       placeholder={placeholder}
       InputProps={{
         endAdornment: (

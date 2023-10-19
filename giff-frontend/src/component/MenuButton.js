@@ -5,11 +5,12 @@ import { Button, IconButton } from '@mui/material';
 import MenuPopOver from './MenuPopOver';
 import { useNavigate } from 'react-router-dom';
 import useMobileQuery from '../queries/useMobileQuery';
+import giftUser from '../access/GiftUser';
 
 function MenuButton() {
     const [anchorEl, setAnchorEl] = useState(null);
     const { isMobile } = useMobileQuery();
-    const access_token = localStorage.getItem('access_token');
+    const isLoggedIn = giftUser.isLoggedIn();
     const navigate = useNavigate();
 
     const onClick = (event) => {
@@ -54,7 +55,7 @@ function MenuButton() {
               anchorEl={anchorEl} 
               onClosePopup={onClosePopup} 
               handleNavigation={handleNavigation} 
-              access_token={access_token} 
+              isLoggedIn={isLoggedIn} 
               handleOnClickSignOut={handleOnClickSignOut}
               handleOnClickSignIn={handleOnClickSignIn} 
             />

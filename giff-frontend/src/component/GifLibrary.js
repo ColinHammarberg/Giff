@@ -6,6 +6,7 @@ import { DownloadAllLibraryGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
+import giftUser from '../access/GiftUser';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -16,9 +17,9 @@ function GifLibrary() {
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
     const navigate = useNavigate();
     useEffect(() => {
-      const access_token = localStorage.getItem('access_token');
+      const isLoggedIn = giftUser.isLoggedIn();
       const fetchData = async () => {
-        const response = await FetchUserGifs(access_token);
+        const response = await FetchUserGifs(isLoggedIn);
         if (response.data) {
           console.log('response', response.data);
   
@@ -36,7 +37,6 @@ function GifLibrary() {
             }
             return 0;
           });
-  
           setGifs(sortedGifs);
         }
       };
