@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
 import { NotificationContainer } from 'react-notifications';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -23,13 +23,25 @@ import KeepAliveComponent from './component/KeepAlive';
 function Navigator() {
   const navigate = useNavigate();
   const access_token = localStorage.getItem('access_token');
-  const [initialRedirectDone, setInitialRedirectDone] = useState(false);
+  const initialRedirectDone = localStorage.getItem('initialRedirectDone');
 
   useEffect(() => {
-    if (access_token && !initialRedirectDone) {
-      navigate('/gift');
-      setInitialRedirectDone(true);
-    }
+    let isMounted = true;
+
+    const redirectTimeout = setTimeout(() => {
+      if (access_token && !initialRedirectDone && isMounted) {
+        navigate('/gift');
+      }
+    }, 500); // Adjust the delay as needed (in milliseconds)
+
+    return () => {
+      isMounted = false;
+      clearTimeout(redirectTimeout); // Cleanup timeout on component unmount
+
+      if (!initialRedirectDone) {
+        localStorage.setItem('initialRedirectDone', true);
+      }
+    };
   }, [access_token, navigate, initialRedirectDone]);
 
   return null;

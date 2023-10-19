@@ -14,7 +14,6 @@ from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import asyncio
 from webdriver_manager.chrome import ChromeDriverManager
-from pyppeteer import launch
 import requests
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
