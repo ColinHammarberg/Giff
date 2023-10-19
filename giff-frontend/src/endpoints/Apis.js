@@ -4,9 +4,9 @@ let Api;
 
 // Check if the app is running locally
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-  Api = 'http://127.0.0.1:5000'; // Replace this with your local backend URL
+  Api = 'http://127.0.0.1:5000'; // local
 } else {
-  Api = 'https://gift-server-eu-1.azurewebsites.net';
+  Api = 'https://gift-server-eu-1.azurewebsites.net'; // azure
 }
 
 export async function GenerateSingleGif(url) {
