@@ -234,7 +234,7 @@ def generate_gifs_from_list():
             error_messages.add("Missing URL")
         else:
             response = requests.post(
-                'http://localhost:5000/generate-single-gif',
+                'https://gift-server-eu-1.azurewebsites.net/generate-single-gif',
                 json={'url': URL, 'name': name, 'user_id': user_id},
                 headers=headers
             )

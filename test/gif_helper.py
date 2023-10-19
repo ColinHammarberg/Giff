@@ -24,44 +24,6 @@ def is_video_url(URL):
     # Check if the URL includes "youtube" or "vimeo"
     return "youtube" in URL or "vimeo" in URL
 
-def generate_gifs_from_list():
-    data = request.get_json()
-    print('data', data)
-    # Use get method with a default value to handle missing 'gifData'
-    gifData = data.get('gifData', [])
-
-    if not gifData:
-        return jsonify({'error': 'No GIF data provided'})
-
-    error_messages = set()  # Use a set to store unique error messages
-
-    for gif in gifData:
-        URL = gif.get('url')
-        name = gif.get('name')
-
-        if not URL:
-            error_messages.add("Missing URL")
-        else:
-            # Check if the URL is a YouTube or Vimeo link
-            if is_video_url(URL):
-                error_messages.add("video")
-            else:
-                response = requests.post(
-                    'http://localhost:5000/generate-single-gif', json={'url': URL, 'name': name})
-                if response.status_code != 200:
-                    error_messages.add(
-                        f"Failed to generate GIF for URL: {URL}")
-
-                # Check the scroll_height error for each URL
-                single_gif_data = response.json()
-                print('single_gif_data', single_gif_data)
-                if 'error' in single_gif_data and single_gif_data['error'] == 'Invalid scroll height':
-                    error_messages.add("Invalid scroll height")
-    if error_messages:
-        return jsonify({'error': '\n'.join(error_messages)})
-
-    return jsonify({'message': 'GIFs generated successfully for all URLs', 'data': single_gif_data})
-
 
 @jwt_required()
 def get_user_gifs():
@@ -169,7 +131,7 @@ def generate_pdf_gifs_from_list():
         name = gif['name']
 
         response = requests.post(
-            'http://localhost:5000/generate-pdf-gif', json={'url': URL, 'name': name})
+            'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif', json={'url': URL, 'name': name})
 
         if response.status_code != 200:
             return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
