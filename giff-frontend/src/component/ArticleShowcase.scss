@@ -98,27 +98,9 @@
         }
 
         .article-btn {
-            width: 100%;
             display: grid;
             justify-content: center;
             gap: 30px;
-
-            .MuiButton-root {
-                height: 47px;
-                width: 459px;
-                border-radius: 50px;
-                border: 1px solid #000;
-                color: #000;
-                font-family: 'Staatliches';
-
-                &.create-btn {
-                    background-color: #F4149B;
-                }
-
-                &.read-more-btn {
-                    background-color: #B9F140;
-                }
-            }
         }
     }
 }
@@ -129,11 +111,7 @@
             .article-header {
                 height: 150px;
             }
-            .article-btn {
-                .MuiButton-root {
-                    width: 100%;
-                }
-            }
+
         }
     }
 }

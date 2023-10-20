@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Checkbox, InputLabel, TextField } from '@mui/material';
+import { Box, Checkbox, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signup } from '../../endpoints/Apis';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { showNotification } from '../Notification';
 import Header from '../Header';
 import { isValidEmail } from '../../utils/utils';
+import OfficialButton from '../OfficialButton';
 
 function UserSignup() {
   const [checked, setChecked] = useState(false);
@@ -86,9 +87,7 @@ function UserSignup() {
             <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
         </div>
         <div className="buttons">
-          <Button onClick={signUpUserCredentials}>
-            Sign Up
-          </Button>
+          <OfficialButton onClick={signUpUserCredentials} label="Sign Up" variant="yellow" />
         </div>
         <Box className="checkbox">
             <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />

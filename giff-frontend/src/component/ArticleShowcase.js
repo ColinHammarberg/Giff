@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, Dialog, DialogContent } from '@mui/material';
+import { Box, Dialog, DialogContent } from '@mui/material';
 import './ArticleShowcase.scss';
 import { useNavigate } from 'react-router-dom';
+import OfficialButton from './OfficialButton';
 
 const ArticleShowcase = ({ article, onClose, open }) => {
   const navigate = useNavigate();
@@ -40,8 +41,8 @@ const ArticleShowcase = ({ article, onClose, open }) => {
           {renderContent()}
         </Box>
         <Box className="article-btn">
-          <Button className="create-btn" onClick={() => navigate('/single-gif-creation')}>Create your own gif now</Button>
-          <Button className="read-more-btn">Read more marketing posts</Button>
+          <OfficialButton variant="pink" onClick={() => navigate('/single-gif-creation')} label="Create your own gif now" />
+          <OfficialButton variant="green" label="Read more marketing posts" />
         </Box>
       </DialogContent>
     </Dialog>

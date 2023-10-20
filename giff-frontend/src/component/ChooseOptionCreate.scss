@@ -35,13 +35,9 @@
             gap: 24px;
             margin: auto;
 
-            .MuiButton-root {
-                color: #000;
-                border-radius: 50px;
-                font-family: 'Staatliches';
-                font-size: 30px;
-                height: 80px;
+            .official-btn {
                 width: 459px;
+                height: 60px;
 
                 &.create-one {
                     background-color: rgba(254, 201, 1, 1);

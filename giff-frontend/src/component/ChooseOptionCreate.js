@@ -1,11 +1,12 @@
 import React from 'react';
 import './ChooseOptionCreate.scss';
 import Header from './Header';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
 import useMobileQuery from '../queries/useMobileQuery';
 import Footer from './Footer';
+import OfficialButton from './OfficialButton';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ function ChooseOptionCreate() {
                     </div>
                 </Box>
                 <Box className="enter-btn">
-                    <Button className="create-one" onClick={(() => setTimeout(() => navigate('/single-gif-creation')))}>Create one gif</Button>
-                    <Button className="create-several" onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} >Create several gifs</Button>
+                    <OfficialButton onClick={(() => setTimeout(() => navigate('/single-gif-creation')))} label="Create one gif" variant="yellow" />
+                    <OfficialButton onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} label="Create several gifs" variant="pink" />
                 </Box>
             </Box>
             <Footer />

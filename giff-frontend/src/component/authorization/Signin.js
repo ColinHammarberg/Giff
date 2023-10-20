@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Button, InputLabel, TextField } from '@mui/material';
+import { Box, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signin } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '../Notification';
 import Header from '../Header';
+import OfficialButton from '../OfficialButton';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -80,9 +81,7 @@ function UserSignin() {
           />
         </div>
         <div className="buttons">
-          <Button onClick={signInUserCredentials}>
-            Signin
-          </Button>
+          <OfficialButton onClick={signInUserCredentials} label="Signin" variant="yellow" />
           <div className="no-account">Don't have an account yet champ? <span onClick={() => navigate('/signup')}>Sign up here then.</span></div>
         </div>
       </Box>
