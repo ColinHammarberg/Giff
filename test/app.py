@@ -114,7 +114,7 @@ def generate_gif():
 
     chrome_options = Options()
     chrome_options.add_argument('--headless')
-    chrome_options.binary_location = '/usr/local/bin'
+    #chrome_options.binary_location = '/usr/local/bin'
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(URL)
 
