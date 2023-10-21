@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Button, TextField } from '@mui/material';
-import './GifGenerator.scss';
+import { Box, TextField } from '@mui/material';
+import './SingleGifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
+import OfficialButton from './OfficialButton';
 
 function SingleGifGenerator(props) {
   const { onChange, gifGenerated, onKeyPress, generateSingleGif } = props;
@@ -36,7 +37,7 @@ function SingleGifGenerator(props) {
         />
         <Box className="btn-content">
           {!gifGenerated && (
-            <Button className="action-btn" onClick={generateSingleGif}>Create GIF</Button>
+            <OfficialButton onClick={generateSingleGif} label="Create GIF" variant="yellow" />
           )}
         </Box>
       </Box>

@@ -6,6 +6,8 @@ import LoadingGif from './LoadingGif';
 import { GetMultipleGifs } from '../endpoints/Apis';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
+import OfficialButton from './OfficialButton';
+import useMobileQuery from '../queries/useMobileQuery';
 
 function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload } = props;
@@ -15,19 +17,19 @@ function MultipleGeneratedGifs(props) {
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const [selectedGif, setSelectedGif] = useState(null);
+  const { isMobile } = useMobileQuery();
 
-  const shareGif = (gifUrl, resourceId) => {
+  const shareGif = (gifUrl, resourceId, selectedColor) => {
     console.log('Sharing GIF:', gifUrl);
     console.log('Resource ID:', resourceId);
     setIsDesignOpen(true);
-    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId});
+    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
   };
 
   const handleEditButtonClick = () => {
-    console.log('selectedGif', selectedGif);
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      shareGif(hoveredGif.url, hoveredGif.resourceId);
+      shareGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
       setDesignChanges(false);
     }
   };
@@ -84,7 +86,7 @@ function MultipleGeneratedGifs(props) {
   return (
     <div className="multiple-generated-gif">
       <Header menu />
-      {isLoading ? (
+      {isLoading && !gifGenerated ? (
         <Box className="loading-container">
           <LoadingGif />
         </Box>
@@ -97,6 +99,7 @@ function MultipleGeneratedGifs(props) {
               setDesignChanges={setDesignChanges}
               selectedGif={selectedDesignGif}
               tabs={tabs}
+              isMobile={isMobile}
               changeTab={changeTab}
               activeTab={activeTab}
               onClickOk={() => {
@@ -107,8 +110,9 @@ function MultipleGeneratedGifs(props) {
               }}
             />
           </Grid>
+
           <Box className="button-container">
-            <Button className="download-gifs" onClick={onDownload}>Download Gifs</Button>
+            <OfficialButton onClick={onDownload} className="download-btn" label="Download Gifs" isProcessing={isLoading} variant="yellow" />
           </Box>
         </>
       )}

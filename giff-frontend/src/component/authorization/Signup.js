@@ -12,6 +12,7 @@ import OfficialButton from '../OfficialButton';
 function UserSignup() {
   const [checked, setChecked] = useState(false);
   const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -38,6 +39,7 @@ function UserSignup() {
       setError('Invalid email address');
       return;
     }
+    setIsLoading(true);
     try {
       const response = await Signup({ email: formData.email, password: formData.password });
       if (response.status === 200) {
@@ -45,6 +47,7 @@ function UserSignup() {
           localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
           navigate('/choose-option-create');
           showNotification('success', 'Successfully signed up');
+          setIsLoading(false);
         }, 2000);
       } else {
         showNotification('error', response.data.message || "Signup failed for some reason");
@@ -87,7 +90,7 @@ function UserSignup() {
             <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signUpUserCredentials} label="Sign Up" variant="yellow" />
+          <OfficialButton onClick={signUpUserCredentials} label="Sign Up" variant="yellow" isProcessing={isLoading} />
         </div>
         <Box className="checkbox">
             <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />

@@ -41,17 +41,9 @@
 
     .btn-content {
         margin-top: 25px;
-    }
-
-    .action-btn {
-        background-color: rgba(254, 201, 1, 1) !important;
-        color: #000 !important;
-        font-family: 'Staatliches' !important;
-        width: 225px !important;
-        height: 60px;
-        border-radius: 50px !important;
-        font-size: 20px !important;
-        font-weight: 400 !important;
+        .official-btn {
+            width: 225px;
+        }
     }
 
     .gifs {

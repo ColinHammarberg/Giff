@@ -7,14 +7,18 @@ import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
 import giftUser from '../access/GiftUser';
+import OfficialButton from './OfficialButton';
+import useMobileQuery from '../queries/useMobileQuery';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
     const [designChanges, setDesignChanges] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
+    const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
     useEffect(() => {
       const isLoggedIn = giftUser.isLoggedIn();
@@ -63,6 +67,7 @@ function GifLibrary() {
           return;
         }
         const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name }));
+        setIsLoading(true);
         try {
           const response = await DownloadAllLibraryGifs(gifData);
           // Create blob
@@ -77,19 +82,20 @@ function GifLibrary() {
         } catch (error) {
           console.error('Error downloading ZIP file:', error);
         }
+        setIsLoading(false);
       };
 
-      const shareGif = (gifUrl, resourceId) => {
+      const shareGif = (gifUrl, resourceId, selectedColor) => {
         console.log('Sharing GIF:', gifUrl);
         console.log('Resource ID:', resourceId);
         setIsDesignOpen(true);
-        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId});
+        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
       };
 
       const handleEditButtonClick = () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          shareGif(hoveredGif.url, hoveredGif.resourceId);
+          shareGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
           setDesignChanges(false);
         }
       };
@@ -110,6 +116,7 @@ function GifLibrary() {
         selectedGif={selectedDesignGif}
         setDesignChanges={setDesignChanges}
         tabs={tabs}
+        isMobile={isMobile}
         changeTab={changeTab}
         activeTab={activeTab}
         onClickOk={() => {
@@ -122,7 +129,7 @@ function GifLibrary() {
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
           <Box className="title"><span>This is your library.</span> download all gifs at once <span>or</span> hover over the gif you want to download or share.</Box>
-          <Box className="download">{gifs?.length > 0 ? <Button onClick={handleDownloadLibraryGifs}>Download all gifs</Button> : <Button onClick={() => navigate('/choose-option-create')}>Create gifs</Button> }</Box>
+          <Box className="download">{gifs?.length > 0 ? <OfficialButton onClick={handleDownloadLibraryGifs} isProcessing={isLoading} label="Download all gifs" variant="yellow" /> : <OfficialButton onClick={() => navigate('/choose-option-create')} label="Create gifs" variant="yellow" />}</Box>
         </Box>
           <Box className="gif-wrapper">
             {gifs?.map((item, index) => {

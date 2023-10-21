@@ -11,6 +11,7 @@ import OfficialButton from '../OfficialButton';
 function UserSignin() {
   const [error, setError] = useState(false);
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
   // const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +26,7 @@ function UserSignin() {
   }
 
   const signInUserCredentials = async () => {
+    setIsLoading(true);
     try {
       const response = await Signin({ email: email, password: password });
       if (response.status === 200) {
@@ -32,6 +34,7 @@ function UserSignin() {
         setTimeout(() => {
           navigate('/choose-option-create');
           showNotification('success', 'Successfully signed in');
+          setIsLoading(false);
         }, 3000)
       } else {
         setError('error', response.data.message);
@@ -81,7 +84,7 @@ function UserSignin() {
           />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signInUserCredentials} label="Signin" variant="yellow" />
+          <OfficialButton onClick={signInUserCredentials} label="Signin" variant="yellow" isProcessing={isLoading} />
           <div className="no-account">Don't have an account yet champ? <span onClick={() => navigate('/signup')}>Sign up here then.</span></div>
         </div>
       </Box>

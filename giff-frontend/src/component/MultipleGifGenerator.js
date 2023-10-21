@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, InputLabel, TextField, IconButton, Button } from '@mui/material';
+import { Box, InputLabel, TextField, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './MultipleGifGenerator.scss';
@@ -7,6 +7,7 @@ import InfoButton from './InfoButton';
 import Header from './Header';
 import { showNotification } from './Notification';
 import LightTooltip from './LightToolTip';
+import OfficialButton from './OfficialButton';
 
 function MultipleGifGenerator(props) {
   const { urlList, setUrlList, setDuplicateNames, duplicateNames, gifGenerated, generateMultipleGifs } = props;
@@ -119,9 +120,7 @@ function MultipleGifGenerator(props) {
         </Box>
         <Box className="btn-content">
           {!gifGenerated && (
-            <Button className="action-btn" onClick={generateMultipleGifs}>
-              Create {urlList.length} GIFS
-            </Button>
+            <OfficialButton label={`Create ${urlList.length} GIFS`} onClick={generateMultipleGifs} variant="yellow" />
           )}
       </Box>
       </Box>

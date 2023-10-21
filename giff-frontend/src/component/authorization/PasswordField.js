@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
+import EyeIcon from '../../resources/eye.png'
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles({
   root: {
-    fill: 'rgba(0, 0, 0, 0.2)',
+    width: '20px',
   },
+  hiddenPassword: {
+    width: '20px',
+    opacity: '0.4'
+  }
 });
 
 const PasswordField = React.forwardRef((props, ref) => {
@@ -33,9 +36,9 @@ const PasswordField = React.forwardRef((props, ref) => {
           <InputAdornment>
             <IconButton tabIndex="-1" size="small" onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? (
-                <VisibilityIcon fontSize="small" className={classes.root} />
+                <img src={EyeIcon} className={classes.root} alt="" />
               ) : (
-                <VisibilityOffIcon fontSize="small" className={classes.root} />
+                <img src={EyeIcon} className={classes.hiddenPassword} alt="" />
               )}
             </IconButton>
           </InputAdornment>

@@ -71,16 +71,30 @@
 
         .select-color-container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
             width: 240px;
             height: 240px;
 
-            >div {
-                min-width: 60px;
-                cursor: pointer;
-                box-sizing: border-box;
-                flex: 1 0 calc(25% - 30px);
+            .colors {
+                width: 240px;
+                height: 240px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+
+                .MuiBox-root {
+                    min-width: 60px;
+                    cursor: pointer;
+                    box-sizing: border-box;
+                    flex: 1 0 calc(25% - 30px);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    img {
+                        width: 20px;
+                        position: absolute;
+                    }
+                }
             }
         }
 
@@ -148,11 +162,13 @@
             .content {
                 min-width: 100%;
                 padding: 0;
+                margin-top: 100px;
+                gap: 20px;
 
                 .title {
                     color: rgba(255, 255, 255, 0.5);
                     font-family: 'Staatliches';
-                    font-size: 30px;
+                    font-size: 25px;
                     width: 281px;
                     text-align: center;
                     margin: auto;
@@ -166,6 +182,34 @@
 
                 .select-color-container {
                     margin: auto;
+                    width: 100%;
+                    justify-content: center;
+                    display: flex;
+                    gap: 8px;
+
+                    .colors {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        width: 170px;
+                        height: 170px;
+
+                        .MuiBox-root {
+                            min-width: 85px;
+                        }
+                    }
+
+                    &.mobile-view {
+                        display: flex;
+                        height: 170px;
+
+                        .MuiIconButton-root {
+
+                            img {
+                                width: 40px;
+                            }
+                        }
+                    }
                 }
 
                 .image {

@@ -33,25 +33,10 @@
         justify-content: center;
         margin-top: 50px;
 
-        .btn {
+        .official-btn {
             width: 311px !important;
             font-size: 15px !important;
             height: 40px !important;
-
-            &.download {
-                background-color: rgba(254, 201, 1, 1) !important;
-                color: #000;
-            }
-
-            &.share {
-                background-color: rgba(185, 241, 64, 1);
-                color: #000;
-            }
-
-            &.share-else-where {
-                color: #000;
-                background-color: #F4149B !important;
-            }
         }
     }
 }

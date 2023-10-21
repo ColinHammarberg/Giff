@@ -70,13 +70,8 @@
     .button-container {
         margin-top: 24px;
 
-        .download-gifs {
-            background-color: rgba(254, 201, 1, 1);
+        .download-btn {
             width: 459px;
-            font-family: 'Staatliches';
-            color: #000;
-            border-radius: 50px;
-            font-size: 20px;
         }
     }
 }
@@ -85,6 +80,15 @@
     .multiple-generated-gif {
         .multiple-gifs {
             .gif {
+                width: 100%;
+            }
+        }
+
+        .button-container {
+            margin-top: 24px;
+            padding: 24px;
+
+            .download-btn {
                 width: 100%;
             }
         }

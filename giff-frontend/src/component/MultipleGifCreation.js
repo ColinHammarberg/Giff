@@ -71,15 +71,19 @@ function MultipleGifLanding() {
 
   async function handleDownloadClick() {
     if (gifGenerated) {
+      setIsLoading(true);
       try {
         const response = await DownloadFolder(); // Make sure DownloadFolder sets responseType to 'blob'
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
         const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.download = 'your-gift-bag.zip';
-        link.click();
-        window.URL.revokeObjectURL(url);
+        setTimeout(() => {
+          link.href = url;
+          link.target = '_blank';
+          link.download = 'your-gift-bag.zip';
+          link.click();
+          window.URL.revokeObjectURL(url);
+          setIsLoading(false);
+        }, 3000)
       } catch (error) {
         console.error('Error downloading ZIP file:', error);
       }
@@ -100,6 +104,8 @@ function MultipleGifLanding() {
       </div>
     );
   }
+
+  console.log('isLoading', isLoading);
 
   return (
     <div className="gif-landing">
