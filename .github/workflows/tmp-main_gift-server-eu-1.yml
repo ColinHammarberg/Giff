@@ -13,6 +13,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup-chromedriver:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # This action automatically downloads and sets up ChromeDriver
+    - name: Setup ChromeDriver
+      uses: nanasess/setup-chromedriver@master
+
+    # Check ChromeDriver version
+    - name: Verify ChromeDriver installation
+      run: |
+        chromedriver --version
+        
   build:
     runs-on: ubuntu-latest
 
