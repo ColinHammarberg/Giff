@@ -32,6 +32,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
         working-directory: 'test'
+
+      - name: Install libglib2.0-0
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglib2.0-0
+          
      # This action automatically downloads and sets up ChromeDriver
       - name: Setup ChromeDriver
         uses: nanasess/setup-chromedriver@master
@@ -40,11 +46,6 @@ jobs:
       - name: Verify ChromeDriver installation
         run: |
           chromedriver --version
-          
-      - name: Install libglib2.0-0
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libglib2.0-0
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
