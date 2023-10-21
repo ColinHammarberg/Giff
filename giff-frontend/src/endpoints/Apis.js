@@ -44,8 +44,8 @@ export async function GeneratePdfGifs(url, access_token) {
 }
 
 export async function GenerateMultipleGifs(gifData) {
-  console.log('gifData1', gifData);
   const access_token = localStorage.getItem('access_token');
+  console.log('access_tokentoken', access_token, gifData);
     try {
       const response = await axios.post(
         `${Api}/generate-gif-from-list`, 
@@ -67,8 +67,17 @@ export async function GenerateMultipleGifs(gifData) {
 
 
 export async function GenerateMultiplePdfGifs(gifData) {
-    console.log('gifData2', gifData);
-    const response = await axios.post(`${Api}/generate-pdf-gifs-from-list`, {gifData});
+    const access_token = localStorage.getItem('access_token');
+    console.log('access_token123', access_token, gifData);
+    const response = await axios.post(`${Api}/generate-pdf-gifs-from-list`, 
+    {gifData, access_token},
+    {
+      headers: {
+        // Keep the Authorization header if you need it for other routes
+        'Authorization': `Bearer ${access_token}`
+      }
+    }
+    );
     return response;
 }
 

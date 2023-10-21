@@ -52,11 +52,12 @@ def get_user_gifs():
 
 
 # Endpoint for generating gif out of online pdfs
-
+@jwt_required(optional=True)
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
-    user_id = data.get('user_id', None)
+    user_id = get_jwt_identity()
+    gif_data = {}  # Initialize gif_data dictionary
 
     if user_id is None:
         try:
@@ -64,7 +65,7 @@ def generate_pdf_gif():
         except RuntimeError:
             pass  # If JWT is not present, user_id remains None
 
-    # default name if name isn't passed as a value
+    # Default name if name isn't passed as a value
     NAME = data.get('name', f'pdf_animation-{user_id}.gif') if user_id else "your_pdf_gif-t.gif"
     # Create a temporary directory to store individual images
     images_dir = os.path.join(os.path.dirname(
@@ -107,7 +108,8 @@ def generate_pdf_gif():
     frame_durations = [0.5] * len(frames)
     print('frame_durations', frame_durations)
     imageio.mimsave(output_path, frames, duration=frame_durations,
-                    loop=0) # Adjust duration as needed
+                    loop=0)  # Adjust duration as needed
+
     # Clean up: Delete individual images and temporary PDF
     for img_path in image_paths:
         os.remove(os.path.join(images_dir, img_path))
@@ -115,28 +117,56 @@ def generate_pdf_gif():
 
     print(f"PDF GIF saved at {output_path}")
 
-    return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME})
+    # Save the GIF data to the database
+    resource_id = str(uuid.uuid4())
+    print('user_id', user_id)
+    folder_name = f"{user_id}/"
+    if user_id:
+        upload_to_s3(output_path, 'gift-resources',
+                 f"{folder_name}{NAME}", resource_id)
+        # Database Entry Here
+        print('user-id', user_id)
+        gif_data = {
+            "name": NAME,
+            "resourceId": resource_id,
+        }
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
+                    gif_url=output_path, resourceId=resource_id))
+        db.session.commit()
 
+    return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME, 'data': [gif_data]})
+
+@jwt_required(optional=True)
 def generate_pdf_gifs_from_list():
     data = request.get_json()
     gifData = data['gifData']
-    print('data', gifData)
+    user_id = get_jwt_identity()
+    access_token = data.get('access_token')
+    print('gifData123', gifData)
 
     # Check if 'gifData' key exists in the JSON data
-    if 'gifData' not in data:
-        return jsonify({'error': 'No GIF data provided'})
+    # if 'gifData' not in data:
+    #     return jsonify({'error': 'No GIF data provided'})
+
+    generated_gifs_data = []
 
     for gif in gifData:
         URL = gif['url']
         name = gif['name']
-
+        headers = {'Authorization': f'Bearer {access_token}'}
         response = requests.post(
-            'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif', json={'url': URL, 'name': name})
+                'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif',
+                json={'url': URL, 'name': name, 'user_id': user_id},
+                headers=headers
+            )
+        single_gif_data = response.json().get('data', [])
+        generated_gifs_data.extend(single_gif_data)
+        print('single_gif_data', single_gif_data)
 
         if response.status_code != 200:
             return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
 
-    return jsonify({'message': 'GIFs generated successfully for all URLs'})
+    return jsonify({'message': 'GIFs generated successfully for all URLs', 'data': generated_gifs_data})
 
 def download_gif():
     gifs_folder = os.path.join(os.path.dirname(

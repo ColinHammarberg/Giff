@@ -44,8 +44,9 @@ function MultipleGeneratedGifs(props) {
 
   useEffect(() => {
     if (gifGenerated) {
+      console.log('gifGenerated.data', gifGenerated);
       const fetchData = async () => {
-        const response = await GetMultipleGifs(gifGenerated?.data);
+        const response = await GetMultipleGifs(gifGenerated);
         if (response.data) {
           console.log('response', response.data);
           setImportedGifs(response.data)

@@ -21,52 +21,72 @@ function MultipleGifLanding() {
     if (Object.values(duplicateNames).some(value => value === true)) {
       return;
     } else {
-        try {
-          setIsLoading(true);
-          // Determine the GIF type (PDF or regular)
-          const sanitizedUrlList = urlList.map((item) => ({
-            url: item.url.startsWith('http://') || item.url.startsWith('https://')
-              ? item.url
-              : `https://${item.url}`,
-            name: item.name,
-          }));
-      
-          // Determine the GIF type (PDF or regular)
-          const isPdf = sanitizedUrlList.some((item) => item.url.endsWith('.pdf'));
-          const gifData = sanitizedUrlList.map((item) => ({ url: item.url, name: item.name }));
-
-          let response;
-          
-          if (isPdf) {
-            // Filter URLs that are PDFs
-            const pdfUrls = gifData.filter((item) => item.url.endsWith('.pdf'));
-            response = await GenerateMultiplePdfGifs(pdfUrls);
-          } if (gifData) {
-            // Filter URLs that are not PDFs
-            const nonPdfUrls = gifData.filter((item) => !item.url.endsWith('.pdf'));
-            response = await GenerateMultipleGifs(nonPdfUrls);
-          }
-          console.log('response', response);
-        
-          if (response.data.error) {
-            const errorMessage = response.data.error;
-            if (errorMessage.includes("Invalid scroll height")) {
-              setError('height error');
-            } else if (errorMessage.includes("video")) {
-                setError('video error');
-            } else {
-                setError('general error');
-            }
-          } else if (response.data.message === 'GIFs generated successfully for all URLs') {
-            setGifGenerated(response.data || true);
-            console.log('response112', gifGenerated);
-          }
-          setIsLoading(false);
-        } catch (error) {
-          setError('general error');
-          setIsLoading(false);
+      try {
+        setIsLoading(true);
+        // Determine the GIF type (PDF or regular)
+        const sanitizedUrlList = urlList.map((item) => ({
+          url: item.url.startsWith('http://') || item.url.startsWith('https://')
+            ? item.url
+            : `https://${item.url}`,
+          name: item.name,
+        }));
+  
+        // Separate PDF and non-PDF URLs
+        const pdfUrls = sanitizedUrlList.filter((item) => item.url.endsWith('.pdf'));
+        const nonPdfUrls = sanitizedUrlList.filter((item) => !item.url.endsWith('.pdf'));
+  
+        // Declare variables to store responses
+        let pdfResponse;
+        let nonPdfResponse;
+  
+        // Call the appropriate generation functions
+        if (pdfUrls.length > 0) {
+          pdfResponse = await GenerateMultiplePdfGifs(pdfUrls);
         }
+  
+        if (nonPdfUrls.length > 0) {
+          nonPdfResponse = await GenerateMultipleGifs(nonPdfUrls);
+        }
+  
+        console.log('pdfResponse', pdfResponse);
+        console.log('nonPdfResponse', nonPdfResponse);
+  
+        // Create an array to accumulate response data
+        let data = [];
+  
+        // Merge PDF response data into the array
+        if (pdfResponse && pdfResponse.data.data) {
+          data = data.concat(pdfResponse.data.data);
+        }
+  
+        // Merge non-PDF response data into the array
+        if (nonPdfResponse && nonPdfResponse.data.data) {
+          data = data.concat(nonPdfResponse.data.data);
+        }
+  
+        // Handle errors as needed
+        if (pdfResponse?.data.error || nonPdfResponse?.data.error) {
+          const errorMessage = (pdfResponse?.data.error || nonPdfResponse?.data.error) || '';
+          if (errorMessage.includes("Invalid scroll height")) {
+            setError('height error');
+          } else if (errorMessage.includes("video")) {
+            setError('video error');
+          } else {
+            setError('general error');
+          }
+        }
+  
+        // Set gifGenerated with the merged data array
+        if (data.length > 0) {
+          setGifGenerated(data);
+        }
+  
+        setIsLoading(false);
+      } catch (error) {
+        setError('general error');
+        setIsLoading(false);
       }
+    }
   };
 
   async function handleDownloadClick() {
