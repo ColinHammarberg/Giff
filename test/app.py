@@ -120,26 +120,28 @@ def generate_gif():
     #chrome_options.binary_location = '/usr/local/bin'
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(URL)
+    timer = 400
 
     scroll_height = driver.execute_script("return document.body.scrollHeight")
     if scroll_height < 1000:
         return jsonify({'error': 'Invalid scroll height'})
 
-    elif 1000 <= scroll_height < 3000:
-        timer = 200
-        duration = timer / 600.0  # 0.333s / per screenshot
+    # elif 1000 <= scroll_height < 3000:
+    #     timer = 200
+    #     duration = timer / 600.0  # 0.333s / per screenshot
 
-    elif 3000 <= scroll_height < 5000:
-        timer = 300
-        duration = timer / 800.0  # 0.375s / per screenshot
+    # elif 3000 <= scroll_height < 5000:
+    #     timer = 300
+    #     duration = timer / 800.0  # 0.375s / per screenshot
 
-    elif 5000 <= scroll_height < 9000:
-        timer = 400
-        duration = timer / 800.0  # 0.266s / per screenshot
+    # elif 5000 <= scroll_height < 9000:
+    #     timer = 400
+    #     duration = timer / 800.0  # 0.266s / per screenshot
 
-    else:
-        timer = 500
-        duration = timer / 800.0  # 0.25s / per screenshot
+    # else:
+    #     timer = 500
+    #     duration = timer / 800.0  # 0.25s / per screenshot
+    duration = 1.0
 
     if not NAME.endswith('.gif'):
         NAME += '.gif'

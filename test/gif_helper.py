@@ -1,12 +1,9 @@
 from extensions import db
 from flask import jsonify, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
-import imageio
+from PIL import Image
 import io
 import os
-import time
 import zipfile
 from PIL import Image
 import requests
@@ -50,7 +47,6 @@ def get_user_gifs():
         print("An exception occurred:", e)
         return jsonify({'error': str(e)}), 500
 
-
 # Endpoint for generating gif out of online pdfs
 @jwt_required(optional=True)
 def generate_pdf_gif():
@@ -86,6 +82,8 @@ def generate_pdf_gif():
 
     print('pdf_document.page_count', pdf_document.page_count)
 
+    frame_durations = []  # List to store frame durations
+
     for page_number in range(pdf_document.page_count):
         page = pdf_document[page_number]
         image_list = page.get_pixmap()
@@ -94,21 +92,25 @@ def generate_pdf_gif():
         img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
         img.save(img_path, 'PNG')
 
+        # Calculate individual frame duration for each page (adjust as needed)
+        frame_duration = 1.0  # Adjust the duration as needed
+        frame_durations.append(int(frame_duration * 1000))  # Convert to milliseconds
+
     pdf_document.close()
 
-    # Create a GIF from the images
+    # Create a GIF from the images using Pillow
+    image_paths = sorted(os.listdir(images_dir))
+    frames = [Image.open(os.path.join(images_dir, img_path))
+              for img_path in image_paths if img_path.endswith('.png')]
+
+    # Specify the output path for the GIF
     gifs_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
     os.makedirs(gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_folder, NAME)
 
-    image_paths = sorted(os.listdir(images_dir))
-    frames = [Image.open(os.path.join(images_dir, img_path))
-              for img_path in image_paths if img_path.endswith('.png')]
-    frame_durations = [0.5] * len(frames)
-    print('frame_durations', frame_durations)
-    imageio.mimsave(output_path, frames, duration=frame_durations,
-                    loop=0)  # Adjust duration as needed
+    # Save the GIF with specified frame durations
+    frames[0].save(output_path, save_all=True, append_images=frames[1:], duration=frame_durations, loop=0)
 
     # Clean up: Delete individual images and temporary PDF
     for img_path in image_paths:
@@ -145,8 +147,8 @@ def generate_pdf_gifs_from_list():
     print('gifData123', gifData)
 
     # Check if 'gifData' key exists in the JSON data
-    # if 'gifData' not in data:
-    #     return jsonify({'error': 'No GIF data provided'})
+    if 'gifData' not in data:
+        return jsonify({'error': 'No GIF data provided'})
 
     generated_gifs_data = []
 
@@ -155,12 +157,18 @@ def generate_pdf_gifs_from_list():
         name = gif['name']
         headers = {'Authorization': f'Bearer {access_token}'}
         response = requests.post(
-                'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif',
-                json={'url': URL, 'name': name, 'user_id': user_id},
-                headers=headers
-            )
-        single_gif_data = response.json().get('data', [])
-        generated_gifs_data.extend(single_gif_data)
+            'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif',
+            json={'url': URL, 'name': name, 'user_id': user_id},
+            headers=headers
+        )
+
+        try:
+            single_gif_data = response.json().get('data', [])
+            generated_gifs_data.extend(single_gif_data)
+        except ValueError:
+            # Handle the case where the response is not valid JSON
+            return jsonify({'error': f'Invalid JSON response from GIF generation for URL: {URL}'})
+
         print('single_gif_data', single_gif_data)
 
         if response.status_code != 200:
