@@ -5,29 +5,24 @@ import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 import LoadingGif from './LoadingGif';
 import OfficialButton from './OfficialButton';
+import { GetMultipleGifs } from '../endpoints/Apis';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload, key, url, edit } = props;
+  const { gifGenerated, isLoading, onDownload, key } = props;
   const navigate = useNavigate();
-  const [gifSrc, setGifSrc] = useState(null);
+  const [importedGifs, setImportedGifs] = useState();
 
   useEffect(() => {
-    const fetchGif = async () => {
-      try {
-        const gifModule = await import(
-          `../gifs/${gifGenerated}`
-        );
-        setGifSrc(gifModule.default);
-      } catch (error) {
-        console.error("Could not load GIF:", error);
-      }
-    };
-    if (!edit) {
-      fetchGif();
-    } else {
-      // fetch resource from resourceId
+    if (gifGenerated) {
+      const fetchData = async () => {
+        const response = await GetMultipleGifs(gifGenerated);
+        if (response.data) {
+          setImportedGifs(response.data)
+        }
+      };
+      fetchData();
     }
-    }, [url, gifGenerated, edit]);
+  }, [gifGenerated]);
 
   return (
     <div className="generated-gif" key={key}>
@@ -38,9 +33,15 @@ function GeneratedGif(props) {
         </Box>
       ) : (
         <>
+        {gifGenerated && importedGifs?.length > 0 && (
           <Box className="gif">
-            {gifGenerated && <img src={gifSrc} alt="Generated GIF" />}
+            {importedGifs.map((gif) => {
+              return (
+                <img src={gif?.url} alt="Generated GIF" />
+              )
+            })}
           </Box>
+        )}  
           <Box className="generated-gif-btn-box">
             <OfficialButton variant="yellow" label="Download GIF" onClick={onDownload} />
             <OfficialButton variant="green" label="Share gif in email" onClick={() => navigate('/email-choice')} />

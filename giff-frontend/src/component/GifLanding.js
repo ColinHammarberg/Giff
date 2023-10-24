@@ -45,7 +45,8 @@ function GifLanding() {
       if (response?.data?.error) {
         handleErrors(response.data.error);
       } else if (response.data.message === 'GIF generated and uploaded!') {
-        setGifGenerated(response.data.name);
+        const responseData = response.data;
+        setGifGenerated(responseData.data);
       }
       setIsLoading(false);
     } catch (error) {
