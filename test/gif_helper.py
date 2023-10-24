@@ -161,6 +161,11 @@ def generate_pdf_gifs_from_list():
             json={'url': URL, 'name': name, 'user_id': user_id},
             headers=headers
         )
+        if response.status_code != 200:
+            return jsonify({'error': f'Failed to generate GIF for URL: {URL}'})
+
+        # Inspect raw response
+        print("Raw Response:", response.text)
 
         try:
             single_gif_data = response.json().get('data', [])
