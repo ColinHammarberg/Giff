@@ -52,10 +52,10 @@ def get_user_gifs():
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
-    user_id = get_jwt_identity()
+    user_id = data.get('user_id', get_jwt_identity())
     gif_data = {} # Initialize gif_data dictionary
     user_exists = User.query.filter_by(id=user_id).first()
-    print('user_exists', user_exists)
+    print('user_id', user_id)
 
     if not user_exists and user_id:
         return jsonify({'error': f'User with id {user_id} not found'}), 400
@@ -162,7 +162,7 @@ def generate_pdf_gifs_from_list():
         name = gif['name']
         headers = {'Authorization': f'Bearer {access_token}'}
         response = requests.post(
-            'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif',
+            'http://127.0.0.1:5000/generate-pdf-gif',
             json={'url': URL, 'name': name, 'user_id': user_id},
             headers=headers
         )
