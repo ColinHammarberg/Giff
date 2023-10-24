@@ -17,7 +17,6 @@ function MultipleGifLanding() {
   ]);
 
   const generateMultipleGifs = async () => {
-    console.log('duplicateNames', duplicateNames);
     if (Object.values(duplicateNames).some(value => value === true)) {
       return;
     } else {

@@ -76,6 +76,7 @@ export async function GenerateMultiplePdfGifs(gifData) {
       }
     }
     );
+    console.log('response', response);
     return response;
 }
 
