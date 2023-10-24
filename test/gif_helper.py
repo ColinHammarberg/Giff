@@ -162,7 +162,7 @@ def generate_pdf_gifs_from_list():
         name = gif['name']
         headers = {'Authorization': f'Bearer {access_token}'}
         response = requests.post(
-            'http://127.0.0.1:5000/generate-pdf-gif',
+            'https://gift-server-eu-1.azurewebsites.net/generate-pdf-gif',
             json={'url': URL, 'name': name, 'user_id': user_id},
             headers=headers
         )
