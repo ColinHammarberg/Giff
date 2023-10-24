@@ -1,8 +1,11 @@
-const isAuthenticated = localStorage.getItem('access_token');
+export const isAuthenticated = () => {
+  const token = localStorage.getItem('access_token');
+  return !!token;
+};
 
 console.log('isAuthenticated', isAuthenticated);
 
-export const MenuItems = [
+export const getMenuItems = (isAuthenticated) => [
     {title: 'Profile', url: 'profile', key: 1, isShow: isAuthenticated},
     {title: 'My Gif library', url: 'gif-library', key: 2, isShow: isAuthenticated},
     {title: 'Insights & Inspiration', url: 'insights', key: 3, isShow: !isAuthenticated},

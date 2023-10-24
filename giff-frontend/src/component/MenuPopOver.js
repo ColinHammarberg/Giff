@@ -1,11 +1,14 @@
 import React, { PureComponent } from 'react';
 import { Box, Button, Popover } from '@mui/material';
 import './MenuPopOver.scss';
-import { MenuItems } from '../utils/utils';
+import { getMenuItems, isAuthenticated } from '../utils/utils';
 
 class MenuPopOver extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      isAuthenticated: isAuthenticated(),
+    };
     this.handleClose = this.handleClose.bind(this);
     this.anchorOrigin = {
       vertical: 'bottom',
@@ -23,6 +26,7 @@ class MenuPopOver extends PureComponent {
 
   render() {
     const { anchorEl } = this.props;
+    const menuItems = getMenuItems(this.state.isAuthenticated);
     if (!anchorEl) {
         return null;
     }
@@ -36,7 +40,7 @@ class MenuPopOver extends PureComponent {
         onClose={this.handleClose}
       >
         <Box className="gif-menu-items">
-            {MenuItems.map((item) => (
+            {menuItems.map((item) => (
               item.isShow && (
                 <Box key={item.key} onClick={() => this.props.handleNavigation(item.url)}>
                 {item.title}
