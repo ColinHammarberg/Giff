@@ -52,7 +52,6 @@ export async function GenerateMultipleGifs(gifData) {
         { gifData, access_token },
         {
           headers: {
-            // Keep the Authorization header if you need it for other routes
             'Authorization': `Bearer ${access_token}`
           }
         }
@@ -73,7 +72,6 @@ export async function GenerateMultiplePdfGifs(gifData) {
     {gifData, access_token},
     {
       headers: {
-        // Keep the Authorization header if you need it for other routes
         'Authorization': `Bearer ${access_token}`
       }
     }
