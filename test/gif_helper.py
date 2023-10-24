@@ -11,7 +11,7 @@ import fitz
 from PIL import Image
 from s3_helper import upload_to_s3
 import uuid
-from models import UserGif
+from models import UserGif, User
 import os
 
 backend_gifs_folder = os.path.join(os.path.dirname(
@@ -53,7 +53,12 @@ def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
     user_id = get_jwt_identity()
-    gif_data = {}  # Initialize gif_data dictionary
+    gif_data = {} # Initialize gif_data dictionary
+    user_exists = User.query.filter_by(id=user_id).first()
+    print('user_exists', user_exists)
+
+    if not user_exists and user_id:
+        return jsonify({'error': f'User with id {user_id} not found'}), 400
 
     if user_id is None:
         try:
@@ -123,7 +128,7 @@ def generate_pdf_gif():
     resource_id = str(uuid.uuid4())
     print('user_id', user_id)
     folder_name = f"{user_id}/"
-    if user_id:
+    if user_exists:
         upload_to_s3(output_path, 'gift-resources',
                  f"{folder_name}{NAME}", resource_id)
         # Database Entry Here
