@@ -63,7 +63,7 @@ pyparsing==3.1.1
 PyPDF2==3.0.1
 PySocks==1.7.1
 python-dateutil==2.8.2
-flask_jwt_extended==4.5.2
+# flask_jwt_extended==4.5.2
 python-decouple==3.8
 python-dotenv==1.0.0
 python-http-client==3.3.7
