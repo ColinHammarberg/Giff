@@ -50,7 +50,7 @@ function GifLanding() {
       }
       setIsLoading(false);
     } catch (error) {
-      setError('An error occurred while generating GIF.');
+      handleErrors('general error')
       setIsLoading(false);
     }
   };
