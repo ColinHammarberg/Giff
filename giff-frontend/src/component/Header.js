@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import DesktopLogo from '../resources/gif_logo_desktop.gif'
 import MobileLogo from '../resources/gif_logo_mobile.gif'
 import useMobileQuery from '../queries/useMobileQuery';
-import giftUser from '../access/GiftUser';
 
 function Header({ menu }) {
     const navigate = useNavigate();
     const { isMobile } = useMobileQuery();
+    const access_token = localStorage.getItem('access_token');
+
     function navigateUser() {
-        if (giftUser.isLoggedIn()) {
+        if (access_token) {
             return navigate('/choose-option-create')
         }
     }
