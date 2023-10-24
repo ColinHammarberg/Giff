@@ -118,7 +118,7 @@ def generate_gif():
     chrome_options.add_argument('--verbose')
     chrome_options.add_argument('--disable-dev-shm-usage')
     #chrome_options.binary_location = '/usr/local/bin'
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(executable_path='/usr/local/bin', options=chrome_options)
     driver.get(URL)
     timer = 400
 
