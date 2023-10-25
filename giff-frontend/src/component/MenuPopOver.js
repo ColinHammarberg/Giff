@@ -10,6 +10,7 @@ class MenuPopOver extends PureComponent {
       isAuthenticated: isAuthenticated(),
     };
     this.handleClose = this.handleClose.bind(this);
+    this.handleNavigationClick = this.handleNavigationClick.bind(this);
     this.anchorOrigin = {
       vertical: 'bottom',
       horizontal: 'left',
@@ -24,9 +25,17 @@ class MenuPopOver extends PureComponent {
     this.props.onClosePopup();
   }
 
+  handleNavigationClick(item) {
+    if (item?.onClick) {
+      item.onClick()
+    } else {
+      this.props.handleNavigation(item.url)
+    }
+  }
+
   render() {
     const { anchorEl } = this.props;
-    const menuItems = getMenuItems(this.state.isAuthenticated);
+    const menuItems = getMenuItems(this.state.isAuthenticated, this.props.handleOnClickSignIn, this.props.handleOnClickSignOut);
     if (!anchorEl) {
         return null;
     }
@@ -42,17 +51,11 @@ class MenuPopOver extends PureComponent {
         <Box className="gif-menu-items">
             {menuItems.map((item) => (
               item.isShow && (
-                <Box key={item.key} onClick={() => this.props.handleNavigation(item.url)}>
-                {item.title}
-              </Box>
+                <Box key={item.key} onClick={() => this.handleNavigationClick(item)}>
+                  {item.title}
+                </Box>
               )
             ))}
-            {this.props.isLoggedIn ? (
-              <Box onClick={this.props.handleOnClickSignOut}>Sign Out</Box>
-            ) : (
-              <Box onClick={this.props.handleOnClickSignIn}>Sign In</Box>
-            )
-          }
         </Box>
         <Button onClick={this.handleClose} className="close-menu">CLOSE MENU</Button>
       </Popover>

@@ -41,6 +41,10 @@
             width: 100%;
             min-width: 225px;
 
+            input:-webkit-autofill {
+                box-shadow: 0 0 0 50px #fff inset;
+            }
+
             .MuiInputBase-root {
                 background-color: #fff;
                 height: 86px;
