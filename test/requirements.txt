@@ -8,8 +8,11 @@ azure-appconfiguration==1.4.0
 azure-appconfiguration-provider==1.0.0
 azure-common==1.1.28
 azure-core==1.29.4
+azure-core-tracing-opentelemetry==1.0.0b11
 azure-identity==1.14.1
 azure-keyvault-secrets==4.7.0
+azure-monitor-opentelemetry==1.0.0
+azure-monitor-opentelemetry-exporter==1.0.0b17
 blinker==1.6.2
 boto3==1.28.57
 botocore==1.31.57
@@ -47,7 +50,24 @@ multidict==6.0.4
 numpy==1.25.2
 oauthlib==3.2.2
 openai==0.28.0
+opentelemetry-api==1.20.0
+opentelemetry-instrumentation==0.41b0
+opentelemetry-instrumentation-asgi==0.41b0
+opentelemetry-instrumentation-dbapi==0.41b0
+opentelemetry-instrumentation-django==0.41b0
+opentelemetry-instrumentation-fastapi==0.41b0
+opentelemetry-instrumentation-flask==0.41b0
+opentelemetry-instrumentation-psycopg2==0.41b0
+opentelemetry-instrumentation-requests==0.41b0
+opentelemetry-instrumentation-urllib==0.41b0
+opentelemetry-instrumentation-urllib3==0.41b0
+opentelemetry-instrumentation-wsgi==0.41b0
+opentelemetry-resource-detector-azure==0.1.0
+opentelemetry-sdk==1.20.0
+opentelemetry-semantic-conventions==0.41b0
+opentelemetry-util-http==0.41b0
 outcome==1.2.0
+packaging==23.2
 pdf2image==1.16.3
 Pillow==10.0.0
 portalocker==2.8.2
@@ -63,7 +83,6 @@ pyparsing==3.1.1
 PyPDF2==3.0.1
 PySocks==1.7.1
 python-dateutil==2.8.2
-# flask_jwt_extended==4.5.2
 python-decouple==3.8
 python-dotenv==1.0.0
 python-http-client==3.3.7
@@ -80,6 +99,8 @@ SQLAlchemy==2.0.21
 starkbank-ecdsa==2.2.0
 tqdm==4.66.1
 trio==0.22.2
+psycopg2-binary==2.9.9
+gunicorn==21.2.0
 trio-websocket==0.10.3
 typing_extensions==4.7.1
 uritemplate==4.1.1
@@ -90,5 +111,3 @@ Werkzeug==2.3.7
 wsproto==1.2.0
 yarl==1.9.2
 zipp==3.16.2
-gunicorn==21.2.0
-psycopg2-binary==2.9.9

@@ -24,6 +24,10 @@ from azure.appconfiguration.provider import (
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 import os
+from azure.monitor.opentelemetry import configure_azure_monitor
+
+# Import the tracing api from the `opentelemetry` package.
+from opentelemetry import trace
 
 #key vault init
 #keyVaultName = os.environ["KEY_VAULT_NAME"]
@@ -40,6 +44,19 @@ app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstr
 
 # Initialize database with the app
 db.init_app(app)
+
+configure_azure_monitor(
+    connection_string=client.get_secret("Insightsconnectionstring").value,
+)
+
+# Get a tracer for the current module.
+tracer = trace.get_tracer(__name__)
+
+with tracer.start_as_current_span("hello"):
+    print("Hello, World!")
+
+# Wait for export to take place in the background.
+input()
 
 app.secret_key = 'gift_secret_key_123'
 jwt = JWTManager(app)
