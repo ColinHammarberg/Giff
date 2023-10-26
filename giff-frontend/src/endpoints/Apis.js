@@ -164,6 +164,18 @@ export async function FetchUserGifs(access_token) {
   return response.data;
 }
 
+export async function FetchUserLogo() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.get(`${Api}/fetch_user_logo`,
+  {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  }
+  )
+  return response;
+}
+
 export async function KeepAccessAlive() {
   const access_token = localStorage.getItem('access_token');
   const response = await axios.get(`${Api}/keep_access_alive`, {

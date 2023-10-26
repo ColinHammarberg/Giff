@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { UploadUserLogo } from '../endpoints/Apis';
+import { showNotification } from './Notification';
 
 function LogoUploadForm() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -18,8 +19,12 @@ function LogoUploadForm() {
         const response = await UploadUserLogo(selectedFile);
         const data = response.data;
         console.log('data', data);
+        if (data.message === "Logo uploaded!") {
+          showNotification('success', 'Your logo was successfully uploaded!');
+        }
       } catch (error) {
         console.error('Error:', error);
+        showNotification('error', 'Your logo failed to be uploaded! Please try again.');
       }
 
       // Reset the selected file state

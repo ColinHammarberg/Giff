@@ -1,6 +1,6 @@
 import boto3
 from flask import jsonify, request
-from models import UserGif
+from models import UserGif, UserLogo
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
@@ -95,6 +95,30 @@ def get_multiple_gifs():
         gifs_list.append(gif_data)
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
+
+@jwt_required()
+def fetch_logo():
+    user_id = get_jwt_identity()
+    if user_id is None:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+    user_logo = UserLogo.query.filter_by(user_id=user_id).first()
+
+    if user_logo is None:
+        return jsonify({'error': 'Logo not found for this user'}), 404
+
+    resource_id = user_logo.resource_id
+
+    folder_name = f"{user_id}/logos/"
+
+    # Generate a presigned URL to access the logo
+    presigned_url = s3.generate_presigned_url('get_object',
+                                             Params={'Bucket': 'logo-resources',
+                                                     'Key': f"{folder_name}{resource_id}.png"},
+                                             ExpiresIn=3600)  # URL expires in 1 hour
+
+    return jsonify({'message': 'Success', 'logo_url': presigned_url}), 200
+
 
 
 

@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs
+from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo
 import uuid
 from models import UserGif
 import time
@@ -75,6 +75,10 @@ def fetch_user():
 @app.route('/upload_user_logo', methods=['POST'])
 def upload_user_logo():
     return upload_logo()
+
+@app.route('/fetch_user_logo', methods=['GET'])
+def fetch_user_logo():
+    return fetch_logo()
 
 
 @app.route('/signin', methods=['POST'])
