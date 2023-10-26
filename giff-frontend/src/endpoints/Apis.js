@@ -30,8 +30,8 @@ export async function GenerateSingleGif(url) {
 }
 
 
-export async function GeneratePdfGifs(url, access_token) {
-    console.log('access_token', access_token);
+export async function GeneratePdfGifs(url) {
+  const access_token = localStorage.getItem('access_token');
     const response = await axios.post(`${Api}/generate-pdf-gif`, 
     { url },
     {
