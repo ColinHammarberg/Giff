@@ -52,9 +52,12 @@ function MultipleGifLanding() {
   
         // Create an array to accumulate response data
         let data = [];
+
+        console.log('pdfResponse', pdfResponse);
   
         // Merge PDF response data into the array
         if (pdfResponse && pdfResponse.data.data) {
+          console.log('pdfResponse', pdfResponse);
           data = data.concat(pdfResponse.data.data);
         }
   
