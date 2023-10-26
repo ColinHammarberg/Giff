@@ -5,7 +5,7 @@ import GiftLogo from '../resources/gif_logo_desktop.gif';
 function UserLogo() {
     const { user } = useContext(GiftContext);
     return (
-        <img src={user?.userLogoSrc} alt={GiftLogo} style={{ width: '100px', height: '100px' }} />
+        <img src={user?.userLogoSrc} alt="" style={{ width: '100px', height: '100px' }} />
     )
 }
 
