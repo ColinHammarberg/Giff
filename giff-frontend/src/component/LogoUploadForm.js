@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { UploadUserLogo } from '../endpoints/Apis';
 
 function LogoUploadForm() {
-  const [uploadStatus, setUploadStatus] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -21,7 +20,6 @@ function LogoUploadForm() {
         setUploadStatus(data.message);
       } catch (error) {
         console.error('Error:', error);
-        setUploadStatus('An error occurred during logo upload.');
       }
 
       // Reset the selected file state
