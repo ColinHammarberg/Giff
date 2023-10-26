@@ -36,7 +36,8 @@ credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
 app = Flask(__name__)
-CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://giveagif-t.com"}})
+# CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://gift-server-eu-1.azurewebsites.net" }})
+CORS(app)
 #app.config.update(azure_app_config)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'

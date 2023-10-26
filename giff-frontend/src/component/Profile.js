@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
 import giftUser from '../access/GiftUser';
+import LogoUploadForm from './LogoUploadForm';
 
 function Profile() {
     const [userInfo, setUserInfo] = useState(null);
@@ -98,10 +99,13 @@ function Profile() {
           </Box>
           <Box className="password-details">
             <div className="text">
-              <span>password</span>
+              <span>Password</span>
               <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
             </div>
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
+          </Box>
+          <Box className="password-details">
+            <LogoUploadForm />
           </Box>
         </Box>
         <Box className="delete-account">

@@ -64,7 +64,6 @@ export async function GenerateMultipleGifs(gifData) {
   }
 }
 
-
 export async function GenerateMultiplePdfGifs(gifData) {
     const access_token = localStorage.getItem('access_token');
     console.log('access_token123', access_token, gifData);
@@ -78,6 +77,26 @@ export async function GenerateMultiplePdfGifs(gifData) {
     );
     console.log('response', response);
     return response;
+}
+
+export async function UploadUserLogo(logo) {
+  const access_token = localStorage.getItem('access_token');
+  const formData = new FormData();
+  formData.append('logo', logo); // Assuming 'logo' is a File object
+  console.log('formData', formData);
+
+  try {
+    const response = await axios.post(`${Api}/upload_user_logo`, formData, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 }
 
 export async function DownloadFolder() {

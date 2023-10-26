@@ -120,8 +120,7 @@ def update_password():
     
 @jwt_required()
 def upload_logo():
-    data = request.get_json()
-    user_id = data.get('user_id', get_jwt_identity())
+    user_id = get_jwt_identity()
     logo_data = {}
 
     user_exists = User.query.filter_by(id=user_id).first()
