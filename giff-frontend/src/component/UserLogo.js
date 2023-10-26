@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { GiftContext } from "../context/GiftContextProvider";
-import GiftLogo from '../resources/gif_logo_desktop.gif';
 
 function UserLogo() {
     const { user } = useContext(GiftContext);
