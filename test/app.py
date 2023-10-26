@@ -24,10 +24,10 @@ from azure.appconfiguration.provider import (
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 import os
-from azure.monitor.opentelemetry import configure_azure_monitor
+# from azure.monitor.opentelemetry import configure_azure_monitor
 
-# Import the tracing api from the `opentelemetry` package.
-from opentelemetry import trace
+# # Import the tracing api from the `opentelemetry` package.
+# from opentelemetry import trace
 
 #key vault init
 #keyVaultName = os.environ["KEY_VAULT_NAME"]
@@ -44,12 +44,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstr
 # Initialize database with the app
 db.init_app(app)
 
-configure_azure_monitor(
-    connection_string='InstrumentationKey=06f2a380-4400-48b2-9a09-36fcb72ce4f8;IngestionEndpoint=https://swedencentral-0.in.applicationinsights.azure.com/',
-)
+# configure_azure_monitor(
+#     connection_string='InstrumentationKey=06f2a380-4400-48b2-9a09-36fcb72ce4f8;IngestionEndpoint=https://swedencentral-0.in.applicationinsights.azure.com/',
+# )
 
-# Get a tracer for the current module.
-tracer = trace.get_tracer(__name__)
+# # Get a tracer for the current module.
+# tracer = trace.get_tracer(__name__)
 
 app.secret_key = 'gift_secret_key_123'
 jwt = JWTManager(app)
@@ -123,9 +123,8 @@ def generate_gif():
         return jsonify({'error': 'video url'})
 
     chrome_options = Options()
-    chrome_options.binary_location = '/usr/local/bin/chromedriver'
-    # chrome_options.add_argument('--headless')
-    #chrome_options.binary_location = '/usr/local/bin'
+    chrome_options.binary_location = '/usr/local/bin'
+    chrome_options.add_argument('--headless')
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(URL)
     timer = 400
