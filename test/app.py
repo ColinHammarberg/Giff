@@ -8,7 +8,7 @@ import uuid
 from models import UserGif
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, upload_logo
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -36,7 +36,7 @@ credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://giveagif-t.com"}})
 #app.config.update(azure_app_config)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
@@ -70,6 +70,10 @@ def fetch_all_user_gifs():
 def fetch_user():
     print('generate')
     return fetch_user_info()
+
+@app.route('/upload_user_logo', methods=['POST'])
+def upload_user_logo():
+    return upload_logo()
 
 
 @app.route('/signin', methods=['POST'])
