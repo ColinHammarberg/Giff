@@ -17,7 +17,7 @@ function LogoUploadForm() {
       try {
         const response = await UploadUserLogo(selectedFile);
         const data = response.data;
-        setUploadStatus(data.message);
+        console.log('data', data);
       } catch (error) {
         console.error('Error:', error);
       }
