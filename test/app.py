@@ -35,7 +35,6 @@ KVUri = "https://gift-app-keys.vault.azure.net"
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
-
 app = Flask(__name__)
 CORS(app)
 #app.config.update(azure_app_config)
@@ -46,17 +45,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstr
 db.init_app(app)
 
 configure_azure_monitor(
-    connection_string=client.get_secret("Insightsconnectionstring").value,
+    connection_string='InstrumentationKey=06f2a380-4400-48b2-9a09-36fcb72ce4f8;IngestionEndpoint=https://swedencentral-0.in.applicationinsights.azure.com/',
 )
 
 # Get a tracer for the current module.
 tracer = trace.get_tracer(__name__)
-
-with tracer.start_as_current_span("hello"):
-    print("Hello, World!")
-
-# Wait for export to take place in the background.
-input()
 
 app.secret_key = 'gift_secret_key_123'
 jwt = JWTManager(app)
