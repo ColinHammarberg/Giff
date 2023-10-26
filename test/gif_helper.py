@@ -48,7 +48,7 @@ def get_user_gifs():
         return jsonify({'error': str(e)}), 500
 
 # Endpoint for generating gif out of online pdfs
-@jwt_required(optional=True)
+@jwt_required()
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
@@ -143,7 +143,7 @@ def generate_pdf_gif():
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME, 'data': [gif_data]})
 
-@jwt_required(optional=True)
+@jwt_required()
 def generate_pdf_gifs_from_list():
     data = request.get_json()
     gifData = data['gifData']

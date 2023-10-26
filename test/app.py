@@ -115,7 +115,7 @@ def generate_gif():
         try:
             user_id = get_jwt_identity()
         except RuntimeError:
-            pass  # If JWT is not present, user_id remains None
+            pass # If JWT is not present, user_id remains None
     URL = data.get('url')
     NAME = data.get('name', f'your_gift-{user_id}.gif') if user_id else "your_gif-t.gif"
 
@@ -133,21 +133,6 @@ def generate_gif():
     if scroll_height < 1000:
         return jsonify({'error': 'Invalid scroll height'})
 
-    # elif 1000 <= scroll_height < 3000:
-    #     timer = 200
-    #     duration = timer / 600.0  # 0.333s / per screenshot
-
-    # elif 3000 <= scroll_height < 5000:
-    #     timer = 300
-    #     duration = timer / 800.0  # 0.375s / per screenshot
-
-    # elif 5000 <= scroll_height < 9000:
-    #     timer = 400
-    #     duration = timer / 800.0  # 0.266s / per screenshot
-
-    # else:
-    #     timer = 500
-    #     duration = timer / 800.0  # 0.25s / per screenshot
     duration = 1.0
 
     if not NAME.endswith('.gif'):
