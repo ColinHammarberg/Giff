@@ -25,6 +25,7 @@ function MenuButton() {
       try {
         // Remove JWT and user state
         localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
         // Redirect to login page
         navigate('/');
       } catch (error) {

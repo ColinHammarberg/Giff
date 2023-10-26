@@ -1,24 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Profile.scss';
 import Header from './Header';
 import { Box, Button, TextField } from '@mui/material';
-import { DeleteUserProfile, FetchUserInfo, FetchUserLogo, UpdatePassword } from '../endpoints/Apis';
+import { DeleteUserProfile, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
 import giftUser from '../access/GiftUser';
 import LogoUploadForm from './LogoUploadForm';
+import { GiftContext } from '../context/GiftContextProvider';
 
 function Profile() {
-    const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
+    const { user } = useContext(GiftContext); // Get the context value
     const [password, setPassword] = useState({
       currentPassword: '',
       newPassword: '',
     });
+
+    console.log('user', user?.userInfo?.email);
+    
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
       setAnchorEl(event?.currentTarget);
@@ -68,28 +72,7 @@ function Profile() {
         }
       }
     }
-    useEffect(() => {
-        const fetchData = async () => {
-          const response = await FetchUserInfo();
-          console.log('response', response);
-          if (response) {
-            setUserInfo(response.data);
-          }
-        };
-        fetchData();
-      }, []);
 
-      useEffect(() => {
-        const fetchData = async () => {
-          const response = await FetchUserLogo();
-          console.log('response', response);
-          if (response) {
-            console.log('response', response);
-          }
-        };
-        fetchData();
-      }, []);
-    console.log('userInfo', userInfo);
   return (
     <div className="profile">
       <Header menu />
@@ -106,7 +89,7 @@ function Profile() {
                 <span>Email address</span>
                 <Button>Edit Email</Button>
               </div>
-              <TextField value={userInfo?.email} />
+              <TextField value={user?.userInfo?.email} />
           </Box>
           <Box className="password-details">
             <div className="text">
