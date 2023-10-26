@@ -52,7 +52,7 @@
                 border-radius: 50px;
                 height: 15px;
                 color: #fff;
-                width: 50px;
+                width: 60px;
                 font-family: 'Staatliches';
                 background-color: #000;
                 cursor: pointer;
@@ -64,10 +64,12 @@
             gap: 24px;
 
             .custom-button {
-                /* Your button styling here */
                 background-color: #fff;
                 width: 343px;
                 font-family: "Staatliches";
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 cursor: pointer;
                 border: none;
                 border-radius: 5px;

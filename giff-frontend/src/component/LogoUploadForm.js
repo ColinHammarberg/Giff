@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { UploadUserLogo } from '../endpoints/Apis';
 import { showNotification } from './Notification';
+import UserLogo from './UserLogo';
 
-function LogoUploadForm() {
+function LogoUploadForm(props) {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (e) => {
@@ -49,7 +50,13 @@ function LogoUploadForm() {
           </button>
         </div>
         <label htmlFor="logo-file" id="custom-button" className="custom-button">
-          Choose File
+          {props.userLogoSrc ? (
+            <UserLogo />
+          ) : (
+            <>
+              Choose File
+            </>
+          )}
         </label>
         <input
           type="file"

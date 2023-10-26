@@ -20,8 +20,6 @@ function Profile() {
       currentPassword: '',
       newPassword: '',
     });
-
-    console.log('user', user?.userInfo?.email);
     
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
@@ -99,7 +97,7 @@ function Profile() {
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
           </Box>
           <Box className="password-details">
-            <LogoUploadForm />
+            <LogoUploadForm userLogoSrc={user.userLogoSrc} />
           </Box>
         </Box>
         <Box className="delete-account">
