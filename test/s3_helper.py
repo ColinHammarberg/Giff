@@ -1,9 +1,10 @@
 import boto3
 from flask import jsonify, request
-from models import UserGif, UserLogo
+from models import UserGif, UserLogo, User
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
-
+import os
+import uuid
 
 s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
     aws_secret_access_key='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', region_name='eu-north-1')
@@ -145,6 +146,62 @@ def delete_logo():
     db.session.commit()
 
     return jsonify({'message': 'Logo deleted successfully'}), 200
+
+@jwt_required()
+def upload_logo():
+    user_id = get_jwt_identity()
+    logo_data = {}
+
+    user_exists = User.query.filter_by(id=user_id).first()
+
+    if not user_exists and user_id:
+        return jsonify({'error': f'User with id {user_id} not found'}), 400
+
+    # Check if a logo file is provided in the request
+    if 'logo' not in request.files:
+        return jsonify({'error': 'No logo file provided'}), 400
+
+    logo_file = request.files['logo']
+
+    if logo_file.filename == '':
+        return jsonify({'error': 'Empty logo file provided'}), 400
+
+    # Generate a unique resource ID for the logo
+    resource_id = str(uuid.uuid4())
+
+    # Define the folder structure in your S3 bucket (if needed)
+    folder_name = f"{user_id}/logos/"
+
+    # Save the logo file to a temporary directory on your server
+    temp_dir = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), 'temp_logos')
+    os.makedirs(temp_dir, exist_ok=True)
+    temp_logo_path = os.path.join(temp_dir, f'{resource_id}.png')
+    logo_file.save(temp_logo_path)
+
+    # Upload the logo to S3
+    upload_to_s3(temp_logo_path, 'logo-resources',
+                 f"{folder_name}{resource_id}.png", resource_id)
+    
+    logo_url = s3.generate_presigned_url('get_object',
+                                        Params={'Bucket': 'logo-resources',
+                                                'Key': f"{folder_name}{resource_id}.png"},
+                                        ExpiresIn=3600)  # URL expires in 1 hour
+
+    # Store logo metadata in the user database
+    if user_exists:
+        # Database Entry Here
+        db.session.add(UserLogo(user_id=user_id, resource_id=resource_id))
+        db.session.commit()
+
+    logo_data = {
+        "resource_id": resource_id,
+    }
+
+    # Clean up: Delete the temporary logo file
+    os.remove(temp_logo_path)
+
+    return jsonify({'message': 'Logo uploaded!', 'resource_id': logo_data, 'logo_url': logo_url})
 
 
 

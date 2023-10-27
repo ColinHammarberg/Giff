@@ -3,12 +3,12 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo
+from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo
 import uuid
 from models import UserGif
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, upload_logo
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity

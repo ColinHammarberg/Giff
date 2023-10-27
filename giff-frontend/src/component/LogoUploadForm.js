@@ -12,28 +12,42 @@ function LogoUploadForm(props) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Check if a file is selected and the "Upload Logo" button is clicked
     if (selectedFile) {
       try {
         const response = await UploadUserLogo(selectedFile);
         const data = response.data;
         console.log('data', data);
+  
         if (data.message === "Logo uploaded!") {
+          // New logo URL from server response
+          const newLogoUrl = data.logo_url;
+  
+          props.setUser((prevUser) => {
+            const updatedUser = { ...prevUser, userLogoSrc: newLogoUrl };
+            return updatedUser;
+          });
+  
+          const userData = localStorage.getItem('user');
+          if (userData) {
+            const parsedUserData = JSON.parse(userData);
+            parsedUserData.userLogoSrc = newLogoUrl;
+            localStorage.setItem('user', JSON.stringify(parsedUserData));
+          }
+  
           showNotification('success', 'Your logo was successfully uploaded!');
         }
       } catch (error) {
-        console.error('Error:', error);
         showNotification('error', 'Your logo failed to be uploaded! Please try again.');
       }
-
       // Reset the selected file state
       setSelectedFile(null);
     }
   };
+  
 
   useEffect(() => {
-    // Your JavaScript code that accesses DOM elements goes here
     document.getElementById('custom-button').addEventListener('click', function () {
       document.getElementById('logo-file').click();
     });
