@@ -66,7 +66,7 @@ function GifLibrary() {
         if (!gifs) {
           return;
         }
-        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name }));
+        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
         setIsLoading(true);
         try {
           const response = await DownloadAllLibraryGifs(gifData);

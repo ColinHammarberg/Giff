@@ -12,6 +12,7 @@ const KeepAliveComponent = () => {
       localStorage.setItem('access_token', newAccessToken);
     } catch (error) {
       navigate('/');
+      localStorage.removeItem('access_token');
       console.error('Error during keep-alive:', error);
     }
   }, [navigate]);

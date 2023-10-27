@@ -1,18 +1,17 @@
 from extensions import db
 from flask import jsonify, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from PIL import Image
+from PIL import Image, ImageOps, ImageSequence
 import io
 import os
 import zipfile
-from PIL import Image
 import requests
 import fitz
-from PIL import Image
 from s3_helper import upload_to_s3
 import uuid
 from models import UserGif, User
 import os
+import io
 
 backend_gifs_folder = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'gifs')
@@ -218,6 +217,41 @@ def download_all_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+    
+def hex_to_rgb(hex):
+    hex = hex.lstrip("#")
+    return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+
+def add_border_to_gif(gif_bytes_io, selected_color):
+    gif_bytes_io.seek(0)
+    pil_gif = Image.open(gif_bytes_io)
+    selected_color_tuple = hex_to_rgb(selected_color)
+
+    frames_with_durations = []
+    for frame in ImageSequence.Iterator(pil_gif):
+        frame = frame.convert("P")
+        
+        palette = frame.getpalette()
+        colors = frame.getcolors()
+        least_used_color = min(colors, key=lambda x: x[0])[1]
+        
+        palette[least_used_color * 3 : least_used_color * 3 + 3] = selected_color_tuple
+        frame.putpalette(palette)
+        
+        frame = ImageOps.expand(frame, border=30, fill=least_used_color)
+        frames_with_durations.append((frame, 1000))  # Set duration to 1 second (1000 milliseconds)
+
+    output_gif_io = io.BytesIO()
+    frames_with_durations[0][0].save(
+        output_gif_io,
+        format='GIF',
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[d for _, d in frames_with_durations],
+        loop=0
+    )
+    output_gif_io.seek(0)
+    return output_gif_io
 
 @jwt_required()
 def download_all_library_gifs():
@@ -230,16 +264,20 @@ def download_all_library_gifs():
             for gif_info in gif_data:
                 gif_url = gif_info['url']
                 gif_name = gif_info['name']
+                selected_color = gif_info['selectedColor']  # Received from frontend
+
                 # Download the GIF
                 response = requests.get(gif_url)
                 if response.status_code == 200:
-                    # Convert the GIF to a BytesIO object
                     gif_bytes = io.BytesIO(response.content)
-                    # Add the GIF data to ZIP
-                    zipf.writestr(f'{gif_name}.gif', gif_bytes.getvalue())
                     
-        zip_buffer.seek(0)
+                    # Assuming add_border_to_gif is a function that adds the border and returns new GIF bytes
+                    new_gif_bytes = add_border_to_gif(gif_bytes, selected_color)
+                    
+                    # Add the new GIF to ZIP
+                    zipf.writestr(f'{gif_name}.gif', new_gif_bytes.getvalue())
 
+        zip_buffer.seek(0)
         return send_file(
             zip_buffer,
             as_attachment=True,
