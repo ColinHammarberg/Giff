@@ -16,7 +16,7 @@ function Profile() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
-    const { user } = useContext(GiftContext); // Get the context value
+    const { user, setUser } = useContext(GiftContext); // Get the context value
     const [password, setPassword] = useState({
       currentPassword: '',
       newPassword: '',
@@ -76,14 +76,27 @@ function Profile() {
       try {
         const response = await DeleteUserLogo();
         if (response.data) {
-          console.log('response', response);
-          showNotification('success', 'Successfully deleted your logo')
+          // Step 1: Update React state
+          setUser((prevUser) => {
+            const updatedUser = { ...prevUser, userLogoSrc: null };
+            return updatedUser;
+          });
+    
+          // Step 2: Update localStorage
+          const userData = localStorage.getItem('user');
+          if (userData) {
+            const parsedUserData = JSON.parse(userData);
+            parsedUserData.userLogoSrc = null;
+            localStorage.setItem('user', JSON.stringify(parsedUserData));
+          }
+          
+          showNotification('success', 'Successfully deleted your logo');
         }
       } catch (error) {
-        console.log('error', error);
-        showNotification('error', 'Failed to delete your logo')
+        showNotification('error', 'Failed to delete your logo');
       }
-    }
+    };
+    
 
   return (
     <div className="profile">
@@ -112,7 +125,7 @@ function Profile() {
           </Box>
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={user?.userLogoSrc} />
-            {!user?.userLogoSrc && (
+            {user?.userLogoSrc && (
               <IconButton onClick={handleOnDeleteLogo}>
                 <DeleteIcon />
               </IconButton>

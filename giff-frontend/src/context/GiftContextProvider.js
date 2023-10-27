@@ -105,6 +105,7 @@ const GiftContextProvider = ({ children }) => {
         singleGif,
         handleDownloadClick,
         user,
+        setUser
       }}
     >
       {children}
