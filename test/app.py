@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo
+from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo
 import uuid
 from models import UserGif
 import time
@@ -100,6 +100,10 @@ def keep_user_access_alive():
 def signup_user():
     print('generate')
     return signup()
+
+@app.route('/delete_user_logo', methods=['GET'])
+def delete_user_logo():
+    return delete_logo()
 
 @app.route('/delete_user', methods=['GET'])
 def delete_user():

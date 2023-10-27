@@ -155,6 +155,16 @@ export async function FetchUserInfo() {
   return response;
 }
 
+export async function DeleteUserLogo() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.get(`${Api}/delete_user_logo`, {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  })
+  return response;
+}
+
 export async function FetchUserGifs(access_token) {
   const response = await axios.get(`${Api}/fetch_user_gifs`, {
     headers: {

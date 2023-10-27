@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import './Profile.scss';
 import Header from './Header';
 import { Box, Button, TextField } from '@mui/material';
-import { DeleteUserProfile, UpdatePassword } from '../endpoints/Apis';
+import { DeleteUserLogo, DeleteUserProfile, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
@@ -71,6 +71,19 @@ function Profile() {
       }
     }
 
+    const handleOnDeleteLogo = async () => {
+      try {
+        const response = await DeleteUserLogo();
+        if (response.data) {
+          console.log('response', response);
+          showNotification('success', 'Successfully deleted your logo')
+        }
+      } catch (error) {
+        console.log('error', error);
+        showNotification('error', 'Failed to delete your logo')
+      }
+    }
+
   return (
     <div className="profile">
       <Header menu />
@@ -98,6 +111,11 @@ function Profile() {
           </Box>
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={user?.userLogoSrc} />
+            {user?.userLogoSrc && (
+              <IconButton onClick={handleOnDeleteLogo}>
+                <DeleteIcon />
+              </IconButton>
+            )}
           </Box>
         </Box>
         <Box className="delete-account">

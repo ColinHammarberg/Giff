@@ -2,6 +2,7 @@ import boto3
 from flask import jsonify, request
 from models import UserGif, UserLogo
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from extensions import db
 
 
 s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
@@ -118,6 +119,33 @@ def fetch_logo():
                                              ExpiresIn=3600)  # URL expires in 1 hour
 
     return jsonify({'message': 'Success', 'logo_url': presigned_url}), 200
+
+@jwt_required()
+def delete_logo():
+    user_id = get_jwt_identity()
+    
+    if user_id is None:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+    user_logo = UserLogo.query.filter_by(user_id=user_id).first()
+
+    if user_logo is None:
+        return jsonify({'error': 'Logo not found for this user'}), 404
+
+    resource_id = user_logo.resource_id
+    folder_name = f"{user_id}/logos/"
+    # Delete the logo from the S3 bucket
+    try:
+        s3.delete_object(Bucket='logo-resources', Key=f"{folder_name}{resource_id}.png")
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete logo from S3: {str(e)}'}), 500
+
+    # Delete the logo entry from the database
+    db.session.delete(user_logo)
+    db.session.commit()
+
+    return jsonify({'message': 'Logo deleted successfully'}), 200
+
 
 
 

@@ -10,7 +10,6 @@ import os
 
 # Fetch user info endpoint
 
-
 @jwt_required()
 def fetch_user_info():
     user_id = get_jwt_identity()
