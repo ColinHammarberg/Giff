@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
 import './Profile.scss';
 import Header from './Header';
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, IconButton, TextField } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { DeleteUserLogo, DeleteUserProfile, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
@@ -111,7 +112,7 @@ function Profile() {
           </Box>
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={user?.userLogoSrc} />
-            {user?.userLogoSrc && (
+            {!user?.userLogoSrc && (
               <IconButton onClick={handleOnDeleteLogo}>
                 <DeleteIcon />
               </IconButton>

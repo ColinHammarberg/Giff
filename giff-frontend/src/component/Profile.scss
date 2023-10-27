@@ -84,6 +84,17 @@
             }
         }
 
+        .MuiButtonBase-root {
+            &:hover {
+                .MuiSvgIcon-root {
+                    color: #F4149B;
+                }
+            }
+            .MuiSvgIcon-root {
+                color: #fff;
+            }
+        }
+
         .email-details {
             display: flex;
             gap: 24px;
