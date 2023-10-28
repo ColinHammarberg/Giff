@@ -3,12 +3,13 @@ import { Box } from '@mui/material';
 import MultipleGifGenerator from './MultipleGifGenerator';
 import './GifLanding.scss';
 import GifError from './GifError';
-import { DownloadFolder, GenerateMultipleGifs, GenerateMultiplePdfGifs } from '../endpoints/Apis';
+import { DownloadAllLibraryGifs, GenerateMultipleGifs, GenerateMultiplePdfGifs } from '../endpoints/Apis';
 import MultipleGeneratedGifs from './MultipleGeneratedGifs';
 
 function MultipleGifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
   const [error, setError] = useState(null);
+  const [importedGifs, setImportedGifs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [duplicateNames, setDuplicateNames] = React.useState({});
   const [urlList, setUrlList] = useState([
@@ -91,11 +92,14 @@ function MultipleGifLanding() {
     }
   };
 
+  console.log('importedGifs', importedGifs);
+
   async function handleDownloadClick() {
     if (gifGenerated) {
       setIsLoading(true);
+      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
       try {
-        const response = await DownloadFolder(); // Make sure DownloadFolder sets responseType to 'blob'
+        const response = await DownloadAllLibraryGifs(gifData);
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
         const link = document.createElement('a');
         setTimeout(() => {
@@ -137,6 +141,8 @@ function MultipleGifLanding() {
           isLoading={isLoading}
           onDownload={handleDownloadClick}
           urlList={urlList}
+          setImportedGifs={setImportedGifs}
+          importedGifs={importedGifs}
         />
       ) : (
         <MultipleGifGenerator

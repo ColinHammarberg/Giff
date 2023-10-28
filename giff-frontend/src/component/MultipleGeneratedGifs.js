@@ -10,8 +10,7 @@ import OfficialButton from './OfficialButton';
 import useMobileQuery from '../queries/useMobileQuery';
 
 function MultipleGeneratedGifs(props) {
-  const { gifGenerated, isLoading, onDownload } = props;
-  const [importedGifs, setImportedGifs] = useState([]);
+  const { gifGenerated, isLoading, onDownload, setImportedGifs, importedGifs } = props;
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
@@ -54,7 +53,7 @@ function MultipleGeneratedGifs(props) {
       };
       fetchData();
     }
-  }, [gifGenerated, designChanges]);
+  }, [gifGenerated, designChanges, setImportedGifs]);
 
   console.log('gifGenerated', gifGenerated);
 
