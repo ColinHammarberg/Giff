@@ -11,6 +11,7 @@ import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
 import giftUser from '../access/GiftUser';
 import LogoUploadForm from './LogoUploadForm';
 import { GiftContext } from '../context/GiftContextProvider';
+import LightTooltip from './LightToolTip';
 
 function Profile() {
     const navigate = useNavigate();
@@ -73,27 +74,33 @@ function Profile() {
     }
 
     const handleOnDeleteLogo = async () => {
-      try {
-        const response = await DeleteUserLogo();
-        if (response.data) {
-          // Step 1: Update React state
-          setUser((prevUser) => {
-            const updatedUser = { ...prevUser, userLogoSrc: null };
-            return updatedUser;
-          });
-    
-          // Step 2: Update localStorage
-          const userData = localStorage.getItem('user');
-          if (userData) {
-            const parsedUserData = JSON.parse(userData);
-            parsedUserData.userLogoSrc = null;
-            localStorage.setItem('user', JSON.stringify(parsedUserData));
+      const { hasConfirmed } = await DeleteProfileDialog.show();
+      console.log('hasConfirmed', hasConfirmed);
+      if (!hasConfirmed) {
+        return;
+      } else {
+        try {
+          const response = await DeleteUserLogo();
+          if (response.data) {
+            // Step 1: Update React state
+            setUser((prevUser) => {
+              const updatedUser = { ...prevUser, userLogoSrc: null };
+              return updatedUser;
+            });
+      
+            // Step 2: Update localStorage
+            const userData = localStorage.getItem('user');
+            if (userData) {
+              const parsedUserData = JSON.parse(userData);
+              parsedUserData.userLogoSrc = null;
+              localStorage.setItem('user', JSON.stringify(parsedUserData));
+            }
+            
+            showNotification('success', 'Successfully deleted your logo');
           }
-          
-          showNotification('success', 'Successfully deleted your logo');
+        } catch (error) {
+          showNotification('error', 'Failed to delete your logo');
         }
-      } catch (error) {
-        showNotification('error', 'Failed to delete your logo');
       }
     };
     
@@ -126,9 +133,11 @@ function Profile() {
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />
             {user?.userLogoSrc && (
-              <IconButton onClick={handleOnDeleteLogo}>
-                <DeleteIcon />
-              </IconButton>
+              <LightTooltip title="Remove logo">
+                <IconButton onClick={handleOnDeleteLogo}>
+                  <DeleteIcon />
+                </IconButton>
+              </LightTooltip>
             )}
           </Box>
         </Box>
