@@ -245,6 +245,21 @@ export async function DownloadAllLibraryGifs(gifData) {
   return response;
 }
 
+export async function DownloadIndividualDesignedGifs(gifData) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('gifData', gifData);
+  const response = await axios.post(`${Api}/download-individual-design-gifs`,
+  gifData,
+  {
+    headers: {
+      'Authorization': `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    },
+    responseType: 'arraybuffer'
+  });
+  return response;
+}
+
 export async function DeleteUserProfile(access_token) {
   const response = await axios.get(`${Api}/delete_user`, {
     headers: {

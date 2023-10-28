@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './GifLibrary.scss';
 import Header from './Header';
 import { Box, Button } from '@mui/material';
-import { DownloadAllLibraryGifs, FetchUserGifs } from '../endpoints/Apis';
+import { DownloadAllLibraryGifs, DownloadIndividualDesignedGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
@@ -47,20 +47,38 @@ function GifLibrary() {
       fetchData();
     }, [designChanges]);
 
-      console.log('gifs', gifs);
-
       const handleDownloadIndividualGifs = async () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          const link = document.createElement('a');
-          link.href = hoveredGif.url; // Use the actual URL here
-          link.target = '_blank';
-          link.download = hoveredGif.name;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          const gifData = {
+            url: hoveredGif.url,
+            name: hoveredGif.name,
+            selectedColor: hoveredGif.selectedColor,
+          };
+      
+          try {
+            const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
+      
+            const blob = new Blob([response.data], { type: 'image/gif' });
+      
+            const downloadUrl = window.URL.createObjectURL(blob);
+      
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = downloadUrl; 
+            a.download = `${hoveredGif.name}`;
+      
+            document.body.appendChild(a);
+            a.click();
+      
+            window.URL.revokeObjectURL(downloadUrl);
+            document.body.removeChild(a);
+          } catch (error) {
+            console.error('Error downloading individual GIF:', error);
+          }
         }
-      }
+      };
+      
 
       const handleDownloadLibraryGifs = async () => {
         if (!gifs) {

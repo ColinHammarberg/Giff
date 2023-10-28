@@ -7,7 +7,7 @@ from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_lo
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -276,6 +276,10 @@ def generate_pdf_list():
 def download_all():
     print('generate')
     return download_all_gifs()
+
+@app.route('/download-individual-design-gifs', methods=['POST'])
+def download_individual_design():
+    return download_individual_gif()
 
 
 @app.route('/download', methods=['GET'])

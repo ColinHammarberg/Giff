@@ -97,8 +97,8 @@ def generate_pdf_gif():
         img.save(img_path, 'PNG')
 
         # Calculate individual frame duration for each page (adjust as needed)
-        frame_duration = 1.0  # Adjust the duration as needed
-        frame_durations.append(int(frame_duration * 1000))  # Convert to milliseconds
+        frame_duration = 1.0 # Adjust the duration as needed
+        frame_durations.append(int(frame_duration * 1000)) # Convert to milliseconds
 
     pdf_document.close()
 
@@ -304,4 +304,42 @@ def update_selected_color():
         return jsonify({'message': 'Selected color updated successfully'}), 200
     else:
         return jsonify({'error': 'GIF not found'}), 404
+    
 
+@jwt_required()
+def download_individual_gif():
+    try:
+        gif_data = request.get_json()
+        selected_color = gif_data.get('selectedColor')
+        gif_url = gif_data.get('url')
+        gif_name = gif_data.get('name')
+
+        if gif_url is None:
+            return "Invalid GIF URL", 400
+
+        # Make a GET request to download the GIF using gif_url
+        response = requests.get(gif_url)
+
+        print(f"Response status code: {response.status_code}")
+
+        if response.status_code == 200:
+            # Process the response and add the border as needed
+            gif_bytes_io = io.BytesIO(response.content)
+            modified_gif_bytes_io = add_border_to_gif(gif_bytes_io, selected_color)
+
+            # Return the modified GIF as a response
+            return send_file(
+                modified_gif_bytes_io,
+                as_attachment=True,
+                download_name=f'{gif_name}',
+                mimetype='image/gif'
+            )
+
+        # Handle other status codes if necessary
+        print(f"Error: Unexpected status code {response.status_code}")
+
+    except Exception as e:
+        print(f"Error downloading individual GIF: {e}")
+        return "An error occurred", 500
+
+    return "Success", 200
