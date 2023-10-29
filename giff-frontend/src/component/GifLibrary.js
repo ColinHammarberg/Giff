@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './GifLibrary.scss';
 import Header from './Header';
 import { Box, Button } from '@mui/material';
-import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs, FetchUserGifs } from '../endpoints/Apis';
+import { DownloadAllLibraryGifs, DownloadIndividualDesignedGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
 import giftUser from '../access/GiftUser';
 import OfficialButton from './OfficialButton';
 import useMobileQuery from '../queries/useMobileQuery';
-import { showNotification } from './Notification';
+// import { showNotification } from './Notification';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -111,32 +111,32 @@ function GifLibrary() {
         setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
       };
 
-      async function handleOnDeleteGif() {
-        const hoveredGif = gifs[selectedGif];
-        const gifData = {
-          name: hoveredGif.name,
-          resourceId: hoveredGif.resourceId,
-        };
+      // async function handleOnDeleteGif() {
+      //   const hoveredGif = gifs[selectedGif];
+      //   const gifData = {
+      //     name: hoveredGif.name,
+      //     resourceId: hoveredGif.resourceId,
+      //   };
       
-        try {
-          const response = await DeleteGif(gifData);
-          if (response.data) {
-            console.log('response', response.data);
+      //   try {
+      //     const response = await DeleteGif(gifData);
+      //     if (response.data) {
+      //       console.log('response', response.data);
       
-            // Update local state to remove the deleted GIF
-            const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
-            setGifs(updatedGifs);
+      //       // Update local state to remove the deleted GIF
+      //       const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
+      //       setGifs(updatedGifs);
       
-            showNotification('success', 'GIF deleted from your library.');
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 404) {
-            showNotification('error', 'GIF not found.');
-          } else {
-            showNotification('error', 'Failed to delete the GIF.');
-          }
-        }
-      }
+      //       showNotification('success', 'GIF deleted from your library.');
+      //     }
+      //   } catch (error) {
+      //     if (error.response && error.response.status === 404) {
+      //       showNotification('error', 'GIF not found.');
+      //     } else {
+      //       showNotification('error', 'Failed to delete the GIF.');
+      //     }
+      //   }
+      // }
 
       const handleEditButtonClick = () => {
         if (selectedGif !== null) {
