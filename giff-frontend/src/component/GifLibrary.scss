@@ -82,8 +82,10 @@
                             height: 100%;
 
                             .MuiButton-root {
-                                width: 162px;
+                                width: 120px;
+                                height: 30px;
                                 border-radius: 50px;
+
                                 color: #000;
                                 font-family: 'Staatliches';
                                 border: 1px solid #000;
@@ -116,6 +118,7 @@
             .gif-showcase-info {
                 padding: 24px;
             }
+
             .gif-wrapper .gif-box {
                 display: unset;
                 width: 100%;

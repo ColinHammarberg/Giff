@@ -99,6 +99,43 @@ export async function UploadUserLogo(logo) {
   }
 }
 
+export async function UploadPdfThenCreateGif(pdf) {
+  const access_token = localStorage.getItem('access_token');
+  const formData = new FormData();
+  formData.append('pdf', pdf); // Assuming 'pdf' is a File object
+
+  try {
+    const response = await axios.post(`${Api}/upload-pdf-generate-gif`, formData, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
+export async function DeleteGif(selectedGif) {
+  const access_token = localStorage.getItem('access_token');
+  console.log("DeleteGif selectedGif:", selectedGif);
+  console.log("DeleteGif access_token:", access_token);
+  
+  try {
+    const response = await axios.post(`${Api}/delete-gif`, selectedGif, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log("DeleteGif error:", error);
+    throw error;
+  }
+}
+
 export async function DownloadFolder() {
   const response = await axios.get(`${Api}/download-all-gifs`, {
     responseType: 'blob'

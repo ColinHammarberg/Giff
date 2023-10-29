@@ -4,6 +4,7 @@ import './SingleGifGenerator.scss';
 import InfoButton from './InfoButton';
 import Header from './Header';
 import OfficialButton from './OfficialButton';
+// import UploadPdfGifForm from './UploadPdfGifForm';
 
 function SingleGifGenerator(props) {
   const { onChange, gifGenerated, onKeyPress, generateSingleGif } = props;
@@ -35,6 +36,7 @@ function SingleGifGenerator(props) {
           }}
           placeholder='https://spce.com'
         />
+        {/* <UploadPdfGifForm /> */}
         <Box className="btn-content">
           {!gifGenerated && (
             <OfficialButton onClick={generateSingleGif} label="Create GIF" variant="yellow" />

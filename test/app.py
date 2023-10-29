@@ -3,11 +3,11 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo
+from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -270,6 +270,14 @@ def generate_pdf():
 def generate_pdf_list():
     print('generate')
     return generate_pdf_gifs_from_list()
+
+@app.route('/delete-gif', methods=['POST'])
+def delete_selected_gif():
+    return delete_gif()
+
+@app.route('/upload-pdf-generate-gif', methods=['POST'])
+def upload_pdf_create_gif():
+    return upload_pdf_and_generate_gif()
 
 
 @app.route('/download-all-gifs', methods=['GET'])

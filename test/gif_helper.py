@@ -185,6 +185,92 @@ def generate_pdf_gifs_from_list():
 
     return jsonify({'message': 'GIFs generated successfully for all URLs', 'data': generated_gifs_data})
 
+@jwt_required()
+def upload_pdf_and_generate_gif():
+    user_id = get_jwt_identity()
+    gif_data = {}
+
+    user_exists = User.query.filter_by(id=user_id).first()
+
+    if not user_exists and user_id:
+        return jsonify({'error': f'User with id {user_id} not found'}), 400
+
+    # Check if a PDF file is provided in the request
+    if 'pdf' not in request.files:
+        return jsonify({'error': 'No PDF file provided'}), 400
+
+    pdf_file = request.files['pdf']
+
+    if pdf_file.filename == '':
+        return jsonify({'error': 'Empty PDF file provided'}), 400
+
+    # Generate a unique resource ID for the GIF
+    resource_id = str(uuid.uuid4())
+
+    # Define the folder structure in your S3 bucket (if needed)
+    folder_name = f"{user_id}"
+
+    # Create a temporary directory to store individual images
+    images_dir = os.path.join(os.path.dirname(__file__), 'pdf_images')
+    os.makedirs(images_dir, exist_ok=True)
+
+    # Save the PDF file to a temporary directory on your server
+    temp_pdf_path = os.path.join(images_dir, f'{pdf_file.filename}.pdf')
+    pdf_file.save(temp_pdf_path)
+
+    # Use PyMuPDF to extract images from PDF pages
+    pdf_document = fitz.open(temp_pdf_path)
+    frame_durations = []  # List to store frame durations
+
+    for page_number in range(pdf_document.page_count):
+        page = pdf_document[page_number]
+        image_list = page.get_pixmap()
+        img = Image.frombytes(
+            "RGB", [image_list.width, image_list.height], image_list.samples)
+        img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
+        img.save(img_path, 'PNG')
+
+        # Calculate individual frame duration for each page (adjust as needed)
+        frame_duration = 1.0  # Adjust the duration as needed
+        frame_durations.append(int(frame_duration * 1000))  # Convert to milliseconds
+
+    pdf_document.close()
+
+    # Create a GIF from the images using Pillow
+    image_paths = sorted(os.listdir(images_dir))
+    frames = [Image.open(os.path.join(images_dir, img_path))
+              for img_path in image_paths if img_path.endswith('.png')]
+
+    # Specify the output path for the GIF
+    gifs_folder = os.path.join(os.path.dirname(__file__), 'generated_gifs')
+    os.makedirs(gifs_folder, exist_ok=True)
+    gif_name = f'{pdf_file.filename}.gif'
+    output_path = os.path.join(gifs_folder, gif_name)
+
+    # Save the GIF with specified frame durations
+    frames[0].save(output_path, save_all=True, append_images=frames[1:], duration=frame_durations, loop=0)
+
+    # Clean up: Delete individual images and temporary PDF
+    for img_path in image_paths:
+        os.remove(os.path.join(images_dir, img_path))
+    if os.path.exists(temp_pdf_path):
+        os.remove(temp_pdf_path)
+
+    # Upload the GIF to S3
+    upload_to_s3(output_path, 'gif-resources', f"{folder_name}{gif_name}", resource_id)
+
+    # Store GIF metadata in the user database
+    if user_exists:
+        db.session.add(UserGif(user_id=user_id, gif_name=gif_name, gif_url=output_path, resourceId=resource_id))
+        db.session.commit()
+
+    gif_data = {
+        "name": gif_name,
+        "resourceId": resource_id,
+    }
+
+    return jsonify({'message': 'PDF uploaded and GIF generated!', 'gif_data': gif_data}), 200
+
 def download_gif():
     gifs_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')

@@ -7,7 +7,8 @@ import os
 import uuid
 
 s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-    aws_secret_access_key='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', region_name='eu-north-1')
+                  aws_secret_access_key='UUCQR4Ix9eTgvmZjP+T7USang61ZPa6nqlHgp47G', region_name='eu-north-1')
+
 
 def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
     print('file_name', file_name)
@@ -25,6 +26,7 @@ def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
         return False
     return True
 
+
 @jwt_required()
 def fetch_user_gifs():
     user_id = get_jwt_identity()
@@ -33,7 +35,8 @@ def fetch_user_gifs():
         return jsonify({'error': 'User not authenticated'}), 401
 
     # Fetch user GIFs from the database in descending order of creation date
-    user_gifs = UserGif.query.filter_by(user_id=user_id).order_by(UserGif.created_at.desc()).all()
+    user_gifs = UserGif.query.filter_by(
+        user_id=user_id).order_by(UserGif.created_at.desc()).all()
     print('user_gifs', user_gifs)
     s3_client = s3
     bucket_name = 'gift-resources'
@@ -44,9 +47,11 @@ def fetch_user_gifs():
                                                          Params={'Bucket': bucket_name,
                                                                  'Key': f"{user_id}/{gif.gif_name}"},
                                                          ExpiresIn=3600)  # URL expires in 1 hour
-        gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId, "selectedColor": gif.selectedColor, "created_at": gif.created_at})
+        gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId,
+                         "selectedColor": gif.selectedColor, "created_at": gif.created_at})
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
+
 
 @jwt_required()
 def get_multiple_gifs():
@@ -75,7 +80,8 @@ def get_multiple_gifs():
             return jsonify({'error': 'Invalid GIF request format'}), 400
 
         # Fetch the specific GIF from the database
-        gif = UserGif.query.filter_by(user_id=user_id, resourceId=resource_id, gif_name=gif_name).first()
+        gif = UserGif.query.filter_by(
+            user_id=user_id, resourceId=resource_id, gif_name=gif_name).first()
 
         if gif is None:
             return jsonify({'error': 'GIF not found'}), 404
@@ -98,6 +104,7 @@ def get_multiple_gifs():
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
 
+
 @jwt_required()
 def fetch_logo():
     user_id = get_jwt_identity()
@@ -115,16 +122,17 @@ def fetch_logo():
 
     # Generate a presigned URL to access the logo
     presigned_url = s3.generate_presigned_url('get_object',
-                                             Params={'Bucket': 'logo-resources',
-                                                     'Key': f"{folder_name}{resource_id}.png"},
-                                             ExpiresIn=3600)  # URL expires in 1 hour
+                                              Params={'Bucket': 'logo-resources',
+                                                      'Key': f"{folder_name}{resource_id}.png"},
+                                              ExpiresIn=3600)  # URL expires in 1 hour
 
     return jsonify({'message': 'Success', 'logo_url': presigned_url}), 200
+
 
 @jwt_required()
 def delete_logo():
     user_id = get_jwt_identity()
-    
+
     if user_id is None:
         return jsonify({'error': 'User not authenticated'}), 401
 
@@ -137,7 +145,8 @@ def delete_logo():
     folder_name = f"{user_id}/logos/"
     # Delete the logo from the S3 bucket
     try:
-        s3.delete_object(Bucket='logo-resources', Key=f"{folder_name}{resource_id}.png")
+        s3.delete_object(Bucket='logo-resources',
+                         Key=f"{folder_name}{resource_id}.png")
     except Exception as e:
         return jsonify({'error': f'Failed to delete logo from S3: {str(e)}'}), 500
 
@@ -146,6 +155,7 @@ def delete_logo():
     db.session.commit()
 
     return jsonify({'message': 'Logo deleted successfully'}), 200
+
 
 @jwt_required()
 def upload_logo():
@@ -182,11 +192,11 @@ def upload_logo():
     # Upload the logo to S3
     upload_to_s3(temp_logo_path, 'logo-resources',
                  f"{folder_name}{resource_id}.png", resource_id)
-    
+
     logo_url = s3.generate_presigned_url('get_object',
-                                        Params={'Bucket': 'logo-resources',
-                                                'Key': f"{folder_name}{resource_id}.png"},
-                                        ExpiresIn=3600)  # URL expires in 1 hour
+                                         Params={'Bucket': 'logo-resources',
+                                                 'Key': f"{folder_name}{resource_id}.png"},
+                                         ExpiresIn=3600)  # URL expires in 1 hour
 
     # Store logo metadata in the user database
     if user_exists:
@@ -204,9 +214,41 @@ def upload_logo():
     return jsonify({'message': 'Logo uploaded!', 'resource_id': logo_data, 'logo_url': logo_url})
 
 
+@jwt_required()
+def delete_gif():
+    try:
+        # Get user ID from JWT token
+        user_id = get_jwt_identity()
 
+        if user_id is None:
+            return jsonify({'error': 'User not authenticated'}), 401
 
+        # Get data from JSON request
+        data = request.get_json()
+        gif_name = data.get('name')
+        resource_id = data.get('resourceId')
 
+        if not gif_name or not resource_id:
+            return jsonify({'error': 'Bad request: Missing name or resourceId'}), 400
 
-    
+        # Fetch the GIF from the database
+        gif = UserGif.query.filter_by(
+            user_id=user_id, resourceId=resource_id, gif_name=gif_name).first()
 
+        if gif is None:
+            return jsonify({'error': 'GIF not found'}), 404
+        
+        bucket_name = 'gift-resources'
+
+        # Delete GIF from S3
+        s3.delete_object(Bucket=bucket_name, Key=f"{user_id}/{gif_name}")
+
+        # Delete GIF from database
+        db.session.delete(gif)
+        db.session.commit()
+
+        return jsonify({'message': 'GIF successfully deleted'}), 200
+
+    except Exception as e:
+        print(f"Server Error: {e}")
+        return jsonify({'error': 'Internal Server Error'}), 500
