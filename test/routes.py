@@ -79,7 +79,6 @@ def signout():
 
 # Delete user endpoint
 
-
 @jwt_required()
 def delete_user_profile():
     user_id = get_jwt_identity()

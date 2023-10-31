@@ -7,7 +7,7 @@ from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_lo
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -105,9 +105,8 @@ def signup_user():
 def delete_user_logo():
     return delete_logo()
 
-@app.route('/delete_user', methods=['GET'])
+@app.route('/delete-user-profile', methods=['POST'])
 def delete_user():
-    print('generate')
     return delete_user_profile()
 
 @app.route('/update_user_password', methods=['POST'])
@@ -133,7 +132,7 @@ def generate_gif():
     NAME = data.get('name', f'your_gift-{user_id}.gif') if user_id else "your_gif-t.gif"
 
     if is_video_url(URL):
-        return jsonify({'error': 'video url'})
+        return generate_video_gif(data, user_id)
 
     chrome_options = Options()
     chrome_options.binary_location = '/usr/local/bin'
@@ -279,6 +278,9 @@ def delete_selected_gif():
 def upload_pdf_create_gif():
     return upload_pdf_and_generate_gif()
 
+@app.route('/generate-video-gif', methods=['POST'])
+def generate_video_from_gif():
+    return generate_video_gif()
 
 @app.route('/download-all-gifs', methods=['GET'])
 def download_all():

@@ -52,7 +52,6 @@ function Profile() {
     }
 
     const handleOnClickDeleteAccount = async () => {
-      const isLoggedIn = giftUser.isLoggedIn();
       const { hasConfirmed } = await DeleteProfileDialog.show();
       console.log('hasConfirmed', hasConfirmed);
       let response;
@@ -60,15 +59,15 @@ function Profile() {
         return;
       } else {
         try {
-          response = await DeleteUserProfile(isLoggedIn);
+          response = await DeleteUserProfile();
+          console.log('response', response);
           if (response.data.status === 'Profile deleted') {
             localStorage.removeItem('access_token');
-            // Redirect to login page
             navigate('/');
             showNotification('success', response.data.status)
           }
         } catch (error) {
-          showNotification('error', response.data.error)
+          showNotification('error', 'Failed to delete account. Please try again!')
         }
       }
     }

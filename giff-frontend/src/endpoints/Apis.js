@@ -143,6 +143,26 @@ export async function DownloadFolder() {
   return response;
 }
 
+// export async function GenerateGifFromVideoSrc(url) {
+//   console.log('url', url);
+//   const token = localStorage.getItem('access_token'); // Retrieve the token from local storage
+  
+//   try {
+//     const response = await axios.post(`${Api}//generate-video-gif`, 
+//       { url },
+//       {
+//       headers: {
+//       'Authorization': `Bearer ${token}`
+//       }
+//      });
+//     console.log('Response from server', response);
+//     return response;
+//   } catch (error) {
+//     console.error('Error generating GIF:', error);
+//     throw error;
+//   }
+// }
+
 export async function Signin(userCredentials) {
   const response = await axios.post(`${Api}/signin`, { email: userCredentials.email, password: userCredentials.password });
   return response;
@@ -297,8 +317,9 @@ export async function DownloadIndividualDesignedGifs(gifData) {
   return response;
 }
 
-export async function DeleteUserProfile(access_token) {
-  const response = await axios.get(`${Api}/delete_user`, {
+export async function DeleteUserProfile() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.post(`${Api}/delete-user-profile`, {}, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }

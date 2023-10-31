@@ -1,5 +1,6 @@
 from extensions import db
 from flask import jsonify, request, send_file
+from pytube import YouTube
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from PIL import Image, ImageOps, ImageSequence
 import io
@@ -9,6 +10,8 @@ import requests
 import fitz
 from s3_helper import upload_to_s3
 import uuid
+from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB
+from PIL import Image, ImageSequence
 from models import UserGif, User
 import os
 import io
@@ -429,3 +432,47 @@ def download_individual_gif():
         return "An error occurred", 500
 
     return "Success", 200
+
+def generate_video_gif(data, user_id):
+    URL = data.get('url')
+    NAME = data.get('name', f'your_video_gif-{user_id}.gif') if user_id else "your_video_gif-t.gif"
+    start_frame = data.get('start_frame', 0)
+    end_frame = data.get('end_frame', 300)
+
+    # Step 1: Download Video
+    yt = YouTube(URL)
+    video = yt.streams.filter(file_extension='mp4').first()
+    video_path = video.download()
+
+    # Step 2: Read Video and Extract Frames
+    cap = VideoCapture(video_path)
+    frames = []
+    for i in range(start_frame, end_frame):
+        cap.set(1, i)
+        ret, frame = cap.read()
+        if ret:
+            rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
+            pil_img = Image.fromarray(rgb_frame)
+            frames.append(pil_img)
+
+    # Step 3: Save Frames as GIF
+    gifs_frontend_folder = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    output_gif_path = os.path.join(gifs_frontend_folder, NAME)
+    
+    frames[0].save(output_gif_path, save_all=True, append_images=frames[1:], loop=0, duration=10)
+
+    resource_id = str(uuid.uuid4())
+    folder_name = f"{user_id}/" if user_id else ""
+    upload_to_s3(output_gif_path, 'gift-resources', f"{folder_name}{NAME}", resource_id)
+
+    gif_data = {
+        "name": NAME,
+        "resourceId": resource_id,
+    }
+
+    if user_id:
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_gif_path, resourceId=resource_id))
+        db.session.commit()
+
+    return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
