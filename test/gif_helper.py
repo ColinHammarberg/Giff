@@ -361,10 +361,10 @@ def download_all_library_gifs():
                     gif_bytes = io.BytesIO(response.content)
                     
                     # Assuming add_border_to_gif is a function that adds the border and returns new GIF bytes
-                    new_gif_bytes = add_border_to_gif(gif_bytes, selected_color)
-                    
-                    # Add the new GIF to ZIP
-                    zipf.writestr(f'{gif_name}.gif', new_gif_bytes.getvalue())
+                    if selected_color:
+                        new_gif_bytes = add_border_to_gif(gif_bytes, selected_color)
+                        # Add the new GIF to ZIP
+                        zipf.writestr(f'{gif_name}.gif', new_gif_bytes.getvalue())
 
         zip_buffer.seek(0)
         return send_file(
@@ -458,6 +458,7 @@ def generate_video_gif(data, user_id):
     # Step 3: Save Frames as GIF
     gifs_frontend_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    os.makedirs(gifs_frontend_folder, exist_ok=True)
     output_gif_path = os.path.join(gifs_frontend_folder, NAME)
     
     frames[0].save(output_gif_path, save_all=True, append_images=frames[1:], loop=0, duration=10)

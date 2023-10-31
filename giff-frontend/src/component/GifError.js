@@ -47,7 +47,6 @@ function GifError(props) {
                     </div>
                 </Box>
                 <Box style={{display: 'grid', width: "100%", justifyContent: 'center', gap: "24px"}}>
-                    <Button className="btn video">Create gif from video</Button>
                     <Button className="btn use-another-url-btn" onClick={handleOnClickAnotherUrl}>Use Another URL</Button>
                 </Box>
             </Box>
