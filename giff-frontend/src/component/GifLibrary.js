@@ -10,6 +10,7 @@ import giftUser from '../access/GiftUser';
 import OfficialButton from './OfficialButton';
 import useMobileQuery from '../queries/useMobileQuery';
 import { showNotification } from './Notification';
+import DeleteGifDialog from './DeleteGifDialog';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -128,23 +129,28 @@ function GifLibrary() {
           name: hoveredGif.name,
           resourceId: hoveredGif.resourceId,
         };
-      
-        try {
-          const response = await DeleteGif(gifData);
-          if (response.data) {
-            console.log('response', response.data);
-      
-            // Update local state to remove the deleted GIF
-            const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
-            setGifs(updatedGifs);
-      
-            showNotification('success', 'GIF deleted from your library.');
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 404) {
-            showNotification('error', 'GIF not found.');
-          } else {
-            showNotification('error', 'Failed to delete the GIF.');
+
+        const { hasConfirmed } = await DeleteGifDialog.show();
+        if (!hasConfirmed) {
+          return;
+        } else {
+          try {
+            const response = await DeleteGif(gifData);
+            if (response.data) {
+              console.log('response', response.data);
+        
+              // Update local state to remove the deleted GIF
+              const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
+              setGifs(updatedGifs);
+        
+              showNotification('success', 'GIF deleted from your library.');
+            }
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              showNotification('error', 'GIF not found.');
+            } else {
+              showNotification('error', 'Failed to delete the GIF.');
+            }
           }
         }
       }
@@ -187,9 +193,9 @@ function GifLibrary() {
             </>
           ) : (
             <>
-              <span>This is your library.</span>
-              Download all gifs at once
-              <span>or</span>
+              <span>This is your library. </span>
+               Download all gifs at once
+              <span> or </span>
               hover over the gif you want to download or share.
             </>
           )}

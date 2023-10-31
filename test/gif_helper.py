@@ -414,7 +414,10 @@ def download_individual_gif():
         if response.status_code == 200:
             # Process the response and add the border as needed
             gif_bytes_io = io.BytesIO(response.content)
-            modified_gif_bytes_io = add_border_to_gif(gif_bytes_io, selected_color)
+            if selected_color:
+                modified_gif_bytes_io = add_border_to_gif(gif_bytes_io, selected_color)
+            else:
+                modified_gif_bytes_io = gif_bytes_io
 
             # Return the modified GIF as a response
             return send_file(
@@ -435,7 +438,8 @@ def download_individual_gif():
 
 def generate_video_gif(data, user_id):
     URL = data.get('url')
-    NAME = data.get('name', f'your_video_gif-{user_id}.gif') if user_id else "your_video_gif-t.gif"
+    resource_id = str(uuid.uuid4())
+    NAME = data.get('name', f'{resource_id}.gif') if user_id else f"{resource_id}.gif"
     start_frame = data.get('start_frame', 0)
     end_frame = data.get('end_frame', 300)
 
@@ -461,9 +465,8 @@ def generate_video_gif(data, user_id):
     os.makedirs(gifs_frontend_folder, exist_ok=True)
     output_gif_path = os.path.join(gifs_frontend_folder, NAME)
     
-    frames[0].save(output_gif_path, save_all=True, append_images=frames[1:], loop=0, duration=10)
+    frames[0].save(output_gif_path, save_all=True, append_images=frames[1:], loop=0, duration=1)
 
-    resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/" if user_id else ""
     upload_to_s3(output_gif_path, 'gift-resources', f"{folder_name}{NAME}", resource_id)
 
