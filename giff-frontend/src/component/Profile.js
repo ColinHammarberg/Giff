@@ -8,7 +8,6 @@ import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
-import giftUser from '../access/GiftUser';
 import LogoUploadForm from './LogoUploadForm';
 import { GiftContext } from '../context/GiftContextProvider';
 import LightTooltip from './LightToolTip';
