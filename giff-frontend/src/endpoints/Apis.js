@@ -103,6 +103,7 @@ export async function UploadPdfThenCreateGif(pdf) {
   const access_token = localStorage.getItem('access_token');
   const formData = new FormData();
   formData.append('pdf', pdf); // Assuming 'pdf' is a File object
+  console.log('formData2', formData);
 
   try {
     const response = await axios.post(`${Api}/upload-pdf-generate-gif`, formData, {

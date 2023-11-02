@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { showNotification } from './Notification';
+import { TextField } from '@mui/material';
+import React, { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { UploadPdfThenCreateGif } from '../endpoints/Apis';
+import { showNotification } from './Notification';
 
-function UploadPdfGifForm(props) {
-  const [selectedPdf, setSelectedPdf] = useState(null);
+const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf }, ref) => {
+
+  useEffect(() => {
+    document.getElementById('custom-button').addEventListener('click', function () {
+      document.getElementById('pdf-file').click();
+    });
+  }, []);
 
   const handlePdfChange = (e) => {
-    // Handle PDF file selection and update the state
     setSelectedPdf(e.target.files[0]);
   };
 
@@ -34,23 +39,17 @@ function UploadPdfGifForm(props) {
     }
   };
 
-  useEffect(() => {
-    document.getElementById('custom-button').addEventListener('click', function () {
-      document.getElementById('pdf-file').click();
-    });
-  }, []);
+  useImperativeHandle(ref, () => ({
+    submit: () => {
+      handleFormSubmit(new Event('submit'));
+    }
+  }));
 
   return (
     <>
-      <form onSubmit={handleFormSubmit} encType="multipart/form-data">
-        <div className="text">
-          <span>PDF</span>
-          <button type="submit" disabled={!selectedPdf}>
-            Generate GIF
-          </button>
-        </div>
+      <form encType="multipart/form-data" onSubmit={handleFormSubmit}>
         <label htmlFor="pdf-file" id="custom-button" className="custom-button">
-          Choose PDF
+          Upload pdf
         </label>
         <input
           type="file"
@@ -60,9 +59,10 @@ function UploadPdfGifForm(props) {
           onChange={handlePdfChange}
           style={{ display: 'none' }}
         />
+        <TextField value={selectedPdf?.name} />
       </form>
     </>
   );
-}
+});
 
 export default UploadPdfGifForm;

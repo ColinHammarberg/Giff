@@ -1,64 +1,70 @@
-import React, { useContext, useState } from 'react';
-import '../App.css'
+import React, { useContext, useRef, useState } from 'react';
 import SingleGifGenerator from './SingleGifGenerator';
 import { Box } from '@mui/material';
 import GeneratedGif from './GeneratedGif';
-import './GifLanding.scss';
 import GifError from './GifError';
-import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
+import { GeneratePdfGifs, GenerateSingleGif, UploadPdfThenCreateGif } from '../endpoints/Apis';
 import { GiftContext } from '../context/GiftContextProvider';
-import giftUser from '../access/GiftUser';
+import { showNotification } from './Notification';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
-  const { handleDownloadClick } = useContext(GiftContext); // Get the context value
   const [url, setUrl] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const [emailValue, setEmailValue] = useState('');
+  const [selectedPdf, setSelectedPdf] = useState(null);
+  const { handleDownloadClick } = useContext(GiftContext);
+  const formRef = useRef();
 
-  function handleOnChangeUrl(value) {
-    if (!value.startsWith("https://")) {
-        value = "http://" + value
-    }
+  const handleOnChangeUrl = (value) => {
     setUrl(value);
-    console.log('url', value);
-  }
+  };
 
   const handleErrors = (errorMessage) => {
-    if (errorMessage.includes("Invalid scroll height")) {
-      setError('height error');
-    } else if (errorMessage.includes("video")) {
-      setError('video error');
-    } else {
-      setError('general error');
-    }
+    setError(errorMessage);
   };
 
-  const generateSingleGif = async () => {
-    const isLoggedIn = giftUser.isLoggedIn();
-    try {
-      setIsLoading(true);
-      const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url, isLoggedIn) : GenerateSingleGif(url));
-      console.log('response', response);
-      if (response?.data?.error) {
-        handleErrors(response.data.error);
-      } else if (response.data.message === 'GIF generated and uploaded!') {
-        const responseData = response.data;
-        setGifGenerated(responseData.data);
+  const handlePdfChange = (e) => {
+    setSelectedPdf(e.target.files[0]);
+  };
+
+  const handleCreateGifClick = () => {
+    formRef.current.submit();
+  };
+
+  const generateSingleGif = async (formData) => {
+    setIsLoading(true);
+    console.log('formData', formData);
+    if (selectedPdf) {
+      try {
+        const response = await UploadPdfThenCreateGif(formData);
+        const data = response.data;
+        if (data.message === "PDF uploaded and GIF generated!") {
+          showNotification('success', 'PDF uploaded and GIF generated!');
+        } else {
+          showNotification('error', 'Failed to generate GIF from PDF. Please try again.');
+        }
+      } catch (error) {
+        showNotification('error', 'An error occurred while processing your request. Please try again later.');
       }
-      setIsLoading(false);
-    } catch (error) {
-      handleErrors('general error')
-      setIsLoading(false);
+    } else {
+      try {
+        setIsLoading(true);
+        const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url) : GenerateSingleGif(url));
+        console.log('response', response);
+        if (response?.data?.error) {
+          handleErrors(response.data.error);
+        } else if (response.data.message === 'GIF generated and uploaded!') {
+          const responseData = response.data;
+          setGifGenerated(responseData.data);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        handleErrors('general error')
+        setIsLoading(false);
+      }
     }
-  };
-
-  const handleKeyPressGenerateGif = (event) => {
-    if (event.key === 'Enter') {
-      generateSingleGif();
-    }
+    setIsLoading(false);
   };
 
   if (error) {
@@ -72,22 +78,30 @@ function GifLanding() {
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-          <GeneratedGif key={gifGenerated} url={url} gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
-        ) : (
-          <SingleGifGenerator onChange={handleOnChangeUrl} onKeyPress={handleKeyPressGenerateGif} generateSingleGif={generateSingleGif} gifGenerated={gifGenerated} />
-        )
-        }
-        {!isLoading && (
-            <Box className="bottom-content">
-                {gifGenerated && (
-                  <Box className="go-back-content">
-                    Want to create another gif? <span className="back-btn" onClick={() => {setGifGenerated(null)}}>Go back to home page here</span>
-                  </Box>
-                )}
+        <GeneratedGif key={gifGenerated} url={url} gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
+      ) : (
+        <SingleGifGenerator
+          onChange={handleOnChangeUrl}
+          generateSingleGif={generateSingleGif}
+          handleCreateGifClick={handleCreateGifClick}
+          gifGenerated={gifGenerated}
+          selectedPdf={selectedPdf}
+          setSelectedPdf={setSelectedPdf}
+          handlePdfChange={handlePdfChange}
+          ref={formRef}
+        />
+      )}
+      {!isLoading && (
+        <Box className="bottom-content">
+          {gifGenerated && (
+            <Box className="go-back-content">
+              Want to create another gif? <span className="back-btn" onClick={() => { setGifGenerated(null); }}>Go back to home page here</span>
             </Box>
-        )}
+          )}
+        </Box>
+      )}
     </div>
-  )
+  );
 }
 
 export default GifLanding;

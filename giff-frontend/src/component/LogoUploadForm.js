@@ -78,6 +78,7 @@ function LogoUploadForm(props) {
           onChange={handleFileChange}
           style={{ display: 'none' }}
         />
+        <button type="submit" style={{ display: 'none' }}></button>
       </form>
     </>
   );
