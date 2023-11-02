@@ -5,6 +5,7 @@ import InfoButton from './InfoButton';
 import Header from './Header';
 import OfficialButton from './OfficialButton';
 import UploadPdfGifForm from './UploadPdfGifForm';
+import LightToolTip from './LightToolTip';
 
 const SingleGifGenerator = forwardRef(({ onChange, gifGenerated, onKeyPress, generateSingleGif, selectedPdf, setSelectedPdf, handlePdfChange, handleCreateGifClick, setGifGenerated, setIsLoading }, ref) => {
   const infoButtonText = [
@@ -25,18 +26,21 @@ const SingleGifGenerator = forwardRef(({ onChange, gifGenerated, onKeyPress, gen
       <Header menu />
       <Box className="text-field-content">
         <div className="text-field-header">Add any* url <InfoButton infoButtonText={infoButtonText} /></div>
-        <div className="url">
-          <div className="box">Add Url</div>
-          <TextField
-            onChange={(event) => handleOnChangeUrl(event)}
-            onKeyPress={(event) => {
-              if (onKeyPress) {
-                onKeyPress(event);
-              }
-            }}
-            placeholder='https://spce.com'
-          />
-        </div>
+        <LightToolTip title="You have already uploaded a file!" disableHoverListener={!selectedPdf}>
+          <div className="url">
+            <div className="box">Add Url</div>
+              <TextField
+                onChange={(event) => handleOnChangeUrl(event)}
+                onKeyPress={(event) => {
+                  if (onKeyPress) {
+                    onKeyPress(event);
+                  }
+                }}
+                disabled={selectedPdf}
+                placeholder='https://spce.com'
+              />
+          </div>
+        </LightToolTip>
         <span>OR</span>
         <UploadPdfGifForm setIsLoading={setIsLoading} setGifGenerated={setGifGenerated} setSelectedPdf={setSelectedPdf} selectedPdf={selectedPdf} handlePdfChange={handlePdfChange} ref={ref} handleCreateGifClick={handleCreateGifClick} generateSingleGif={generateSingleGif} />
         <Box className="btn-content">

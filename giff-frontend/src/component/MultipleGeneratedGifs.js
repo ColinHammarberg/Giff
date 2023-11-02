@@ -67,13 +67,13 @@ function MultipleGeneratedGifs(props) {
               className="generated-gif"
               style={{ border: `4px solid ${gif.selectedColor}`}}
             />
-            <Box className="gif-buttons"
-              onMouseEnter={() => setSelectedGif(index)}
-              onMouseLeave={() => setSelectedGif(null)}
-            >
-              <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
-            </Box>
-        </div>
+              <Box className="gif-buttons"
+                onMouseEnter={() => setSelectedGif(index)}
+                onMouseLeave={() => setSelectedGif(null)}
+              >
+                <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
+              </Box>
+          </div>
         <div className="file-info">
           <p className="gif-url">{gif.name}</p>
         </div>

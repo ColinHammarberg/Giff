@@ -57,7 +57,7 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
           onChange={handlePdfChange}
           style={{ display: 'none' }}
         />
-        <TextField value={selectedPdf?.name} />
+        <TextField disabled value={selectedPdf?.name} />
       </form>
     </>
   );

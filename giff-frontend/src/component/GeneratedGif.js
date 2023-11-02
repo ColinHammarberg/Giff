@@ -10,7 +10,8 @@ import { GetMultipleGifs } from '../endpoints/Apis';
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, onDownload, key } = props;
   const navigate = useNavigate();
-  const [importedGifs, setImportedGifs] = useState();
+  const [importedGifs, setImportedGifs] = useState(null);
+
 
   useEffect(() => {
     if (gifGenerated) {
@@ -33,6 +34,7 @@ function GeneratedGif(props) {
         </Box>
       ) : (
         <>
+        <Box className="title">Your gif is ready. It looks great.</Box>
         {gifGenerated && importedGifs?.length > 0 && (
           <Box className="gif">
             {importedGifs.map((gif) => {
