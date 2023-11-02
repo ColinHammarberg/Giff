@@ -3,9 +3,8 @@ import SingleGifGenerator from './SingleGifGenerator';
 import { Box } from '@mui/material';
 import GeneratedGif from './GeneratedGif';
 import GifError from './GifError';
-import { GeneratePdfGifs, GenerateSingleGif, UploadPdfThenCreateGif } from '../endpoints/Apis';
+import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
 import { GiftContext } from '../context/GiftContextProvider';
-import { showNotification } from './Notification';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -32,22 +31,8 @@ function GifLanding() {
     formRef.current.submit();
   };
 
-  const generateSingleGif = async (formData) => {
+  const generateSingleGif = async () => {
     setIsLoading(true);
-    console.log('formData', formData);
-    if (selectedPdf) {
-      try {
-        const response = await UploadPdfThenCreateGif(formData);
-        const data = response.data;
-        if (data.message === "PDF uploaded and GIF generated!") {
-          showNotification('success', 'PDF uploaded and GIF generated!');
-        } else {
-          showNotification('error', 'Failed to generate GIF from PDF. Please try again.');
-        }
-      } catch (error) {
-        showNotification('error', 'An error occurred while processing your request. Please try again later.');
-      }
-    } else {
       try {
         setIsLoading(true);
         const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url) : GenerateSingleGif(url));
@@ -63,9 +48,10 @@ function GifLanding() {
         handleErrors('general error')
         setIsLoading(false);
       }
-    }
     setIsLoading(false);
   };
+
+  console.log('isLoading', isLoading);
 
   if (error) {
     return (
@@ -86,6 +72,8 @@ function GifLanding() {
           handleCreateGifClick={handleCreateGifClick}
           gifGenerated={gifGenerated}
           selectedPdf={selectedPdf}
+          setIsLoading={setIsLoading}
+          setGifGenerated={setGifGenerated}
           setSelectedPdf={setSelectedPdf}
           handlePdfChange={handlePdfChange}
           ref={formRef}

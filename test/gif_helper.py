@@ -265,7 +265,7 @@ def upload_pdf_and_generate_gif():
         print(f"Error: {e}")
         return jsonify({'error': 'An error occurred while processing the PDF'}), 500
 
-    return jsonify({'message': 'PDF uploaded and GIF generated!', 'gif_data': gif_data}), 200
+    return jsonify({'message': 'PDF uploaded and GIF generated!', 'data': [gif_data]}), 200
 
 def download_gif():
     gifs_folder = os.path.join(os.path.dirname(

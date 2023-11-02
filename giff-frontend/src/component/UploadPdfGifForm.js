@@ -3,7 +3,7 @@ import React, { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { UploadPdfThenCreateGif } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 
-const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf }, ref) => {
+const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading, setGifGenerated }, ref) => {
 
   useEffect(() => {
     document.getElementById('custom-button').addEventListener('click', function () {
@@ -17,24 +17,22 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf }, ref) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if a PDF file is selected and the "Generate GIF" button is clicked
     if (selectedPdf) {
+      setIsLoading(true);
       try {
         const response = await UploadPdfThenCreateGif(selectedPdf);
-        const data = response.data;
-
         if (data.message === "PDF uploaded and GIF generated!") {
-          // Handle success
+          const responseData = response.data;
+          setGifGenerated(responseData.data);
           showNotification('success', 'PDF uploaded and GIF generated!');
         } else {
-          // Handle other responses or errors
           showNotification('error', 'Failed to generate GIF from PDF. Please try again.');
         }
       } catch (error) {
         showNotification('error', 'An error occurred while processing your request. Please try again later.');
       }
       // Reset the selected PDF state
+      setIsLoading(false);
       setSelectedPdf(null);
     }
   };
