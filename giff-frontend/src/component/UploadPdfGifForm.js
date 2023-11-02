@@ -21,7 +21,7 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
       setIsLoading(true);
       try {
         const response = await UploadPdfThenCreateGif(selectedPdf);
-        if (data.message === "PDF uploaded and GIF generated!") {
+        if (response.data.message === "PDF uploaded and GIF generated!") {
           const responseData = response.data;
           setGifGenerated(responseData.data);
           showNotification('success', 'PDF uploaded and GIF generated!');
