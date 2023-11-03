@@ -26,7 +26,7 @@ const SingleGifGenerator = forwardRef(({ onChange, gifGenerated, onKeyPress, gen
       <Header menu />
       <Box className="text-field-content">
         <div className="text-field-header">Add any* url <InfoButton infoButtonText={infoButtonText} /></div>
-        <LightToolTip title="You have already uploaded a file!" disableHoverListener={!selectedPdf}>
+        <LightToolTip title="You have already uploaded a file!" disableHoverListener={!selectedPdf} disableFocusListener={!selectedPdf}>
           <div className="url">
             <div className="box">Add Url</div>
               <TextField

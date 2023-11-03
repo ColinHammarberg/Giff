@@ -5,7 +5,7 @@ import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 import LoadingGif from './LoadingGif';
 import OfficialButton from './OfficialButton';
-import { GetMultipleGifs } from '../endpoints/Apis';
+import { DownloadAllLibraryGifs, GetMultipleGifs } from '../endpoints/Apis';
 import { GiftContext } from '../context/GiftContextProvider';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
@@ -30,6 +30,26 @@ function GeneratedGif(props) {
       fetchData();
     }
   }, [gifGenerated, designChanges]);
+
+  async function handleDownloadClick() {
+    if (gifGenerated) {
+      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
+      try {
+        const response = await DownloadAllLibraryGifs(gifData);
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
+        const link = document.createElement('a');
+        setTimeout(() => {
+          link.href = url;
+          link.target = '_blank';
+          link.download = 'your-gift-bag.zip';
+          link.click();
+          window.URL.revokeObjectURL(url);
+        }, 3000)
+      } catch (error) {
+        console.error('Error downloading ZIP file:', error);
+      }
+    }
+  }
 
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
@@ -67,7 +87,7 @@ function GeneratedGif(props) {
           </Box>
         )}  
           <Box className="generated-gif-btn-box">
-            <OfficialButton variant="yellow" label="Download GIF" onClick={onDownload} />
+            <OfficialButton variant="yellow" label="Download GIF" onClick={handleDownloadClick} />
             <OfficialButton variant="green" label="Share gif in email" onClick={() => navigate('/email-choice')} />
           </Box>
           <DesignGifDialog

@@ -1,6 +1,7 @@
 from extensions import db
 from flask import jsonify, request, send_file
 from pytube import YouTube
+import cv2
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from PIL import Image, ImageOps, ImageSequence
 from werkzeug.utils import secure_filename
@@ -440,11 +441,14 @@ def generate_video_gif(data, user_id):
     yt = YouTube(URL)
     video = yt.streams.filter(file_extension='mp4').first()
     video_path = video.download()
-
-    # Step 2: Read Video and Extract Frames
     cap = VideoCapture(video_path)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    start_frame = max(0, min(start_frame, total_frames - 1))
+    end_frame = max(0, min(end_frame, total_frames))
+
+    print('total_frames', total_frames)
     frames = []
-    for i in range(start_frame, end_frame):
+    for i in range(start_frame + 5, end_frame):  # Start from the sixth frame
         cap.set(1, i)
         ret, frame = cap.read()
         if ret:
@@ -457,8 +461,14 @@ def generate_video_gif(data, user_id):
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
     os.makedirs(gifs_frontend_folder, exist_ok=True)
     output_gif_path = os.path.join(gifs_frontend_folder, NAME)
+
+    frames = frames[::3]
     
-    frames[0].save(output_gif_path, save_all=True, append_images=frames[1:], loop=0, duration=1)
+    frame_durations = [1] * len(frames)
+
+    frames = frames[5:]
+
+    frames[0].save(output_gif_path, save_all=True, append_images=frames[1:], loop=0, duration=frame_durations)
 
     folder_name = f"{user_id}/" if user_id else ""
     upload_to_s3(output_gif_path, 'gift-resources', f"{folder_name}{NAME}", resource_id)

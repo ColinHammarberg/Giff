@@ -1,7 +1,11 @@
 from flask import jsonify, request
 import openai
+from PIL import Image
+import io
+import base64
+import os
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 def chat_with_gpt():
     data = request.get_json()
@@ -40,3 +44,38 @@ def chat_with_gpt():
         # Log the error message for debugging
         print('Error:', str(e))
         return jsonify({'error': 'An error occurred while generating a response'}), 500
+    
+def analyze_folder_with_gpt(folder_path):
+    image_paths = [os.path.join(folder_path, img) for img in os.listdir(folder_path) if img.endswith('.png')]
+    relevant_paths = []
+
+    for img_path in image_paths:
+        with Image.open(img_path) as img:
+            buffered = io.BytesIO()
+            img.save(buffered, format="PNG")
+            img_base64 = base64.b64encode(buffered.getvalue()).decode()
+            
+            # Define a prompt to ask GPT-4 if the image is relevant for inclusion in a GIF
+            prompt = {
+                'image': img_base64,
+                'query': "Is this image relevant for inclusion in a GIF?"
+            }
+            
+            # Query GPT-4 with the prompt
+            response = openai.Answer.create(
+                model="text-davinci-002",
+                question=prompt,
+                examples_context="In this task, you need to determine if the given image is relevant for inclusion in a GIF to showcase the company.",
+                examples=[({"image": "base64_encoded_image_1", "query": "Is this image relevant for inclusion in a GIF?"}, "yes"),
+                          ({"image": "base64_encoded_image_2", "query": "Is this image relevant for inclusion in a GIF?"}, "no")],
+                max_tokens=10,
+                stop=None,
+                temperature=0
+            )
+            
+            is_relevant = response['choices'][0]['answer'].strip().lower()
+            
+            if is_relevant == 'yes':
+                relevant_paths.append(img_path)
+
+    return relevant_paths
