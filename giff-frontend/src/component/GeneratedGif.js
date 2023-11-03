@@ -11,7 +11,7 @@ import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
 
 function GeneratedGif(props) {
-  const { gifGenerated, isLoading, onDownload, key } = props;
+  const { gifGenerated, isLoading, key } = props;
   const navigate = useNavigate();
   const [importedGifs, setImportedGifs] = useState(null);
   const { editGif, isDesignOpen, isMobile, selectedDesignGif, handleOpenDesign, handleCloseDesign } = useContext(GiftContext);
