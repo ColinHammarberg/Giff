@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { createContext, useState, useEffect } from 'react';
 import { showNotification } from '../component/Notification';
 import { FetchUserInfo, FetchUserLogo } from '../endpoints/Apis';
+import useMobileQuery from '../queries/useMobileQuery';
 
 export const GiftContext = createContext();
 
@@ -17,6 +18,9 @@ const GiftContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [singleGif, setSingleGif] = useState(null);
   const [user, setUser] = useState(null); // State to store user info and user logo
+  const [selectedDesignGif, setSelectedDesignGif] = useState({});
+  const [isDesignOpen, setIsDesignOpen] = useState(false);
+  const { isMobile } = useMobileQuery();
 
   useEffect(() => {
     // Fetch user info and user logo
@@ -48,6 +52,15 @@ const GiftContextProvider = ({ children }) => {
     fetchUser();
   }, []); // Run this effect only once on component mount
 
+  // design actions
+
+  const editGif = (gifUrl, resourceId, selectedColor) => {
+    console.log('Sharing GIF:', gifUrl);
+    console.log('Resource ID:', resourceId);
+    setIsDesignOpen(true);
+    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
+  };
+
   const onChange = (fieldIdentifier, value) => {
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
@@ -78,6 +91,14 @@ const GiftContextProvider = ({ children }) => {
     }
   };
 
+  const handleOpenDesign = () => {
+    setIsDesignOpen(true);
+  };
+
+  const handleCloseDesign = () => {
+    setIsDesignOpen(false);
+  };
+
   function handleDownloadClick() {
     const singleGif = localStorage.getItem('singleGif');
     console.log('singleGif', singleGif);
@@ -92,6 +113,8 @@ const GiftContextProvider = ({ children }) => {
     }
   }
 
+  console.log('isDesignOpen', isDesignOpen);
+
   return (
     <GiftContext.Provider
       value={{
@@ -105,7 +128,13 @@ const GiftContextProvider = ({ children }) => {
         singleGif,
         handleDownloadClick,
         user,
-        setUser
+        setUser,
+        isDesignOpen,
+        editGif,
+        selectedDesignGif,
+        isMobile,
+        handleOpenDesign,
+        handleCloseDesign
       }}
     >
       {children}

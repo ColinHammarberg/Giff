@@ -18,7 +18,7 @@ function MultipleGeneratedGifs(props) {
   const [selectedGif, setSelectedGif] = useState(null);
   const { isMobile } = useMobileQuery();
 
-  const shareGif = (gifUrl, resourceId, selectedColor) => {
+  const editGif = (gifUrl, resourceId, selectedColor) => {
     console.log('Sharing GIF:', gifUrl);
     console.log('Resource ID:', resourceId);
     setIsDesignOpen(true);
@@ -28,7 +28,7 @@ function MultipleGeneratedGifs(props) {
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      shareGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
+      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
       setDesignChanges(false);
     }
   };
