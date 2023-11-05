@@ -15,6 +15,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import requests
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from PIL import Image
 from flask_mail import Mail
 from azure.appconfiguration.provider import (
@@ -134,10 +135,15 @@ def generate_gif():
     if is_video_url(URL):
         return generate_video_gif(data, user_id)
 
-    chrome_options = Options()
-    chrome_options.binary_location = '/usr/local/bin'
-    chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(options=chrome_options)
+    options = Options()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+        
+    # Set up the Chrome service
+    service = Service(executable_path="/usr/bin/chromedriver")
+    driver = webdriver.Chrome(service=service,options=options)
     driver.get(URL)
     timer = 400
 
