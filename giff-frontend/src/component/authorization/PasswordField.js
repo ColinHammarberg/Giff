@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 
 const PasswordField = React.forwardRef((props, ref) => {
   const classes = useStyles();
-  const { name, onChange, placeholder, error, helperText, onKeyPress } = props;
+  const { name, onChange, placeholder, error, helperText, onKeyPress, isShow } = props;
   const [showPassword, setShowPassword] = React.useState(false);
 
   return (
@@ -34,6 +34,7 @@ const PasswordField = React.forwardRef((props, ref) => {
       InputProps={{
         endAdornment: (
           <InputAdornment>
+          {!isShow && (
             <IconButton tabIndex="-1" size="small" onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? (
                 <img src={EyeIcon} className={classes.root} alt="" />
@@ -41,6 +42,7 @@ const PasswordField = React.forwardRef((props, ref) => {
                 <img src={EyeIcon} className={classes.hiddenPassword} alt="" />
               )}
             </IconButton>
+          )}
           </InputAdornment>
         ),
       }}

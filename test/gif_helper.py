@@ -340,6 +340,7 @@ def add_border_to_gif(gif_bytes_io, selected_color):
 @jwt_required()
 def download_all_library_gifs():
     data = request.get_json()
+    print('gif_data', data)
     gif_data = data.get('gifData', [])
     try:
         zip_buffer = io.BytesIO()
@@ -348,27 +349,17 @@ def download_all_library_gifs():
                 gif_url = gif_info['url']
                 gif_name = gif_info['name']
                 selected_color = gif_info['selectedColor']
-                # Received from frontend
-                desired_resolution = gif_info['resolution', "800x800"]
 
                 # Download the GIF
                 response = requests.get(gif_url)
                 if response.status_code == 200:
                     gif_bytes = io.BytesIO(response.content)
-
-                    # Resize the GIF
-                    resized_gif_bytes = resize_gif(
-                        gif_bytes, desired_resolution)
-
-                    # Add border to GIF (if needed)
+                    
+                    # Assuming add_border_to_gif is a function that adds the border and returns new GIF bytes
                     if selected_color:
-                        new_gif_bytes = add_border_to_gif(
-                            resized_gif_bytes, selected_color)
-                    else:
-                        new_gif_bytes = resized_gif_bytes
-
-                    # Add the new GIF to ZIP
-                    zipf.writestr(f'{gif_name}.gif', new_gif_bytes.getvalue())
+                        new_gif_bytes = add_border_to_gif(gif_bytes, selected_color)
+                        # Add the new GIF to ZIP
+                        zipf.writestr(f'{gif_name}.gif', new_gif_bytes.getvalue())
 
         zip_buffer.seek(0)
         return send_file(

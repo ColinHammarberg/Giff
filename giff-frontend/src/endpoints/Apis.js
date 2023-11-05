@@ -303,6 +303,21 @@ export async function DownloadAllLibraryGifs(gifData) {
   return response;
 }
 
+export async function UpdateEmailAddress(credentials) {
+  const access_token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(`${Api}/update-email`, credentials, 
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return response;
+  } catch (error) {
+    return { status: error.response?.status, data: error.response?.data };
+  }
+}
+
 export async function DownloadIndividualDesignedGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
   console.log('gifData', gifData);

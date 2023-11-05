@@ -92,25 +92,21 @@ function GifLibrary() {
         if (!gifs) {
           return;
         }
+        // const { hasConfirmed, selectedResolution } = await ChooseResolutionDialog.show();
         const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
-        const { isConfirmed } = await ChooseResolutionDialog.show();
         setIsLoading(true);
-        if (!isConfirmed) {
-          return;
-        } else {
-          try {
-            const response = await DownloadAllLibraryGifs(gifData);
-            const blob = new Blob([response.data], { type: 'application/zip' });
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = 'your-gift-bag.zip';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          } catch (error) {
-            console.error('Error downloading ZIP file:', error);
-          }
+        try {
+          const response = await DownloadAllLibraryGifs(gifData);
+          const blob = new Blob([response.data], { type: 'application/zip' });
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = 'your-gift-bag.zip';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (error) {
+          console.error('Error downloading ZIP file:', error);
         }
         setIsLoading(false);
       };

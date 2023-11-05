@@ -3,7 +3,7 @@ import './Profile.scss';
 import Header from './Header';
 import { Box, Button, IconButton, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DeleteUserLogo, DeleteUserProfile, UpdatePassword } from '../endpoints/Apis';
+import { DeleteUserLogo, DeleteUserProfile, UpdateEmailAddress, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
@@ -21,6 +21,12 @@ function Profile() {
       currentPassword: '',
       newPassword: '',
     });
+    const [email, setEmail] = useState({
+      newEmail: '',
+      password: '',
+    });
+
+    console.log('email', email);
     
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
@@ -33,6 +39,19 @@ function Profile() {
         [field]: e.target.value,
       });
     };
+
+    const handleOnChangeEmail = (e, field) => {
+      setEmail({
+        ...email,
+        [field]: e.target.value,
+      });
+    };
+
+    const handleOnClickChangeEmailButton = (event) => {
+      console.log('event', event, changeUserDetails);
+      setAnchorEl(event?.currentTarget);
+      setChangeUserDetails(event?.target?.name);
+    }
     
     const handleOnClose = () => {
       setAnchorEl(null);
@@ -49,6 +68,38 @@ function Profile() {
         showNotification('error', 'Failed to update password');
       }
     }
+
+    console.log('email', email);
+
+    async function requestChangeUserEmail() {
+      try {
+        const response = await UpdateEmailAddress(email);
+        console.log('response', response);
+        if (response.data.status === 'Email updated successfully') {
+          showNotification('success', 'Email updated successfully');
+          // Update user state
+          setUser((prevUser) => {
+            console.log('prevUser', prevUser);
+            return {
+              ...prevUser,
+                email: email.newEmail,
+            };
+          });
+          // Update localStorage
+          const userData = localStorage.getItem('user');
+          if (userData) {
+            const parsedUserData = JSON.parse(userData);
+            parsedUserData.userInfo.email = email.newEmail;
+            localStorage.setItem('user', JSON.stringify(parsedUserData));
+          }
+        } else {
+          showNotification('error', 'Email was not updated successfully. Please try again!');
+        }
+      } catch (error) {
+        showNotification('error', 'Failed to update email');
+      }
+    }
+    
 
     const handleOnClickDeleteAccount = async () => {
       const { hasConfirmed } = await DeleteProfileDialog.show();
@@ -100,24 +151,26 @@ function Profile() {
           showNotification('error', 'Failed to delete your logo');
         }
       }
-    };
-    
+    };    
 
   return (
     <div className="profile">
       <Header menu />
         <Box className="title">Profile</Box>
         <Box className="profile-info">
-          <ResetUserDetailsPopover
-            requestChangeUserPassword={requestChangeUserPassword} 
-            onChange={handleOnChangePassword} 
-            onClosePopover={handleOnClose}
-            anchorEl={anchorEl} 
-          />
+        <ResetUserDetailsPopover
+          requestChangeUserPassword={requestChangeUserPassword}
+          requestChangeUserEmail={requestChangeUserEmail}
+          handleOnChangePassword={handleOnChangePassword}
+          handleOnChangeEmail={handleOnChangeEmail}
+          changeUserDetails={changeUserDetails}
+          onClosePopover={handleOnClose}
+          anchorEl={anchorEl} 
+        />
           <Box className="email-details">
               <div className="text">
                 <span>Email address</span>
-                <Button>Edit Email</Button>
+                <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit Email</Button>
               </div>
               <TextField value={user?.userInfo?.email} />
           </Box>

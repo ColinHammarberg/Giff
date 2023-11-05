@@ -8,7 +8,7 @@ import uuid
 from models import UserGif
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -81,12 +81,10 @@ def upload_user_logo():
 def fetch_user_logo():
     return fetch_logo()
 
-
 @app.route('/signin', methods=['POST'])
 def signin_user():
     print('generate')
     return signin()
-
 
 @app.route('/signout', methods=['GET'])
 def signout_user():
@@ -101,6 +99,10 @@ def keep_user_access_alive():
 def signup_user():
     print('generate')
     return signup()
+
+@app.route('/update-email', methods=['POST'])
+def update_email_address():
+    return update_email()
 
 @app.route('/delete_user_logo', methods=['GET'])
 def delete_user_logo():
