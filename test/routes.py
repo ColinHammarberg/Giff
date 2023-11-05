@@ -115,3 +115,22 @@ def update_password():
     except Exception as e:
         print(f"Exception: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
+    
+@jwt_required()
+def update_email():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    current_user = User.query.get(user_id)
+    print(f"Current user: {current_user.email}")
+    try:
+        if not check_password_hash(current_user.password, data['password']):
+            return jsonify({"status": "Incorrect current password"}), 401
+        
+        new_email = data['newEmail']
+        current_user.email = new_email
+        db.session.commit()
+        return jsonify({"status": "Email updated successfully"}), 200
+        
+    except Exception as e:
+        print(f"Exception: {e}")
+        return jsonify({"status": "Internal Server Error"}), 500
