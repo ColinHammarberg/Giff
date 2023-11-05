@@ -30,8 +30,8 @@ export async function GenerateSingleGif(url) {
 }
 
 
-export async function GeneratePdfGifs(url, access_token) {
-    console.log('access_token', access_token);
+export async function GeneratePdfGifs(url) {
+  const access_token = localStorage.getItem('access_token');
     const response = await axios.post(`${Api}/generate-pdf-gif`, 
     { url },
     {
@@ -64,7 +64,6 @@ export async function GenerateMultipleGifs(gifData) {
   }
 }
 
-
 export async function GenerateMultiplePdfGifs(gifData) {
     const access_token = localStorage.getItem('access_token');
     console.log('access_token123', access_token, gifData);
@@ -80,12 +79,90 @@ export async function GenerateMultiplePdfGifs(gifData) {
     return response;
 }
 
+export async function UploadUserLogo(logo) {
+  const access_token = localStorage.getItem('access_token');
+  const formData = new FormData();
+  formData.append('logo', logo); // Assuming 'logo' is a File object
+  console.log('formData', formData);
+
+  try {
+    const response = await axios.post(`${Api}/upload_user_logo`, formData, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
+export async function UploadPdfThenCreateGif(pdf) {
+  const access_token = localStorage.getItem('access_token');
+  const formData = new FormData();
+  formData.append('pdf', pdf); // Assuming 'pdf' is a File object
+  console.log('formData2', formData);
+
+  try {
+    const response = await axios.post(`${Api}/upload-pdf-generate-gif`, formData, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
+export async function DeleteGif(selectedGif) {
+  const access_token = localStorage.getItem('access_token');
+  console.log("DeleteGif selectedGif:", selectedGif);
+  console.log("DeleteGif access_token:", access_token);
+  
+  try {
+    const response = await axios.post(`${Api}/delete-gif`, selectedGif, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log("DeleteGif error:", error);
+    throw error;
+  }
+}
+
 export async function DownloadFolder() {
   const response = await axios.get(`${Api}/download-all-gifs`, {
     responseType: 'blob'
   });
   return response;
 }
+
+// export async function GenerateGifFromVideoSrc(url) {
+//   console.log('url', url);
+//   const token = localStorage.getItem('access_token'); // Retrieve the token from local storage
+  
+//   try {
+//     const response = await axios.post(`${Api}//generate-video-gif`, 
+//       { url },
+//       {
+//       headers: {
+//       'Authorization': `Bearer ${token}`
+//       }
+//      });
+//     console.log('Response from server', response);
+//     return response;
+//   } catch (error) {
+//     console.error('Error generating GIF:', error);
+//     throw error;
+//   }
+// }
 
 export async function Signin(userCredentials) {
   const response = await axios.post(`${Api}/signin`, { email: userCredentials.email, password: userCredentials.password });
@@ -136,6 +213,16 @@ export async function FetchUserInfo() {
   return response;
 }
 
+export async function DeleteUserLogo() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.get(`${Api}/delete_user_logo`, {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  })
+  return response;
+}
+
 export async function FetchUserGifs(access_token) {
   const response = await axios.get(`${Api}/fetch_user_gifs`, {
     headers: {
@@ -143,6 +230,18 @@ export async function FetchUserGifs(access_token) {
     }
   });
   return response.data;
+}
+
+export async function FetchUserLogo() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.get(`${Api}/fetch_user_logo`,
+  {
+    headers: {
+      'Authorization': `Bearer ${access_token}`
+    }
+  }
+  )
+  return response;
 }
 
 export async function KeepAccessAlive() {
@@ -204,8 +303,24 @@ export async function DownloadAllLibraryGifs(gifData) {
   return response;
 }
 
-export async function DeleteUserProfile(access_token) {
-  const response = await axios.get(`${Api}/delete_user`, {
+export async function DownloadIndividualDesignedGifs(gifData) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('gifData', gifData);
+  const response = await axios.post(`${Api}/download-individual-design-gifs`,
+  gifData,
+  {
+    headers: {
+      'Authorization': `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    },
+    responseType: 'arraybuffer'
+  });
+  return response;
+}
+
+export async function DeleteUserProfile() {
+  const access_token = localStorage.getItem('access_token');
+  const response = await axios.post(`${Api}/delete-user-profile`, {}, {
     headers: {
       'Authorization': `Bearer ${access_token}`
     }

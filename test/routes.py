@@ -1,12 +1,14 @@
 from flask import jsonify, request
 from extensions import db
-from models import User
+from models import User, UserLogo
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from s3_helper import upload_to_s3
+import uuid
+import os
 
 # Fetch user info endpoint
-
 
 @jwt_required()
 def fetch_user_info():
@@ -76,7 +78,6 @@ def signout():
         return jsonify({"status": "Internal Server Error"}), 500
 
 # Delete user endpoint
-
 
 @jwt_required()
 def delete_user_profile():

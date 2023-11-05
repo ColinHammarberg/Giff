@@ -1,7 +1,11 @@
 from flask import jsonify, request
 import openai
+from PIL import Image
+import io
+import base64
+import os
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 def chat_with_gpt():
     data = request.get_json()
@@ -40,3 +44,37 @@ def chat_with_gpt():
         # Log the error message for debugging
         print('Error:', str(e))
         return jsonify({'error': 'An error occurred while generating a response'}), 500
+
+# def determine_relevance(image_info):
+#     relevant_paths = []
+
+#     for img_path, descriptions in image_info:
+#         # Construct the prompt for GPT-4
+#         prompt = f"Are the following descriptions relevant for a GIF to showcase the company? {', '.join(descriptions)}"
+
+#         try:
+#             # Make a request to GPT-4 with the constructed prompt
+#             response = openai.Completion.create(
+#                 engine="gpt-4.0-turbo",   # Replace with the GPT-4 engine name you want to use
+#                 prompt=prompt,
+#                 max_tokens=10,
+#                 temperature=0
+#             )
+
+#             # Extract the generated text from the response
+#             is_relevant = response.choices[0].text.strip().lower()
+
+#             # Check if GPT-4 deems the image relevant
+#             if is_relevant == 'yes':
+#                 relevant_paths.append(img_path)
+
+#         except Exception as e:
+#             # Log the error message for debugging
+#             print('Error:', str(e))
+
+#     return relevant_paths
+
+
+
+
+

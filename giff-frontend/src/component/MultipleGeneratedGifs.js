@@ -10,8 +10,7 @@ import OfficialButton from './OfficialButton';
 import useMobileQuery from '../queries/useMobileQuery';
 
 function MultipleGeneratedGifs(props) {
-  const { gifGenerated, isLoading, onDownload } = props;
-  const [importedGifs, setImportedGifs] = useState([]);
+  const { gifGenerated, isLoading, onDownload, setImportedGifs, importedGifs } = props;
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
@@ -19,7 +18,7 @@ function MultipleGeneratedGifs(props) {
   const [selectedGif, setSelectedGif] = useState(null);
   const { isMobile } = useMobileQuery();
 
-  const shareGif = (gifUrl, resourceId, selectedColor) => {
+  const editGif = (gifUrl, resourceId, selectedColor) => {
     console.log('Sharing GIF:', gifUrl);
     console.log('Resource ID:', resourceId);
     setIsDesignOpen(true);
@@ -29,7 +28,7 @@ function MultipleGeneratedGifs(props) {
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      shareGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
+      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
       setDesignChanges(false);
     }
   };
@@ -54,7 +53,7 @@ function MultipleGeneratedGifs(props) {
       };
       fetchData();
     }
-  }, [gifGenerated, designChanges]);
+  }, [gifGenerated, designChanges, setImportedGifs]);
 
   console.log('gifGenerated', gifGenerated);
 
@@ -68,13 +67,13 @@ function MultipleGeneratedGifs(props) {
               className="generated-gif"
               style={{ border: `4px solid ${gif.selectedColor}`}}
             />
-            <Box className="gif-buttons"
-              onMouseEnter={() => setSelectedGif(index)}
-              onMouseLeave={() => setSelectedGif(null)}
-            >
-              <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
-            </Box>
-        </div>
+              <Box className="gif-buttons"
+                onMouseEnter={() => setSelectedGif(index)}
+                onMouseLeave={() => setSelectedGif(null)}
+              >
+                <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
+              </Box>
+          </div>
         <div className="file-info">
           <p className="gif-url">{gif.name}</p>
         </div>

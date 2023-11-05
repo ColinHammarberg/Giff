@@ -29,6 +29,23 @@
                     font-family: 'Staatliches';
                 }
             }
+
+            .edit {
+                display: flex;
+                justify-content: center;
+                margin-top: 24px;
+
+                .edit-mode-btn {
+                    border-radius: 50px;
+                    border: 1px solid rgba(255, 255, 255, 1);
+                    background-color: #000;
+                    color: rgba(255, 255, 255, 1);
+                    width: 69px;
+                    height: 28px;
+                    font-size: 10px;
+                    font-family: 'Staatliches';
+                }
+            }
         }
 
         .gif-wrapper {
@@ -82,8 +99,10 @@
                             height: 100%;
 
                             .MuiButton-root {
-                                width: 162px;
+                                width: 120px;
+                                height: 30px;
                                 border-radius: 50px;
+
                                 color: #000;
                                 font-family: 'Staatliches';
                                 border: 1px solid #000;
@@ -95,12 +114,16 @@
                                 &.share {
                                     background-color: #F4149B;
                                 }
+                                &.edit {
+                                    background-color: rgba(185, 241, 64, 1);
+                                }
                             }
                         }
                     }
 
                     img {
                         width: 197px;
+                        height: 150px;
                         border: 1px solid #FEC901;
                     }
                 }
@@ -116,6 +139,7 @@
             .gif-showcase-info {
                 padding: 24px;
             }
+
             .gif-wrapper .gif-box {
                 display: unset;
                 width: 100%;

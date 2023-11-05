@@ -1,0 +1,51 @@
+.delete-logo-dialog {
+    .MuiBackdrop-root {
+        background-color: unset;
+    }
+
+    .MuiDialog-container {
+        .MuiPaper-root {
+            width: 300px;
+            height: 220px;
+            background-color: #1B1A19;
+            padding: 12px;
+            font-family: 'Staatliches';
+
+            .dialog-content {
+                overflow: hidden;
+            }
+
+            .delete-logo-content {
+                color: #fff;
+                font-size: 16px;
+            }
+
+            .delete-btn-actions {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 24px;
+                height: 80px;
+
+                .MuiButton-root {
+                    border: 1px solid #000;
+                    border-radius: 50px;
+                    color: #fff;
+                    font-family: 'Staatliches';
+                    font-size: 10px;
+                    height: 25px;
+                    width: 100%;
+                    color: #000;
+
+                    &.confirm-btn {
+                        background-color: #FE6B01;
+                    }
+
+                    &.keep-logo-btn {
+                        background-color: #B9F140;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import './GifLibrary.scss';
 import Header from './Header';
 import { Box, Button } from '@mui/material';
-import { DownloadAllLibraryGifs, FetchUserGifs } from '../endpoints/Apis';
+import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs, FetchUserGifs } from '../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from './DesignGifDialog';
 import { useTabs } from './Tabs';
 import giftUser from '../access/GiftUser';
 import OfficialButton from './OfficialButton';
 import useMobileQuery from '../queries/useMobileQuery';
+import { showNotification } from './Notification';
+import DeleteGifDialog from './DeleteGifDialog';
+import ChooseResolutionDialog from './ChooseResolutionDialog';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -18,6 +21,7 @@ function GifLibrary() {
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
+    const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
     useEffect(() => {
@@ -47,45 +51,71 @@ function GifLibrary() {
       fetchData();
     }, [designChanges]);
 
-      console.log('gifs', gifs);
-
       const handleDownloadIndividualGifs = async () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          const link = document.createElement('a');
-          link.href = hoveredGif.url; // Use the actual URL here
-          link.target = '_blank';
-          link.download = hoveredGif.name;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          const { hasConfirmed, selectedResolution } = await ChooseResolutionDialog.show();
+          console.log('selectedResolution', selectedResolution, hasConfirmed);
+          const gifData = {
+            url: hoveredGif.url,
+            name: hoveredGif.name,
+            selectedColor: hoveredGif.selectedColor,
+            resolution: selectedResolution,
+          };
+          if (!hasConfirmed) {
+            return;
+          } else {
+            try {
+              const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
+              const blob = new Blob([response.data], { type: 'image/gif' });
+              const downloadUrl = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.href = downloadUrl; 
+              a.download = `${hoveredGif.name}`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(downloadUrl);
+              document.body.removeChild(a);
+            } catch (error) {
+              console.error('Error downloading individual GIF:', error);
+            }
+          }
         }
-      }
+      };
 
+      function handleOnClickOpenEditMode() {
+        setOpenEditMode(true);
+      }
+      
       const handleDownloadLibraryGifs = async () => {
         if (!gifs) {
           return;
         }
-        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name }));
+        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
+        const { isConfirmed } = await ChooseResolutionDialog.show();
         setIsLoading(true);
-        try {
-          const response = await DownloadAllLibraryGifs(gifData);
-          // Create blob
-          const blob = new Blob([response.data], { type: 'application/zip' });
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = downloadUrl;
-          a.download = 'your-gift-bag.zip';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } catch (error) {
-          console.error('Error downloading ZIP file:', error);
+        if (!isConfirmed) {
+          return;
+        } else {
+          try {
+            const response = await DownloadAllLibraryGifs(gifData);
+            const blob = new Blob([response.data], { type: 'application/zip' });
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = 'your-gift-bag.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } catch (error) {
+            console.error('Error downloading ZIP file:', error);
+          }
         }
         setIsLoading(false);
       };
 
-      const shareGif = (gifUrl, resourceId, selectedColor) => {
+      const editGif = (gifUrl, resourceId, selectedColor) => {
         console.log('Sharing GIF:', gifUrl);
         console.log('Resource ID:', resourceId);
         setIsDesignOpen(true);
@@ -95,10 +125,42 @@ function GifLibrary() {
       const handleEditButtonClick = () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          shareGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
+          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
           setDesignChanges(false);
         }
       };
+
+      async function handleOnDeleteGif() {
+        const hoveredGif = gifs[selectedGif];
+        const gifData = {
+          name: hoveredGif.name,
+          resourceId: hoveredGif.resourceId,
+        };
+
+        const { hasConfirmed } = await DeleteGifDialog.show();
+        if (!hasConfirmed) {
+          return;
+        } else {
+          try {
+            const response = await DeleteGif(gifData);
+            if (response.data) {
+              console.log('response', response.data);
+        
+              // Update local state to remove the deleted GIF
+              const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
+              setGifs(updatedGifs);
+        
+              showNotification('success', 'GIF deleted from your library.');
+            }
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              showNotification('error', 'GIF not found.');
+            } else {
+              showNotification('error', 'Failed to delete the GIF.');
+            }
+          }
+        }
+      }
 
       console.log('gifs', gifs);
       const handleOpenDesign = () => {
@@ -128,8 +190,51 @@ function GifLibrary() {
       />
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
-          <Box className="title"><span>This is your library.</span> download all gifs at once <span>or</span> hover over the gif you want to download or share.</Box>
-          <Box className="download">{gifs?.length > 0 ? <OfficialButton onClick={handleDownloadLibraryGifs} isProcessing={isLoading} label="Download all gifs" variant="yellow" /> : <OfficialButton onClick={() => navigate('/choose-option-create')} label="Create gifs" variant="yellow" />}</Box>
+          <Box className="title">
+          {openEditMode ? (
+            <>
+              <span>You are in edit mode. Hover over </span>
+              the gif you want
+              <span> or </span>
+              When ready, click the big button to go back to your library.
+            </>
+          ) : (
+            <>
+              <span>This is your library. </span>
+               Download all gifs at once
+              <span> or </span>
+              hover over the gif you want to download or share.
+            </>
+          )}
+          </Box>
+          <Box className="download">
+            {gifs?.length > 0 ? (
+              openEditMode ? (
+                <OfficialButton 
+                  onClick={() => setOpenEditMode(false)} 
+                  isProcessing={isLoading} 
+                  label="Go back to library" 
+                  variant="yellow" 
+                />
+              ) : (
+                <OfficialButton 
+                  onClick={handleDownloadLibraryGifs} 
+                  isProcessing={isLoading} 
+                  label="Download all gifs" 
+                  variant="yellow" 
+                />
+              )
+            ) : (
+              <OfficialButton 
+                onClick={() => navigate('/choose-option-create')} 
+                label="Create gifs" 
+                variant="yellow" 
+              />
+            )}
+          </Box>
+
+
+          {gifs?.length > 0 && !openEditMode && (<Box className="edit"><Button onClick={handleOnClickOpenEditMode} className="edit-mode-btn">Edit Mode</Button></Box>)}
         </Box>
           <Box className="gif-wrapper">
             {gifs?.map((item, index) => {
@@ -144,8 +249,17 @@ function GifLibrary() {
                   >
                     <img src={item.url} alt="" style={{ border: `4px solid ${item.selectedColor}`}} />
                     <Box className="gif-buttons">
-                      <Button className="download" onClick={handleDownloadIndividualGifs}>Download</Button>
-                      <Button className="share" onClick={handleEditButtonClick}>Edit</Button>
+                    {!openEditMode ? (
+                      <>
+                        <Button className="download" onClick={handleDownloadIndividualGifs}>Download</Button>
+                        <Button className="share">Share</Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button className="download" onClick={handleOnDeleteGif}>Delete</Button>
+                        <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
+                      </>
+                  )}
                     </Box>
                   </Box>
                   <span>{item.name}</span>

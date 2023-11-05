@@ -1,12 +1,13 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { showNotification } from '../component/Notification';
+import { FetchUserInfo, FetchUserLogo } from '../endpoints/Apis';
+import useMobileQuery from '../queries/useMobileQuery';
 
 export const GiftContext = createContext();
 
 const GiftContextProvider = ({ children }) => {
-  // Define a single state object to hold all the input values
   const [inputValues, setInputValues] = useState({
     html_content: '',
     global_substitutions: '',
@@ -16,6 +17,49 @@ const GiftContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [singleGif, setSingleGif] = useState(null);
+  const [user, setUser] = useState(null); // State to store user info and user logo
+  const [selectedDesignGif, setSelectedDesignGif] = useState({});
+  const [isDesignOpen, setIsDesignOpen] = useState(false);
+  const { isMobile } = useMobileQuery();
+
+  useEffect(() => {
+    // Fetch user info and user logo
+    const fetchUser = async () => {
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          const parsedUserData = JSON.parse(userData);
+          setUser(parsedUserData);
+        } else {
+          const userInfoResponse = await FetchUserInfo(); // Replace with your user info endpoint
+          const userLogoResponse = await FetchUserLogo(); // Replace with your user logo endpoint
+          
+          if (userInfoResponse.data) {
+            const userObj = {
+              userInfo: userInfoResponse.data,
+              userLogoSrc: userLogoResponse?.data?.logo_url || null,
+            };
+            setUser(userObj);
+            
+            localStorage.setItem('user', JSON.stringify(userObj));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUser();
+  }, []); // Run this effect only once on component mount
+
+  // design actions
+
+  const editGif = (gifUrl, resourceId, selectedColor) => {
+    console.log('Sharing GIF:', gifUrl);
+    console.log('Resource ID:', resourceId);
+    setIsDesignOpen(true);
+    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
+  };
 
   const onChange = (fieldIdentifier, value) => {
     setInputValues((prevInputValues) => ({
@@ -37,11 +81,8 @@ const GiftContextProvider = ({ children }) => {
       if (response.data.error) {
         console.error('Error generating GIF:', response.data.error);
         setError(response.data.error);
-        
       } else if (response.data.message === 'Email sent successfully') {
-        return (
-          showNotification('success', response.data.message)
-        )
+        showNotification('success', response.data.message);
       }
       setIsLoading(false);
     } catch (error) {
@@ -50,13 +91,20 @@ const GiftContextProvider = ({ children }) => {
     }
   };
 
+  const handleOpenDesign = () => {
+    setIsDesignOpen(true);
+  };
+
+  const handleCloseDesign = () => {
+    setIsDesignOpen(false);
+  };
+
   function handleDownloadClick() {
     const singleGif = localStorage.getItem('singleGif');
     console.log('singleGif', singleGif);
     if (singleGif) {
-      // Create a virtual anchor element and trigger the download
       const link = document.createElement('a');
-      link.href = singleGif; // Use the actual URL here
+      link.href = singleGif;
       link.target = '_blank';
       link.download = 'generated_gif.gif';
       document.body.appendChild(link);
@@ -64,6 +112,8 @@ const GiftContextProvider = ({ children }) => {
       document.body.removeChild(link);
     }
   }
+
+  console.log('isDesignOpen', isDesignOpen);
 
   return (
     <GiftContext.Provider
@@ -76,7 +126,15 @@ const GiftContextProvider = ({ children }) => {
         error,
         setSingleGif,
         singleGif,
-        handleDownloadClick
+        handleDownloadClick,
+        user,
+        setUser,
+        isDesignOpen,
+        editGif,
+        selectedDesignGif,
+        isMobile,
+        handleOpenDesign,
+        handleCloseDesign
       }}
     >
       {children}

@@ -9,6 +9,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     gifs = relationship("UserGif", backref="user")
+    logos = relationship("UserLogo", backref="user")
 
 class UserGif(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,4 +21,11 @@ class UserGif(db.Model):
     user = db.relationship('User', back_populates='gifs')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class UserLogo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey('user.id'))
+    resource_id = db.Column(db.String, unique=True)
+    user = db.relationship('User', back_populates='logos')
+
 User.gifs = db.relationship('UserGif', back_populates='user')
+User.logos = db.relationship('UserLogo', back_populates='user')

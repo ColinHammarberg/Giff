@@ -3,11 +3,11 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
-from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs
+from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -24,10 +24,10 @@ from azure.appconfiguration.provider import (
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 import os
-from azure.monitor.opentelemetry import configure_azure_monitor
+# from azure.monitor.opentelemetry import configure_azure_monitor
 
-# Import the tracing api from the `opentelemetry` package.
-from opentelemetry import trace
+# # Import the tracing api from the `opentelemetry` package.
+# from opentelemetry import trace
 
 #key vault init
 #keyVaultName = os.environ["KEY_VAULT_NAME"]
@@ -35,8 +35,8 @@ KVUri = "https://gift-app-keys.vault.azure.net"
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
-
 app = Flask(__name__)
+# CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://gift-server-eu-1.azurewebsites.net" }})
 CORS(app)
 #app.config.update(azure_app_config)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
@@ -45,18 +45,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstr
 # Initialize database with the app
 db.init_app(app)
 
-configure_azure_monitor(
-    connection_string=client.get_secret("Insightsconnectionstring").value,
-)
+# configure_azure_monitor(
+#     connection_string='InstrumentationKey=06f2a380-4400-48b2-9a09-36fcb72ce4f8;IngestionEndpoint=https://swedencentral-0.in.applicationinsights.azure.com/',
+# )
 
-# Get a tracer for the current module.
-tracer = trace.get_tracer(__name__)
-
-with tracer.start_as_current_span("hello"):
-    print("Hello, World!")
-
-# Wait for export to take place in the background.
-input()
+# # Get a tracer for the current module.
+# tracer = trace.get_tracer(__name__)
 
 app.secret_key = 'gift_secret_key_123'
 jwt = JWTManager(app)
@@ -77,6 +71,14 @@ def fetch_all_user_gifs():
 def fetch_user():
     print('generate')
     return fetch_user_info()
+
+@app.route('/upload_user_logo', methods=['POST'])
+def upload_user_logo():
+    return upload_logo()
+
+@app.route('/fetch_user_logo', methods=['GET'])
+def fetch_user_logo():
+    return fetch_logo()
 
 
 @app.route('/signin', methods=['POST'])
@@ -99,9 +101,12 @@ def signup_user():
     print('generate')
     return signup()
 
-@app.route('/delete_user', methods=['GET'])
+@app.route('/delete_user_logo', methods=['GET'])
+def delete_user_logo():
+    return delete_logo()
+
+@app.route('/delete-user-profile', methods=['POST'])
 def delete_user():
-    print('generate')
     return delete_user_profile()
 
 @app.route('/update_user_password', methods=['POST'])
@@ -122,17 +127,16 @@ def generate_gif():
         try:
             user_id = get_jwt_identity()
         except RuntimeError:
-            pass  # If JWT is not present, user_id remains None
+            pass # If JWT is not present, user_id remains None
     URL = data.get('url')
     NAME = data.get('name', f'your_gift-{user_id}.gif') if user_id else "your_gif-t.gif"
 
     if is_video_url(URL):
-        return jsonify({'error': 'video url'})
+        return generate_video_gif(data, user_id)
 
     chrome_options = Options()
-    chrome_options.binary_location = '/usr/local/bin/chromedriver'
-    # chrome_options.add_argument('--headless')
-    #chrome_options.binary_location = '/usr/local/bin'
+    chrome_options.binary_location = '/usr/local/bin'
+    chrome_options.add_argument('--headless')
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(URL)
     timer = 400
@@ -141,21 +145,6 @@ def generate_gif():
     if scroll_height < 1000:
         return jsonify({'error': 'Invalid scroll height'})
 
-    # elif 1000 <= scroll_height < 3000:
-    #     timer = 200
-    #     duration = timer / 600.0  # 0.333s / per screenshot
-
-    # elif 3000 <= scroll_height < 5000:
-    #     timer = 300
-    #     duration = timer / 800.0  # 0.375s / per screenshot
-
-    # elif 5000 <= scroll_height < 9000:
-    #     timer = 400
-    #     duration = timer / 800.0  # 0.266s / per screenshot
-
-    # else:
-    #     timer = 500
-    #     duration = timer / 800.0  # 0.25s / per screenshot
     duration = 1.0
 
     if not NAME.endswith('.gif'):
@@ -281,11 +270,26 @@ def generate_pdf_list():
     print('generate')
     return generate_pdf_gifs_from_list()
 
+@app.route('/delete-gif', methods=['POST'])
+def delete_selected_gif():
+    return delete_gif()
+
+@app.route('/upload-pdf-generate-gif', methods=['POST'])
+def upload_pdf_create_gif():
+    return upload_pdf_and_generate_gif()
+
+@app.route('/generate-video-gif', methods=['POST'])
+def generate_video_from_gif():
+    return generate_video_gif()
 
 @app.route('/download-all-gifs', methods=['GET'])
 def download_all():
     print('generate')
     return download_all_gifs()
+
+@app.route('/download-individual-design-gifs', methods=['POST'])
+def download_individual_design():
+    return download_individual_gif()
 
 
 @app.route('/download', methods=['GET'])

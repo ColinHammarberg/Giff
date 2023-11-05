@@ -2,12 +2,12 @@ import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Button, Dialog, DialogContent } from '@mui/material';
-import './DeleteProfileDialog.scss';
+import './DeleteGifDialog.scss';
 
 let resolve;
 let containerElement;
 
-class DeleteProfileDialog extends PureComponent {
+class DeleteGifDialog extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +36,7 @@ class DeleteProfileDialog extends PureComponent {
       resolve = res;
       ReactDOM.render(
         <ThemeProvider theme={createTheme()}>
-          <DeleteProfileDialog />
+          <DeleteGifDialog />
         </ThemeProvider>,
         containerElement
       );
@@ -45,19 +45,19 @@ class DeleteProfileDialog extends PureComponent {
 
   handleCancel() {
     this.setState({ isOpen: false, hasConfirmed: false }, () => {
-      DeleteProfileDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
+        DeleteGifDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
     });
   }
 
   handleHistoryStateChanged() {
     this.setState({ isOpen: false,  }, () => {
-      DeleteProfileDialog.destroy();
+        DeleteGifDialog.destroy();
     });
   }
 
   handleConfirm() {
     this.setState({ isOpen: false, hasConfirmed: true }, () => {
-      DeleteProfileDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
+        DeleteGifDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
     });
   }
 
@@ -76,20 +76,20 @@ class DeleteProfileDialog extends PureComponent {
     }
     return (
         <Dialog
-            className="delete-profile-dialog"
+            className="delete-gif-dialog"
             open={true}
             fullScreen={null}
             maxWidth={'sm'}
             transitionDuration={400}
         >
         <DialogContent className="dialog-content styled-scrollbar">
-            <Box className="delete-profile-content">
+            <Box className="delete-gif-content">
                 Are you sure, Champ? <br></br><br></br>
-                If you delete your logo, the logo will be removed and you'll have to upload a new file if you would like to use it again
+                Deleting your gif will mean it’s gone for good. 
             </Box>
             <Box className="delete-btn-actions">
-                <Button onClick={this.handleConfirm} className="confirm-btn">No, delete my account now</Button>
-                <Button onClick={this.handleCancel} className="keep-account-btn">Ok, I’ll think about it</Button>
+                <Button onClick={this.handleConfirm} className="confirm-btn">No, delete my gif</Button>
+                <Button onClick={this.handleCancel} className="keep-gif-btn">Ok, let's keep my gif</Button>
             </Box>
         </DialogContent>
       </Dialog>
@@ -97,8 +97,8 @@ class DeleteProfileDialog extends PureComponent {
   }
 }
 
-DeleteProfileDialog.propTypes = {
+DeleteGifDialog.propTypes = {
   
 };
 
-export default DeleteProfileDialog;
+export default DeleteGifDialog;

@@ -1,23 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Profile.scss';
 import Header from './Header';
-import { Box, Button, TextField } from '@mui/material';
-import { DeleteUserProfile, FetchUserInfo, UpdatePassword } from '../endpoints/Apis';
+import { Box, Button, IconButton, TextField } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteUserLogo, DeleteUserProfile, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
-import giftUser from '../access/GiftUser';
+import LogoUploadForm from './LogoUploadForm';
+import { GiftContext } from '../context/GiftContextProvider';
+import LightTooltip from './LightToolTip';
 
 function Profile() {
-    const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
+    const { user, setUser } = useContext(GiftContext); // Get the context value
     const [password, setPassword] = useState({
       currentPassword: '',
       newPassword: '',
     });
+    
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
       setAnchorEl(event?.currentTarget);
@@ -47,7 +51,6 @@ function Profile() {
     }
 
     const handleOnClickDeleteAccount = async () => {
-      const isLoggedIn = giftUser.isLoggedIn();
       const { hasConfirmed } = await DeleteProfileDialog.show();
       console.log('hasConfirmed', hasConfirmed);
       let response;
@@ -55,29 +58,51 @@ function Profile() {
         return;
       } else {
         try {
-          response = await DeleteUserProfile(isLoggedIn);
+          response = await DeleteUserProfile();
+          console.log('response', response);
           if (response.data.status === 'Profile deleted') {
             localStorage.removeItem('access_token');
-            // Redirect to login page
             navigate('/');
             showNotification('success', response.data.status)
           }
         } catch (error) {
-          showNotification('error', response.data.error)
+          showNotification('error', 'Failed to delete account. Please try again!')
         }
       }
     }
-    useEffect(() => {
-        const fetchData = async () => {
-          const response = await FetchUserInfo();
-          console.log('response', response);
-          if (response) {
-            setUserInfo(response.data);
+
+    const handleOnDeleteLogo = async () => {
+      const { hasConfirmed } = await DeleteProfileDialog.show();
+      console.log('hasConfirmed', hasConfirmed);
+      if (!hasConfirmed) {
+        return;
+      } else {
+        try {
+          const response = await DeleteUserLogo();
+          if (response.data) {
+            // Step 1: Update React state
+            setUser((prevUser) => {
+              const updatedUser = { ...prevUser, userLogoSrc: null };
+              return updatedUser;
+            });
+      
+            // Step 2: Update localStorage
+            const userData = localStorage.getItem('user');
+            if (userData) {
+              const parsedUserData = JSON.parse(userData);
+              parsedUserData.userLogoSrc = null;
+              localStorage.setItem('user', JSON.stringify(parsedUserData));
+            }
+            
+            showNotification('success', 'Successfully deleted your logo');
           }
-        };
-        fetchData();
-      }, []);
-    console.log('userInfo', userInfo);
+        } catch (error) {
+          showNotification('error', 'Failed to delete your logo');
+        }
+      }
+    };
+    
+
   return (
     <div className="profile">
       <Header menu />
@@ -94,14 +119,24 @@ function Profile() {
                 <span>Email address</span>
                 <Button>Edit Email</Button>
               </div>
-              <TextField value={userInfo?.email} />
+              <TextField value={user?.userInfo?.email} />
           </Box>
           <Box className="password-details">
             <div className="text">
-              <span>password</span>
+              <span>Password</span>
               <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
             </div>
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
+          </Box>
+          <Box className="password-details">
+            <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />
+            {user?.userLogoSrc && (
+              <LightTooltip title="Remove logo">
+                <IconButton onClick={handleOnDeleteLogo}>
+                  <DeleteIcon />
+                </IconButton>
+              </LightTooltip>
+            )}
           </Box>
         </Box>
         <Box className="delete-account">
