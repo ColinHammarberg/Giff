@@ -58,6 +58,10 @@ jwt = JWTManager(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return "pong2222111"
+
 @app.route('/update_selected_color', methods=['POST'])
 def update_gif_color():
     print('generate')
