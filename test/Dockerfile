@@ -1,29 +1,19 @@
-# Use an official Python runtime as the base image
+# Use the official Python image with a tagged version
 FROM python:3.11-slim
 
 # Set the working directory in the container
-WORKDIR /test
+WORKDIR /usr/src/app
 
-# Set environment variables
-ENV FLASK_APP=app.py \
-    FLASK_RUN_HOST=0.0.0.0 \
-    FLASK_ENV=production
+# Copy the dependencies file to the working directory
+COPY requirements.txt .
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc python3-dev libffi-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy the requirements file into the container
-COPY requirements.txt requirements.txt
-
-# Install Python dependencies
+# Install any dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a non-root user to run our application
-RUN useradd -M flaskuser && mkdir -p /home/flaskuser
-USER flaskuser
+# Install Chromium and chromedriver
+RUN apt-get update \
+    && apt-get install -y chromium chromium-driver \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 # Set the application directory as a volume
 VOLUME /test
@@ -31,8 +21,8 @@ VOLUME /test
 # Copy the current directory contents into the container
 COPY . .
 
-# Make port 5000 available to the outside world
+# Expose port 5000 for the Flask app
 EXPOSE 5000
 
-# Define command to run the application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Command to run on container start using Gunicorn
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app"]
