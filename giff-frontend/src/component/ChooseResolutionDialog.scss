@@ -1,0 +1,86 @@
+.choose-resolution-dialog {
+    .MuiBackdrop-root {
+        background-color: unset;
+    }
+
+    .MuiDialog-container {
+        .MuiPaper-root {
+            width: 400px;
+            height: 420px;
+            background-color: #FEC901;
+            font-family: 'Staatliches';
+
+            .dialog-content {
+                overflow: hidden;
+                padding: 0;
+            }
+
+            .content {
+                background-color: #FEC901;
+                margin: auto;
+                padding: 8px;
+
+                .options {
+                    display: grid;
+                    gap: 8px;
+                    margin-top: 20px;
+
+                    .value {
+                        display: flex;
+                        align-items: center;
+                        height: 34px;
+                        font-size: 16px;
+
+                        input {
+                            width: 12px;
+                            height: 16px;
+                            margin-right: 8px;
+                        }
+                    }
+                }
+
+                .option-actions {
+                    display: grid;
+                    gap: 8px;
+                    margin-top: 20px;
+
+                    .MuiButton-root {
+                        color: #fff;
+                        font-family: 'Staatliches';
+                        border: 1px solid #000;
+                        height: 30px;
+                        margin: auto;
+                        width: 200px;
+                        border-radius: 50px;
+                        margin-top: 10px;
+                        background-color: #000;
+                    }
+
+                    span {
+                        font-size: 12px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+            }
+
+            .option-header {
+                background-color: #F4149B;
+                height: 51px;
+                color: #fff;
+                font-size: 18px;
+                font-family: 'Staatliches';
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .choose-resolution-content {
+                color: #fff;
+                font-size: 16px;
+            }
+        }
+    }
+}

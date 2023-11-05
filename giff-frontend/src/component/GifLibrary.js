@@ -11,6 +11,7 @@ import OfficialButton from './OfficialButton';
 import useMobileQuery from '../queries/useMobileQuery';
 import { showNotification } from './Notification';
 import DeleteGifDialog from './DeleteGifDialog';
+import ChooseResolutionDialog from './ChooseResolutionDialog';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -53,31 +54,32 @@ function GifLibrary() {
       const handleDownloadIndividualGifs = async () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
+          const { hasConfirmed, selectedResolution } = await ChooseResolutionDialog.show();
+          console.log('selectedResolution', selectedResolution, hasConfirmed);
           const gifData = {
             url: hoveredGif.url,
             name: hoveredGif.name,
             selectedColor: hoveredGif.selectedColor,
+            resolution: selectedResolution,
           };
-      
-          try {
-            const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
-      
-            const blob = new Blob([response.data], { type: 'image/gif' });
-      
-            const downloadUrl = window.URL.createObjectURL(blob);
-      
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = downloadUrl; 
-            a.download = `${hoveredGif.name}`;
-      
-            document.body.appendChild(a);
-            a.click();
-      
-            window.URL.revokeObjectURL(downloadUrl);
-            document.body.removeChild(a);
-          } catch (error) {
-            console.error('Error downloading individual GIF:', error);
+          if (!hasConfirmed) {
+            return;
+          } else {
+            try {
+              const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
+              const blob = new Blob([response.data], { type: 'image/gif' });
+              const downloadUrl = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.href = downloadUrl; 
+              a.download = `${hoveredGif.name}`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(downloadUrl);
+              document.body.removeChild(a);
+            } catch (error) {
+              console.error('Error downloading individual GIF:', error);
+            }
           }
         }
       };
@@ -91,19 +93,24 @@ function GifLibrary() {
           return;
         }
         const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
+        const { isConfirmed } = await ChooseResolutionDialog.show();
         setIsLoading(true);
-        try {
-          const response = await DownloadAllLibraryGifs(gifData);
-          const blob = new Blob([response.data], { type: 'application/zip' });
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = downloadUrl;
-          a.download = 'your-gift-bag.zip';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } catch (error) {
-          console.error('Error downloading ZIP file:', error);
+        if (!isConfirmed) {
+          return;
+        } else {
+          try {
+            const response = await DownloadAllLibraryGifs(gifData);
+            const blob = new Blob([response.data], { type: 'application/zip' });
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = 'your-gift-bag.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } catch (error) {
+            console.error('Error downloading ZIP file:', error);
+          }
         }
         setIsLoading(false);
       };

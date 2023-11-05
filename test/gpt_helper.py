@@ -44,38 +44,37 @@ def chat_with_gpt():
         # Log the error message for debugging
         print('Error:', str(e))
         return jsonify({'error': 'An error occurred while generating a response'}), 500
-    
-def analyze_folder_with_gpt(folder_path):
-    image_paths = [os.path.join(folder_path, img) for img in os.listdir(folder_path) if img.endswith('.png')]
-    relevant_paths = []
 
-    for img_path in image_paths:
-        with Image.open(img_path) as img:
-            buffered = io.BytesIO()
-            img.save(buffered, format="PNG")
-            img_base64 = base64.b64encode(buffered.getvalue()).decode()
-            
-            # Define a prompt to ask GPT-4 if the image is relevant for inclusion in a GIF
-            prompt = {
-                'image': img_base64,
-                'query': "Is this image relevant for inclusion in a GIF?"
-            }
-            
-            # Query GPT-4 with the prompt
-            response = openai.Answer.create(
-                model="text-davinci-002",
-                question=prompt,
-                examples_context="In this task, you need to determine if the given image is relevant for inclusion in a GIF to showcase the company.",
-                examples=[({"image": "base64_encoded_image_1", "query": "Is this image relevant for inclusion in a GIF?"}, "yes"),
-                          ({"image": "base64_encoded_image_2", "query": "Is this image relevant for inclusion in a GIF?"}, "no")],
-                max_tokens=10,
-                stop=None,
-                temperature=0
-            )
-            
-            is_relevant = response['choices'][0]['answer'].strip().lower()
-            
-            if is_relevant == 'yes':
-                relevant_paths.append(img_path)
+# def determine_relevance(image_info):
+#     relevant_paths = []
 
-    return relevant_paths
+#     for img_path, descriptions in image_info:
+#         # Construct the prompt for GPT-4
+#         prompt = f"Are the following descriptions relevant for a GIF to showcase the company? {', '.join(descriptions)}"
+
+#         try:
+#             # Make a request to GPT-4 with the constructed prompt
+#             response = openai.Completion.create(
+#                 engine="gpt-4.0-turbo",   # Replace with the GPT-4 engine name you want to use
+#                 prompt=prompt,
+#                 max_tokens=10,
+#                 temperature=0
+#             )
+
+#             # Extract the generated text from the response
+#             is_relevant = response.choices[0].text.strip().lower()
+
+#             # Check if GPT-4 deems the image relevant
+#             if is_relevant == 'yes':
+#                 relevant_paths.append(img_path)
+
+#         except Exception as e:
+#             # Log the error message for debugging
+#             print('Error:', str(e))
+
+#     return relevant_paths
+
+
+
+
+
