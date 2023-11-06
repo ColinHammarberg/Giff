@@ -19,7 +19,7 @@ RUN apt-get update \
 VOLUME /test
 
 # Copy the current directory contents into the container
-COPY . .
+COPY . /usr/src/app
 
 # Expose port 5000 for the Flask app
 EXPOSE 5000
