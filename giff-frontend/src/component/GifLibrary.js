@@ -92,7 +92,6 @@ function GifLibrary() {
         if (!gifs) {
           return;
         }
-        // const { hasConfirmed, selectedResolution } = await ChooseResolutionDialog.show();
         const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
         setIsLoading(true);
         try {

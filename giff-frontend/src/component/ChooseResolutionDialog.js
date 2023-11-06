@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Button, Dialog, DialogContent } from '@mui/material';
 import './ChooseResolutionDialog.scss';
+import { SaveUserResolution } from '../endpoints/Apis';
+import { showNotification } from './Notification';
 
 let resolve;
 let containerElement;
@@ -15,10 +17,12 @@ class ChooseResolutionDialog extends PureComponent {
       hasConfirmed: false,
       selectedResolution: '',
       savedSettings: '',
+      isSavingSettings: false,
     };
     this.handleCancel = this.handleCancel.bind(this);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleHistoryStateChanged = this.handleHistoryStateChanged.bind(this);
+    this.handleSaveSettingsChange = this.handleSaveSettingsChange.bind(this);
   }
 
   componentDidMount() {
@@ -29,6 +33,27 @@ class ChooseResolutionDialog extends PureComponent {
       this.setState({ selectedResolution: savedSettings, savedSettings });
     }
   }
+
+  async handleSaveSettingsChange() {
+    this.setState({ isSavingSettings: true });
+    try {
+      const response = await SaveUserResolution(this.state.selectedResolution);
+      console.log('Settings saved:', response);
+      this.setState({
+        savedSettings: this.state.selectedResolution,
+        isSavingSettings: false
+      });
+      showNotification('success', 'Successfully saved settings.')
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      this.setState({
+        savedSettings: '',
+        isSavingSettings: false
+      });
+      showNotification('error', 'Error while saving settings.')
+    }
+  }
+  
 
   componentWillUnmount() {
     window.removeEventListener('popstate', this.handleHistoryStateChanged);
@@ -65,18 +90,6 @@ class ChooseResolutionDialog extends PureComponent {
   handleRadioButtonChange(option) {
     this.setState({ selectedResolution: option.value });
     this.setState({ savedSettings: '' });
-  }
-
-  handleSaveSettingsChange() {
-    // Save selectedResolution to local storage
-    const savedSettings = localStorage.getItem('selectedResolution');
-    console.log('savedSettings', savedSettings);
-    if (savedSettings) {
-      localStorage.removeItem('selectedResolution');
-      this.setState({ savedSettings: '' });
-    } else {
-      localStorage.setItem('selectedResolution', this.state.selectedResolution);
-    }
   }
 
   handleConfirm() {

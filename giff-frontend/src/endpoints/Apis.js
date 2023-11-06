@@ -29,6 +29,25 @@ export async function GenerateSingleGif(url) {
   }
 }
 
+export async function SaveUserResolution(resolution) {
+  console.log('resolution', resolution);
+  const token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(`${Api}/save-user-resolution`, 
+    { resolution },
+      {
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
+     });
+    console.log('Response from server', response);
+    return response;
+  } catch (error) {
+    console.error('Error generating GIF:', error);
+    throw error;
+  }
+}
+
 
 export async function GeneratePdfGifs(url) {
   const access_token = localStorage.getItem('access_token');

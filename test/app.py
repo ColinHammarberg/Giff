@@ -12,6 +12,7 @@ from routes import signin, signout, signup, fetch_user_info, delete_user_profile
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from settings_helper import save_user_resolution
 import requests
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
@@ -40,8 +41,9 @@ app = Flask(__name__)
 # CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://gift-server-eu-1.azurewebsites.net" }})
 CORS(app)
 #app.config.update(azure_app_config)
-app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
+# app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://giftadmin:La47rnCz3MNjjxkVhnZWpcBAULzxEnQu@gift-db.postgres.database.azure.com/gift_user_db'
 
 # Initialize database with the app
 db.init_app(app)
@@ -115,6 +117,10 @@ def delete_user_logo():
 @app.route('/delete-user-profile', methods=['POST'])
 def delete_user():
     return delete_user_profile()
+
+@app.route('/save-user-resolution', methods=['POST'])
+def save_resolution():
+    return save_user_resolution()
 
 @app.route('/update_user_password', methods=['POST'])
 def update_user_password():
