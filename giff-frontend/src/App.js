@@ -19,6 +19,7 @@ import Profile from './component/Profile';
 import Articles from './component/Articles';
 import GifLibrary from './component/GifLibrary';
 import KeepAliveComponent from './component/KeepAlive';
+import VerfifyAccount from './component/authorization/VerifyAccount';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -69,6 +70,10 @@ function App() {
             <Route
               path={`${REACT_APP_BASEURL}/profile`}
               element={<Profile />}
+            />
+            <Route
+              path={`${REACT_APP_BASEURL}/verify`}
+              element={<VerfifyAccount />}
             />
             <Route
               path={`${REACT_APP_BASEURL}/gif-library`}

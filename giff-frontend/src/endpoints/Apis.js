@@ -48,6 +48,14 @@ export async function SaveUserResolution(resolution) {
   }
 }
 
+export async function VerifyUser(token) {
+  try {
+    const response = await axios.get(`/verify?token=${token}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : new Error('An error occurred during verification.');
+  }
+}
 
 export async function GeneratePdfGifs(url) {
   const access_token = localStorage.getItem('access_token');

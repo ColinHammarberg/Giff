@@ -8,7 +8,7 @@ import uuid
 from models import UserGif
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -41,9 +41,8 @@ app = Flask(__name__)
 # CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://gift-server-eu-1.azurewebsites.net" }})
 CORS(app)
 #app.config.update(azure_app_config)
-# app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
+app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://giftadmin:La47rnCz3MNjjxkVhnZWpcBAULzxEnQu@gift-db.postgres.database.azure.com/gift_user_db'
 
 # Initialize database with the app
 db.init_app(app)
@@ -73,6 +72,10 @@ def update_gif_color():
 def fetch_all_user_gifs():
     print('generate')
     return fetch_user_gifs()
+
+@app.route('/verify_user', methods=['GET'])
+def verify_user():
+    return verify()
 
 @app.route('/fetch_user_info', methods=['GET'])
 def fetch_user():

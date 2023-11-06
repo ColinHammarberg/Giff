@@ -1,12 +1,13 @@
 from flask import jsonify, request
 from extensions import db
-from models import User, UserLogo
+from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from s3_helper import upload_to_s3
-import uuid
-import os
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from sendgrid.helpers.mail import Mail
+from sendgrid import SendGridAPIClient
+import secrets
 
 # Fetch user info endpoint
 
@@ -45,26 +46,72 @@ def keep_access_alive():
     return jsonify(access_token=new_access_token), 200
 
 # Signup endpoint
+serializer_secret_key = secrets.token_urlsafe(32)
+SERIALIZER_SECRET_KEY = serializer_secret_key
+VERIFICATION_URL = 'http://localhost:3000/verify'
+SENDGRID_API_KEY = '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'
+
+s = URLSafeTimedSerializer(SERIALIZER_SECRET_KEY)
+
+def send_verification_email(email, token):
+    verification_link = f"{VERIFICATION_URL}?token={token}"
+    print('verification_link', verification_link, email, token)
+    TEMPLATE_ID = 'd-cea95aa2f8dc4caaa7ca8b1cb5d87520'
+    message = Mail(
+        from_email='hello@gif-t.io',
+        to_emails=email,
+    )
+    message.template_id = TEMPLATE_ID
+    message.dynamic_template_data = {
+        'verification_link': verification_link
+    }
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
+    except Exception as e:
+        print(str(e))
+
+def verify():
+    token = request.args.get('token')
+    try:
+        email = s.loads(token, salt='email-confirm-salt', max_age=3600)
+    except SignatureExpired:
+        return jsonify({"status": "Verification link expired"}), 400
+    except BadSignature:
+        return jsonify({"status": "Invalid verification link"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        user.is_active = True # Update the user's active status
+        db.session.commit()
+        return jsonify({"status": "Email verified successfully"}), 200
+    else:
+        return jsonify({"status": "User not found"}), 404
 
 def signup():
     data = request.get_json()
     if 'email' not in data or 'password' not in data:
         return jsonify({"status": "Missing required fields"}), 400
+    
     existing_user = User.query.filter_by(email=data['email']).first()
     if existing_user:
         return jsonify({"status": "Email already exists"}), 409
+    
     hashed_password = generate_password_hash(data['password'], method='sha256')
     new_user = User(email=data['email'], password=hashed_password)
     db.session.add(new_user)
+    
     try:
         db.session.commit()
-        print('successfully created', db.session)
+        # User successfully created, now send a verification email
+        token = s.dumps(new_user.email, salt='email-confirm-salt')
+        send_verification_email(new_user.email, token)
+        access_token = create_access_token(identity=new_user.id)
+        return jsonify(access_token=access_token, status="Signup successful"), 200
     except Exception as e:
-        print("Commit failed:", e)
-    db.session.rollback()
-    access_token = create_access_token(identity=new_user.id)
-    print('new_user.id', new_user.id)
-    return jsonify(access_token=access_token, status="Signup successful"), 200
+        db.session.rollback()
+        return jsonify({"status": "Signup failed", "message": str(e)}), 500
 
 # Signout user endpoint
 

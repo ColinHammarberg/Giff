@@ -10,7 +10,6 @@ def save_user_resolution():
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
     try:
-        # Assuming that you have a column in your user model to store the resolution
         current_user.selected_resolution = data['selectedResolution']
         db.session.commit()
         return jsonify({"status": "Settings updated successfully"}), 200
