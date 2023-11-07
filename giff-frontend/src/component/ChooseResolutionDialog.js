@@ -18,11 +18,13 @@ class ChooseResolutionDialog extends PureComponent {
       selectedResolution: '',
       savedSettings: '',
       isSavingSettings: false,
+      shouldSaveSettings: false,
     };
     this.handleCancel = this.handleCancel.bind(this);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleHistoryStateChanged = this.handleHistoryStateChanged.bind(this);
     this.handleSaveSettingsChange = this.handleSaveSettingsChange.bind(this);
+    this.toggleSaveSettings = this.toggleSaveSettings.bind(this);
   }
 
   componentDidMount() {
@@ -32,6 +34,16 @@ class ChooseResolutionDialog extends PureComponent {
     if (savedSettings) {
       this.setState({ selectedResolution: savedSettings, savedSettings });
     }
+  }
+
+  toggleSaveSettings() {
+    this.setState(prevState => ({
+      shouldSaveSettings: !prevState.shouldSaveSettings
+    }), () => {
+      if (this.state.shouldSaveSettings) {
+        this.handleSaveSettingsChange();
+      }
+    });
   }
 
   async handleSaveSettingsChange() {
@@ -93,8 +105,14 @@ class ChooseResolutionDialog extends PureComponent {
   }
 
   handleConfirm() {
+    if (this.state.shouldSaveSettings) {
+      this.handleSaveSettingsChange(); // Only save settings if checkbox is checked
+    }
     this.setState({ isOpen: false, hasConfirmed: true }, () => {
-      ChooseResolutionDialog.destroy({ hasConfirmed: this.state.hasConfirmed, selectedResolution: this.state.selectedResolution });
+      ChooseResolutionDialog.destroy({
+        hasConfirmed: this.state.hasConfirmed,
+        selectedResolution: this.state.selectedResolution,
+      });
     });
   }
 
@@ -157,14 +175,14 @@ class ChooseResolutionDialog extends PureComponent {
                   </Box>
                   <Box className="option-actions">
                       <Button onClick={this.handleConfirm}>Download</Button>
-                      <span>Save settings 
-                        <input 
-                          type="radio" 
-                          name="save_settings" 
-                          onChange={() => this.handleSaveSettingsChange} 
-                          checked={this.state.savedSettings}
-                        />
-                      </span>
+                        <span>Save settings 
+                          <input 
+                            type="checkbox"
+                            name="save_settings" 
+                            onChange={() => this.setState({ shouldSaveSettings: !this.state.shouldSaveSettings })} 
+                            checked={this.state.shouldSaveSettings}
+                          />
+                        </span>
                   </Box>
               </Box>
             </Box>
