@@ -49,7 +49,7 @@ def keep_access_alive():
 # Signup endpoint
 serializer_secret_key = secrets.token_urlsafe(32)
 SERIALIZER_SECRET_KEY = serializer_secret_key
-VERIFICATION_URL = 'http://localhost:3000/verify'
+VERIFICATION_URL = 'http://giveagif-t.com/verify'
 SENDGRID_API_KEY = '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'
 
 s = URLSafeTimedSerializer(SERIALIZER_SECRET_KEY)
