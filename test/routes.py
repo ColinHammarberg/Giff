@@ -20,7 +20,7 @@ def fetch_user_info():
             id=current_user.id,
             email=current_user.email,
             password=current_user.password,
-            resolution=current_user.selected_resolution,
+            resolution=current_user.user_selected_resolution,
             isAuthenticated=current_user.is_active,
             status="Success"
         ), 200

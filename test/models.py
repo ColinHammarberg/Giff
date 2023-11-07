@@ -9,7 +9,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     is_active = db.Column(db.Boolean, default=False)
-    selected_resolution = db.Column(db.String(120), default=None)
+    user_selected_resolution = db.Column(db.String(120), default='800x800')
     gifs = relationship("UserGif", backref="user")
     logos = relationship("UserLogo", backref="user")
 
