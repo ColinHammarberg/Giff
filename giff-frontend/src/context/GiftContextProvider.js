@@ -31,8 +31,8 @@ const GiftContextProvider = ({ children }) => {
           const parsedUserData = JSON.parse(userData);
           setUser(parsedUserData);
         } else {
-          const userInfoResponse = await FetchUserInfo(); // Replace with your user info endpoint
-          const userLogoResponse = await FetchUserLogo(); // Replace with your user logo endpoint
+          const userInfoResponse = await FetchUserInfo();
+          const userLogoResponse = await FetchUserLogo();
           
           if (userInfoResponse.data) {
             const userObj = {

@@ -151,7 +151,7 @@ function Profile() {
           showNotification('error', 'Failed to delete your logo');
         }
       }
-    };    
+    };
 
   return (
     <div className="profile">
@@ -182,8 +182,8 @@ function Profile() {
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
           </Box>
           <Box className="password-details">
-            <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />
-            {user?.userLogoSrc && (
+            <LogoUploadForm userLogoSrc={user?.userInfo?.userLogoSrc} setUser={setUser} />
+            {user?.userInfo?.userLogoSrc && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>
                   <DeleteIcon />

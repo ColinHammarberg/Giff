@@ -12,7 +12,7 @@ function GifLanding() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPdf, setSelectedPdf] = useState(null);
-  const { handleDownloadClick } = useContext(GiftContext);
+  const { handleDownloadClick, user } = useContext(GiftContext);
   const formRef = useRef();
 
   const handleOnChangeUrl = (value) => {
@@ -32,7 +32,10 @@ function GifLanding() {
   };
 
   const generateSingleGif = async () => {
-    setIsLoading(true);
+    if (!user?.userInfo?.isAuthenticated) {
+      // show popup asking them to verify their account
+    } else {
+      setIsLoading(true);
       try {
         setIsLoading(true);
         const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url) : GenerateSingleGif(url));
@@ -49,9 +52,8 @@ function GifLanding() {
         setIsLoading(false);
       }
     setIsLoading(false);
+    }
   };
-
-  console.log('isLoading', isLoading);
 
   if (error) {
     return (

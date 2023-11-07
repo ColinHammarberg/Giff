@@ -20,11 +20,12 @@ def fetch_user_info():
             id=current_user.id,
             email=current_user.email,
             password=current_user.password,
+            resolution=current_user.selected_resolution,
+            isAuthenticated=current_user.is_active,
             status="Success"
         ), 200
     else:
         return jsonify({"status": "User not found"}), 404
-
 
 def signin():
     data = request.get_json()
