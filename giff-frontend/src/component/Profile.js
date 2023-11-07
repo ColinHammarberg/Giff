@@ -182,8 +182,8 @@ function Profile() {
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
           </Box>
           <Box className="password-details">
-            <LogoUploadForm userLogoSrc={user?.userInfo?.userLogoSrc} setUser={setUser} />
-            {user?.userInfo?.userLogoSrc && (
+            <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />
+            {user?.userLogoSrc && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>
                   <DeleteIcon />
