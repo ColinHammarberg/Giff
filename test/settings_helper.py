@@ -10,7 +10,7 @@ def save_user_resolution():
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
     try:
-        current_user.user_selected_resolution = data['selectedResolution']
+        current_user.selected_resolution = data['selectedResolution']
         db.session.commit()
         return jsonify({"status": "Settings updated successfully"}), 200
     except Exception as e:
