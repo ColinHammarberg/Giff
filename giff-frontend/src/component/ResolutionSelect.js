@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Autocomplete, IconButton, InputAdornment, TextField } from "@mui/material"
 import { useState } from "react";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -19,13 +19,16 @@ const ResolutionOptions = [
 ]
 
 function ResolutionSelect({ defaultValue, onChange }) {
-    const findDefaultOption = () => ResolutionOptions.find(option => option.value === defaultValue);
+    const findDefaultOption = useCallback(() => 
+        ResolutionOptions.find(option => option.value === defaultValue), 
+        [defaultValue]
+    );
     const [value, setValue] = useState(findDefaultOption());
     const [showOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
         setValue(findDefaultOption());
-    }, [defaultValue]);
+    }, [findDefaultOption]);
 
     function handleOnChange(event, newValue) {
         setValue(newValue);
@@ -33,6 +36,7 @@ function ResolutionSelect({ defaultValue, onChange }) {
             onChange(newValue ? newValue.value : null);
         }
     }
+
     function handleClickShowOptions() {
         setShowOptions(!showOptions);
     }
