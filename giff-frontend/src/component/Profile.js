@@ -190,7 +190,6 @@ function Profile() {
           <Box className="resolution-details">
             <div className="text">
               <span>Standard gif size</span>
-              <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit size</Button>
             </div>
             <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.userInfo?.resolution} />
           </Box>

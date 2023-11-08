@@ -49,7 +49,7 @@ def keep_access_alive():
 # Signup endpoint
 serializer_secret_key = secrets.token_urlsafe(32)
 SERIALIZER_SECRET_KEY = serializer_secret_key
-VERIFICATION_URL = 'http://giveagif-t.com/verify'
+VERIFICATION_URL = 'https://giveagif-t.com/verify'
 SENDGRID_API_KEY = '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'
 
 s = URLSafeTimedSerializer(SERIALIZER_SECRET_KEY)
@@ -64,7 +64,7 @@ def send_verification_email(email, token):
     )
     message.template_id = TEMPLATE_ID
     message.dynamic_template_data = {
-        'verification_link': verification_link
+        'gift_verification_link': verification_link
     }
     try:
         sg = SendGridAPIClient(SENDGRID_API_KEY)
