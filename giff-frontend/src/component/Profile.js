@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
+import _debounce from 'lodash/debounce';
 import './Profile.scss';
 import Header from './Header';
 import { Box, Button, IconButton, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DeleteUserLogo, DeleteUserProfile, UpdateEmailAddress, UpdatePassword } from '../endpoints/Apis';
+import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../endpoints/Apis';
 import { showNotification } from './Notification';
 import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
@@ -11,6 +12,7 @@ import ResetUserDetailsPopover from './authorization/ResetUserDetailsPopover';
 import LogoUploadForm from './LogoUploadForm';
 import { GiftContext } from '../context/GiftContextProvider';
 import LightTooltip from './LightToolTip';
+import ResolutionSelect from './ResolutionSelect';
 
 function Profile() {
     const navigate = useNavigate();
@@ -69,7 +71,9 @@ function Profile() {
       }
     }
 
-    console.log('email', email);
+    const handleUserUpdate = (updatedFields) => {
+      setUser(updatedFields);
+    };
 
     async function requestChangeUserEmail() {
       try {
@@ -78,20 +82,7 @@ function Profile() {
         if (response.data.status === 'Email updated successfully') {
           showNotification('success', 'Email updated successfully');
           // Update user state
-          setUser((prevUser) => {
-            console.log('prevUser', prevUser);
-            return {
-              ...prevUser,
-                email: email.newEmail,
-            };
-          });
-          // Update localStorage
-          const userData = localStorage.getItem('user');
-          if (userData) {
-            const parsedUserData = JSON.parse(userData);
-            parsedUserData.userInfo.email = email.newEmail;
-            localStorage.setItem('user', JSON.stringify(parsedUserData));
-          }
+          handleUserUpdate({ email: email.newEmail });
         } else {
           showNotification('error', 'Email was not updated successfully. Please try again!');
         }
@@ -121,6 +112,21 @@ function Profile() {
         }
       }
     }
+
+    const handleResolutionSizeChange = _debounce(async(value) => {
+      if (value) {
+        try {
+          const response = await SaveUserResolution(value);
+          if (response.data) {
+            handleUserUpdate({ resolution: value });
+            showNotification('success', 'Successfully updated your resolution for your gifs')
+          }
+        } catch(e) {
+          showNotification('error', 'Successfully updated your resolution for your gifs')
+        }
+      }
+      console.log('value2', value);
+    }, 400);
 
     const handleOnDeleteLogo = async () => {
       const { hasConfirmed } = await DeleteProfileDialog.show();
@@ -165,7 +171,7 @@ function Profile() {
           handleOnChangeEmail={handleOnChangeEmail}
           changeUserDetails={changeUserDetails}
           onClosePopover={handleOnClose}
-          anchorEl={anchorEl} 
+          anchorEl={anchorEl}
         />
           <Box className="email-details">
               <div className="text">
@@ -180,6 +186,13 @@ function Profile() {
               <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
             </div>
             <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
+          </Box>
+          <Box className="resolution-details">
+            <div className="text">
+              <span>Standard gif size</span>
+              <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit size</Button>
+            </div>
+            <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.userInfo?.resolution} />
           </Box>
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />

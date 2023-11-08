@@ -1,6 +1,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { createContext, useState, useEffect } from 'react';
+import _debounce from 'lodash/debounce';
 import { showNotification } from '../component/Notification';
 import { FetchUserInfo, FetchUserLogo } from '../endpoints/Apis';
 import useMobileQuery from '../queries/useMobileQuery';
@@ -50,7 +51,29 @@ const GiftContextProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, []); // Run this effect only once on component mount
+  }, []);
+
+  const updateUserData = (updatedFields) => {
+    setUser((prevUser) => {
+      const updatedUserInfo = {
+        ...prevUser.userInfo,
+        ...updatedFields,
+      };
+  
+      console.log('Updated Fields:', updatedFields);
+      console.log('Updated User Info:', updatedUserInfo);
+  
+      const updatedUser = {
+        ...prevUser,
+        userInfo: updatedUserInfo,
+      };
+  
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
+  const debouncedUpdateUserData = _debounce(updateUserData, 300);
 
   // design actions
 
@@ -128,7 +151,7 @@ const GiftContextProvider = ({ children }) => {
         singleGif,
         handleDownloadClick,
         user,
-        setUser,
+        setUser: debouncedUpdateUserData,
         isDesignOpen,
         editGif,
         selectedDesignGif,

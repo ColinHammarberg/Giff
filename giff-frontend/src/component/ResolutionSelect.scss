@@ -1,0 +1,51 @@
+    .label {
+        font-size: 12px;
+        line-height: 16px;
+        font-family: 'MediumLLWeb-Regular';
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .resolution-size-select-autocomplete {
+        height: 40px;
+
+        .MuiInputAdornment-root {
+            .MuiIconButton-root {
+                .MuiSvgIcon-root {
+                    color: #000;
+                }
+            }
+        }
+    }
+
+    .option-item {
+        font-family: 'MediumLLWeb-Regular';
+        font-size: 15px;
+    }
+
+    .icon-button {
+        padding: 2px;
+        margin-right: 3px;
+    }
+
+    .MuiAutocomplete-inputRoot {
+        padding: 1.5px;
+        padding-left: 6px !important;
+        flex-wrap: nowrap;
+    }
+
+    .MuiOutlinedInput-root {
+        &:hover {
+            border: none;
+        }
+
+        .MuiOutlinedInput-notchedOutline {
+            border: 1px solid #dbe1e3 !important;
+        }
+
+        &.Mui-focused {
+            .MuiOutlinedInput-notchedOutline {
+                border: 1px solid #000 !important;
+            }
+        }
+    }

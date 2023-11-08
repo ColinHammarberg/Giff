@@ -104,6 +104,15 @@
             }
         }
 
+        .resolution-details {
+            display: flex;
+            gap: 24px;
+
+            .text {
+                color: #FE6B01;
+            }
+        }
+
         .password-details {
             display: flex;
             gap: 24px;
