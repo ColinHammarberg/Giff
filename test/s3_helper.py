@@ -113,20 +113,21 @@ def fetch_logo():
 
     user_logo = UserLogo.query.filter_by(user_id=user_id).first()
 
-    if user_logo is None:
-        return jsonify({'error': 'Logo not found for this user'}), 404
+    # Initialize logo URL to null
+    presigned_url = None
 
-    resource_id = user_logo.resource_id
+    # If a user logo is found, generate the presigned URL
+    if user_logo:
+        resource_id = user_logo.resource_id
+        folder_name = f"{user_id}/logos/"
+        presigned_url = s3.generate_presigned_url('get_object',
+                                             Params={'Bucket': 'logo-resources',
+                                                     'Key': f"{folder_name}{resource_id}.png"},
+                                             ExpiresIn=3600)  # URL expires in 1 hour
 
-    folder_name = f"{user_id}/logos/"
-
-    # Generate a presigned URL to access the logo
-    presigned_url = s3.generate_presigned_url('get_object',
-                                              Params={'Bucket': 'logo-resources',
-                                                      'Key': f"{folder_name}{resource_id}.png"},
-                                              ExpiresIn=3600)  # URL expires in 1 hour
-
+    # Return the logo URL, which will be null if no logo is found
     return jsonify({'message': 'Success', 'logo_url': presigned_url}), 200
+
 
 
 @jwt_required()
