@@ -12,7 +12,8 @@ function VerfifyAccount() {
         if (token) {
           try {
             const response = await VerifyUser(token);
-            if (response.data.status === "Email verified successfully") {
+            console.log('response', response);
+            if (response.data) {
               showNotification('success', 'Your email has been successfully verified.');
               setTimeout(() => navigate('/choose-option-create'), 3000);
             } else {

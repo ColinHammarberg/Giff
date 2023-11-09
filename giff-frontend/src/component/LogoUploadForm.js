@@ -49,7 +49,7 @@ function LogoUploadForm(props) {
   
 
   useEffect(() => {
-    document.getElementById('custom-button').addEventListener('click', function () {
+    document.getElementById('custom-button')?.addEventListener('click', function () {
       document.getElementById('logo-file').click();
     });
   }, []);
