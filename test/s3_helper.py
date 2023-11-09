@@ -133,6 +133,7 @@ def fetch_logo():
 @jwt_required()
 def delete_logo():
     user_id = get_jwt_identity()
+    user_exists = User.query.filter_by(id=user_id).first()
 
     if user_id is None:
         return jsonify({'error': 'User not authenticated'}), 401
@@ -152,6 +153,7 @@ def delete_logo():
         return jsonify({'error': f'Failed to delete logo from S3: {str(e)}'}), 500
 
     # Delete the logo entry from the database
+    user_exists.has_logo = False
     db.session.delete(user_logo)
     db.session.commit()
 
@@ -202,6 +204,7 @@ def upload_logo():
     # Store logo metadata in the user database
     if user_exists:
         # Database Entry Here
+        user_exists.has_logo = True
         db.session.add(UserLogo(user_id=user_id, resource_id=resource_id))
         db.session.commit()
 

@@ -34,7 +34,6 @@ function UserSignin() {
         setTimeout(() => {
           navigate('/choose-option-create');
           showNotification('success', 'Successfully signed in');
-          setIsLoading(false);
         }, 3000)
       } else {
         setError('error', response.data.message);
@@ -42,6 +41,7 @@ function UserSignin() {
     } catch (error) {
       setError('error', "Signin failed");
     }
+    setIsLoading(false);
   };
   
 

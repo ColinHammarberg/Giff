@@ -33,12 +33,16 @@ const GiftContextProvider = ({ children }) => {
           setUser(parsedUserData);
         } else {
           const userInfoResponse = await FetchUserInfo();
-          const userLogoResponse = await FetchUserLogo();
+          let logoUrl = null;
           
           if (userInfoResponse.data) {
+            if (userInfoResponse.data.has_logo) {
+              const userLogoResponse = await FetchUserLogo();
+              logoUrl = userLogoResponse?.data?.logo_url || null;
+            }
             const userObj = {
               userInfo: userInfoResponse.data,
-              userLogoSrc: userLogoResponse?.data?.logo_url || null,
+              userLogoSrc: logoUrl,
             };
             setUser(userObj);
             

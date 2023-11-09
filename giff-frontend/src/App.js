@@ -30,9 +30,9 @@ function Navigator() {
     let isMounted = true;
     const redirectTimeout = setTimeout(() => {
       if (access_token && !initialRedirectDone && isMounted) {
-        navigate('/gift');
+        navigate('/choose-option-create');
       }
-    }, 500); // Adjust the delay as needed (in milliseconds)
+    }, 500);
 
     return () => {
       isMounted = false;

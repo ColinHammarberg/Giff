@@ -47,7 +47,6 @@ function UserSignup() {
           localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
           navigate('/choose-option-create');
           showNotification('success', 'Successfully signed up');
-          setIsLoading(false);
         }, 2000);
       } else {
         showNotification('error', response.data.message || "Signup failed for some reason");
@@ -55,6 +54,7 @@ function UserSignup() {
     } catch (error) {
       showNotification('error', error.response?.data?.message || "Signup failed");
     }
+    setIsLoading(false);
   };
 
   const handleKeyPressGenerateGif = (event) => {
