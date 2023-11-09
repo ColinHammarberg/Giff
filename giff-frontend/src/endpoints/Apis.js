@@ -50,10 +50,20 @@ export async function SaveUserResolution(resolution) {
 
 export async function VerifyUser(token) {
   try {
-    const response = await axios.get(`/verify?token=${token}`);
-    return response.data;
+    const response = await axios.get(`/verify?token=${encodeURIComponent(token)}`);
+    return { data: response.data, status: response.status };
   } catch (error) {
-    throw error.response ? error.response.data : new Error('An error occurred during verification.');
+    if (error.response) {
+      return { 
+        data: error.response.data, 
+        status: error.response.status 
+      };
+    } else {
+      return {
+        data: 'An error occurred during verification.',
+        status: 0
+      };
+    }
   }
 }
 
