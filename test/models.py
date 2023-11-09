@@ -10,9 +10,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(120), nullable=False)
     is_active = db.Column(db.Boolean, default=False)
     selected_resolution = db.Column(db.String(120), default=None, nullable=True)
-    gifs = relationship("UserGif", back_populates="user")
-    logo_id = db.Column(db.Integer, ForeignKey('user_logo.id'), nullable=True)
-    logo = relationship("UserLogo", back_populates="user", uselist=False)
+    gifs = relationship("UserGif", backref="user")
+    logos = relationship("UserLogo", backref="user")
 
 class UserGif(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,6 +25,9 @@ class UserGif(db.Model):
 
 class UserLogo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey('user.id'))
     resource_id = db.Column(db.String, unique=True)
+    user = db.relationship('User', back_populates='logos')
 
 User.gifs = db.relationship('UserGif', back_populates='user')
+User.logos = db.relationship('UserLogo', back_populates='user')
