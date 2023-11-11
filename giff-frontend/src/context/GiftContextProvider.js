@@ -34,6 +34,7 @@ const GiftContextProvider = ({ children }) => {
         } else {
           const userInfoResponse = await FetchUserInfo();
           let logoUrl = null;
+          console.log('userInfoResponse', userInfoResponse);
           
           if (userInfoResponse.data) {
             if (userInfoResponse.data.has_logo) {
