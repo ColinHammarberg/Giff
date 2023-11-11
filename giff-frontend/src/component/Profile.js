@@ -13,6 +13,7 @@ import LogoUploadForm from './LogoUploadForm';
 import { GiftContext } from '../context/GiftContextProvider';
 import LightTooltip from './LightToolTip';
 import ResolutionSelect from './ResolutionSelect';
+import Tag from './Tag';
 
 function Profile() {
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ function Profile() {
       newEmail: '',
       password: '',
     });
+    const isActive = user?.userInfo?.is_active;
 
     console.log('email', email);
     
@@ -178,14 +180,21 @@ function Profile() {
                 <span>Email address</span>
                 <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit Email</Button>
               </div>
-              <TextField value={user?.userInfo?.email} />
+              <div className="email">
+                <Tag variant={isActive ? 'success' : 'error'} label={isActive ? 'Verified' : 'Not verified'}/>
+                <TextField 
+                  value={user?.userInfo?.email}
+                  className="email"
+                  disabled
+                />
+              </div>
           </Box>
           <Box className="password-details">
             <div className="text">
               <span>Password</span>
               <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
             </div>
-            <TextField type="password" value="******" inputProps={{ maxLength: 10 }} />
+            <TextField type="password" value="******" inputProps={{ maxLength: 10 }} disabled />
           </Box>
           <Box className="resolution-details">
             <div className="text">

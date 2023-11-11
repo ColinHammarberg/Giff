@@ -23,6 +23,10 @@
             background-color: #fff;
             width: 343px;
 
+            .Mui-disabled {
+                -webkit-text-fill-color: #000;
+            }
+
             .MuiInputBase-root {
                 font-family: 'Staatliches';
                 font-size: 25px;
@@ -90,6 +94,7 @@
                     color: #F4149B;
                 }
             }
+
             .MuiSvgIcon-root {
                 color: #fff;
             }
