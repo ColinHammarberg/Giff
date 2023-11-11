@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { showNotification } from '../Notification';
 import { VerifyUser } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
+import Verification from '../../resources/verification.gif';
+import './Verification.scss';
 
 function VerifyAccount() {
   const navigate = useNavigate();
+  const [verified, setVerified] = useState(false);
 
   useEffect(() => {
     const verifyUserAccount = async () => {
@@ -18,7 +21,8 @@ function VerifyAccount() {
         const { data, status } = await VerifyUser(token);
         if (status === 200) {
           showNotification('success', data.status);
-          setTimeout(() => navigate('/choose-option-create'), 3000);
+          setVerified(true);
+          setTimeout(() => navigate('/choose-option-create'), 5000);
         } else {
           showNotification('error', data.status);
         }
@@ -36,7 +40,11 @@ function VerifyAccount() {
 
   return (
     <div className="gif-landing">
-      Token is being verified...
+      <div className="verification">
+        {verified && (
+          <img src={Verification} alt="" />
+        )}
+      </div>
     </div>
   );
 }
