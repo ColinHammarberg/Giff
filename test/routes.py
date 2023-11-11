@@ -22,7 +22,7 @@ def fetch_user_info():
             email=current_user.email,
             password=current_user.password,
             resolution=current_user.selected_resolution,
-            isAuthenticated=current_user.is_active,
+            is_active=current_user.is_active,
             has_logo=current_user.has_logo,
             status="Success"
         ), 200

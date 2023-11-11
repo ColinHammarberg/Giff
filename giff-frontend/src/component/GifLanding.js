@@ -32,7 +32,7 @@ function GifLanding() {
   };
 
   const generateSingleGif = async () => {
-    // if (!user?.userInfo?.isAuthenticated) {
+    // if (!user?.userInfo?.is_active) {
     //   // show popup asking them to verify their account
     // } else {
       setIsLoading(true);
