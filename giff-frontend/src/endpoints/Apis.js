@@ -11,7 +11,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 
 export async function GenerateSingleGif(url) {
   console.log('url', url);
-  const token = localStorage.getItem('access_token'); // Retrieve the token from local storage
+  const token = localStorage.getItem('access_token'); // Retrieve the token from local storage 
   
   try {
     const response = await axios.post(`${Api}/generate-single-gif`, 
