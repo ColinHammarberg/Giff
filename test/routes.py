@@ -75,15 +75,6 @@ def send_verification_email(email, token):
     except Exception as e:
         print(str(e))
 
-def activate_user(email):
-    user = User.query.filter_by(email=email).first()
-    if user:
-        user.is_active = True
-        db.session.commit()
-        return True
-    else:
-        return False
-
 def verify():
     token = request.args.get('token')
     try:
@@ -93,7 +84,11 @@ def verify():
     except BadSignature:
         return jsonify({"status": "Invalid verification link"}), 400
 
-    if activate_user(email):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        user.is_active = True
+        db.session.commit()
+        db.session.refresh(user)
         return jsonify({"status": "Email verified successfully"}), 200
     else:
         return jsonify({"status": "User not found"}), 404
