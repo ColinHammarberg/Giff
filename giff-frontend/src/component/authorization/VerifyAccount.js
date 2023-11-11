@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { showNotification } from '../Notification';
 import { VerifyUser } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
-import Verification from '../../resources/verification.gif';
+import Verification from './Verifying.jpg';
 import './Verification.scss';
 
 function VerifyAccount() {
