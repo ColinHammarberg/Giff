@@ -16,6 +16,7 @@ def fetch_user_info():
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
     if current_user:
+        db.session.refresh(current_user) # Refresh to get the latest data
         return jsonify(
             id=current_user.id,
             email=current_user.email,
@@ -85,8 +86,9 @@ def verify():
 
     user = User.query.filter_by(email=email).first()
     if user:
-        user.is_active = True # Update the user's active status
+        user.is_active = True
         db.session.commit()
+        db.session.refresh(user)
         return jsonify({"status": "Email verified successfully"}), 200
     else:
         return jsonify({"status": "User not found"}), 404

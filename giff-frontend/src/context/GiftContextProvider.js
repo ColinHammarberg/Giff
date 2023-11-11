@@ -27,7 +27,7 @@ const GiftContextProvider = ({ children }) => {
     // Fetch user info and user logo
     const fetchUser = async () => {
       try {
-        const userData = localStorage.getItem('user');
+        const userData = sessionStorage.getItem('user');
         if (userData) {
           const parsedUserData = JSON.parse(userData);
           setUser(parsedUserData);
@@ -47,7 +47,7 @@ const GiftContextProvider = ({ children }) => {
             };
             setUser(userObj);
             
-            localStorage.setItem('user', JSON.stringify(userObj));
+            sessionStorage.setItem('user', JSON.stringify(userObj));
           }
         }
       } catch (error) {
@@ -73,7 +73,7 @@ const GiftContextProvider = ({ children }) => {
         userInfo: updatedUserInfo,
       };
   
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
   };

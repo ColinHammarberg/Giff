@@ -144,11 +144,11 @@ function Profile() {
             });
       
             // Step 2: Update localStorage
-            const userData = localStorage.getItem('user');
+            const userData = sessionStorage.getItem('user');
             if (userData) {
               const parsedUserData = JSON.parse(userData);
               parsedUserData.userLogoSrc = null;
-              localStorage.setItem('user', JSON.stringify(parsedUserData));
+              sessionStorage.setItem('user', JSON.stringify(parsedUserData));
             }
             
             showNotification('success', 'Successfully deleted your logo');

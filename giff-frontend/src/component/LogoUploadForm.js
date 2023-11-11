@@ -30,11 +30,11 @@ function LogoUploadForm(props) {
             return updatedUser;
           });
   
-          const userData = localStorage.getItem('user');
+          const userData = sessionStorage.getItem('user');
           if (userData) {
             const parsedUserData = JSON.parse(userData);
             parsedUserData.userLogoSrc = newLogoUrl;
-            localStorage.setItem('user', JSON.stringify(parsedUserData));
+            sessionStorage.setItem('user', JSON.stringify(parsedUserData));
           }
   
           showNotification('success', 'Your logo was successfully uploaded!');
