@@ -25,4 +25,4 @@ COPY ./test .
 EXPOSE 5000
 
 # Command to run on container start using Gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--worker-class=gevent", "--worker-connections=1000", "--workers=3", "-b", "0.0.0.0:5000", "app:app"]
