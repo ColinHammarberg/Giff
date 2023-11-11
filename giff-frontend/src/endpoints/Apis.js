@@ -50,7 +50,7 @@ export async function SaveUserResolution(resolution) {
 
 export async function VerifyUser(token) {
   try {
-    const response = await axios.get(`/verify?token=${encodeURIComponent(token)}`);
+    const response = await axios.get(`${Api}/verify_user?token=${encodeURIComponent(token)}`);
     return { data: response.data, status: response.status };
   } catch (error) {
     if (error.response) {
