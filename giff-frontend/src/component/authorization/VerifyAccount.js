@@ -1,60 +1,48 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { showNotification } from '../Notification';
 import { VerifyUser } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import Verification from './Verifying.jpg';
 import './Verification.scss';
-import { GiftContext } from '../../context/GiftContextProvider';
 
 function VerifyAccount() {
   const navigate = useNavigate();
-  const [verifying, setVerifying] = useState(false);
-  const { setUser } = useContext(GiftContext);
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
 
-  useEffect(() => {  
-    const verifyUserAccount = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      if (!token) {
-        showNotification('error', 'No verification token found.');
-        return;
-      }
-      try {
-        const { data, status } = await VerifyUser(token);
-        if (status === 200) {
-          const access_token = localStorage.getItem('access_token');
+  const { data, isLoading, isError } = useQuery(
+    ['verifyUser', token],
+    () => VerifyUser(token),
+    {
+      retry: 5,
+      retryDelay: 5000,
+      enabled: !!token,
+      onSuccess: (data) => {
+        if (data?.status === 200) {
           showNotification('success', data.status);
-          if (access_token) {
-            sessionStorage.removeItem('user');
-            localStorage.removeItem('access_token');
-            setTimeout(() => navigate('/'), 3000);
-          } else {
-            setTimeout(() => navigate('/'), 3000);
-          }
-        } else {
-          showNotification('error', data.status);
+          sessionStorage.removeItem('user');
+          setTimeout(() => navigate('/'), 3000);
         }
-      } catch (error) {
-        if (error.status) {
-          showNotification('error', error.data.status);
-          console.log('error.data', error.data);
-        } else {
-          showNotification('error', error.message);
-          console.log('error.data', error);
-        }
+      },
+      onError: (error) => {
+        showNotification('error', error.message || 'Verification failed');
       }
-    };
-    setVerifying(true);
-    setTimeout(verifyUserAccount, 5000);
-  
-  }, [navigate, setUser]);
-  
+    }
+  );
+
+  useEffect(() => {
+    if (data?.status !== 200 && !isLoading && !isError) {
+      showNotification('error', 'Invalid or expired token.');
+      navigate('/');
+    }
+  }, [data, isLoading, isError, navigate]);
 
   return (
     <div className="gif-landing">
       <div className="verification">
-        {verifying && (
-          <img src={Verification} alt="" />
+        {isLoading && (
+          <img src={Verification} alt="Verifying" />
         )}
       </div>
     </div>
