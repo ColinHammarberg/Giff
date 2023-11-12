@@ -261,7 +261,8 @@ export async function DeleteUserLogo() {
   return response;
 }
 
-export async function FetchUserGifs(access_token) {
+export async function FetchUserGifs() {
+  const access_token = localStorage.getItem('access_token');
   const response = await axios.get(`${Api}/fetch_user_gifs`, {
     headers: {
       'Authorization': `Bearer ${access_token}`

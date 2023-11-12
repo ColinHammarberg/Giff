@@ -4,9 +4,9 @@ import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signin } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
-import { showNotification } from '../Notification';
-import Header from '../Header';
-import OfficialButton from '../OfficialButton';
+import { showNotification } from '../notification/Notification';
+import Header from '../overall/Header';
+import OfficialButton from '../buttons/OfficialButton';
 
 function UserSignin() {
   const [error, setError] = useState(false);
