@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { showNotification } from '../Notification';
-import { FetchUserInfo, VerifyUser } from '../../endpoints/Apis';
+import { VerifyUser } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import Verification from './Verifying.jpg';
 import './Verification.scss';
@@ -26,13 +26,9 @@ function VerifyAccount() {
           showNotification('success', data.status);
           setVerified(true);
           if (access_token) {
-            const updatedUserData = await FetchUserInfo();
-            if (updatedUserData.data) {
-              setUser({
-                userInfo: updatedUserData.data,
-              });
-            }
-            setTimeout(() => navigate('/choose-option-create'), 5000);
+            sessionStorage.removeItem('user')
+            localStorage.removeItem('access_token');
+            setTimeout(() => navigate('/'), 5000);
           } else {
             setTimeout(() => navigate('/'), 5000);
           }
