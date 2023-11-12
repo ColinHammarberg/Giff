@@ -8,6 +8,7 @@ import Header from './Header';
 import { showNotification } from './Notification';
 import LightTooltip from './LightToolTip';
 import OfficialButton from './OfficialButton';
+import MultipleGifCreationDialog from './MultipleGifCreationDialog';
 
 function MultipleGifGenerator(props) {
   const { urlList, setUrlList, setDuplicateNames, duplicateNames, gifGenerated, generateMultipleGifs } = props;
@@ -53,6 +54,9 @@ function MultipleGifGenerator(props) {
   
 
   function addUrl() {
+    if (urlList.length === 10) {
+      return MultipleGifCreationDialog.show();
+    }
     if (urlList.length < 10) {
       setUrlList((prevList) => [...prevList, { name: '', url: '' }]);
     } else {
@@ -61,9 +65,13 @@ function MultipleGifGenerator(props) {
   }
 
   function removeItem(indexToRemove) {
-    setUrlList((prevList) => {
-      return prevList.filter((_, index) => index !== indexToRemove);
-    });
+    if (urlList.length <= 2) {
+      return;
+    } else {
+      setUrlList((prevList) => {
+        return prevList.filter((_, index) => index !== indexToRemove);
+      });
+    }
   }
 
   return (
@@ -76,40 +84,40 @@ function MultipleGifGenerator(props) {
         <Box className="url-inputs">
           {urlList.map((item, index) => (
             <Box key={index} className="input-fields">
-              <div className="inputs">
-                <div>
-                    <InputLabel shrink htmlFor={`url-input-${index}`}>
-                      URL
+            <div className="inputs">
+              <div>
+                  <InputLabel shrink htmlFor={`url-input-${index}`}>
+                    URL
+                  </InputLabel>
+                  <TextField
+                    id={`url-input-${index}`}
+                    onChange={(event) => handleOnChangeUrl(event, index)}
+                    value={item.url}
+                    placeholder="The url goes here..."
+                  />
+                </div>
+                  <div>
+                    <InputLabel shrink htmlFor={`name-input-${index}`}>
+                      Name of file
                     </InputLabel>
                     <TextField
-                      id={`url-input-${index}`}
-                      onChange={(event) => handleOnChangeUrl(event, index)}
-                      value={item.url}
-                      placeholder="The url goes here..."
-                    />
-                  </div>
-                    <div>
-                      <InputLabel shrink htmlFor={`name-input-${index}`}>
-                        Name of file
-                      </InputLabel>
-                      <TextField
-                        id={`name-input-${index}`}
-                        error={duplicateNames[index]}
-                        helperText={duplicateNames[index] ? "Name already exists" : ""}
-                        className="name-input"
-                        onChange={(event) => handleNameChange(event, index)}
-                        value={item.name}
-                        placeholder="The name goes here..."
-                    />
-                  </div>
+                      id={`name-input-${index}`}
+                      error={duplicateNames[index]}
+                      helperText={duplicateNames[index] ? "Name already exists" : ""}
+                      className="name-input"
+                      onChange={(event) => handleNameChange(event, index)}
+                      value={item.name}
+                      placeholder="The name goes here..."
+                  />
                 </div>
-                <LightTooltip title="Remove item">
-                <IconButton onClick={() => removeItem(index)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </LightTooltip>
-            </Box>
-          ))}
+              </div>
+              <LightTooltip title={urlList.length <= 2 ? "You can't remove the last two items" : "Remove item"}>
+              <IconButton onClick={() => removeItem(index)}>
+                  <DeleteIcon />
+                </IconButton>
+              </LightTooltip>
+          </Box>
+        ))}
           <div className="add-btn">
             <LightTooltip title="Add field">
               <div>
