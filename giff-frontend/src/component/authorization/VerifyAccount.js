@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
 import { showNotification } from '../Notification';
 import { VerifyUser } from '../../endpoints/Apis';
@@ -11,12 +11,12 @@ function VerifyAccount() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
 
-  const { data, isLoading, isError } = useQuery(
+  const { isLoading } = useQuery(
     ['verifyUser', token],
     () => VerifyUser(token),
     {
       retry: 5,
-      retryDelay: 5000,
+      retryDelay: 2000,
       enabled: !!token,
       onSuccess: (data) => {
         if (data?.status === 200) {
@@ -31,12 +31,12 @@ function VerifyAccount() {
     }
   );
 
-  useEffect(() => {
-    if (data?.status !== 200 && !isLoading && !isError) {
-      showNotification('error', 'Invalid or expired token.');
-      navigate('/');
-    }
-  }, [data, isLoading, isError, navigate]);
+  // useEffect(() => {
+  //   if (data?.status !== 200 && !isLoading && !isError) {
+  //     showNotification('error', 'Invalid or expired token.');
+  //     navigate('/');
+  //   }
+  // }, [data, isLoading, isError, navigate]);
 
   return (
     <div className="gif-landing">
