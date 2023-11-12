@@ -8,7 +8,6 @@ import LightTooltip from '../overall/LightToolTip';
 import OfficialButton from '../buttons/OfficialButton';
 import InfoButton from '../overall/InfoButton';
 import Header from '../overall/Header';
-import { showNotification } from '../notification/Notification';
 
 function MultipleGifGenerator(props) {
   const { urlList, setUrlList, setDuplicateNames, duplicateNames, gifGenerated, generateMultipleGifs } = props;
@@ -56,11 +55,8 @@ function MultipleGifGenerator(props) {
   function addUrl() {
     if (urlList.length === 10) {
       return MultipleGifCreationDialog.show();
-    }
-    if (urlList.length < 10) {
-      setUrlList((prevList) => [...prevList, { name: '', url: '' }]);
     } else {
-      showNotification('error', "You can't create more than 8 gifs at once.")
+      setUrlList((prevList) => [...prevList, { name: '', url: '' }]);
     }
   }
 

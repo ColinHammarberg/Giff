@@ -76,7 +76,7 @@ class DesignGifDialog extends PureComponent {
       if (response.data.message === 'Selected color updated successfully') {
         this.handleCancel();
         this.props.setDesignChanges(true);
-        showNotification('success', "You can't create more than 8 gifs at once.")
+        showNotification('success', "Your design changes have been applied to your gif!")
       }
 
       console.log('response', response.message);
