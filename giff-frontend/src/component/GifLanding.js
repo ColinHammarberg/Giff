@@ -5,6 +5,7 @@ import GeneratedGif from './GeneratedGif';
 import GifError from './GifError';
 import { GeneratePdfGifs, GenerateSingleGif } from '../endpoints/Apis';
 import { GiftContext } from '../context/GiftContextProvider';
+import VerifyAccountDialog from './authorization/VerifyAccountDialog';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -12,8 +13,9 @@ function GifLanding() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPdf, setSelectedPdf] = useState(null);
-  const { handleDownloadClick } = useContext(GiftContext);
+  const { handleDownloadClick, user } = useContext(GiftContext);
   const formRef = useRef();
+  const isActive = user?.userInfo?.is_active;
 
   const handleOnChangeUrl = (value) => {
     setUrl(value);
@@ -31,10 +33,16 @@ function GifLanding() {
     formRef.current.submit();
   };
 
+  console.log('isActive', isActive);
+
   const generateSingleGif = async () => {
-    // if (!user?.userInfo?.is_active) {
-    //   // show popup asking them to verify their account
-    // } else {
+    if (!isActive) {
+      // show popup asking them to verify their account
+      const { hasConfirmed } = await VerifyAccountDialog.show();
+      if (hasConfirmed) {
+        return;
+      }
+    } else {
       setIsLoading(true);
       try {
         setIsLoading(true);
@@ -52,7 +60,7 @@ function GifLanding() {
         setIsLoading(false);
       }
     setIsLoading(false);
-    // }
+    }
   };
 
   if (error) {
