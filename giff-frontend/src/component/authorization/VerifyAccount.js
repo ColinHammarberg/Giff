@@ -8,10 +8,10 @@ import { GiftContext } from '../../context/GiftContextProvider';
 
 function VerifyAccount() {
   const navigate = useNavigate();
-  const [verified, setVerified] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const { setUser } = useContext(GiftContext);
 
-  useEffect(() => {
+  useEffect(() => {  
     const verifyUserAccount = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
@@ -24,13 +24,12 @@ function VerifyAccount() {
         if (status === 200) {
           const access_token = localStorage.getItem('access_token');
           showNotification('success', data.status);
-          setVerified(true);
           if (access_token) {
-            sessionStorage.removeItem('user')
+            sessionStorage.removeItem('user');
             localStorage.removeItem('access_token');
-            setTimeout(() => navigate('/'), 5000);
+            setTimeout(() => navigate('/'), 3000);
           } else {
-            setTimeout(() => navigate('/'), 5000);
+            setTimeout(() => navigate('/'), 3000);
           }
         } else {
           showNotification('error', data.status);
@@ -38,21 +37,23 @@ function VerifyAccount() {
       } catch (error) {
         if (error.status) {
           showNotification('error', error.data.status);
-          console.log('error.data', error.data)
+          console.log('error.data', error.data);
         } else {
           showNotification('error', error.message);
-          console.log('error.data', error)
+          console.log('error.data', error);
         }
       }
     };
-
-    verifyUserAccount();
+    setVerifying(true);
+    setTimeout(verifyUserAccount, 5000);
+  
   }, [navigate, setUser]);
+  
 
   return (
     <div className="gif-landing">
       <div className="verification">
-        {verified && (
+        {verifying && (
           <img src={Verification} alt="" />
         )}
       </div>
