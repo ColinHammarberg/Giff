@@ -1,5 +1,6 @@
 import { NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import './Notification.scss';
 
 export const showNotification = (type, message) => {
     switch (type) {

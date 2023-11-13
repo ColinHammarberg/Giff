@@ -1,0 +1,31 @@
+.notification-container {
+    .notification-success {
+        background-color: #B9F140 !important;
+        color: #000;
+        &::before {
+            content: none !important;
+        }
+    }
+
+    .notification-error {
+        background-color: #FE6B01 !important;
+        color: #000;
+        &::before {
+            content: none !important;
+        }
+    }
+
+    .notification-message {
+        .title {
+            display: none;
+        }
+        .message {
+            font-family: "Staatliches";
+        }
+    }
+    
+    .notification {
+        opacity: 1;
+        border-radius: 50px;
+    }
+}
