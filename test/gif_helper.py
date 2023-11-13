@@ -342,6 +342,11 @@ def download_all_library_gifs():
     data = request.get_json()
     print('gif_data', data)
     gif_data = data.get('gifData', [])
+    user_id = get_jwt_identity()
+    user = User.query.filter_by(
+        id=user_id).first()
+    selected_resolution = user.selected_resolution if user.selected_resolution else "800x1280"
+    print('selected_resolution', selected_resolution)
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
@@ -354,12 +359,14 @@ def download_all_library_gifs():
                 response = requests.get(gif_url)
                 if response.status_code == 200:
                     gif_bytes = io.BytesIO(response.content)
+                    resized_gif_bytes_io = resize_gif(gif_bytes, selected_resolution)
                     
-                    # Assuming add_border_to_gif is a function that adds the border and returns new GIF bytes
                     if selected_color:
-                        new_gif_bytes = add_border_to_gif(gif_bytes, selected_color)
-                        # Add the new GIF to ZIP
-                        zipf.writestr(f'{gif_name}.gif', new_gif_bytes.getvalue())
+                        new_gif_bytes = add_border_to_gif(resized_gif_bytes_io, selected_color)                        
+                    else:
+                        new_gif_bytes = resized_gif_bytes_io
+
+                    zipf.writestr(f'{gif_name}', new_gif_bytes.getvalue())
 
         zip_buffer.seek(0)
         return send_file(
@@ -399,7 +406,11 @@ def download_individual_gif():
         selected_color = gif_data.get('selectedColor')
         gif_url = gif_data.get('url')
         gif_name = gif_data.get('name')
-        desired_resolution = gif_data.get('resolution', "800x1280")
+        user_id = get_jwt_identity()
+        user = User.query.filter_by(
+            id=user_id).first()
+        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get('resolution', "800x1280")
+        print('selected_resolution', selected_resolution)
 
         if gif_url is None:
             return "Invalid GIF URL", 400
@@ -409,7 +420,7 @@ def download_individual_gif():
 
         if response.status_code == 200:
             gif_bytes_io = io.BytesIO(response.content)
-            resized_gif_bytes_io = resize_gif(gif_bytes_io, desired_resolution)
+            resized_gif_bytes_io = resize_gif(gif_bytes_io, selected_resolution)
             
             if selected_color:
                 modified_gif_bytes_io = add_border_to_gif(resized_gif_bytes_io, selected_color)

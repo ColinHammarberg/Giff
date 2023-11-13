@@ -22,6 +22,7 @@ const GiftContextProvider = ({ children }) => {
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const { isMobile } = useMobileQuery();
+  const access_token = localStorage.getItem('access_token');
 
   useEffect(() => {
     // Fetch user info and user logo
@@ -31,7 +32,7 @@ const GiftContextProvider = ({ children }) => {
         if (userData) {
           const parsedUserData = JSON.parse(userData);
           setUser(parsedUserData);
-        } else {
+        } else if (access_token) {
           const userInfoResponse = await FetchUserInfo();
           let logoUrl = null;
           console.log('userInfoResponse', userInfoResponse);
@@ -56,7 +57,7 @@ const GiftContextProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, []);
+  }, [access_token]);
 
   const updateUserData = (updatedFields) => {
     setUser((prevUser) => {

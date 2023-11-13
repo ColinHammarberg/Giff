@@ -50,13 +50,16 @@ function Navigator() {
 function App() {
   const queryClient = new QueryClient();
   const REACT_APP_BASEURL = process.env.REACT_APP_BASEURL || '/';
+  const access_token = localStorage.getItem('access_token');
 
   return (
     <GiftContextProvider>
       <QueryClientProvider client={queryClient}>
         <NotificationContainer />
         <BrowserRouter>
-          <KeepAliveComponent />
+          {access_token && (
+            <KeepAliveComponent />
+          )}
           <Navigator />
           <Routes>
             <Route
