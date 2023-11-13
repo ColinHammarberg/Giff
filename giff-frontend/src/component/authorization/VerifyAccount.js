@@ -10,6 +10,7 @@ function VerifyAccount() {
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
+  console.log('token', token);
 
   const { data } = useQuery(
     ['verifyUser', token],
