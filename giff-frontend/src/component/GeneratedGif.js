@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from './Header';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import LoadingGif from './LoadingGif';
 import OfficialButton from './OfficialButton';
 import { DownloadAllLibraryGifs, GetMultipleGifs } from '../endpoints/Apis';
@@ -12,7 +12,7 @@ import { useTabs } from './Tabs';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [importedGifs, setImportedGifs] = useState(null);
   const { editGif, isDesignOpen, isMobile, selectedDesignGif, handleOpenDesign, handleCloseDesign } = useContext(GiftContext);
   const [selectedGif, setSelectedGif] = useState(null);
@@ -88,7 +88,7 @@ function GeneratedGif(props) {
         )}  
           <Box className="generated-gif-btn-box">
             <OfficialButton variant="yellow" label="Download GIF" onClick={handleDownloadClick} />
-            <OfficialButton variant="green" label="Share gif in email" onClick={() => navigate('/email-choice')} />
+            {/* <OfficialButton variant="green" label="Share gif in email" onClick={() => navigate('/email-choice')} /> */}
           </Box>
           <DesignGifDialog
             isOpen={isDesignOpen}
