@@ -11,12 +11,12 @@ function VerifyAccount() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
 
-  const { isLoading } = useQuery(
+  const { data } = useQuery(
     ['verifyUser', token],
     () => VerifyUser(token),
     {
-      retry: 5,
-      retryDelay: 2000,
+      retry: 10,
+      retryDelay: 1000,
       enabled: !!token,
       onSuccess: (data) => {
         if (data?.status === 200) {
@@ -31,19 +31,12 @@ function VerifyAccount() {
     }
   );
 
-  // useEffect(() => {
-  //   if (data?.status !== 200 && !isLoading && !isError) {
-  //     showNotification('error', 'Invalid or expired token.');
-  //     navigate('/');
-  //   }
-  // }, [data, isLoading, isError, navigate]);
+  console.log('data', data);
 
   return (
     <div className="gif-landing">
       <div className="verification">
-        {isLoading && (
-          <img src={Verification} alt="Verifying" />
-        )}
+        <img src={Verification} alt="Verifying" />
       </div>
     </div>
   );
