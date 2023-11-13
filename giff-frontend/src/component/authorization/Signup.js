@@ -4,10 +4,10 @@ import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signup } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
-import { showNotification } from '../Notification';
-import Header from '../Header';
+import { showNotification } from '../notification/Notification';
+import Header from '../overall/Header';
 import { isValidEmail } from '../../utils/utils';
-import OfficialButton from '../OfficialButton';
+import OfficialButton from '../buttons/OfficialButton';
 
 function UserSignup() {
   const [checked, setChecked] = useState(false);

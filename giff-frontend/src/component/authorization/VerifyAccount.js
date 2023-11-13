@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { showNotification } from '../Notification';
+import { showNotification } from '../notification/Notification';
 import { VerifyUser } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import Verification from './Verifying.jpg';

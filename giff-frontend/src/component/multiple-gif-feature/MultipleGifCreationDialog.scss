@@ -1,0 +1,64 @@
+.multiple-gif-creation-dialog {
+    .MuiBackdrop-root {
+        background-color: unset;
+    }
+
+    .MuiDialog-container {
+        .MuiPaper-root {
+            width: 300px;
+            height: 220px;
+            background-color: #FE6B01;
+            font-family: 'Staatliches';
+
+            .header-content {
+                background-color: rgba(254, 201, 1, 1);
+                font-size: 16px;
+                font-family: 'Staatliches';
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .dialog-content {
+                overflow: hidden;
+                padding: 0;
+            }
+
+            .close-btn-actions {
+                display: flex;
+                justify-content: right;
+                align-items: center;
+                gap: 24px;
+
+                .MuiButton-root {
+                    border: 1px solid #000;
+                    border-radius: 50px;
+                    color: #fff !important;
+                    font-family: 'Staatliches';
+                    font-size: 6px;
+                    height: 12px;
+                    width: 43px;
+                    color: #000;
+                    margin-top: 10px;
+                    margin-right: 10px;
+
+                    &.close-btn {
+                        background-color: #000;
+                    }
+                }
+            }
+
+            .multiple-gif-creation-content {
+                color: #000;
+                font-size: 16px;
+                background-color: #FE6B01;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 80%;
+            }
+        }
+    }
+}

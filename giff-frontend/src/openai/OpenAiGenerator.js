@@ -3,7 +3,7 @@ import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import axios from 'axios';
 import './OpenAiGenerator.scss';
-import Header from '../component/Header';
+import Header from '../component/overall/Header';
 import UserAvatar from './UserAvatar';
 
 const OpenAiGenerator = () => {

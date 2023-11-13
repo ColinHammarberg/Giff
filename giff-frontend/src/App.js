@@ -3,22 +3,22 @@ import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
 import { NotificationContainer } from 'react-notifications';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.css'
-import GifLanding from './component/GifLanding';
+import GifLanding from './component/single-gif-feature/GifLanding';
 import GiftContextProvider from './context/GiftContextProvider';
-import SendEmailComponent from './component/SendEmailComponent';
-import RightsAndPrivacy from './component/RightsAndPrivacy';
+import SendEmailComponent from './component/email/SendEmailComponent';
+import RightsAndPrivacy from './component/overall/RightsAndPrivacy';
 import OpenAiGenerator from './openai/OpenAiGenerator';
-import Landing from './component/Landing';
-import ChooseOptionCreate from './component/ChooseOptionCreate';
-import EmailChoice from './component/EmailChoice';
-import MultipleGifLanding from './component/MultipleGifCreation';
-import SendViaOwnEmail from './component/SendViaOwnEmail';
+import Landing from './component/overall/Landing';
+import ChooseOptionCreate from './component/overall/ChooseOptionCreate';
+import EmailChoice from './component/email/EmailChoice';
+import MultipleGifLanding from './component/multiple-gif-feature/MultipleGifCreation';
+import SendViaOwnEmail from './component/email/SendViaOwnEmail';
 import UserSignin from './component/authorization/Signin';
 import UserSignup from './component/authorization/Signup';
-import Profile from './component/Profile';
-import Articles from './component/Articles';
-import GifLibrary from './component/GifLibrary';
-import KeepAliveComponent from './component/KeepAlive';
+import Profile from './component/profile/Profile';
+import Articles from './component/story/Articles';
+import GifLibrary from './component/gif-library/GifLibrary';
+import KeepAliveComponent from './component/authorization/KeepAlive';
 import VerfifyAccount from './component/authorization/VerifyAccount';
 
 function Navigator() {

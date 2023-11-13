@@ -4,9 +4,9 @@ import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signin } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
-import { showNotification } from '../Notification';
-import Header from '../Header';
-import OfficialButton from '../OfficialButton';
+import { showNotification } from '../notification/Notification';
+import Header from '../overall/Header';
+import OfficialButton from '../buttons/OfficialButton';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -55,7 +55,7 @@ function UserSignin() {
     <div className="authorization">
       <Header />
       <Box className="user-authentication">
-        <Box className="user-title">Welcome back, Champ</Box>
+        <Box className="user-title">Sign in to Gif-T</Box>
         <div>
           <InputLabel>
             Username
@@ -84,8 +84,8 @@ function UserSignin() {
           />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signInUserCredentials} label="Signin" variant="yellow" isProcessing={isLoading} />
-          <div className="no-account">Don't have an account yet champ? <span onClick={() => navigate('/signup')}>Sign up here then.</span></div>
+          <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="yellow" isProcessing={isLoading} />
+          <div className="no-account">Don’t have a Gif-t account yet? No worries. You can sign up <span onClick={() => navigate('/signup')}>here.</span></div>
         </div>
       </Box>
     </div>
