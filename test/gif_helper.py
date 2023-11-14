@@ -336,7 +336,6 @@ def add_border_to_gif(gif_bytes_io, selected_color):
     output_gif_io.seek(0)
     return output_gif_io
 
-
 @jwt_required()
 def download_all_library_gifs():
     data = request.get_json()
@@ -359,10 +358,12 @@ def download_all_library_gifs():
                 response = requests.get(gif_url)
                 if response.status_code == 200:
                     gif_bytes = io.BytesIO(response.content)
-                    resized_gif_bytes_io = resize_gif(gif_bytes, selected_resolution)
-                    
+                    resized_gif_bytes_io = resize_gif(
+                        gif_bytes, selected_resolution)
+
                     if selected_color:
-                        new_gif_bytes = add_border_to_gif(resized_gif_bytes_io, selected_color)                        
+                        new_gif_bytes = add_border_to_gif(
+                            resized_gif_bytes_io, selected_color)
                     else:
                         new_gif_bytes = resized_gif_bytes_io
 
@@ -397,6 +398,37 @@ def update_selected_color():
         return jsonify({'message': 'Selected color updated successfully'}), 200
     else:
         return jsonify({'error': 'GIF not found'}), 404
+    
+
+def overlay_filter_on_gif(gif_bytes_io, filter_path):
+    gif_bytes_io.seek(0)
+    pil_gif = Image.open(gif_bytes_io)
+
+    filter_image = Image.open(filter_path).convert('RGBA')
+
+    filter_image = filter_image.resize(pil_gif.size)
+
+    overlayed_frames = []
+    for frame in ImageSequence.Iterator(pil_gif):
+        frame = frame.convert('RGBA')
+
+        # Overlay the filter
+        overlayed_frame = Image.alpha_composite(frame, filter_image)
+
+        overlayed_frames.append(
+            (overlayed_frame, frame.info.get('duration', 1000)))
+
+    output_gif_io = io.BytesIO()
+    overlayed_frames[0][0].save(
+        output_gif_io,
+        format='GIF',
+        save_all=True,
+        append_images=[frame for frame, _ in overlayed_frames[1:]],
+        duration=[d for _, d in overlayed_frames],
+        loop=0
+    )
+    output_gif_io.seek(0)
+    return output_gif_io
 
 
 @jwt_required()
@@ -409,7 +441,8 @@ def download_individual_gif():
         user_id = get_jwt_identity()
         user = User.query.filter_by(
             id=user_id).first()
-        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get('resolution', "800x1280")
+        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get(
+            'resolution', "800x1280")
         print('selected_resolution', selected_resolution)
 
         if gif_url is None:
@@ -418,14 +451,22 @@ def download_individual_gif():
         response = requests.get(gif_url)
         print(f"Response status code: {response.status_code}")
 
+        selected_filter = True
+
         if response.status_code == 200:
             gif_bytes_io = io.BytesIO(response.content)
-            resized_gif_bytes_io = resize_gif(gif_bytes_io, selected_resolution)
-            
+            resized_gif_bytes_io = resize_gif(
+                gif_bytes_io, selected_resolution)
+
             if selected_color:
-                modified_gif_bytes_io = add_border_to_gif(resized_gif_bytes_io, selected_color)
+                modified_gif_bytes_io = add_border_to_gif(
+                    resized_gif_bytes_io, selected_color)
             else:
                 modified_gif_bytes_io = resized_gif_bytes_io
+
+            if selected_filter:
+                filter_path = f'./filter/filter1.png'
+                modified_gif_bytes_io = overlay_filter_on_gif(modified_gif_bytes_io, filter_path)
 
             return send_file(
                 modified_gif_bytes_io,
@@ -500,6 +541,7 @@ def generate_video_gif(data, user_id):
         db.session.commit()
 
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
+
 
 def ease_in_quad(t):
     return t * t
