@@ -5,15 +5,13 @@ import cv2
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from PIL import Image, ImageOps, ImageSequence
 from werkzeug.utils import secure_filename
-# from gpt_helper import determine_relevance
-# from cloud_vision import analyze_images
 from utils import resize_gif
 import io
 import os
 import zipfile
 import requests
 import fitz
-from s3_helper import upload_to_s3
+from s3_helper import upload_to_s3, fetch_filter_url
 import uuid
 from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB
 from PIL import Image, ImageSequence
@@ -400,11 +398,17 @@ def update_selected_color():
         return jsonify({'error': 'GIF not found'}), 404
     
 
-def overlay_filter_on_gif(gif_bytes_io, filter_path):
+def overlay_filter_on_gif(gif_bytes_io, filter_url):
     gif_bytes_io.seek(0)
     pil_gif = Image.open(gif_bytes_io)
 
-    filter_image = Image.open(filter_path).convert('RGBA')
+    # Download the filter image from the URL
+    response = requests.get(filter_url)
+    if response.status_code != 200:
+        raise Exception("Failed to download filter image")
+
+    filter_bytes_io = io.BytesIO(response.content)
+    filter_image = Image.open(filter_bytes_io).convert('RGBA')
 
     filter_image = filter_image.resize(pil_gif.size)
 
@@ -415,8 +419,7 @@ def overlay_filter_on_gif(gif_bytes_io, filter_path):
         # Overlay the filter
         overlayed_frame = Image.alpha_composite(frame, filter_image)
 
-        overlayed_frames.append(
-            (overlayed_frame, frame.info.get('duration', 1000)))
+        overlayed_frames.append((overlayed_frame, frame.info.get('duration', 1000)))
 
     output_gif_io = io.BytesIO()
     overlayed_frames[0][0].save(
@@ -463,10 +466,11 @@ def download_individual_gif():
                     resized_gif_bytes_io, selected_color)
             else:
                 modified_gif_bytes_io = resized_gif_bytes_io
-
             if selected_filter:
-                filter_path = f'./filter/filter1.png'
-                modified_gif_bytes_io = overlay_filter_on_gif(modified_gif_bytes_io, filter_path)
+                selected_filter = "filter1.png"
+                presigned_filter_url = fetch_filter_url(selected_filter)
+                print('presigned_filter_url', presigned_filter_url)
+                modified_gif_bytes_io = overlay_filter_on_gif(modified_gif_bytes_io, presigned_filter_url)
 
             return send_file(
                 modified_gif_bytes_io,

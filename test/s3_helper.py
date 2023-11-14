@@ -10,6 +10,18 @@ s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                   aws_secret_access_key='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', region_name='eu-north-1')
 
 
+def fetch_filter_url(selected_filter):
+    s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                             aws_secret_access_key='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', 
+                             region_name='eu-north-1')
+    
+    presigned_url = s3_client.generate_presigned_url('get_object',
+                                                     Params={'Bucket': 'gift-filter-options',
+                                                             'Key': selected_filter},
+                                                     ExpiresIn=3600)
+    return presigned_url
+
+
 def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
     print('file_name', file_name)
     try:
