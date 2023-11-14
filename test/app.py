@@ -7,7 +7,7 @@ from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_lo
 import uuid
 from models import UserGif
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, ease_in_quad
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -17,7 +17,8 @@ import requests
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from PIL import Image
+from PIL import Image, ImageOps
+from io import BytesIO
 from flask_mail import Mail
 from azure.appconfiguration.provider import (
     load,
@@ -38,21 +39,12 @@ credential = DefaultAzureCredential()
 client = SecretClient(vault_url=KVUri, credential=credential)
 
 app = Flask(__name__)
-# CORS(app, resources={r"/generate-pdf-gifs-from-list": {"origins": "https://gift-server-eu-1.azurewebsites.net" }})
 CORS(app)
-#app.config.update(azure_app_config)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
 
 # Initialize database with the app
 db.init_app(app)
-
-# configure_azure_monitor(
-#     connection_string='InstrumentationKey=06f2a380-4400-48b2-9a09-36fcb72ce4f8;IngestionEndpoint=https://swedencentral-0.in.applicationinsights.azure.com/',
-# )
-
-# # Get a tracer for the current module.
-# tracer = trace.get_tracer(__name__)
 
 app.secret_key = 'gift_secret_key_123'
 jwt = JWTManager(app)
@@ -155,8 +147,7 @@ def generate_gif():
     options.add_argument('--headless')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
-        
-    # Set up the Chrome service
+
     service = Service(executable_path="/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service,options=options)
     driver.get(URL)
@@ -175,11 +166,16 @@ def generate_gif():
     os.makedirs(screenshots_dir, exist_ok=True)
     driver.execute_script("document.body.style.overflow = 'hidden'")
 
+    screenshot_dimensions = None
+
     for i in range(0, scroll_height, timer):
         driver.execute_script(f"window.scrollTo(0, {i})")
         time.sleep(1)
         screenshot_path = os.path.join(screenshots_dir, f'screenshot_{i}.png')
         driver.save_screenshot(screenshot_path)
+        if screenshot_dimensions is None:
+            first_screenshot = Image.open(screenshot_path)
+            screenshot_dimensions = first_screenshot.size
 
     driver.quit()
 
@@ -188,6 +184,29 @@ def generate_gif():
         screenshot_path = os.path.join(screenshots_dir, screenshot)
         frame = Image.open(screenshot_path)
         frames_with_durations.append((frame, duration))
+    
+    logo_url = 'https://logowik.com/content/uploads/images/google-logo-2020.jpg'
+    response = requests.get(logo_url)
+    logo_image = Image.open(BytesIO(response.content))
+    logo_image = logo_image.resize(screenshot_dimensions, Image.Resampling.LANCZOS)
+    outro_duration = 2.4
+    num_easing_frames = 8  # Number of frames for the easing animation
+    min_scale_factor = 0.3  # Minimum scale factor to avoid zero dimensions
+
+    for i in range(num_easing_frames):
+        t = i / float(num_easing_frames - 1)  # Normalized time (0 to 1)
+        scale_factor = ease_in_quad(t) * (1 - min_scale_factor) + min_scale_factor
+
+        # Resize logo for the current frame
+        current_size = tuple(int(dim * scale_factor) for dim in screenshot_dimensions)
+        easing_frame = logo_image.resize(current_size, Image.Resampling.LANCZOS)
+        easing_frame = ImageOps.pad(easing_frame, screenshot_dimensions, centering=(0.5, 0.5))
+
+        # Add easing frame to the list with a shorter duration
+        frames_with_durations.append((easing_frame, 0.3))  # 0.1 seconds per frame
+
+    # Add the final logo frame with the longer duration
+    frames_with_durations.append((logo_image, outro_duration))
 
     gifs_frontend_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')

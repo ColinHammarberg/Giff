@@ -23,7 +23,7 @@ def fetch_user_info():
             password=current_user.password,
             resolution=current_user.selected_resolution,
             is_active=current_user.is_active,
-            has_logo=current_user.has_logo,
+            # has_logo=current_user.has_logo,
             status="Success"
         ), 200
     else:

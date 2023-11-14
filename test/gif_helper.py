@@ -500,3 +500,6 @@ def generate_video_gif(data, user_id):
         db.session.commit()
 
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
+
+def ease_in_quad(t):
+    return t * t
