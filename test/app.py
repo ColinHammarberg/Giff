@@ -3,9 +3,10 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
+import boto3
 from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
 import uuid
-from models import UserGif
+from models import UserGif, UserLogo
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, ease_in_quad
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify
@@ -185,28 +186,40 @@ def generate_gif():
         frame = Image.open(screenshot_path)
         frames_with_durations.append((frame, duration))
     
-    logo_url = 'https://logowik.com/content/uploads/images/google-logo-2020.jpg'
-    response = requests.get(logo_url)
-    logo_image = Image.open(BytesIO(response.content))
-    logo_image = logo_image.resize(screenshot_dimensions, Image.Resampling.LANCZOS)
-    outro_duration = 2.4
-    num_easing_frames = 8  # Number of frames for the easing animation
-    min_scale_factor = 0.3  # Minimum scale factor to avoid zero dimensions
+    user_logo = UserLogo.query.filter_by(user_id=user_id).first()
+    presigned_url = None
 
-    for i in range(num_easing_frames):
-        t = i / float(num_easing_frames - 1)  # Normalized time (0 to 1)
-        scale_factor = ease_in_quad(t) * (1 - min_scale_factor) + min_scale_factor
+    # If a user logo is found, generate the presigned URL
+    s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                  aws_secret_access_key='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', region_name='eu-north-1')
+    if user_logo:
+        resource_id = user_logo.resource_id
+        folder_name = f"{user_id}/logos/"
+        presigned_url = s3.generate_presigned_url('get_object',
+                                             Params={'Bucket': 'logo-resources',
+                                                     'Key': f"{folder_name}{resource_id}.png"},
+                                             ExpiresIn=3600)  # URL expires in 1 hour
+        response = requests.get(presigned_url)
+        logo_image = Image.open(BytesIO(response.content))
+        logo_image = logo_image.resize(screenshot_dimensions, Image.Resampling.LANCZOS)
+        outro_duration = 2.4
+        num_easing_frames = 8  # Number of frames for the easing animation
+        min_scale_factor = 0.3  # Minimum scale factor to avoid zero dimensions
 
-        # Resize logo for the current frame
-        current_size = tuple(int(dim * scale_factor) for dim in screenshot_dimensions)
-        easing_frame = logo_image.resize(current_size, Image.Resampling.LANCZOS)
-        easing_frame = ImageOps.pad(easing_frame, screenshot_dimensions, centering=(0.5, 0.5))
+        for i in range(num_easing_frames):
+            t = i / float(num_easing_frames - 1)  # Normalized time (0 to 1)
+            scale_factor = ease_in_quad(t) * (1 - min_scale_factor) + min_scale_factor
 
-        # Add easing frame to the list with a shorter duration
-        frames_with_durations.append((easing_frame, 0.3))  # 0.1 seconds per frame
+            # Resize logo for the current frame
+            current_size = tuple(int(dim * scale_factor) for dim in screenshot_dimensions)
+            easing_frame = logo_image.resize(current_size, Image.Resampling.LANCZOS)
+            easing_frame = ImageOps.pad(easing_frame, screenshot_dimensions, centering=(0.5, 0.5))
 
-    # Add the final logo frame with the longer duration
-    frames_with_durations.append((logo_image, outro_duration))
+            # Add easing frame to the list with a shorter duration
+            frames_with_durations.append((easing_frame, 0.3))  # 0.1 seconds per frame
+
+            # Add the final logo frame with the longer duration
+            frames_with_durations.append((logo_image, outro_duration))
 
     gifs_frontend_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
