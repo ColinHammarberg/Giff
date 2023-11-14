@@ -65,6 +65,7 @@ function GifLibrary() {
           } else {
             try {
               const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
+              console.log('response2', response);
               const blob = new Blob([response.data], { type: 'image/gif' });
               const downloadUrl = window.URL.createObjectURL(blob);
               const a = document.createElement('a');
