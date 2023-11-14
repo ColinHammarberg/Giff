@@ -18,6 +18,7 @@ from PIL import Image, ImageSequence
 from models import UserGif, User
 import os
 import io
+import logging
 
 backend_gifs_folder = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'gifs')
@@ -399,39 +400,39 @@ def update_selected_color():
     
 
 def overlay_filter_on_gif(gif_bytes_io, filter_url):
-    gif_bytes_io.seek(0)
-    pil_gif = Image.open(gif_bytes_io)
+    try:
+        gif_bytes_io.seek(0)
+        pil_gif = Image.open(gif_bytes_io)
 
-    # Download the filter image from the URL
-    response = requests.get(filter_url)
-    if response.status_code != 200:
-        raise Exception("Failed to download filter image")
+        response = requests.get(filter_url)
+        if response.status_code != 200:
+            raise Exception(f"Failed to download filter image, Status code: {response.status_code}")
 
-    filter_bytes_io = io.BytesIO(response.content)
-    filter_image = Image.open(filter_bytes_io).convert('RGBA')
+        filter_bytes_io = io.BytesIO(response.content)
+        filter_image = Image.open(filter_bytes_io).convert('RGBA')
+        filter_image = filter_image.resize(pil_gif.size)
 
-    filter_image = filter_image.resize(pil_gif.size)
+        overlayed_frames = []
+        for frame in ImageSequence.Iterator(pil_gif):
+            frame = frame.convert('RGBA')
+            overlayed_frame = Image.alpha_composite(frame, filter_image)
+            overlayed_frames.append((overlayed_frame, frame.info.get('duration', 1000)))
 
-    overlayed_frames = []
-    for frame in ImageSequence.Iterator(pil_gif):
-        frame = frame.convert('RGBA')
+        output_gif_io = io.BytesIO()
+        overlayed_frames[0][0].save(
+            output_gif_io,
+            format='GIF',
+            save_all=True,
+            append_images=[frame for frame, _ in overlayed_frames[1:]],
+            duration=[d for _, d in overlayed_frames],
+            loop=0
+        )
+        output_gif_io.seek(0)
+        return output_gif_io
 
-        # Overlay the filter
-        overlayed_frame = Image.alpha_composite(frame, filter_image)
-
-        overlayed_frames.append((overlayed_frame, frame.info.get('duration', 1000)))
-
-    output_gif_io = io.BytesIO()
-    overlayed_frames[0][0].save(
-        output_gif_io,
-        format='GIF',
-        save_all=True,
-        append_images=[frame for frame, _ in overlayed_frames[1:]],
-        duration=[d for _, d in overlayed_frames],
-        loop=0
-    )
-    output_gif_io.seek(0)
-    return output_gif_io
+    except Exception as e:
+        logging.exception("Error occurred in overlay_filter_on_gif")
+        raise e
 
 
 @jwt_required()
