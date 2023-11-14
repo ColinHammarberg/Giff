@@ -46,7 +46,8 @@ function GifLanding() {
       setIsLoading(true);
       try {
         setIsLoading(true);
-        const response = await (url.endsWith('.pdf') ? GeneratePdfGifs(url) : GenerateSingleGif(url));
+        const newUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+        const response = await (newUrl.endsWith('.pdf') ? GeneratePdfGifs(newUrl) : GenerateSingleGif(newUrl));
         console.log('response', response);
         if (response?.data?.error) {
           handleErrors(response.data.error);
