@@ -83,13 +83,11 @@ class DesignGifDialog extends PureComponent {
         response = await ApplyGifFrame(selectedGif, selectedFrame);
       }
 
-      if (response.data.message === 'Selected color updated successfully') {
+      if (response.data.message) {
         this.handleCancel();
         this.props.setDesignChanges(true);
         showNotification('success', "Your design changes have been applied to your gif!")
       }
-
-      console.log('response', response.message);
     } catch (error) {
       console.error('Error saving GIF:', error);
     }

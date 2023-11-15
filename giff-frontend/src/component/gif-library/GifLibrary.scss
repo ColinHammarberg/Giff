@@ -97,6 +97,7 @@
                             justify-content: center;
                             width: 100%;
                             height: 100%;
+                            z-index: 1399;
 
                             .MuiButton-root {
                                 width: 120px;
@@ -125,6 +126,12 @@
                         width: 197px;
                         height: 150px;
                         border: 1px solid #FEC901;
+                        &:nth-child(2) {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            z-index: 10;
+                          }
                     }
                 }
             }

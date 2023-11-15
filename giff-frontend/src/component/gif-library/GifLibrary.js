@@ -11,6 +11,9 @@ import useMobileQuery from '../../queries/useMobileQuery';
 import { showNotification } from '../notification/Notification';
 import DeleteGifDialog from './DeleteGifDialog';
 import ChooseResolutionDialog from './ChooseResolutionDialog';
+import Frame1 from '../../resources/filter1.png'
+import Frame2 from '../../resources/filter-2.png'
+import Frame3 from '../../resources/filter-3.png'
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -109,20 +112,31 @@ function GifLibrary() {
         setIsLoading(false);
       };
 
-      const editGif = (gifUrl, resourceId, selectedColor) => {
+      const editGif = (gifUrl, resourceId, selectedColor, selectedFrame) => {
         console.log('Sharing GIF:', gifUrl);
         console.log('Resource ID:', resourceId);
         setIsDesignOpen(true);
-        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
+        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame});
       };
 
       const handleEditButtonClick = () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
+          console.log('hoveredGif', hoveredGif);
+          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame);
           setDesignChanges(false);
         }
       };
+
+      const getSelectedFramePath = (selectedFrame) => {
+        let framePath = Frame1;;
+        if (selectedFrame === 'frame-2') {
+          framePath = Frame2;
+        } else {
+          framePath = Frame3;
+        }
+        return framePath;
+      }
 
       async function handleOnDeleteGif() {
         const hoveredGif = gifs[selectedGif];
@@ -226,8 +240,6 @@ function GifLibrary() {
               />
             )}
           </Box>
-
-
           {gifs?.length > 0 && !openEditMode && (<Box className="edit"><Button onClick={handleOnClickOpenEditMode} className="edit-mode-btn">Edit Mode</Button></Box>)}
         </Box>
           <Box className="gif-wrapper">
@@ -241,7 +253,10 @@ function GifLibrary() {
                     onMouseEnter={() => setSelectedGif(index)}
                     onMouseLeave={() => setSelectedGif(null)}
                   >
-                    <img src={item.url} alt="" style={{ border: `4px solid ${item.selectedColor}`}} />
+                    <img src={item.url} alt="" />
+                    {item.selectedFrame && (
+                      <img src={getSelectedFramePath(item.selectedFrame)} alt="" />
+                    )}
                     <Box className="gif-buttons">
                     {!openEditMode ? (
                       <>
