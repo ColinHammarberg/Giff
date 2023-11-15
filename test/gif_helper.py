@@ -458,6 +458,7 @@ def download_individual_gif():
     try:
         gif_data = request.get_json()
         selected_color = gif_data.get('selectedColor')
+        selected_frame = gif_data.get('selectedFrame')
         gif_url = gif_data.get('url')
         gif_name = gif_data.get('name')
         user_id = get_jwt_identity()
@@ -473,8 +474,6 @@ def download_individual_gif():
         response = requests.get(gif_url)
         print(f"Response status code: {response.status_code}")
 
-        selected_filter = True
-
         if response.status_code == 200:
             gif_bytes_io = io.BytesIO(response.content)
             resized_gif_bytes_io = resize_gif(
@@ -483,13 +482,11 @@ def download_individual_gif():
             if selected_color:
                 modified_gif_bytes_io = add_border_to_gif(
                     resized_gif_bytes_io, selected_color)
+            elif selected_frame:
+                presigned_filter_url = fetch_filter_url(selected_frame)
+                modified_gif_bytes_io = overlay_filter_on_gif(resized_gif_bytes_io, presigned_filter_url)
             else:
                 modified_gif_bytes_io = resized_gif_bytes_io
-            if selected_filter:
-                selected_filter = "filter1.png"
-                presigned_filter_url = fetch_filter_url(selected_filter)
-                print('presigned_filter_url', presigned_filter_url)
-                modified_gif_bytes_io = overlay_filter_on_gif(modified_gif_bytes_io, presigned_filter_url)
 
             return send_file(
                 modified_gif_bytes_io,

@@ -53,11 +53,11 @@ function GifLibrary() {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
           const { hasConfirmed, selectedResolution } = await ChooseResolutionDialog.show();
-          console.log('selectedResolution', selectedResolution, hasConfirmed);
           const gifData = {
             url: hoveredGif.url,
             name: hoveredGif.name,
             selectedColor: hoveredGif.selectedColor,
+            selectedFrame: hoveredGif.selectedFrame,
             resolution: selectedResolution,
           };
           if (!hasConfirmed) {
