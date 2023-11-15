@@ -393,6 +393,7 @@ def update_selected_color():
 
     if user_gif:
         user_gif.selectedColor = selected_color
+        user_gif.selectedFrame = None
         db.session.commit()
         return jsonify({'message': 'Selected color updated successfully'}), 200
     else:
@@ -412,6 +413,7 @@ def update_selected_frame():
 
     if user_gif:
         user_gif.selectedFrame = selected_frame
+        user_gif.selectedColor = None
         db.session.commit()
         return jsonify({'message': 'Selected frame updated successfully'}), 200
     else:

@@ -12,6 +12,7 @@ import EyeIcon from '../../resources/eye.png'
 import Frame1 from '../../resources/filter1.png'
 import Frame2 from '../../resources/filter-2.png'
 import Frame3 from '../../resources/filter-3.png'
+import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 
 
 class DesignGifDialog extends PureComponent {
@@ -86,6 +87,7 @@ class DesignGifDialog extends PureComponent {
       if (response.data.message) {
         this.handleCancel();
         this.props.setDesignChanges(true);
+        
         showNotification('success', "Your design changes have been applied to your gif!")
       }
     } catch (error) {
@@ -204,8 +206,8 @@ class DesignGifDialog extends PureComponent {
               <div className="container">
               <div className="image-frame-container">
                 <img src={selectedGif.url} alt="Selected Gif" />
-                {this.state.selectedFrame && (
-                  <img src={this.getFrameSourceByName(this.state.selectedFrame)} alt="Selected Frame" />
+                {(this.state.selectedFrame || getSelectedFramePath(selectedGif.selectedFrame)) && (
+                  <img src={this.getFrameSourceByName(this.state.selectedFrame) || getSelectedFramePath(selectedGif.selectedFrame)} alt="Selected Frame" />
                 )}
               </div>
                 <div className={`select-frame-container`}>

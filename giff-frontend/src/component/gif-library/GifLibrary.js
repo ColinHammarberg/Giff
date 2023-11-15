@@ -11,9 +11,7 @@ import useMobileQuery from '../../queries/useMobileQuery';
 import { showNotification } from '../notification/Notification';
 import DeleteGifDialog from './DeleteGifDialog';
 import ChooseResolutionDialog from './ChooseResolutionDialog';
-import Frame1 from '../../resources/filter1.png'
-import Frame2 from '../../resources/filter-2.png'
-import Frame3 from '../../resources/filter-3.png'
+import { getSelectedFramePath } from './GifLibraryUtils';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -128,16 +126,6 @@ function GifLibrary() {
         }
       };
 
-      const getSelectedFramePath = (selectedFrame) => {
-        let framePath = Frame1;;
-        if (selectedFrame === 'frame-2') {
-          framePath = Frame2;
-        } else {
-          framePath = Frame3;
-        }
-        return framePath;
-      }
-
       async function handleOnDeleteGif() {
         const hoveredGif = gifs[selectedGif];
         const gifData = {
@@ -170,7 +158,6 @@ function GifLibrary() {
         }
       }
 
-      console.log('gifs', gifs);
       const handleOpenDesign = () => {
         setIsDesignOpen(true);
       };
@@ -249,12 +236,12 @@ function GifLibrary() {
                   className="gif-box"
                 >
                   <Box
-                    className={`gif-container ${selectedGif === index ? 'hovered' : ''}`} 
+                    className={`gif-container ${selectedGif === index ? 'hovered' : ''}`}
                     onMouseEnter={() => setSelectedGif(index)}
                     onMouseLeave={() => setSelectedGif(null)}
                   >
-                    <img src={item.url} alt="" />
-                    {item.selectedFrame && (
+                    <img src={item.url} alt="" style={{ border: !item.selectedFrame && `4px solid ${item.selectedColor}`}} />
+                    {item.selectedFrame && !item.selectedColor && (
                       <img src={getSelectedFramePath(item.selectedFrame)} alt="" />
                     )}
                     <Box className="gif-buttons">
