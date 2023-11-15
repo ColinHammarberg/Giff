@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from extensions import db
-from models import User
+from models import User, UserLogo
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -8,6 +8,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from sendgrid.helpers.mail import Mail
 from sendgrid import SendGridAPIClient
 import secrets
+import boto3
 
 # Fetch user info endpoint
 
@@ -17,12 +18,24 @@ def fetch_user_info():
     current_user = User.query.get(user_id)
     if current_user:
         db.session.refresh(current_user) # Refresh to get the latest data
+        user_logo = UserLogo.query.filter_by(user_id=user_id).first()
+        s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                  aws_secret_access_key='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', region_name='eu-north-1')
+        presigned_url = None
+        if user_logo:
+            resource_id = user_logo.resource_id
+            folder_name = f"{user_id}/logos/"
+            presigned_url = s3.generate_presigned_url('get_object',
+                                                     Params={'Bucket': 'logo-resources',
+                                                             'Key': f"{folder_name}{resource_id}.png"},
+                                                     ExpiresIn=3600)  # URL expires in 1 hour
         return jsonify(
             id=current_user.id,
             email=current_user.email,
             password=current_user.password,
             resolution=current_user.selected_resolution,
             is_active=current_user.is_active,
+            logo_url=presigned_url,
             has_logo=current_user.has_logo,
             status="Success"
         ), 200
