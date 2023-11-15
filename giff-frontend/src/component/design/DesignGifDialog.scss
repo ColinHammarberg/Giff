@@ -38,6 +38,7 @@
         .container {
             display: flex;
             justify-content: space-between;
+            min-height: 254px;
         }
 
         .tabs-level-2 {
@@ -98,6 +99,30 @@
             }
         }
 
+        .select-frame-container {
+            .frames {
+                display: flex;
+                gap: 16px;
+
+                img {
+                    width: 100px;
+                    height: 100px;
+                }
+            }
+        }
+
+        .image-frame-container {
+            position: relative;
+
+            img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 288px;
+                height: 240px;
+            }
+        }
+
         .image {
             width: 100%;
             display: flex;
@@ -109,6 +134,8 @@
             }
         }
 
+
+
         .action-content {
             display: grid;
             justify-content: center;
@@ -118,7 +145,6 @@
 
             .title {
                 font-size: 28px;
-                font-family: 'F37Judge-MediumCondensed';
                 line-height: 32px;
             }
 

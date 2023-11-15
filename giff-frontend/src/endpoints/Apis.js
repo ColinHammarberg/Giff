@@ -309,13 +309,32 @@ export async function GetMultipleGifs(gifs) {
   return response.data;
 }
 
-export async function ApplyGifDesign(selectedGif, selectedColor) {
+export async function ApplyGifColor(selectedGif, selectedColor) {
   const access_token = localStorage.getItem('access_token');
   console.log('access_token', access_token);
   const response = await axios.post(
     `${Api}/update_selected_color`,
     {
       selectedColor,
+      resourceId: selectedGif.resourceId,
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    }
+  );
+
+  return response;
+}
+
+export async function ApplyGifFrame(selectedGif, selectedFrame) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('access_token', access_token);
+  const response = await axios.post(
+    `${Api}/update_selected_frame`,
+    {
+      selectedFrame,
       resourceId: selectedGif.resourceId,
     },
     {

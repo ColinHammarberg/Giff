@@ -397,7 +397,25 @@ def update_selected_color():
         return jsonify({'message': 'Selected color updated successfully'}), 200
     else:
         return jsonify({'error': 'GIF not found'}), 404
-    
+
+@jwt_required()
+def update_selected_frame():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    resource_id = data.get('resourceId')
+    selected_frame = data.get('selectedFrame')
+    print('data', data)
+
+    # Update the selectedColor for the specified GIF
+    user_gif = UserGif.query.filter_by(
+        user_id=user_id, resourceId=resource_id).first()
+
+    if user_gif:
+        user_gif.selectedFrame = selected_frame
+        db.session.commit()
+        return jsonify({'message': 'Selected frame updated successfully'}), 200
+    else:
+        return jsonify({'error': 'GIF not found'}), 404
 
 def overlay_filter_on_gif(gif_bytes_io, filter_url):
     try:

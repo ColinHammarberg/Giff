@@ -8,7 +8,7 @@ from s3_helper import upload_to_s3, fetch_user_gifs, get_multiple_gifs, fetch_lo
 import uuid
 from models import UserGif, UserLogo
 import time
-from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, ease_in_quad
+from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, ease_in_quad, update_selected_frame
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -44,6 +44,7 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://gift_super_user:Grym123!@localhost/gift_user_db'
 
+
 # Initialize database with the app
 db.init_app(app)
 
@@ -60,6 +61,11 @@ def ping():
 def update_gif_color():
     print('generate')
     return update_selected_color()
+
+@app.route('/update_selected_frame', methods=['POST'])
+def update_gif_frame():
+    print('generate')
+    return update_selected_frame()
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():

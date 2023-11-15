@@ -60,7 +60,7 @@ def fetch_user_gifs():
                                                                  'Key': f"{user_id}/{gif.gif_name}"},
                                                          ExpiresIn=3600)  # URL expires in 1 hour
         gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId,
-                         "selectedColor": gif.selectedColor, "created_at": gif.created_at})
+                         "selectedColor": gif.selectedColor, "created_at": gif.created_at, "selectedFrame": gif.selectedFrame})
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
 
@@ -109,7 +109,8 @@ def get_multiple_gifs():
             "url": presigned_url,
             "resourceId": gif.resourceId,
             "selectedColor": gif.selectedColor,
-            "created_at": gif.created_at
+            "created_at": gif.created_at,
+            "selectedFrame": gif.selectedFrame,
         }
 
         gifs_list.append(gif_data)

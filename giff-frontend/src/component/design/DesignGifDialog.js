@@ -3,12 +3,16 @@ import PropTypes from 'prop-types';
 import './DesignGifDialog.scss';
 import DialogWrapper from '../DialogWrapper';
 import { Box, Button, IconButton } from '@mui/material';
-import { ApplyGifDesign } from '../../endpoints/Apis';
+import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/Apis';
 import { showNotification } from '../notification/Notification';
 import Tabs from '../tabs/Tabs';
 import LeftNavigation from '../../resources/left-nav.png'
 import RightNavigation from '../../resources/right-nav.png'
 import EyeIcon from '../../resources/eye.png'
+import Frame1 from '../../resources/filter1.png'
+import Frame2 from '../../resources/filter-2.png'
+import Frame3 from '../../resources/filter-3.png'
+
 
 class DesignGifDialog extends PureComponent {
   constructor(props) {
@@ -16,6 +20,7 @@ class DesignGifDialog extends PureComponent {
     this.state = {
       isOpen: true,
       selectedColor: null,
+      selectedFrame: null,
       selectedFilter: null,
       visibleColorIndex: 0,
     };
@@ -42,6 +47,11 @@ class DesignGifDialog extends PureComponent {
       { color: '#F5F5F5' },
       { color: '#FEC901' },
     ];
+    this.frameSelection = [
+      { name: 'frame-1', frame: Frame1 },
+      { name: 'frame-2', frame: Frame2 },
+      { name: 'frame-3', frame: Frame3 },
+    ]
   }
 
   componentDidMount() {
@@ -62,15 +72,15 @@ class DesignGifDialog extends PureComponent {
   }
 
   handleSaveGif = async () => {
-    const { selectedColor, selectedFilter } = this.state;
+    const { selectedColor, selectedFrame } = this.state;
     const { selectedGif } = this.props;
 
     try {
-      const response = await ApplyGifDesign(selectedGif, selectedColor);
-
-      if (selectedFilter) {
-        // Save the selected filter to your state or perform any other action as needed
-        console.log('Selected Filter:', selectedFilter);
+      let response;
+      if (selectedColor) {
+        response = await ApplyGifColor(selectedGif, selectedColor);
+      } else {
+        response = await ApplyGifFrame(selectedGif, selectedFrame);
       }
 
       if (response.data.message === 'Selected color updated successfully') {
@@ -102,16 +112,27 @@ class DesignGifDialog extends PureComponent {
   }
 
   handleColorClick(color) {
-    this.setState({ selectedColor: color, selectedFilter: null });
+    this.setState({ selectedColor: color, selectedFrame: null });
+  }
+
+  handleFrameClick(frameName) {
+    this.setState({ selectedFrame: frameName, selectedColor: null });
+    console.log('state', this.state.selectedFrame);
   }
 
   handleFilterClick(filter) {
     this.setState({ selectedFilter: filter, selectedColor: null });
   }
 
+  getFrameSourceByName(frameName) {
+    const frame = this.frameSelection.find(f => f.name === frameName);
+    return frame ? frame.frame : null;
+  }
+
   render() {
     const { selectedColor, visibleColorIndex } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
+
     console.log('selectedGif', selectedGif);
 
     const visibleColors = isMobile ? this.colorSelection.slice(visibleColorIndex, visibleColorIndex + 4) : this.colorSelection;
@@ -168,6 +189,39 @@ class DesignGifDialog extends PureComponent {
                   {isMobile && (
                     <IconButton onClick={this.handleNextColors}><img src={RightNavigation} alt="" /></IconButton>
                   )}
+                </div>
+              </div>
+              <div className="action-content">
+                <div className="buttons">
+                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
+                </div>
+              </div>
+            </>
+          )}
+          {activeTab === 1 && (
+            <>
+              <div className="title">
+                <span>Choose a</span> good <span>frame,</span> see how it looks <span>and click save.</span>
+              </div>
+              <div className="container">
+              <div className="image-frame-container">
+                <img src={selectedGif.url} alt="Selected Gif" />
+                {this.state.selectedFrame && (
+                  <img src={this.getFrameSourceByName(this.state.selectedFrame)} alt="Selected Frame" />
+                )}
+              </div>
+                <div className={`select-frame-container`}>
+                  <div className="frames">
+                    {this.frameSelection.map((item, index) => (
+                      <Box
+                        key={index}
+                        onClick={() => this.handleFrameClick(item.name)}
+                        style={{cursor: 'pointer'}}
+                      >
+                        <img src={item.frame} alt="" />
+                      </Box>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="action-content">
