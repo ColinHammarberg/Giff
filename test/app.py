@@ -9,7 +9,7 @@ import uuid
 from models import UserGif, UserLogo
 import time
 from gif_helper import is_video_url, generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, ease_in_quad, update_selected_frame
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify, include_logo_in_gifs
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -66,6 +66,10 @@ def update_gif_color():
 def update_gif_frame():
     print('generate')
     return update_selected_frame()
+
+@app.route('/toggle_include_logo', methods=['POST'])
+def toggle_include_logo():
+    return include_logo_in_gifs()
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():

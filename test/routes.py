@@ -37,6 +37,7 @@ def fetch_user_info():
             is_active=current_user.is_active,
             logo_url=presigned_url,
             has_logo=current_user.has_logo,
+            include_logo=current_user.include_logo,
             status="Success"
         ), 200
     else:
@@ -179,6 +180,15 @@ def update_password():
     except Exception as e:
         print(f"Exception: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
+    
+@jwt_required()
+def include_logo_in_gifs():
+    user_id = get_jwt_identity()
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        # Toggle the include_logo value
+        user.include_logo = not user.include_logo
+        db.session.commit()
     
 @jwt_required()
 def update_email():

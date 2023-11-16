@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     is_active = db.Column(db.Boolean, default=False)
     selected_resolution = db.Column(db.String(120), default=None, nullable=True)
     has_logo = db.Column(db.Boolean, default=False)
+    include_logo = db.Column(db.Boolean, default=False)
     gifs = relationship("UserGif", backref="user")
     logos = relationship("UserLogo", backref="user")
 
