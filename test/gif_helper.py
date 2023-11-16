@@ -9,12 +9,12 @@ from utils import resize_gif
 import io
 import os
 import zipfile
+import boto3
 import requests
 import fitz
 from s3_helper import upload_to_s3, fetch_filter_url
 import uuid
 from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB
-from PIL import Image, ImageSequence
 from models import UserGif, User
 import os
 import io
@@ -485,8 +485,14 @@ def download_individual_gif():
                 modified_gif_bytes_io = add_border_to_gif(
                     resized_gif_bytes_io, selected_color)
             elif selected_frame:
-                presigned_filter_url = fetch_filter_url(selected_frame)
-                modified_gif_bytes_io = overlay_filter_on_gif(resized_gif_bytes_io, presigned_filter_url)
+                s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                             aws_secret_access_key='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', 
+                             region_name='eu-north-1')
+                presigned_url = s3_client.generate_presigned_url('get_object',
+                                                                Params={'Bucket': 'gift-filter-options',
+                                                                        'Key': selected_frame},
+                                                                ExpiresIn=3600)
+                modified_gif_bytes_io = overlay_filter_on_gif(resized_gif_bytes_io, presigned_url)
             else:
                 modified_gif_bytes_io = resized_gif_bytes_io
 
