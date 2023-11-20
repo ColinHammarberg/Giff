@@ -33,6 +33,7 @@
             height: 252px;
             border-radius: 4px;
         }
+
         .gif-container {
             display: flex;
             justify-content: center;
@@ -60,7 +61,7 @@
             }
 
             img {
-                width: 300px;
+                width: unset !important;
                 height: 250px;
                 border-radius: 4px;
             }
