@@ -3,7 +3,7 @@ import { Box, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { Signin } from '../../endpoints/Apis';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { showNotification } from '../notification/Notification';
 import Header from '../overall/Header';
 import OfficialButton from '../buttons/OfficialButton';
@@ -14,8 +14,17 @@ function UserSignin() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const [emailValue, setEmailValue] = useState('');
+  const location = useLocation();
+  const [returnUrl, setReturnUrl] = useState('/choose-option-create'); // Default return URL
+
+  React.useEffect(() => {
+    // Extract returnUrl from the query string
+    const searchParams = new URLSearchParams(location.search);
+    const url = searchParams.get('returnUrl');
+    if (url) {
+      setReturnUrl(url);
+    }
+  }, [location]);
 
   function handleOnChangeEmail(event) {
     setEmail(event.target.value);
@@ -32,7 +41,7 @@ function UserSignin() {
       if (response.status === 200) {
         localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
         setTimeout(() => {
-          navigate('/choose-option-create');
+          navigate(returnUrl);
           showNotification('success', 'Successfully signed in');
         }, 3000)
       } else {

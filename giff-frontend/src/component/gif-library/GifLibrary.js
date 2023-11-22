@@ -24,6 +24,13 @@ function GifLibrary() {
     const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
+    const access_token = localStorage.getItem('access_token');
+    useEffect(() => {
+      if (!access_token) {
+        const returnUrl = window.location.pathname;
+        navigate(`/?returnUrl=${encodeURIComponent(returnUrl)}`);
+      }
+    }, [access_token, navigate]);
     useEffect(() => {
       const fetchData = async () => {
         const response = await FetchUserGifs();
