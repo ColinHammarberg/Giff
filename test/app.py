@@ -148,7 +148,9 @@ def generate_gif():
         except RuntimeError:
             pass # If JWT is not present, user_id remains None
     URL = data.get('url')
-    NAME = data.get('name', f'your_gift-{user_id}.gif') if user_id else "your_gif-t.gif"
+    user_gif_count = UserGif.query.filter_by(user_id=user_id).count()
+    next_gif_number = user_gif_count + 1
+    NAME = data.get('name', f"your_gif-{next_gif_number}.gif") if user_id else "your_gif-t.gif"
 
     if is_video_url(URL):
         return generate_video_gif(data, user_id)
@@ -196,40 +198,40 @@ def generate_gif():
         frame = Image.open(screenshot_path)
         frames_with_durations.append((frame, duration))
     
-    user_logo = UserLogo.query.filter_by(user_id=user_id).first()
-    presigned_url = None
+    # user_logo = UserLogo.query.filter_by(user_id=user_id).first()
+    # presigned_url = None
 
     # If a user logo is found, generate the presigned URL
-    s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                  aws_secret_access_key='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', region_name='eu-north-1')
-    if user_logo:
-        resource_id = user_logo.resource_id
-        folder_name = f"{user_id}/logos/"
-        presigned_url = s3.generate_presigned_url('get_object',
-                                             Params={'Bucket': 'logo-resources',
-                                                     'Key': f"{folder_name}{resource_id}.png"},
-                                             ExpiresIn=3600)  # URL expires in 1 hour
-        response = requests.get(presigned_url)
-        logo_image = Image.open(BytesIO(response.content))
-        logo_image = logo_image.resize(screenshot_dimensions, Image.Resampling.LANCZOS)
-        outro_duration = 2.4
-        num_easing_frames = 8  # Number of frames for the easing animation
-        min_scale_factor = 0.3  # Minimum scale factor to avoid zero dimensions
+    # s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+    #               aws_secret_access_key='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', region_name='eu-north-1')
+    # if user_logo:
+    #     resource_id = user_logo.resource_id
+    #     folder_name = f"{user_id}/logos/"
+    #     presigned_url = s3.generate_presigned_url('get_object',
+    #                                          Params={'Bucket': 'logo-resources',
+    #                                                  'Key': f"{folder_name}{resource_id}.png"},
+    #                                          ExpiresIn=3600)  # URL expires in 1 hour
+    #     response = requests.get(presigned_url)
+    #     logo_image = Image.open(BytesIO(response.content))
+    #     logo_image = logo_image.resize(screenshot_dimensions, Image.Resampling.LANCZOS)
+    #     outro_duration = 2.4
+    #     num_easing_frames = 8  # Number of frames for the easing animation
+    #     min_scale_factor = 0.3  # Minimum scale factor to avoid zero dimensions
 
-        for i in range(num_easing_frames):
-            t = i / float(num_easing_frames - 1)  # Normalized time (0 to 1)
-            scale_factor = ease_in_quad(t) * (1 - min_scale_factor) + min_scale_factor
+    #     for i in range(num_easing_frames):
+    #         t = i / float(num_easing_frames - 1)  # Normalized time (0 to 1)
+    #         scale_factor = ease_in_quad(t) * (1 - min_scale_factor) + min_scale_factor
 
-            # Resize logo for the current frame
-            current_size = tuple(int(dim * scale_factor) for dim in screenshot_dimensions)
-            easing_frame = logo_image.resize(current_size, Image.Resampling.LANCZOS)
-            easing_frame = ImageOps.pad(easing_frame, screenshot_dimensions, centering=(0.5, 0.5))
+    #         # Resize logo for the current frame
+    #         current_size = tuple(int(dim * scale_factor) for dim in screenshot_dimensions)
+    #         easing_frame = logo_image.resize(current_size, Image.Resampling.LANCZOS)
+    #         easing_frame = ImageOps.pad(easing_frame, screenshot_dimensions, centering=(0.5, 0.5))
 
-            # Add easing frame to the list with a shorter duration
-            frames_with_durations.append((easing_frame, 0.3))  # 0.1 seconds per frame
+    #         # Add easing frame to the list with a shorter duration
+    #         frames_with_durations.append((easing_frame, 0.3))  # 0.1 seconds per frame
 
-            # Add the final logo frame with the longer duration
-            frames_with_durations.append((logo_image, outro_duration))
+    #         # Add the final logo frame with the longer duration
+    #         frames_with_durations.append((logo_image, outro_duration))
 
     gifs_frontend_folder = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')

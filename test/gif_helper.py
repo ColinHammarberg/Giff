@@ -74,8 +74,10 @@ def generate_pdf_gif():
         except RuntimeError:
             pass
 
+    user_gif_count = UserGif.query.filter_by(user_id=user_id).count()
+    next_gif_number = user_gif_count + 1
     NAME = data.get(
-        'name', f'pdf_animation-{user_id}.gif') if user_id else "your_pdf_gif-t.gif"
+        'name', f"your_gif-{next_gif_number}.gif") if user_id else "your_pdf_gif-t.gif"
     images_dir = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), 'pdf_images')
     if not NAME.endswith('.gif'):
