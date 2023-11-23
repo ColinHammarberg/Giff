@@ -60,7 +60,7 @@ function LogoUploadForm(props) {
         <div className="text">
           <span>Logo</span>
           <button type="submit" disabled={!selectedFile}>
-            Upload Logo
+            {props.userLogoSrc ? 'Delete Logo' : 'Upload Logo'}
           </button>
         </div>
         {props.userLogoSrc ? (

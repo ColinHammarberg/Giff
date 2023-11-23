@@ -104,6 +104,10 @@
             display: flex;
             gap: 24px;
 
+            .tag {
+                margin-bottom: 4px;
+            }
+
             .text {
                 color: #B9F140;
             }
@@ -133,7 +137,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 100px;
+        margin-top: 50px;
 
         .MuiButton-root {
             border: 1px solid #fff;
