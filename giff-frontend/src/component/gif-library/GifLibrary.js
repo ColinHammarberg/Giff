@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
 import { Box, Button } from '@mui/material';
@@ -12,11 +12,13 @@ import { showNotification } from '../notification/Notification';
 import DeleteGifDialog from './DeleteGifDialog';
 import ChooseResolutionDialog from './ChooseResolutionDialog';
 import { getSelectedFramePath } from './GifLibraryUtils';
+import { GiftContext } from '../../context/GiftContextProvider';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
     const [selectedGif, setSelectedGif] = useState(null);
     const [designChanges, setDesignChanges] = useState(false);
+    const { user } = useContext(GiftContext);
     const [isLoading, setIsLoading] = useState(false);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
@@ -24,6 +26,7 @@ function GifLibrary() {
     const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
+    console.log('user', user);
     const access_token = localStorage.getItem('access_token');
     useEffect(() => {
       if (!access_token) {
@@ -57,39 +60,45 @@ function GifLibrary() {
       fetchData();
     }, [designChanges]);
 
-      const handleDownloadIndividualGifs = async () => {
-        if (selectedGif !== null) {
-          const hoveredGif = gifs[selectedGif];
-          const { hasConfirmed, selectedResolution } = await ChooseResolutionDialog.show();
-          const gifData = {
-            url: hoveredGif.url,
-            name: hoveredGif.name,
-            selectedColor: hoveredGif.selectedColor,
-            selectedFrame: hoveredGif.selectedFrame,
-            resolution: selectedResolution,
-          };
-          if (!hasConfirmed) {
+    const handleDownloadIndividualGifs = async () => {
+      if (selectedGif !== null) {
+        const hoveredGif = gifs[selectedGif];
+        let selectedResolution = user?.userInfo?.resolution;
+    
+        if (!selectedResolution) {
+          const resolutionDialogResult = await ChooseResolutionDialog.show();
+          if (!resolutionDialogResult.hasConfirmed) {
             return;
-          } else {
-            try {
-              const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
-              console.log('response2', response);
-              const blob = new Blob([response.data], { type: 'image/gif' });
-              const downloadUrl = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.style.display = 'none';
-              a.href = downloadUrl; 
-              a.download = `${hoveredGif.name}`;
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(downloadUrl);
-              document.body.removeChild(a);
-            } catch (error) {
-              console.error('Error downloading individual GIF:', error);
-            }
           }
+          selectedResolution = resolutionDialogResult.selectedResolution;
         }
-      };
+    
+        const gifData = {
+          url: hoveredGif.url,
+          name: hoveredGif.name,
+          selectedColor: hoveredGif.selectedColor,
+          selectedFrame: hoveredGif.selectedFrame,
+          resolution: selectedResolution,
+        };
+    
+        try {
+          const response = await DownloadIndividualDesignedGifs(JSON.stringify(gifData));
+          const blob = new Blob([response.data], { type: 'image/gif' });
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = downloadUrl;
+          a.download = `${hoveredGif.name}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(downloadUrl);
+          document.body.removeChild(a);
+        } catch (error) {
+          console.error('Error downloading individual GIF:', error);
+        }
+      }
+    };
+    
 
       function handleOnClickOpenEditMode() {
         setOpenEditMode(true);
