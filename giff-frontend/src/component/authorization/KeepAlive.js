@@ -13,6 +13,7 @@ const KeepAliveComponent = () => {
     } catch (error) {
       navigate('/');
       localStorage.removeItem('access_token');
+      sessionStorage.removeItem('user');
       console.error('Error during keep-alive:', error);
     }
   }, [navigate]);

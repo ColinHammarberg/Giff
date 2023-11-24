@@ -88,6 +88,13 @@
             }
         }
 
+        .checkbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 50px;
+        }
+
         .MuiButtonBase-root {
             &:hover {
                 .MuiSvgIcon-root {

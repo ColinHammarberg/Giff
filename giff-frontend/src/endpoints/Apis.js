@@ -376,6 +376,21 @@ export async function UpdateEmailAddress(credentials) {
   }
 }
 
+export async function ToggleAccessToken() {
+  const access_token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(`${Api}/toggle_include_logo`, {},
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return response;
+  } catch (error) {
+    return { status: error.response?.status, data: error.response?.data };
+  }
+}
+
 export async function DownloadIndividualDesignedGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
   console.log('gifData', gifData);

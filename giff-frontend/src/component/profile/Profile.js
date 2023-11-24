@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import _debounce from 'lodash/debounce';
 import './Profile.scss';
 import Header from '../overall/Header';
-import { Box, Button, IconButton, TextField } from '@mui/material';
+import { Box, Button, Checkbox, IconButton, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { showNotification } from '../notification/Notification';
 import { useNavigate } from 'react-router-dom';
@@ -13,13 +13,14 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import LightTooltip from '../overall/LightToolTip';
 import ResolutionSelect from './ResolutionSelect';
 import Tag from '../overall/Tag';
-import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/Apis';
+import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, ToggleAccessToken, UpdateEmailAddress, UpdatePassword } from '../../endpoints/Apis';
 
 function Profile() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
     const { user, setUser } = useContext(GiftContext); // Get the context value
+    const [checked, setChecked] = useState(user?.userInfo?.include_logo);
     const [password, setPassword] = useState({
       currentPassword: '',
       newPassword: '',
@@ -29,8 +30,6 @@ function Profile() {
       password: '',
     });
     const isActive = user?.userInfo?.is_active;
-
-    console.log('email', email);
     
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
@@ -42,6 +41,27 @@ function Profile() {
         ...password,
         [field]: e.target.value,
       });
+    };
+
+    const handleUserUpdate = (updatedFields) => {
+      console.log('updatedFields', updatedFields);
+      setUser(updatedFields);
+    };
+
+    const handleOnChangeCheckbox = async (event) => {
+      try {
+        const response = await ToggleAccessToken();
+        const newValue = event.target.checked;
+        setChecked(newValue);
+        console.log('Settings saved:', response);
+        if (response.data.status === 'success') {
+          showNotification('success', 'Successfully saved settings.')
+          handleUserUpdate({ include_logo: response.data.data });
+        }
+      } catch (error) {
+        console.error('Error saving settings:', error);
+        showNotification('error', 'Error while saving settings.')
+      } 
     };
 
     const handleOnChangeEmail = (e, field) => {
@@ -72,10 +92,6 @@ function Profile() {
         showNotification('error', 'Failed to update password');
       }
     }
-
-    const handleUserUpdate = (updatedFields) => {
-      setUser(updatedFields);
-    };
 
     async function requestChangeUserEmail() {
       try {
@@ -212,6 +228,12 @@ function Profile() {
               </LightTooltip>
             )}
           </Box>
+          {user?.userLogoSrc && (
+            <Box className="checkbox">
+              <div>Use logo as last frame of gifs</div>
+              <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
+            </Box>
+          )}
         </Box>
         <Box className="delete-account">
           <Button onClick={handleOnClickDeleteAccount}>Delete Account</Button>

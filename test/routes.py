@@ -133,7 +133,6 @@ def signup():
 
 # Signout user endpoint
 
-
 def signout():
     try:
         # Invalidate token on client-side.
@@ -160,7 +159,6 @@ def delete_user_profile():
         print(f"Error occurred: {e}")
         db.session.rollback()
         return jsonify({"status": "Internal Server Error"}), 500
-
 
 @jwt_required()
 def update_password():
@@ -189,6 +187,9 @@ def include_logo_in_gifs():
         # Toggle the include_logo value
         user.include_logo = not user.include_logo
         db.session.commit()
+        return jsonify({"status": "success", "data": user.include_logo}), 200
+    else:
+        return jsonify({"status": False, "message": "User not found"}), 404
     
 @jwt_required()
 def update_email():
