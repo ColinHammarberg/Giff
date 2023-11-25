@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material';
 import React, { useEffect, forwardRef, useImperativeHandle, useState } from 'react';
-import { UploadPdfThenCreateGif } from '../../endpoints/Apis';
 import { showNotification } from '../notification/Notification';
+import { UploadPdfThenCreateGif } from '../../endpoints/GifCreationEndpoints';
 
 const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading, setGifGenerated }, ref) => {
 

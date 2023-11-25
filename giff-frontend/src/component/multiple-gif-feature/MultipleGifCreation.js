@@ -3,8 +3,8 @@ import { Box } from '@mui/material';
 import MultipleGifGenerator from './MultipleGifGenerator';
 import '../single-gif-feature/GifLanding.scss';
 import GifError from '../error-handling/GifError';
-import { DownloadAllLibraryGifs, GenerateMultipleGifs, GenerateMultiplePdfGifs } from '../../endpoints/Apis';
 import MultipleGeneratedGifs from './MultipleGeneratedGifs';
+import { DownloadAllLibraryGifs, GenerateMultipleGifs, GenerateMultiplePdfGifs } from '../../endpoints/GifCreationEndpoints';
 
 function MultipleGifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);

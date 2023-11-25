@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Button, Dialog, DialogContent } from '@mui/material';
 import './ChooseResolutionDialog.scss';
-import { SaveUserResolution } from '../../endpoints/Apis';
 import { showNotification } from '../notification/Notification';
+import { SaveUserResolution } from '../../endpoints/UserEndpoints';
 
 let resolve;
 let containerElement;
@@ -174,7 +174,7 @@ class ChooseResolutionDialog extends PureComponent {
                       })}
                   </Box>
                   <Box className="option-actions">
-                      <Button onClick={this.handleConfirm}>Download</Button>
+                      <Button onClick={this.handleConfirm} disabled={!this.state.selectedResolution}>Download</Button>
                         <span>Save settings 
                           <input 
                             type="checkbox"

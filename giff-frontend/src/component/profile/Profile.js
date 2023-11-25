@@ -13,7 +13,8 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import LightTooltip from '../overall/LightToolTip';
 import ResolutionSelect from './ResolutionSelect';
 import Tag from '../overall/Tag';
-import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, ToggleAccessToken, UpdateEmailAddress, UpdatePassword } from '../../endpoints/Apis';
+import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
+import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
 
 function Profile() {
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ function Profile() {
 
     const handleOnChangeCheckbox = async (event) => {
       try {
-        const response = await ToggleAccessToken();
+        const response = await ToggleIncludeLogo();
         const newValue = event.target.checked;
         setChecked(newValue);
         console.log('Settings saved:', response);

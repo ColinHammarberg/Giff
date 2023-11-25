@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserLogo from './UserLogo';
-import { UploadUserLogo } from '../../endpoints/Apis';
 import { showNotification } from '../notification/Notification';
+import { UploadUserLogo } from '../../endpoints/UserEndpoints';
 
 function LogoUploadForm(props) {
   const [selectedFile, setSelectedFile] = useState(null);

@@ -3,9 +3,9 @@ import SingleGifGenerator from './SingleGifGenerator';
 import { Box } from '@mui/material';
 import GeneratedGif from './GeneratedGif';
 import GifError from '../error-handling/GifError';
-import { GeneratePdfGifs, GenerateSingleGif } from '../../endpoints/Apis';
 import { GiftContext } from '../../context/GiftContextProvider';
 import VerifyAccountDialog from '../authorization/VerifyAccountDialog';
+import { GeneratePdfGifs, GenerateSingleGif } from '../../endpoints/GifCreationEndpoints';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);

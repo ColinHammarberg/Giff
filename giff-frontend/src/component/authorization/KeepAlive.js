@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { KeepAccessAlive } from '../../endpoints/Apis';
+import { KeepAccessAlive } from '../../endpoints/UserEndpoints';
 
 const KeepAliveComponent = () => {
   const navigate = useNavigate();

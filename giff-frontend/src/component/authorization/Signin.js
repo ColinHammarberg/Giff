@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Box, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
-import { Signin } from '../../endpoints/Apis';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { showNotification } from '../notification/Notification';
 import Header from '../overall/Header';
 import OfficialButton from '../buttons/OfficialButton';
+import { Signin } from '../../endpoints/UserEndpoints';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -41,16 +41,17 @@ function UserSignin() {
       if (response.status === 200) {
         localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
         setTimeout(() => {
+          setIsLoading(false);
           navigate(returnUrl);
           showNotification('success', 'Successfully signed in');
         }, 3000)
       } else {
         setError('error', response.data.message);
+        setIsLoading(false);
       }
     } catch (error) {
       setError('error', "Signin failed");
     }
-    setIsLoading(false);
   };
   
 

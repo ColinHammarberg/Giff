@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
 import { Box, Button } from '@mui/material';
-import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs, FetchUserGifs } from '../../endpoints/Apis';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
@@ -13,6 +12,8 @@ import DeleteGifDialog from './DeleteGifDialog';
 import ChooseResolutionDialog from './ChooseResolutionDialog';
 import { getSelectedFramePath } from './GifLibraryUtils';
 import { GiftContext } from '../../context/GiftContextProvider';
+import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs } from '../../endpoints/GifCreationEndpoints';
+import { FetchUserGifs } from '../../endpoints/UserEndpoints';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);

@@ -4,10 +4,10 @@ import './GeneratedGif.scss';
 import Header from '../overall/Header';
 import LoadingGif from '../overall/LoadingGif';
 import OfficialButton from '../buttons/OfficialButton';
-import { DownloadAllLibraryGifs, GetMultipleGifs } from '../../endpoints/Apis';
 import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
+import { DownloadAllLibraryGifs, GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;

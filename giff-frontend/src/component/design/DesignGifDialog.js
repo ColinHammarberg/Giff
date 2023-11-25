@@ -3,16 +3,25 @@ import PropTypes from 'prop-types';
 import './DesignGifDialog.scss';
 import DialogWrapper from '../DialogWrapper';
 import { Box, Button, IconButton } from '@mui/material';
-import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/Apis';
 import { showNotification } from '../notification/Notification';
 import Tabs from '../tabs/Tabs';
 import LeftNavigation from '../../resources/left-nav.png'
 import RightNavigation from '../../resources/right-nav.png'
 import EyeIcon from '../../resources/eye.png'
-import Frame1 from '../../resources/filter1.png'
-import Frame2 from '../../resources/filter-2.png'
-import Frame3 from '../../resources/filter-3.png'
+import Frame1 from '../../resources/frames/alien.png'
+import Frame2 from '../../resources/frames/chicken.png'
+import Frame3 from '../../resources/frames/girafe.png'
+import Frame4 from '../../resources/frames/unicorn.png'
+import Frame5 from '../../resources/frames/robotic.png'
+import Frame6 from '../../resources/frames/woman.png'
+import AlienIcon from '../../resources/icons/alien-icon.png'
+import ChickenIcon from '../../resources/icons/chicken-icon.png'
+import UnicornIcon from '../../resources/icons/unicorn-icon.png'
+import RoboticIcon from '../../resources/icons/robotic-icon.png'
+import WomanIcon from '../../resources/icons/woman-icon.png'
+import GiraffeIcon from '../../resources/icons/girafe-icon.png'
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
+import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/GifCreationEndpoints';
 
 
 class DesignGifDialog extends PureComponent {
@@ -49,9 +58,12 @@ class DesignGifDialog extends PureComponent {
       { color: '#FEC901' },
     ];
     this.frameSelection = [
-      { name: 'frame-1', frame: Frame1 },
-      { name: 'frame-2', frame: Frame2 },
-      { name: 'frame-3', frame: Frame3 },
+      { name: 'alien', frame: Frame1, icon: AlienIcon },
+      { name: 'chicken', frame: Frame2, icon: ChickenIcon },
+      { name: 'girafe', frame: Frame3, icon: GiraffeIcon },
+      { name: 'unicorn', frame: Frame4, icon: UnicornIcon },
+      { name: 'robotic', frame: Frame5, icon: RoboticIcon },
+      { name: 'woman', frame: Frame6, icon: WomanIcon },
     ]
   }
 
@@ -126,6 +138,7 @@ class DesignGifDialog extends PureComponent {
 
   getFrameSourceByName(frameName) {
     const frame = this.frameSelection.find(f => f.name === frameName);
+    console.log('frame', frame);
     return frame ? frame.frame : null;
   }
 
@@ -217,8 +230,9 @@ class DesignGifDialog extends PureComponent {
                         key={index}
                         onClick={() => this.handleFrameClick(item.name)}
                         style={{cursor: 'pointer'}}
+                        className={item.name}
                       >
-                        <img src={item.frame} alt="" />
+                        <img src={item?.icon} alt="" />
                       </Box>
                     ))}
                   </div>

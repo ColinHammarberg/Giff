@@ -2,6 +2,7 @@
 
 .design-gif-dialog {
     z-index: 1499;
+
     .MuiPaper-root {
         background-color: #000;
         box-shadow: 10px #fff;
@@ -101,13 +102,48 @@
         }
 
         .select-frame-container {
+            width: 40%;
+
             .frames {
                 display: flex;
                 gap: 16px;
+                flex-wrap: wrap;
+
+                .MuiBox-root {
+                    border-radius: 100px;
+                    background-color: #2C2A2A;
+                    width: 85px;
+                    height: 85px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &.alien {
+                        border: 2px solid #B9F140;
+                    }
+
+                    &.robotic {
+                        border: 2px solid #83CEF8;
+                    }
+
+                    &.chicken {
+                        border: 2px solid #F4149B;
+                    }
+
+                    &.woman {
+                        border: 2px solid #110946;
+                    }
+                    &.unicorn {
+                        background-color: #FD95A7;
+                        border: 2px solid #FD95A7;
+                    }
+                    &.girafe {
+                        border: 2px solid #FEC901;
+                    }
+                }
 
                 img {
-                    width: 100px;
-                    height: 100px;
+                    width: 40px;
                 }
             }
         }

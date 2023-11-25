@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React, { createContext, useState, useEffect } from 'react';
 import _debounce from 'lodash/debounce';
 import { showNotification } from '../component/notification/Notification';
-import { FetchUserInfo, FetchUserLogo } from '../endpoints/Apis';
 import useMobileQuery from '../queries/useMobileQuery';
+import { FetchUserInfo, FetchUserLogo } from '../endpoints/UserEndpoints';
 
 export const GiftContext = createContext();
 

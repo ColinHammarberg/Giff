@@ -3,11 +3,11 @@ import { Box, Grid, Button } from '@mui/material';
 import './MultipleGeneratedGifs.scss';
 import LoadingGif from '../overall/LoadingGif';
 import Header from '../overall/Header';
-import { GetMultipleGifs } from '../../endpoints/Apis';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
 import OfficialButton from '../buttons/OfficialButton';
 import useMobileQuery from '../../queries/useMobileQuery';
+import { GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
 
 function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload, setImportedGifs, importedGifs } = props;
