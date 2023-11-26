@@ -7,10 +7,7 @@ import './ResolutionSelect.scss';
 
 const ResolutionOptions = [
     { id: 9, value:  '100x100' },
-    { id: 10, value: '200x200' },
-    { id: 11, value: '300x300' },
-    { id: 12, value: '400x400' },
-    { id: 13, value: '500x500' },
+    { id: 10, value: '300x300' },
     { id: 14, value: '600x600' },
     { id: 15, value: '700x700' },
     { id: 16, value: '800x800' },

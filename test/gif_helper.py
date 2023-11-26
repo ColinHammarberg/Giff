@@ -268,15 +268,6 @@ def upload_pdf_and_generate_gif():
 
     return jsonify({'message': 'PDF uploaded and GIF generated!', 'data': [gif_data]}), 200
 
-
-def download_gif():
-    gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    gif_filename = 'scrolling_animation.gif'
-    gif_path = os.path.join(gifs_folder, gif_filename)
-    return send_file(gif_path, as_attachment=True, attachment_filename=gif_filename)
-
-
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
     try:
@@ -411,7 +402,6 @@ def update_selected_frame():
     user_id = get_jwt_identity()
     resource_id = data.get('resourceId')
     selected_frame = data.get('selectedFrame')
-    print('data', data)
 
     # Update the selectedColor for the specified GIF
     user_gif = UserGif.query.filter_by(
@@ -470,26 +460,26 @@ def download_individual_gif():
         gif_url = gif_data.get('url')
         gif_name = gif_data.get('name')
         user_id = get_jwt_identity()
-        user = User.query.filter_by(
-            id=user_id).first()
-        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get(
-            'resolution', "800x1280")
-        print('selected_resolution', selected_resolution)
+        user = User.query.filter_by(id=user_id).first()
+        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get('resolution', "800x1280")
 
         if gif_url is None:
             return "Invalid GIF URL", 400
 
         response = requests.get(gif_url)
-        print(f"Response status code: {response.status_code}")
 
         if response.status_code == 200:
             gif_bytes_io = io.BytesIO(response.content)
+            original_gif = Image.open(gif_bytes_io)
+
+            # Determine the original dimensions
+            original_width, original_height = original_gif.size
+            is_portrait = original_height > original_width
             resized_gif_bytes_io = resize_gif(
-                gif_bytes_io, selected_resolution)
+                gif_bytes_io, f"{original_width}x{original_height}" if is_portrait else selected_resolution)
 
             if selected_color:
-                modified_gif_bytes_io = add_border_to_gif(
-                    resized_gif_bytes_io, selected_color)
+                modified_gif_bytes_io = add_border_to_gif(resized_gif_bytes_io, selected_color)
             elif selected_frame:
                 s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                              aws_secret_access_key='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', 
@@ -508,7 +498,6 @@ def download_individual_gif():
                 download_name=f'{gif_name}.gif',
                 mimetype='image/gif'
             )
-
         else:
             print(f"Error: Unexpected status code {response.status_code}")
             return "An error occurred with the GIF URL", 400

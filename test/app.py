@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from extensions import db # Just import db, not app
 from flask_cors import CORS
 from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
-from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_gif, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
+from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify, include_logo_in_gifs
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -137,7 +137,6 @@ def generate_pdf():
     print('generate')
     return generate_pdf_gif()
 
-
 @app.route('/generate-pdf-gifs-from-list', methods=['POST'])
 def generate_pdf_list():
     print('generate')
@@ -164,18 +163,10 @@ def download_all():
 def download_individual_design():
     return download_individual_gif()
 
-
-@app.route('/download', methods=['GET'])
-def download_single_gif():
-    print('generate')
-    return download_gif()
-
-
 @app.route('/send_gif', methods=['POST'])
 def send_gif_email():
     print('generate')
     return send_email()
-
 
 @app.route('/chat', methods=['POST'])
 def open_ai_generate():
