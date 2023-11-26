@@ -163,7 +163,7 @@ class DesignGifDialog extends PureComponent {
             <Tabs
               tabs={tabs}
               onChange={this.handleOnChangeTab}
-              variant="tabs-level-2"
+              variant="tabs-level-3"
           />
           )}
           {activeTab === 0 && (

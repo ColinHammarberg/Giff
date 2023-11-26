@@ -22,7 +22,7 @@ function GifLibrary() {
     const { user } = useContext(GiftContext);
     const [isLoading, setIsLoading] = useState(false);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
-    const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design' ]);
+    const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
     const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();

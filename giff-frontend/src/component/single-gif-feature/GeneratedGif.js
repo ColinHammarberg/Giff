@@ -16,7 +16,7 @@ function GeneratedGif(props) {
   const { editGif, isDesignOpen, isMobile, selectedDesignGif, handleOpenDesign, handleCloseDesign } = useContext(GiftContext);
   const [selectedGif, setSelectedGif] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design']);
+  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
 
   useEffect(() => {
     if (gifGenerated) {
