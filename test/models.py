@@ -23,6 +23,7 @@ class UserGif(db.Model):
     resourceId = db.Column(db.String, unique=True)
     selectedColor = db.Column(db.String)
     selectedFrame = db.Column(db.String)
+    resourcetype = db.Column(db.String(255))
     user = db.relationship('User', back_populates='gifs')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

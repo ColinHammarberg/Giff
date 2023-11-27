@@ -65,8 +65,9 @@ function GifLibrary() {
       if (selectedGif !== null) {
         const hoveredGif = gifs[selectedGif];
         let selectedResolution = user?.userInfo?.resolution;
+        setIsLoading(true);
     
-        if (!selectedResolution) {
+        if (!selectedResolution && !hoveredGif.resourceType === 'pdf') {
           const resolutionDialogResult = await ChooseResolutionDialog.show();
           if (!resolutionDialogResult.hasConfirmed) {
             return;
@@ -80,6 +81,7 @@ function GifLibrary() {
           selectedColor: hoveredGif.selectedColor,
           selectedFrame: hoveredGif.selectedFrame,
           resolution: selectedResolution,
+          resourceType: hoveredGif.resourceType
         };
     
         try {
@@ -87,6 +89,7 @@ function GifLibrary() {
           const blob = new Blob([response.data], { type: 'image/gif' });
           const downloadUrl = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
+          setIsLoading(false);
           a.style.display = 'none';
           a.href = downloadUrl;
           a.download = `${hoveredGif.name}`;
@@ -99,6 +102,8 @@ function GifLibrary() {
         }
       }
     };
+
+    console.log('isLoading', isLoading);
     
 
       function handleOnClickOpenEditMode() {
@@ -138,7 +143,7 @@ function GifLibrary() {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
           console.log('hoveredGif', hoveredGif);
-          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame);
+          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType);
           setDesignChanges(false);
         }
       };
@@ -233,7 +238,7 @@ function GifLibrary() {
                   onClick={handleDownloadLibraryGifs} 
                   isProcessing={isLoading} 
                   label="Download all gifs" 
-                  variant="yellow" 
+                  variant="yellow"
                 />
               )
             ) : (
@@ -264,7 +269,7 @@ function GifLibrary() {
                     <Box className="gif-buttons">
                     {!openEditMode ? (
                       <>
-                        <Button className="download" onClick={handleDownloadIndividualGifs}>Download</Button>
+                        <Button className="download" onClick={handleDownloadIndividualGifs}>{isLoading ? 'Processing...' : 'Download'}</Button>
                         <Button className="share">Share</Button>
                       </>
                     ) : (

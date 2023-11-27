@@ -15,7 +15,7 @@ import zipfile
 import boto3
 import requests
 import fitz
-from s3_helper import upload_to_s3, fetch_filter_url
+from s3_helper import upload_to_s3
 import uuid
 from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB
 from models import UserGif, User
@@ -68,6 +68,7 @@ def generate_pdf_gif():
     user_id = data.get('user_id', get_jwt_identity())
     gif_data = {}
     user_exists = User.query.filter_by(id=user_id).first()
+    resourceType = 'pdf'
 
     if not user_exists and user_id:
         return jsonify({'error': f'User with id {user_id} not found'}), 400
@@ -133,9 +134,10 @@ def generate_pdf_gif():
         gif_data = {
             "name": NAME,
             "resourceId": resource_id,
+            "resourceType": resourceType
         }
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                       gif_url=output_path, resourceId=resource_id))
+                       gif_url=output_path, resourceId=resource_id, resourcetype=resourceType))
         db.session.commit()
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME, 'data': [gif_data]})
@@ -189,6 +191,7 @@ def generate_pdf_gifs_from_list():
 def upload_pdf_and_generate_gif():
     user_id = get_jwt_identity()
     gif_data = {}
+    resourceType = 'pdf'
 
     user_exists = User.query.filter_by(id=user_id).first()
     if not user_exists and user_id:
@@ -254,12 +257,13 @@ def upload_pdf_and_generate_gif():
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}/{gif_name}", resource_id)
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
-                           gif_url=output_path, resourceId=resource_id))
+                           gif_url=output_path, resourceId=resource_id, resourcetype=resourceType))
             db.session.commit()
 
         gif_data = {
             "name": gif_name,
             "resourceId": resource_id,
+            "resourceType": resourceType
         }
 
     except Exception as e:
@@ -510,6 +514,7 @@ def download_individual_gif():
 def generate_video_gif(data, user_id):
     URL = data.get('url')
     resource_id = str(uuid.uuid4())
+    resourceType = 'video'
     NAME = data.get(
         'name', f'{resource_id}.gif') if user_id else f"{resource_id}.gif"
     start_frame = data.get('start_frame', 0)
@@ -556,11 +561,12 @@ def generate_video_gif(data, user_id):
     gif_data = {
         "name": NAME,
         "resourceId": resource_id,
+        "resourceType": resourceType
     }
 
     if user_id:
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                       gif_url=output_gif_path, resourceId=resource_id))
+                       gif_url=output_gif_path, resourceId=resource_id, resourcetype=resourceType))
         db.session.commit()
 
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
@@ -574,6 +580,7 @@ def ease_in_quad(t):
 def generate_gif():
     data = request.get_json()
     user_id = data.get('user_id', None)
+    resourceType = 'webpage'
 
     if user_id is None:
         try:
@@ -701,9 +708,10 @@ def generate_gif():
         gif_data = {
             "name": NAME,
             "resourceId": resource_id,
+            "resourceType": resourceType
         }
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                    gif_url=output_path, resourceId=resource_id))
+                    gif_url=output_path, resourceId=resource_id, resourcetype=resourceType))
         db.session.commit()
 
     for screenshot in os.listdir(screenshots_dir):
