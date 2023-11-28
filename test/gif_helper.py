@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from werkzeug.utils import secure_filename
+from gpt_helper import analyze_gif_and_get_description
 from utils import resize_gif
 import io
 import os
@@ -59,7 +60,6 @@ def get_user_gifs():
         return jsonify({'error': str(e)}), 500
 
 # Endpoint for generating gif out of online pdfs
-
 
 @jwt_required()
 def generate_pdf_gif():
@@ -131,14 +131,25 @@ def generate_pdf_gif():
     if user_exists:
         upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
+        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                aws_secret_access_key='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', 
+                                region_name='eu-north-1')
+        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gift-resources',
+                                                                    'Key': f"{user_id}/{NAME}"},
+                                                        ExpiresIn=3600)
+        print('presigned_url', presigned_url)
+
+        description = analyze_gif_and_get_description(presigned_url)
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
+                           gif_url=output_path, resourceId=resource_id, ai_description=description))
+        db.session.commit()
         gif_data = {
             "name": NAME,
             "resourceId": resource_id,
-            "resourceType": resourceType
+            "resourceType": resourceType,
+            "ai_description": description,
         }
-        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                       gif_url=output_path, resourceId=resource_id, resourcetype=resourceType))
-        db.session.commit()
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME, 'data': [gif_data]})
 
@@ -256,14 +267,25 @@ def upload_pdf_and_generate_gif():
         if user_exists:
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}/{gif_name}", resource_id)
+            s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                aws_secret_access_key='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', 
+                                region_name='eu-north-1')
+            presigned_url = s3_client.generate_presigned_url('get_object',
+                                                            Params={'Bucket': 'gift-resources',
+                                                                    'Key': f"{user_id}/{gif_name}"},
+                                                            ExpiresIn=3600)
+            print('presigned_url', presigned_url)
+
+            description = analyze_gif_and_get_description(presigned_url)
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
-                           gif_url=output_path, resourceId=resource_id, resourcetype=resourceType))
+                           gif_url=output_path, resourceId=resource_id, ai_description=description))
             db.session.commit()
 
         gif_data = {
             "name": gif_name,
             "resourceId": resource_id,
-            "resourceType": resourceType
+            "resourceType": resourceType,
+            "ai_description": description
         }
 
     except Exception as e:
@@ -454,7 +476,6 @@ def overlay_filter_on_gif(gif_bytes_io, filter_url):
         logging.exception("Error occurred in overlay_filter_on_gif")
         raise e
 
-
 @jwt_required()
 def download_individual_gif():
     try:
@@ -509,7 +530,6 @@ def download_individual_gif():
     except Exception as e:
         print(f"Error downloading individual GIF: {e}")
         return "An error occurred", 500
-
 
 def generate_video_gif(data, user_id):
     URL = data.get('url')
@@ -571,10 +591,8 @@ def generate_video_gif(data, user_id):
 
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
 
-
 def ease_in_quad(t):
     return t * t
-
 
 @jwt_required(optional=True)
 def generate_gif():
@@ -704,15 +722,26 @@ def generate_gif():
         upload_to_s3(output_path, 'gift-resources',
                  f"{folder_name}{NAME}", resource_id)
         # Database Entry Here
-        print('user-id', user_id)
+        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                aws_secret_access_key='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', 
+                                region_name='eu-north-1')
+        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gift-resources',
+                                                                    'Key': f"{user_id}/{NAME}"},
+                                                        ExpiresIn=3600)
+        print('presigned_url', presigned_url)
+
+        description = analyze_gif_and_get_description(presigned_url)
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
+                           gif_url=output_path, resourceId=resource_id, ai_description=description))
+        db.session.commit()
         gif_data = {
             "name": NAME,
             "resourceId": resource_id,
-            "resourceType": resourceType
+            "resourceType": resourceType,
+            "ai_description": description
         }
-        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                    gif_url=output_path, resourceId=resource_id, resourcetype=resourceType))
-        db.session.commit()
+        
 
     for screenshot in os.listdir(screenshots_dir):
         os.remove(os.path.join(screenshots_dir, screenshot))

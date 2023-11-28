@@ -26,6 +26,7 @@ class UserGif(db.Model):
     resourcetype = db.Column(db.String(255))
     user = db.relationship('User', back_populates='gifs')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    ai_description = db.Column(db.String(1000))
 
 class UserLogo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

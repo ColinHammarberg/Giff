@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from '../overall/Header';
 import LoadingGif from '../overall/LoadingGif';
@@ -17,6 +17,7 @@ function GeneratedGif(props) {
   const [selectedGif, setSelectedGif] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
+  const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
 
   useEffect(() => {
     if (gifGenerated) {
@@ -71,16 +72,31 @@ function GeneratedGif(props) {
         {gifGenerated && importedGifs?.length > 0 && (
           <Box className="gif">
             {importedGifs.map((gif, index) => {
+              const isExpanded = expandedDescriptionIndex === index;
+              const shortDescription = gif?.ai_description?.substring(0, 100) + "...";
               return (
-                <div className="gif-container">
-                  <img src={gif?.url} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor}`}} />
-                  <Box className="gif-buttons"
-                    onMouseEnter={() => setSelectedGif(index)}
-                    onMouseLeave={() => setSelectedGif(null)}
-                  >
-                    <OfficialButton variant="pink" label="Edit" onClick={handleEditButtonClick} />
+                <>
+                  <div className="gif-container">
+                    <img src={gif?.url} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}} />
+                    <Box className="gif-buttons"
+                      onMouseEnter={() => setSelectedGif(index)}
+                      onMouseLeave={() => setSelectedGif(null)}
+                    >
+                      <OfficialButton variant="pink" label="Edit" onClick={handleEditButtonClick} />
+                    </Box>
+                  </div>
+                  <Box className="description" style={{ backgroundColor: gif.selectedColor || '#ffffff'}}>
+                    <p>
+                      {isExpanded ? gif?.ai_description : shortDescription}
+                    </p>
+                    <Button
+                      className="view-more-button"
+                      onClick={() => setExpandedDescriptionIndex(isExpanded ? null : index)}
+                    >
+                      {isExpanded ? "View Less" : "See longer description"}
+                    </Button>
                   </Box>
-                </div>
+                </>
               )
             })}
           </Box>
