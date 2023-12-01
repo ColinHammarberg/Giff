@@ -15,13 +15,15 @@ import ResolutionSelect from './ResolutionSelect';
 import Tag from '../overall/Tag';
 import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
 import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
+import useFetchUser from '../../queries/useUserDataQuery';
 
 function Profile() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
-    const { user, setUser } = useContext(GiftContext); // Get the context value
-    const [checked, setChecked] = useState(user?.userInfo?.include_logo);
+    const { setUser } = useContext(GiftContext); // Get the context value
+    const { user } = useFetchUser();
+    const [checked, setChecked] = useState(user?.include_logo);
     const [password, setPassword] = useState({
       currentPassword: '',
       newPassword: '',
@@ -30,7 +32,7 @@ function Profile() {
       newEmail: '',
       password: '',
     });
-    const isActive = user?.userInfo?.is_active;
+    const isActive = user?.is_active;
     
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
@@ -200,7 +202,7 @@ function Profile() {
               <div className="email">
                 <Tag variant={isActive ? 'success' : 'error'} label={isActive ? 'Verified' : 'Not verified'}/>
                 <TextField 
-                  value={user?.userInfo?.email}
+                  value={user?.email}
                   className="email"
                   disabled
                 />
@@ -217,7 +219,7 @@ function Profile() {
             <div className="text">
               <span>Standard gif size</span>
             </div>
-            <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.userInfo?.resolution} />
+            <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} />
           </Box>
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />

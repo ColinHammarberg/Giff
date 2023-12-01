@@ -7,10 +7,14 @@ import InfoButton from './InfoButton';
 import useMobileQuery from '../../queries/useMobileQuery';
 import Footer from './Footer';
 import OfficialButton from '../buttons/OfficialButton';
+import useFetchUser from '../../queries/useUserDataQuery';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
   const { isMobile } = useMobileQuery();
+  const { user } = useFetchUser();
+
+  console.log('user', user);
   const infoButtonText = [
     {text: 'Create several gifs at once to download a catalog of gifs to share. It’s an awesome way to save time if you have a couple of pages, blog posts or whitepapers that you want to share with different people.'},
     {text: 'Create one gif if you have something specific you want to share with someone right away. If you want, our friendly AI Mrs. Gif-t can even help you with your emails.'}
