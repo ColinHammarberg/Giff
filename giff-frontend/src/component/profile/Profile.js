@@ -16,7 +16,7 @@ import Tag from '../overall/Tag';
 import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
 import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
-import { useQueryClient } from 'react-query';
+// import { useQueryClient } from 'react-query';
 import useFetchUserLogo from '../../queries/useUserLogoQuery';
 
 function Profile() {
@@ -37,7 +37,7 @@ function Profile() {
       password: '',
     });
     const isActive = user?.is_active;
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
@@ -53,8 +53,6 @@ function Profile() {
 
     const handleUserUpdate = (updatedFields) => {
       console.log('updatedFields', updatedFields);
-      queryClient.invalidateQueries('userData');
-      setUser(updatedFields);
     };
 
     const handleOnChangeCheckbox = async (event) => {
