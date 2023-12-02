@@ -29,7 +29,7 @@ class MenuPopOver extends PureComponent {
     if (item?.onClick) {
       item.onClick()
     } else {
-      this.props.handleNavigation(item.url)
+      this.props.handleNavigation(item.url, item.isExternal)
     }
   }
 

@@ -15,8 +15,12 @@ function MenuButton() {
       setAnchorEl(event.currentTarget);
     };
 
-    function handleNavigation(url) {
-      navigate(`/${url}`)
+    function handleNavigation(url, isExternal) {
+      if (isExternal) {
+        window.open(url, '_blank');
+      } else {
+        navigate(`/${url}`)
+      }
     }
 
     async function handleOnClickSignOut() {
