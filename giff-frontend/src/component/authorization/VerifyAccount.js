@@ -21,7 +21,6 @@ function VerifyAccount() {
       enabled: !!token,
       onSuccess: (data) => {
         if (data?.status === 200) {
-          showNotification('success', data.status);
           sessionStorage.removeItem('user');
           setTimeout(() => navigate('/'), 3000);
         }
