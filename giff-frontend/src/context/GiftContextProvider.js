@@ -62,7 +62,7 @@ const GiftContextProvider = ({ children }) => {
   const updateUserData = (updatedFields) => {
     setUser((prevUser) => {
       const updatedUserInfo = {
-        ...prevUser.userInfo,
+        ...prevUser?.userInfo,
         ...updatedFields,
       };
   
