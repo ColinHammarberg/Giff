@@ -6,6 +6,7 @@ const fetchUserLogo = async (access_token) => {
     if (access_token) {      
         const userLogoResponse = await FetchUserLogo();
         const logoUrl = userLogoResponse?.data?.logo_url || null;
+        console.log('logoUrl', userLogoResponse);
         const userLogoObj = {
             userLogoSrc: logoUrl,
         };
@@ -30,7 +31,7 @@ const useFetchUserLogo = () => {
     }
   );
 
-  console.log('getUserData', getUserLogo?.data?.logo_url);
+  console.log('getUserData', getUserLogo);
 
   return {
     userLogo: getUserLogo?.data?.logo_url,
