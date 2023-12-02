@@ -3,7 +3,7 @@ import React from 'react';
 import './Header.scss';
 import MenuButton from './MenuButton';
 import { useNavigate } from 'react-router-dom';
-import DesktopLogo from '../../resources/app_logo.gif'
+import DesktopLogo from '../../resources/app_logo.png'
 import MobileLogo from '../../resources/gif_logo_mobile.gif'
 import useMobileQuery from '../../queries/useMobileQuery';
 
