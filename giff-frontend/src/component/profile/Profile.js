@@ -17,6 +17,7 @@ import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
 import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
 import { useQueryClient } from 'react-query';
+import useFetchUserLogo from '../../queries/useUserLogoQuery';
 
 function Profile() {
     const navigate = useNavigate();
@@ -24,6 +25,8 @@ function Profile() {
     const [changeUserDetails, setChangeUserDetails] = useState(null);
     const { setUser } = useContext(GiftContext); // Get the context value
     const { user } = useFetchUser(changeUserDetails);
+    const { userLogo } = useFetchUserLogo();
+    console.log('userLogo', userLogo);
     const [checked, setChecked] = useState(user?.include_logo);
     const [password, setPassword] = useState({
       currentPassword: '',
@@ -221,8 +224,8 @@ function Profile() {
             <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} />
           </Box>
           <Box className="password-details">
-            <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />
-            {user?.userLogoSrc && (
+            <LogoUploadForm userLogoSrc={userLogo} setUser={setUser} />
+            {userLogo && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>
                   <DeleteIcon />
@@ -230,7 +233,7 @@ function Profile() {
               </LightTooltip>
             )}
           </Box>
-          {user?.userLogoSrc && (
+          {userLogo && (
             <Box className="checkbox">
               <div>Use logo as last frame of gifs</div>
               <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
