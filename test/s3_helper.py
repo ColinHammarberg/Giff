@@ -135,9 +135,9 @@ def fetch_logo():
         resource_id = user_logo.resource_id
         folder_name = f"{user_id}/logos/"
         presigned_url = s3.generate_presigned_url('get_object',
-                                             Params={'Bucket': 'logo-resources',
-                                                     'Key': f"{folder_name}{resource_id}.png"},
-                                             ExpiresIn=3600)  # URL expires in 1 hour
+                                                  Params={'Bucket': 'logo-resources',
+                                                          'Key': f"{folder_name}{resource_id}.png"},
+                                                  ExpiresIn=3600)  # URL expires in 1 hour
 
     # Return the logo URL, which will be null if no logo is found
     return jsonify({'message': 'Success', 'logo_url': presigned_url}), 200

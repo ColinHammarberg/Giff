@@ -28,7 +28,6 @@ const fetchUser = async (access_token) => {
     }
   } catch (error) {
     console.error('Error fetching user data:', error);
-    // Optionally, you might want to handle the error more gracefully
     throw error;
   }
 };
