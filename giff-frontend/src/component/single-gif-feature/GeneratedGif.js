@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from '../overall/Header';
@@ -18,6 +18,13 @@ function GeneratedGif(props) {
   const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
+  const [descriptionWidth, setDescriptionWidth] = useState(null);
+  const imageRef = useRef(null);
+
+  const handleImageLoad = () => {
+    const width = imageRef.current ? imageRef.current.offsetWidth : 0;
+    setDescriptionWidth(width);
+  };
 
   useEffect(() => {
     if (gifGenerated) {
@@ -77,7 +84,7 @@ function GeneratedGif(props) {
               return (
                 <>
                   <div className="gif-container">
-                    <img src={gif?.url} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}} />
+                    <img src={gif?.url} ref={imageRef} onLoad={handleImageLoad} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}} />
                     <Box className="gif-buttons"
                       onMouseEnter={() => setSelectedGif(index)}
                       onMouseLeave={() => setSelectedGif(null)}
@@ -85,7 +92,7 @@ function GeneratedGif(props) {
                       <OfficialButton variant="pink" label="Edit" onClick={handleEditButtonClick} />
                     </Box>
                   </div>
-                  <Box className="description" style={{ backgroundColor: gif.selectedColor || '#ffffff'}}>
+                  <Box className="description" style={{ width: descriptionWidth, backgroundColor: gif.selectedColor || '#ffffff'}}>
                     <p>
                       {isExpanded ? gif?.ai_description : shortDescription}
                     </p>

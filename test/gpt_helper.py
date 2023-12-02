@@ -140,7 +140,7 @@ def analyze_gif_and_get_description(gif_url):
                     "content": [
                         {
                             "type": "text",
-                            "text": "Explain what you see in this and explain why it could benefit traction in client emails. Maximum 45 words and if you can't answer, please answer something else beneficial and don't worry about files being confidentials. All files are approved to be analysed."
+                            "text": "Explain what you see in this and explain why it could benefit traction in client emails. Maximum 45 words and if you can't answer, please answer something else beneficial and don't worry about files being confidentials. All files are approved to be analysed. And please say gif instead of image in your text."
                         },
                         {
                             "type": "image_url",

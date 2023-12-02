@@ -34,11 +34,9 @@
         flex-direction: column;
 
         .description {
-            min-width: 333px;
             background-color: #FFFFFF;
             color: #000;
             font-size: 13px;
-            padding: 4px;
             font-family: 'Staatliches';
             display: flex;
             flex-direction: column;
@@ -46,7 +44,7 @@
             padding-bottom: 8px;
 
             p {
-                width: 300px;
+                padding: 4px;
             }
 
             .view-more-button {
@@ -104,7 +102,7 @@
         display: grid;
         gap: 20px;
         justify-content: center;
-        margin-top: 50px;
+        margin-top: 30px;
 
         .official-btn {
             width: 311px !important;
