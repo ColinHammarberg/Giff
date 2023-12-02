@@ -2,6 +2,7 @@
     .notification-success {
         background-color: #B9F140 !important;
         color: #000;
+
         &::before {
             content: none !important;
         }
@@ -10,6 +11,7 @@
     .notification-error {
         background-color: #FE6B01 !important;
         color: #000;
+
         &::before {
             content: none !important;
         }
@@ -19,13 +21,20 @@
         .title {
             display: none;
         }
+
         .message {
             font-family: "Staatliches";
         }
     }
-    
+
     .notification {
         opacity: 1;
-        border-radius: 50px;
+        border-radius: 0px 0px 0px 20px;
+        height: 120px;
+        font-size: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
     }
 }
