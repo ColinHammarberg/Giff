@@ -64,7 +64,7 @@ function LogoUploadForm(props) {
           </button>
         </div>
         {props.userLogoSrc ? (
-          <UserLogo />
+          <UserLogo userLogoSrc={props.userLogoSrc} />
         ) : (
           <label htmlFor="logo-file" id="custom-button" className="custom-button">
             Choose File

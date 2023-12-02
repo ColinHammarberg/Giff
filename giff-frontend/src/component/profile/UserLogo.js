@@ -1,10 +1,8 @@
-import { useContext } from "react";
-import { GiftContext } from "../../context/GiftContextProvider";
+import React from 'react';
 
-function UserLogo() {
-    const { user } = useContext(GiftContext);
+function UserLogo({ userLogoSrc }) {
     return (
-        <img src={user?.userLogoSrc} alt="" style={{ width: '120px', height: '100px', border: '2px solid #FEC901' }} />
+        <img src={userLogoSrc} alt="" style={{ width: '120px', height: '100px', border: '2px solid #FEC901' }} />
     )
 }
 
