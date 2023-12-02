@@ -30,7 +30,7 @@ const useFetchUserLogo = () => {
   console.log('getUserLogo', getUserLogo);
 
   return {
-    userLogoSrc: getUserLogo?.data?.userLogoSrc,
+    userLogoSrc: getUserLogo?.data,
     isLoading: getUserLogo.isLoading,
     isError: getUserLogo.isError,
   };
