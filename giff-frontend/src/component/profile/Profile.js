@@ -220,8 +220,8 @@ function Profile() {
             <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} />
           </Box>
           <Box className="password-details">
-            <LogoUploadForm userLogoSrc={user?.userLogoSrc} setUser={setUser} />
-            {user?.userLogoSrc && (
+            <LogoUploadForm userLogoSrc={user?.logo_url} setUser={setUser} />
+            {user?.logo_url && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>
                   <DeleteIcon />
@@ -229,7 +229,7 @@ function Profile() {
               </LightTooltip>
             )}
           </Box>
-          {user?.userLogoSrc && (
+          {user?.logo_url && (
             <Box className="checkbox">
               <div>Use logo as last frame of gifs</div>
               <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
