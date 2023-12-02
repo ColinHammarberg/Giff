@@ -5,13 +5,10 @@ const fetchUserLogo = async (access_token) => {
   try {
     if (access_token) {      
         const userLogoResponse = await FetchUserLogo();
-        const logoUrl = userLogoResponse?.data?.logo_url || null;
+        const userLogoSrc = userLogoResponse?.data?.logo_url || null;
         console.log('logoUrl', userLogoResponse);
-        const userLogoObj = {
-            userLogoSrc: logoUrl,
-        };
-        sessionStorage.setItem('userLogo', JSON.stringify(userLogoObj));
-        return userLogoObj;
+        sessionStorage.setItem('userLogoItem', JSON.stringify(userLogoSrc));
+        return userLogoSrc;
     }
   } catch (error) {
     console.error('Error fetching user logo:', error);
@@ -21,9 +18,8 @@ const fetchUserLogo = async (access_token) => {
 
 const useFetchUserLogo = () => {
   const access_token = localStorage.getItem('access_token');
-
   const getUserLogo = useQuery(
-    ['userData', access_token],
+    ['userLogoSrc', access_token],
     () => fetchUserLogo(access_token),
     {
       retry: 1,

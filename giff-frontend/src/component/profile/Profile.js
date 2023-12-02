@@ -165,6 +165,7 @@ function Profile() {
               const updatedUser = { ...prevUser, userLogoSrc: null };
               return updatedUser;
             });
+            sessionStorage.removeItem('userLogoItem')
       
             // Step 2: Update localStorage
             const userData = sessionStorage.getItem('user');
