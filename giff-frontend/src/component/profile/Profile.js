@@ -25,8 +25,8 @@ function Profile() {
     const [changeUserDetails, setChangeUserDetails] = useState(null);
     const { setUser } = useContext(GiftContext); // Get the context value
     const { user } = useFetchUser(changeUserDetails);
-    const { userLogo } = useFetchUserLogo();
-    console.log('userLogo', userLogo);
+    const { userLogoSrc } = useFetchUserLogo();
+    console.log('userLogoSrc', userLogoSrc);
     const [checked, setChecked] = useState(user?.include_logo);
     const [password, setPassword] = useState({
       currentPassword: '',
@@ -224,8 +224,8 @@ function Profile() {
             <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} />
           </Box>
           <Box className="password-details">
-            <LogoUploadForm userLogoSrc={userLogo} setUser={setUser} />
-            {userLogo && (
+            <LogoUploadForm userLogoSrc={userLogoSrc} setUser={setUser} />
+            {userLogoSrc && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>
                   <DeleteIcon />
@@ -233,7 +233,7 @@ function Profile() {
               </LightTooltip>
             )}
           </Box>
-          {userLogo && (
+          {userLogoSrc && (
             <Box className="checkbox">
               <div>Use logo as last frame of gifs</div>
               <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />

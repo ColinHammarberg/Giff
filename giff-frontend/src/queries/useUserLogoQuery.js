@@ -31,10 +31,10 @@ const useFetchUserLogo = () => {
     }
   );
 
-  console.log('getUserData', getUserLogo);
+  console.log('getUserLogo', getUserLogo);
 
   return {
-    userLogo: getUserLogo?.data?.logo_url,
+    userLogoSrc: getUserLogo?.data?.userLogoSrc,
     isLoading: getUserLogo.isLoading,
     isError: getUserLogo.isError,
   };
