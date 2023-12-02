@@ -16,13 +16,14 @@ import Tag from '../overall/Tag';
 import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
 import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
+import { QueryClient } from 'react-query';
 
 function Profile() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
     const { setUser } = useContext(GiftContext); // Get the context value
-    const { user } = useFetchUser();
+    const { user } = useFetchUser(changeUserDetails);
     const [checked, setChecked] = useState(user?.include_logo);
     const [password, setPassword] = useState({
       currentPassword: '',
@@ -33,7 +34,7 @@ function Profile() {
       password: '',
     });
     const isActive = user?.is_active;
-    
+
     const handleOnClickChangePasswordButton = (event) => {
       console.log('event', event, changeUserDetails);
       setAnchorEl(event?.currentTarget);
@@ -48,6 +49,7 @@ function Profile() {
 
     const handleUserUpdate = (updatedFields) => {
       console.log('updatedFields', updatedFields);
+      QueryClient.invalidateQueries('userData');
       setUser(updatedFields);
     };
 
@@ -97,18 +99,14 @@ function Profile() {
     }
 
     async function requestChangeUserEmail() {
-      try {
-        const response = await UpdateEmailAddress(email);
-        console.log('response', response);
-        if (response.data.status === 'Email updated successfully') {
-          showNotification('success', 'Email updated successfully');
+      const response = await UpdateEmailAddress(email);
+      console.log('response', response);
+      if (response.data.status === 'Email updated successfully') {
+        showNotification('success', 'Email updated successfully');
           // Update user state
-          handleUserUpdate({ email: email.newEmail });
-        } else {
+        handleUserUpdate({ email: email.newEmail });
+      } else {
           showNotification('error', 'Email was not updated successfully. Please try again!');
-        }
-      } catch (error) {
-        showNotification('error', 'Failed to update email');
       }
     }
     
