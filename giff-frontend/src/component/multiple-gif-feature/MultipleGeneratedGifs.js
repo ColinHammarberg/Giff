@@ -8,6 +8,7 @@ import { useTabs } from '../tabs/Tabs';
 import OfficialButton from '../buttons/OfficialButton';
 import useMobileQuery from '../../queries/useMobileQuery';
 import { GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
+import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 
 function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload, setImportedGifs, importedGifs } = props;
@@ -17,26 +18,27 @@ function MultipleGeneratedGifs(props) {
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const [selectedGif, setSelectedGif] = useState(null);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
-  const [descriptionWidth, setDescriptionWidth] = useState(null);
+  const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
   const imageRef = useRef(null);
   const { isMobile } = useMobileQuery();
 
-  const editGif = (gifUrl, resourceId, selectedColor) => {
+  const editGif = (gifUrl, resourceId, selectedColor, selectedFrame) => {
     console.log('Sharing GIF:', gifUrl);
     console.log('Resource ID:', resourceId);
     setIsDesignOpen(true);
-    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor});
+    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame});
   };
 
   const handleImageLoad = () => {
     const width = imageRef.current ? imageRef.current.offsetWidth : 0;
-    setDescriptionWidth(width);
+    const height = imageRef.current ? imageRef.current.offsetHeight : 0;
+    setImageDimensions({ width, height });
   };
 
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor);
+      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame);
       setDesignChanges(false);
     }
   };
@@ -80,6 +82,9 @@ function MultipleGeneratedGifs(props) {
               className="generated-gif"
               style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}}
             />
+            {gif.selectedFrame && !gif.selectedColor && (
+              <img src={getSelectedFramePath(gif.selectedFrame)} style={{width: imageDimensions.width, height: imageDimensions.height}} alt="" />
+            )}
               <Box className="gif-buttons"
                 onMouseEnter={() => setSelectedGif(index)}
                 onMouseLeave={() => setSelectedGif(null)}
@@ -87,7 +92,7 @@ function MultipleGeneratedGifs(props) {
                 <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
               </Box>
           </div>
-          <Box className="description" style={{ width: descriptionWidth, backgroundColor: gif.selectedColor || '#ffffff'}}>
+          <Box className="description" style={{ width: imageDimensions.width, backgroundColor: gif.selectedColor || '#ffffff'}}>
             <p>
               {isExpanded ? gif?.ai_description : shortDescription}
             </p>

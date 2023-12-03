@@ -8,6 +8,7 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
 import { DownloadAllLibraryGifs, GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
+import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
@@ -18,12 +19,13 @@ function GeneratedGif(props) {
   const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
-  const [descriptionWidth, setDescriptionWidth] = useState(null);
+  const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
   const imageRef = useRef(null);
 
   const handleImageLoad = () => {
     const width = imageRef.current ? imageRef.current.offsetWidth : 0;
-    setDescriptionWidth(width);
+    const height = imageRef.current ? imageRef.current.offsetHeight : 0;
+    setImageDimensions({ width, height });
   };
 
   useEffect(() => {
@@ -40,7 +42,7 @@ function GeneratedGif(props) {
 
   async function handleDownloadClick() {
     if (gifGenerated) {
-      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
+      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor, selectedFrame: gif.selectedFrame }));
       try {
         const response = await DownloadAllLibraryGifs(gifData);
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
@@ -85,14 +87,17 @@ function GeneratedGif(props) {
                 <>
                   <div className="gif-container">
                     <img src={gif?.url} ref={imageRef} onLoad={handleImageLoad} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}} />
+                    {gif.selectedFrame && !gif.selectedColor && (
+                      <img src={getSelectedFramePath(gif.selectedFrame)} style={{width: imageDimensions.width, height: imageDimensions.height}} alt="" />
+                    )}
                     <Box className="gif-buttons"
                       onMouseEnter={() => setSelectedGif(index)}
                       onMouseLeave={() => setSelectedGif(null)}
                     >
-                      <OfficialButton variant="pink" label="Edit" onClick={handleEditButtonClick} />
+                      <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
                     </Box>
                   </div>
-                  <Box className="description" style={{ width: descriptionWidth, backgroundColor: gif.selectedColor || '#ffffff'}}>
+                  <Box className="description" style={{ width: imageDimensions.width, backgroundColor: gif.selectedColor || '#ffffff'}}>
                     <p>
                       {isExpanded ? gif?.ai_description : shortDescription}
                     </p>

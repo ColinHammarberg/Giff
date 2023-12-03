@@ -109,7 +109,7 @@ function MultipleGifLanding() {
   async function handleDownloadClick() {
     if (gifGenerated) {
       setIsLoading(true);
-      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
+      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor, selectedFrame: gif.selectedFrame }));
       try {
         const response = await DownloadAllLibraryGifs(gifData);
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));

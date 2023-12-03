@@ -32,6 +32,10 @@
         margin-top: 50px;
         flex-direction: column;
 
+        &.edit {
+            background-color: #000;
+        }
+
         .description {
             background-color: #FFFFFF;
             color: #000;
@@ -60,8 +64,7 @@
         }
 
         img {
-            max-width: 333px;
-            height: 252px;
+            height: 250px;
         }
 
         .gif-container {
@@ -69,12 +72,14 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            position: relative; // Ensure relative positioning
 
             .gif-buttons {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
                 position: absolute;
+                z-index: 1299;
 
                 .MuiButton-root {
                     width: 69px;
@@ -82,7 +87,7 @@
                     color: #fff;
                     font-family: 'Staatliches';
                     border: 1px solid #fff;
-                    margin-top: 5px; // Adjust this value based on your design
+                    margin-top: 5px;
 
                     &.edit {
                         background-color: #000;
@@ -91,8 +96,11 @@
             }
 
             img {
-                width: unset !important;
-                height: 250px;
+                &:nth-child(2) {
+                    position: absolute;
+                    top: 0;
+                    z-index: 8;
+                }
             }
         }
     }
