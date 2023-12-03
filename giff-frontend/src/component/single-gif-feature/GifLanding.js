@@ -6,6 +6,7 @@ import GifError from '../error-handling/GifError';
 import { GiftContext } from '../../context/GiftContextProvider';
 import VerifyAccountDialog from '../authorization/VerifyAccountDialog';
 import { GeneratePdfGifs, GenerateSingleGif } from '../../endpoints/GifCreationEndpoints';
+import useFetchUser from '../../queries/useUserDataQuery';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -13,9 +14,10 @@ function GifLanding() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPdf, setSelectedPdf] = useState(null);
-  const { handleDownloadClick, user } = useContext(GiftContext);
+  const { handleDownloadClick } = useContext(GiftContext);
+  const { user } = useFetchUser();
   const formRef = useRef();
-  const isActive = user?.userInfo?.is_active;
+  const isActive = user?.is_active;
 
   const handleOnChangeUrl = (value) => {
     setUrl(value);
@@ -32,8 +34,6 @@ function GifLanding() {
   const handleCreateGifClick = () => {
     formRef.current.submit();
   };
-
-  console.log('isActive', isActive);
 
   const generateSingleGif = async () => {
     if (!isActive) {
