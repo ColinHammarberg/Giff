@@ -14,6 +14,7 @@ import { getSelectedFramePath } from './GifLibraryUtils';
 import { GiftContext } from '../../context/GiftContextProvider';
 import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs } from '../../endpoints/GifCreationEndpoints';
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
+import LoopIcon from '@mui/icons-material/Loop';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -21,6 +22,7 @@ function GifLibrary() {
     const [designChanges, setDesignChanges] = useState(false);
     const { user } = useContext(GiftContext);
     const [isLoading, setIsLoading] = useState(false);
+    const [showLoading, setShowLoading] = useState(true);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
@@ -29,14 +31,23 @@ function GifLibrary() {
     const navigate = useNavigate();
     const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
     const imageRefs = useRef({});
-
     const access_token = localStorage.getItem('access_token');
+    
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowLoading(false);
+      }, 5000);
+    
+      return () => clearTimeout(timer);
+    }, []);
+
     useEffect(() => {
       if (!access_token) {
         const returnUrl = window.location.pathname;
         navigate(`/?returnUrl=${encodeURIComponent(returnUrl)}`);
       }
     }, [access_token, navigate]);
+
     useEffect(() => {
       const fetchData = async () => {
         const response = await FetchUserGifs();
@@ -181,14 +192,24 @@ function GifLibrary() {
           }
         }
       }
-
-      const handleOpenDesign = () => {
-        setIsDesignOpen(true);
-      };
+  const handleOpenDesign = () => {
+    setIsDesignOpen(true);
+  };
     
-      const handleCloseDesign = () => {
-        setIsDesignOpen(false);
-      };
+  const handleCloseDesign = () => {
+    setIsDesignOpen(false);
+  };
+
+  if (showLoading) {
+    return (
+      <>
+        <Header menu />
+        <div className="loading-gifs-container">
+          <LoopIcon className="loading-spinner" />
+        </div>
+      </>
+    );
+  }
   return (
     <div className="gif-library">
       <Header menu />
@@ -268,7 +289,7 @@ function GifLibrary() {
                       src={item.url} 
                       ref={el => imageRefs.current[index] = el} 
                       onLoad={() => handleImageLoad(index)}
-                      alt="" 
+                      alt=""
                       style={{ border: !item.selectedFrame && `4px solid ${item.selectedColor}`}} 
                     />
                     {item.selectedFrame && !item.selectedColor && (

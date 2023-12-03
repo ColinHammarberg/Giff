@@ -1,4 +1,22 @@
 // @import '../utils/responsiveUtils.scss';
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-gifs-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+
+    .loading-spinner {
+        animation: spin 1s linear infinite;
+        color: #fff;
+        font-size: 40px;
+    }
+}
 
 .gif-library {
     font-family: 'Staatliches';
@@ -128,7 +146,6 @@
 
                     img {
                         height: 200px;
-                        border: 1px solid #FEC901;
 
                         &:nth-child(2) {
                             position: absolute;
