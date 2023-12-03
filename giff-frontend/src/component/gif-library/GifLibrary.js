@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
 import { Box, Button } from '@mui/material';
@@ -27,7 +27,9 @@ function GifLibrary() {
     const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
-    console.log('user', user);
+    const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
+    const imageRefs = useRef({});
+
     const access_token = localStorage.getItem('access_token');
     useEffect(() => {
       if (!access_token) {
@@ -38,10 +40,7 @@ function GifLibrary() {
     useEffect(() => {
       const fetchData = async () => {
         const response = await FetchUserGifs();
-        if (response.data) {
-          console.log('response', response.data);
-  
-          // Sort the gifs based on the created_at field in descending order
+        if (response.data) {  
           const sortedGifs = response.data.sort((a, b) => {
             const dateA = a.created_at ? new Date(a.created_at) : null;
             const dateB = b.created_at ? new Date(b.created_at) : null;
@@ -60,6 +59,19 @@ function GifLibrary() {
       };
       fetchData();
     }, [designChanges]);
+
+    const handleImageLoad = (index) => {
+      const image = imageRefs.current[index];
+      if (image) {
+        const width = image.offsetWidth;
+        const height = image.offsetHeight;
+        // You might want to store dimensions per GIF, not as a single state
+        setImageDimensions(prevDimensions => ({
+          ...prevDimensions,
+          [index]: { width, height }
+        }));
+      }
+    };
 
     const handleDownloadIndividualGifs = async () => {
       if (selectedGif !== null) {
@@ -101,10 +113,7 @@ function GifLibrary() {
           console.error('Error downloading individual GIF:', error);
         }
       }
-    };
-
-    console.log('isLoading', isLoading);
-    
+    };    
 
       function handleOnClickOpenEditMode() {
         setOpenEditMode(true);
@@ -133,8 +142,6 @@ function GifLibrary() {
       };
 
       const editGif = (gifUrl, resourceId, selectedColor, selectedFrame) => {
-        console.log('Sharing GIF:', gifUrl);
-        console.log('Resource ID:', resourceId);
         setIsDesignOpen(true);
         setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame});
       };
@@ -142,7 +149,6 @@ function GifLibrary() {
       const handleEditButtonClick = () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          console.log('hoveredGif', hoveredGif);
           editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType);
           setDesignChanges(false);
         }
@@ -161,13 +167,9 @@ function GifLibrary() {
         } else {
           try {
             const response = await DeleteGif(gifData);
-            if (response.data) {
-              console.log('response', response.data);
-        
-              // Update local state to remove the deleted GIF
+            if (response.data) {        
               const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
               setGifs(updatedGifs);
-        
               showNotification('success', 'GIF deleted from your library.');
             }
           } catch (error) {
@@ -262,9 +264,19 @@ function GifLibrary() {
                     onMouseEnter={() => setSelectedGif(index)}
                     onMouseLeave={() => setSelectedGif(null)}
                   >
-                    <img src={item.url} alt="" style={{ border: !item.selectedFrame && `4px solid ${item.selectedColor}`}} />
+                    <img 
+                      src={item.url} 
+                      ref={el => imageRefs.current[index] = el} 
+                      onLoad={() => handleImageLoad(index)}
+                      alt="" 
+                      style={{ border: !item.selectedFrame && `4px solid ${item.selectedColor}`}} 
+                    />
                     {item.selectedFrame && !item.selectedColor && (
-                      <img src={getSelectedFramePath(item.selectedFrame)} alt="" />
+                      <img 
+                        src={getSelectedFramePath(item.selectedFrame)} 
+                        alt="" 
+                        style={imageDimensions[index] ? {width: imageDimensions[index].width, height: imageDimensions[index].height} : {}} 
+                      />
                     )}
                     <Box className="gif-buttons">
                     {!openEditMode ? (

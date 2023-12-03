@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { TextField } from '@mui/material';
 import { showNotification } from '../notification/Notification';
 import { UploadPdfThenCreateGif } from '../../endpoints/GifCreationEndpoints';
@@ -29,8 +29,6 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
       setSelectedPdf(file);
     }
   };
-
-  
 
   const handlePdfChange = (e) => {
     e.preventDefault();

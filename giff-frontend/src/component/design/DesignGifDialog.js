@@ -14,6 +14,12 @@ import Frame3 from '../../resources/frames/girafe.png'
 import Frame4 from '../../resources/frames/unicorn.png'
 import Frame5 from '../../resources/frames/robotic.png'
 import Frame6 from '../../resources/frames/woman.png'
+import Frame7 from '../../resources/frames/pdf-alien.png'
+import Frame8 from '../../resources/frames/pdf-chicken.png'
+import Frame9 from '../../resources/frames/pdf-girafe.png'
+import Frame10 from '../../resources/frames/pdf-unicorn.png'
+import Frame11 from '../../resources/frames/pdf-robotic.png'
+import Frame12 from '../../resources/frames/pdf-woman.png'
 import AlienIcon from '../../resources/icons/alien-icon.png'
 import ChickenIcon from '../../resources/icons/chicken-icon.png'
 import UnicornIcon from '../../resources/icons/unicorn-icon.png'
@@ -27,12 +33,15 @@ import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/GifCreationEndpoin
 class DesignGifDialog extends PureComponent {
   constructor(props) {
     super(props);
+    this.gifImageRef = React.createRef();
     this.state = {
       isOpen: true,
       selectedColor: null,
       selectedFrame: null,
       selectedFilter: null,
       visibleColorIndex: 0,
+      isGifPortrait: false,
+      frameWidth: null,
     };
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSaveGif = this.handleSaveGif.bind(this);
@@ -64,11 +73,55 @@ class DesignGifDialog extends PureComponent {
       { name: 'unicorn', frame: Frame4, icon: UnicornIcon },
       { name: 'robotic', frame: Frame5, icon: RoboticIcon },
       { name: 'woman', frame: Frame6, icon: WomanIcon },
+      { name: 'pdf-alien', frame: Frame7, icon: AlienIcon },
+      { name: 'pdf-chicken', frame: Frame8, icon: ChickenIcon },
+      { name: 'pdf-girafe', frame: Frame9, icon: GiraffeIcon },
+      { name: 'pdf-unicorn', frame: Frame10, icon: UnicornIcon },
+      { name: 'pdf-robotic', frame: Frame11, icon: RoboticIcon },
+      { name: 'pdf-woman', frame: Frame12, icon: WomanIcon },
     ]
   }
 
+  determineGifOrientation = (gifUrl) => {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.src = gifUrl;
+      image.onload = () => {
+        const isPortrait = image.height > image.width;
+        resolve({ isPortrait });
+      };
+  
+      image.onerror = reject;
+    });
+  };
+
+  async updateGifOrientation() {
+    try {
+      const { isPortrait } = await this.determineGifOrientation(this.props.selectedGif.url);
+      this.setState({ isGifPortrait: isPortrait });
+    } catch (error) {
+      console.error('Error determining GIF orientation:', error);
+    }
+  }
+
+  updateFrameWidth() {
+    const image = this.gifImageRef.current;
+    if (image) {
+      this.setState({ frameWidth: image.clientWidth });
+    }
+  }
+
   componentDidMount() {
+    this.updateGifOrientation();
     window.addEventListener('popstate', this.handleCancel);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
+      this.setState({ selectedFrame: null })
+      this.updateGifOrientation();
+      this.updateFrameWidth();
+    }
   }
 
   componentWillUnmount() {
@@ -129,7 +182,6 @@ class DesignGifDialog extends PureComponent {
 
   handleFrameClick(frameName) {
     this.setState({ selectedFrame: frameName, selectedColor: null });
-    console.log('state', this.state.selectedFrame);
   }
 
   handleFilterClick(filter) {
@@ -138,15 +190,22 @@ class DesignGifDialog extends PureComponent {
 
   getFrameSourceByName(frameName) {
     const frame = this.frameSelection.find(f => f.name === frameName);
-    console.log('frame', frame);
     return frame ? frame.frame : null;
   }
+
+  getFilteredFrames() {
+    const { isGifPortrait } = this.state;
+    return this.frameSelection.filter(frame => 
+      isGifPortrait ? frame.name.startsWith('pdf-') : !frame.name.startsWith('pdf-')
+    );
+  }
+  
 
   render() {
     const { selectedColor, visibleColorIndex } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
-    console.log('selectedGif', selectedGif);
+    const filteredFrames = this.getFilteredFrames();
 
     const visibleColors = isMobile ? this.colorSelection.slice(visibleColorIndex, visibleColorIndex + 4) : this.colorSelection;
 
@@ -218,14 +277,23 @@ class DesignGifDialog extends PureComponent {
               </div>
               <div className="container">
               <div className="image-frame-container">
-                <img src={selectedGif.url} alt="Selected Gif" />
-                {(this.state.selectedFrame || getSelectedFramePath(selectedGif.selectedFrame)) && (
-                  <img src={this.getFrameSourceByName(this.state.selectedFrame) || getSelectedFramePath(selectedGif.selectedFrame)} alt="Selected Frame" />
+                <img 
+                  src={selectedGif.url}
+                  alt="Selected Gif"
+                  ref={this.gifImageRef}
+                  onLoad={this.updateFrameWidth.bind(this)}
+                />
+                {(this.state.selectedFrame || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)) && (
+                  <img 
+                    src={this.getFrameSourceByName(this.state.selectedFrame) || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)}
+                    style={{ width: this.state.frameWidth, height: '250px' }}
+                    alt="Selected Frame"
+                  />
                 )}
               </div>
                 <div className={`select-frame-container`}>
                   <div className="frames">
-                    {this.frameSelection.map((item, index) => (
+                    {filteredFrames.map((item, index) => (
                       <Box
                         key={index}
                         onClick={() => this.handleFrameClick(item.name)}
