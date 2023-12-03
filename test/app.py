@@ -158,7 +158,7 @@ def download_library_gifs():
 
 @app.route('/generate-gif-from-list', methods=['POST'])
 def generate_gif_list():
-    generate_gifs_from_list()
+    return generate_gifs_from_list()
 
 
 @app.route('/generate-pdf-gif', methods=['POST'])
