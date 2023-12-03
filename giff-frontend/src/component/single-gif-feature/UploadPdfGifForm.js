@@ -1,10 +1,9 @@
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { TextField } from '@mui/material';
-import React, { useEffect, forwardRef, useImperativeHandle, useState } from 'react';
 import { showNotification } from '../notification/Notification';
 import { UploadPdfThenCreateGif } from '../../endpoints/GifCreationEndpoints';
 
 const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading, setGifGenerated }, ref) => {
-
   const [dragOver, setDragOver] = useState(false);
 
   const handleDragOver = (e) => {
@@ -31,14 +30,14 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
     }
   };
 
-  useEffect(() => {
-    document.getElementById('custom-button')?.addEventListener('click', function () {
-      document.getElementById('pdf-file').click();
-    });
-  }, []);
+  
 
   const handlePdfChange = (e) => {
-    setSelectedPdf(e.target.files[0]);
+    e.preventDefault();
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setSelectedPdf(file);
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -56,10 +55,10 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
         }
       } catch (error) {
         showNotification('error', 'An error occurred while processing your request. Please try again later.');
+      } finally {
+        setIsLoading(false);
+        setSelectedPdf(null);
       }
-      // Reset the selected PDF state
-      setIsLoading(false);
-      setSelectedPdf(null);
     }
   };
 
@@ -72,9 +71,9 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
   return (
     <>
       <form encType="multipart/form-data" onSubmit={handleFormSubmit}>
-        <label htmlFor="pdf-file" id="custom-button" className="custom-button">
-          Upload pdf
-        </label>
+      <label htmlFor="pdf-file" className="custom-button">
+            Upload PDF
+      </label>
         <div 
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
@@ -86,7 +85,9 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
             disabled
             value={selectedPdf?.name || ''}
             placeholder="Drag and drop a PDF here or click to upload"
+            fullWidth
           />
+          
           <div style={{
             position: 'absolute', 
             top: 0, 
