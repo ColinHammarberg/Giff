@@ -7,7 +7,7 @@ import OfficialButton from '../buttons/OfficialButton';
 import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
-import { DownloadAllLibraryGifs, GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
+import { DownloadIndividualDesignedGifs, GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 
 function GeneratedGif(props) {
@@ -41,23 +41,30 @@ function GeneratedGif(props) {
   }, [gifGenerated, designChanges]);
 
   async function handleDownloadClick() {
-    if (gifGenerated) {
-      const gifData = importedGifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor, selectedFrame: gif.selectedFrame }));
-      try {
-        const response = await DownloadAllLibraryGifs(gifData);
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }));
-        const link = document.createElement('a');
-        setTimeout(() => {
-          link.href = url;
-          link.target = '_blank';
-          link.download = 'your-gift-bag.zip';
-          link.click();
-          window.URL.revokeObjectURL(url);
-        }, 3000)
-      } catch (error) {
-        console.error('Error downloading ZIP file:', error);
-      }
+    if (!gifGenerated) return;
+  
+    const { url, name, selectedColor, selectedFrame, resourceType } = importedGifs[0];
+    const gifData = JSON.stringify({ url, name, selectedColor, selectedFrame, resourceType });
+  
+    try {
+      const response = await DownloadIndividualDesignedGifs(gifData);
+      const blob = new Blob([response.data], { type: 'image/gif' });
+      initiateDownload(blob, name);
+    } catch (error) {
+      console.error('Error downloading individual GIF:', error);
     }
+  }
+  
+  function initiateDownload(blob, filename) {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = downloadUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+    document.body.removeChild(a);
   }
 
   const handleEditButtonClick = () => {
