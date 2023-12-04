@@ -12,10 +12,10 @@ import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
-  // const navigate = useNavigate();
   const [importedGifs, setImportedGifs] = useState(null);
   const { editGif, isDesignOpen, isMobile, selectedDesignGif, handleOpenDesign, handleCloseDesign } = useContext(GiftContext);
   const [selectedGif, setSelectedGif] = useState(null);
+  const [downloadLoading, setDownloadLoading] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
@@ -47,6 +47,7 @@ function GeneratedGif(props) {
     const gifData = JSON.stringify({ url, name, selectedColor, selectedFrame, resourceType });
   
     try {
+      setDownloadLoading(true)
       const response = await DownloadIndividualDesignedGifs(gifData);
       const blob = new Blob([response.data], { type: 'image/gif' });
       initiateDownload(blob, name);
@@ -65,6 +66,7 @@ function GeneratedGif(props) {
     a.click();
     window.URL.revokeObjectURL(downloadUrl);
     document.body.removeChild(a);
+    setDownloadLoading(false);
   }
 
   const handleEditButtonClick = () => {
@@ -121,8 +123,7 @@ function GeneratedGif(props) {
           </Box>
         )}  
           <Box className="generated-gif-btn-box">
-            <OfficialButton variant="yellow" label="Download GIF" onClick={handleDownloadClick} />
-            {/* <OfficialButton variant="green" label="Share gif in email" onClick={() => navigate('/email-choice')} /> */}
+            <OfficialButton variant="yellow" label="Download GIF" onClick={handleDownloadClick} isProcessing={downloadLoading} />
           </Box>
           <DesignGifDialog
             isOpen={isDesignOpen}
