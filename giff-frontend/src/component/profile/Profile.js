@@ -27,6 +27,7 @@ function Profile() {
     const { isMobile } = useMobileQuery();
     const { setUser } = useContext(GiftContext); // Get the context value
     const { user } = useFetchUser(changeUserDetails);
+    const [showOptions, setShowOptions] = useState(false);
     const { userLogoSrc } = useFetchUserLogo();
     console.log('userLogoSrc', userLogoSrc);
     const [checked, setChecked] = useState(user?.include_logo);
@@ -205,7 +206,9 @@ function Profile() {
                 )}
               </div>
               <div className="email">
-                <Tag variant={isActive ? 'success' : 'error'} label={isActive ? 'Verified' : 'Not verified'}/>
+                {!isMobile && (
+                  <Tag variant={isActive ? 'success' : 'error'} label={isActive ? 'Verified' : 'Not verified'}/>
+                )}
                 {isMobile && (
                   <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit</Button>
                 )}
@@ -234,7 +237,12 @@ function Profile() {
             <div className="text">
               <span>Standard gif size</span>
             </div>
-            <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} />
+            <div className="resolution">
+              {isMobile && (
+                <Button name="edit-email" onClick={() => setShowOptions(true)}>Edit</Button>
+              )}
+              <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} setShowOptions={setShowOptions} showOptions={showOptions} />
+            </div>
           </Box>
           <Box className="password-details">
             <LogoUploadForm userLogoSrc={userLogoSrc} setUser={setUser} />

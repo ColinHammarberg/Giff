@@ -15,13 +15,12 @@ const ResolutionOptions = [
     { id: 24, value: '1280x1000' },
 ]
 
-function ResolutionSelect({ defaultValue, onChange }) {
+function ResolutionSelect({ defaultValue, onChange, showOptions, setShowOptions }) {
     const findDefaultOption = useCallback(() => 
         ResolutionOptions.find(option => option.value === defaultValue), 
         [defaultValue]
     );
     const [value, setValue] = useState(findDefaultOption());
-    const [showOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
         setValue(findDefaultOption());
