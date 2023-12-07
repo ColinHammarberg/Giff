@@ -161,12 +161,35 @@
 @media (max-width: 600px) {
     .profile {
         .profile-info {
+            .MuiButton-root {
+                height: 55px;
+                width: 58px;
+                background-color: #B9F140;
+                border-radius: 0;
+                border: 1px solid #000;
+                color: #000;
+                font-family: 'Staatliches';
+                font-size: 20px;
+            }
+
             .email-details {
-                display: grid;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+                .email {
+                    display: flex;
+                    align-items: center;
+                }
             }
 
             .password-details {
-                display: grid;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+                .password {
+                    display: flex;
+                    align-items: center;
+                }
             }
         }
 

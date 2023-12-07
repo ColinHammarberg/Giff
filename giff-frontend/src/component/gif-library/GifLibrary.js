@@ -51,7 +51,7 @@ function GifLibrary() {
     useEffect(() => {
       const fetchData = async () => {
         const response = await FetchUserGifs();
-        if (response.data) {  
+        if (response.data) {
           const sortedGifs = response.data.sort((a, b) => {
             const dateA = a.created_at ? new Date(a.created_at) : null;
             const dateB = b.created_at ? new Date(b.created_at) : null;

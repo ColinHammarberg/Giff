@@ -13,17 +13,17 @@
 
         .text {
             button {
-            background-color: #fff;
-            width: 450px;
-            height: 84px;
-            border: 1px solid #B9F140;
-            font-family: "Staatliches";
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            border: none;
-            color: #000;
+                background-color: #fff;
+                width: 450px;
+                height: 84px;
+                border: 1px solid #B9F140;
+                font-family: "Staatliches";
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                border: none;
+                color: #000;
             }
         }
 
@@ -44,6 +44,7 @@
             width: 0;
             height: 0;
         }
+
         .MuiFormControl-root {
             width: 450px;
             height: 84px;
@@ -136,9 +137,25 @@
 
 @media (max-width: 600px) {
     .gif-generator {
-        .MuiFormControl-root {
-            width: 276px;
-            height: 55px;
+        .text-field-content {
+            width: 80%;
+            margin: auto;
+
+            .url {
+                .box {
+                    min-width: 75px;
+                }
+            }
+
+            // form {
+            //     .custom-button {
+            //         width: 85px;
+            //     }
+            // }
+
+            .MuiFormControl-root {
+                width: 100% !important;
+            }
         }
     }
 }

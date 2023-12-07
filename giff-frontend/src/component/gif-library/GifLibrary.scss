@@ -167,9 +167,12 @@
                 padding: 24px;
             }
 
-            .gif-wrapper .gif-box {
-                display: unset;
-                width: 100%;
+            .gif-wrapper {
+                margin-top: 40px;
+
+                .gif-box {
+                    width: 100%;
+                }
             }
         }
     }

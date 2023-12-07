@@ -66,9 +66,9 @@ function UserSignin() {
       <Header />
       <Box className="user-authentication">
         <Box className="user-title">Sign in to Gif-T</Box>
-        <div>
+        <div className="username">
           <InputLabel>
-            Username
+            Email
           </InputLabel>
           <TextField 
             value={email}
@@ -78,7 +78,7 @@ function UserSignin() {
               handleKeyPressGenerateGif(event);
             }} />
         </div>
-        <div>
+        <div className="password">
           <InputLabel>
             Password
           </InputLabel>

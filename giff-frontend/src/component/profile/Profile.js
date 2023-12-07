@@ -18,11 +18,13 @@ import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddre
 import useFetchUser from '../../queries/useUserDataQuery';
 // import { useQueryClient } from 'react-query';
 import useFetchUserLogo from '../../queries/useUserLogoQuery';
+import useMobileQuery from '../../queries/useMobileQuery';
 
 function Profile() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
+    const { isMobile } = useMobileQuery();
     const { setUser } = useContext(GiftContext); // Get the context value
     const { user } = useFetchUser(changeUserDetails);
     const { userLogoSrc } = useFetchUserLogo();
@@ -198,10 +200,15 @@ function Profile() {
           <Box className="email-details">
               <div className="text">
                 <span>Email address</span>
-                <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit Email</Button>
+                {!isMobile && (
+                  <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit Email</Button>
+                )}
               </div>
               <div className="email">
                 <Tag variant={isActive ? 'success' : 'error'} label={isActive ? 'Verified' : 'Not verified'}/>
+                {isMobile && (
+                  <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit</Button>
+                )}
                 <TextField 
                   value={user?.email}
                   className="email"
@@ -212,9 +219,16 @@ function Profile() {
           <Box className="password-details">
             <div className="text">
               <span>Password</span>
-              <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
+              {!isMobile && (
+                <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit Password</Button>
+              )}
             </div>
-            <TextField type="password" value="******" inputProps={{ maxLength: 10 }} disabled />
+            <div className="password">
+              {isMobile && (
+                <Button name="edit-password" onClick={handleOnClickChangePasswordButton}>Edit</Button>
+              )}
+              <TextField type="password" value="******" inputProps={{ maxLength: 10 }} disabled />
+            </div>
           </Box>
           <Box className="resolution-details">
             <div className="text">
