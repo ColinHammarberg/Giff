@@ -5,7 +5,7 @@ from extensions import db
 from flask_cors import CORS
 from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
 from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify, include_logo_in_gifs
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify, include_logo_in_gifs, send_verification_email_again
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -42,6 +42,11 @@ mail = Mail(app)
 @app.route('/ping', methods=['GET'])
 def ping():
     return "pong2222111"
+
+
+@app.route('/send_verification_email', methods=['GET'])
+def send_verification_email():
+    return send_verification_email_again()
 
 
 @app.route('/update_selected_color', methods=['POST'])

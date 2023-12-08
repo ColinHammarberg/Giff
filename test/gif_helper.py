@@ -375,6 +375,7 @@ def download_all_library_gifs():
                 gif_url = gif_info['url']
                 gif_name = gif_info['name']
                 selected_color = gif_info['selectedColor']
+                selected_frame = gif_info('selectedFrame')
 
                 # Download the GIF
                 response = requests.get(gif_url)
@@ -386,6 +387,15 @@ def download_all_library_gifs():
                     if selected_color:
                         new_gif_bytes = add_border_to_gif(
                             resized_gif_bytes_io, selected_color)
+                    elif selected_frame:
+                        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                    aws_secret_access_key='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', 
+                                    region_name='eu-north-1')
+                        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                                        Params={'Bucket': 'gift-filter-options',
+                                                                                'Key': selected_frame},
+                                                                        ExpiresIn=3600)
+                        new_gif_bytes = overlay_filter_on_gif(resized_gif_bytes_io, presigned_url)
                     else:
                         new_gif_bytes = resized_gif_bytes_io
 

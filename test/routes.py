@@ -106,6 +106,21 @@ def verify():
         return jsonify({"status": "Email verified successfully"}), 200
     else:
         return jsonify({"status": "User not found"}), 404
+    
+@jwt_required()
+def send_verification_email_again():
+    user_id = get_jwt_identity()
+    current_user = User.query.get(user_id)
+
+    if not current_user:
+        return jsonify({"status": "User not found"}), 404
+    try:
+        token = s.dumps(current_user.email, salt='email-confirm-salt')
+        send_verification_email(current_user.email, token)
+        return jsonify({"status": "Sent new email verification link"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"status": "Failed to send verification email"}), 500
 
 def signup():
     data = request.get_json()

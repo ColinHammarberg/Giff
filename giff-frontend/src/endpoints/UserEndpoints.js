@@ -183,3 +183,13 @@ export async function SaveUserResolution(resolution) {
     });
     return response.data;
   }
+
+  export async function ResendVerificationEmail() {
+    const access_token = localStorage.getItem('access_token');
+    const response = await axios.get(`${Api}/send_verification_email`, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return response.data;
+  }

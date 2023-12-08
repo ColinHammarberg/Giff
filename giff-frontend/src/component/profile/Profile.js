@@ -14,7 +14,7 @@ import LightTooltip from '../overall/LightToolTip';
 import ResolutionSelect from './ResolutionSelect';
 import Tag from '../overall/Tag';
 import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
-import { DeleteUserLogo, DeleteUserProfile, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
+import { DeleteUserLogo, DeleteUserProfile, ResendVerificationEmail, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
 // import { useQueryClient } from 'react-query';
 import useFetchUserLogo from '../../queries/useUserLogoQuery';
@@ -80,6 +80,18 @@ function Profile() {
         [field]: e.target.value,
       });
     };
+
+    async function handleOnResendEmailVerification() {
+      try {
+        const response = await ResendVerificationEmail();
+        console.log('response', response);
+        if (response.status === 'Sent new email verification link') {
+          showNotification('success', `Sent verification email to ${user?.email}`)
+        }
+      } catch (error) {
+        showNotification('error', 'Failed to send verification email.');
+      }
+    }
 
     const handleOnClickChangeEmailButton = (event) => {
       console.log('event', event, changeUserDetails);
@@ -212,11 +224,14 @@ function Profile() {
                 {isMobile && (
                   <Button name="edit-email" onClick={handleOnClickChangeEmailButton}>Edit</Button>
                 )}
-                <TextField 
+                <TextField
                   value={user?.email}
                   className="email"
                   disabled
                 />
+                {!isActive && !isMobile && (
+                  <Button className="verify-email-btn" onClick={handleOnResendEmailVerification}>Click to verify</Button>
+                )}
               </div>
           </Box>
           <Box className="password-details">
