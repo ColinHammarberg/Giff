@@ -303,7 +303,6 @@ function GifLibrary() {
                     {!openEditMode ? (
                       <>
                         <Button className="download" onClick={handleDownloadIndividualGifs}>{isLoading ? 'Processing...' : 'Download'}</Button>
-                        <Button className="share">Share</Button>
                       </>
                     ) : (
                       <>
