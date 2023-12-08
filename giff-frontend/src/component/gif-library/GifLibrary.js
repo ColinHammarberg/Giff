@@ -281,11 +281,11 @@ function GifLibrary() {
                   className="gif-box"
                 >
                   <Box
-                    className={`gif-container ${selectedGif === index ? 'hovered' : ''}`}
+                    className={`gif-container ${selectedGif === index ? 'hovered' : ''} ${isMobile ? 'hovered' : ''}`}
                     onMouseEnter={() => setSelectedGif(index)}
                     onMouseLeave={() => setSelectedGif(null)}
                   >
-                    <img 
+                    <img
                       src={item.url} 
                       ref={el => imageRefs.current[index] = el} 
                       onLoad={() => handleImageLoad(index)}
