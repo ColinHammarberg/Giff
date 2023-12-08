@@ -29,7 +29,7 @@ function Profile() {
     const { user } = useFetchUser(changeUserDetails);
     const [showOptions, setShowOptions] = useState(false);
     const { userLogoSrc } = useFetchUserLogo();
-    console.log('userLogoSrc', userLogoSrc);
+    console.log('user', user);
     const [checked, setChecked] = useState(user?.include_logo);
     const [password, setPassword] = useState({
       currentPassword: '',
@@ -153,9 +153,10 @@ function Profile() {
       if (value) {
         try {
           const response = await SaveUserResolution(value);
-          if (response.data) {
+          if (response.data.status === "Settings updated successfully") {
             handleUserUpdate({ resolution: value });
-            showNotification('Yay! You now have a new standard size.')
+            setChangeUserDetails(value);
+            showNotification('success', 'Yay! You now have a new standard size.')
           }
         } catch(e) {
           showNotification('error', 'Successfully updated your resolution for your gifs')
@@ -173,14 +174,11 @@ function Profile() {
         try {
           const response = await DeleteUserLogo();
           if (response.data) {
-            // Step 1: Update React state
             setUser((prevUser) => {
               const updatedUser = { ...prevUser, userLogoSrc: null };
               return updatedUser;
             });
             sessionStorage.removeItem('userLogoItem')
-      
-            // Step 2: Update localStorage
             const userData = sessionStorage.getItem('user');
             if (userData) {
               const parsedUserData = JSON.parse(userData);

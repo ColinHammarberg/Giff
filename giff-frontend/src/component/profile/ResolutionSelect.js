@@ -56,25 +56,29 @@ function ResolutionSelect({ defaultValue, onChange, showOptions, setShowOptions 
             className="resolution-size-select-autocomplete"
             renderInput={(params) => (
                 <TextField
-                    // eslint-disable-next-line react/jsx-props-no-spreading
                     {...params}
                     fullWidth
                     variant="outlined"
                     InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                        <InputAdornment position="end">
-                        <IconButton
-                            aria-label="toggle password visibility"
-                            size="small"
-                            onClick={handleClickShowOptions}
-                            className="icon-button"
-                        >
-                            {showOptions ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                        </IconButton>
-                        </InputAdornment>
-                    ),
+                        ...params.InputProps,
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle resolution options"
+                                    size="small"
+                                    onClick={handleClickShowOptions}
+                                    className="icon-button"
+                                >
+                                    {showOptions ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
                     }}
+                    inputProps={{
+                        ...params.inputProps,
+                        style: { caretColor: "transparent" } // Hide the text cursor
+                    }}
+                    readOnly
                 />
             )}
         />

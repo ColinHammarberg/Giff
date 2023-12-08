@@ -3,10 +3,7 @@ import { FetchUserInfo } from '../endpoints/UserEndpoints';
 
 const fetchUser = async (access_token) => {
   try {
-    const userData = sessionStorage.getItem('user');
-    if (userData) {
-      return JSON.parse(userData);
-    } else if (access_token) {
+     if (access_token) {
       const userInfoResponse = await FetchUserInfo();
       if (userInfoResponse.data) {
         const userObj = {
