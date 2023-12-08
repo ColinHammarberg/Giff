@@ -243,7 +243,7 @@ function GifLibrary() {
               <span>This is your library. </span>
                Download all gifs at once
               <span> or </span>
-              hover over the gif you want to download or share.
+              {isMobile ? 'click on' : 'hover over'} the gif you want to download.
             </>
           )}
           </Box>
