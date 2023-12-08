@@ -39,11 +39,11 @@ function UserSignin() {
     try {
       const response = await Signin({ email: email, password: password });
       if (response.status === 200) {
-        localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
+        localStorage.setItem('access_token', response.data.access_token);
         setTimeout(() => {
           setIsLoading(false);
           navigate(returnUrl);
-          showNotification('success', 'Successfully signed in');
+          showNotification('success', 'Aaaaand you’re signed in!');
         }, 3000)
       } else {
         setError('error', response.data.message);

@@ -153,9 +153,10 @@ class DesignGifDialog extends PureComponent {
         this.handleCancel();
         this.props.setDesignChanges(true);
         
-        showNotification('success', "Your design changes have been applied to your gif!")
+        showNotification('success', "Woa! Your gif looks great, champ!")
       }
     } catch (error) {
+      showNotification('error', "Whoops! We couldn’t save those changes. Please try again.")
       console.error('Error saving GIF:', error);
     }
   };

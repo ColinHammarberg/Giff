@@ -181,7 +181,7 @@ function GifLibrary() {
             if (response.data) {        
               const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
               setGifs(updatedGifs);
-              showNotification('success', 'GIF deleted from your library.');
+              showNotification('success', 'Your gif is deleted. Why not create a new one?');
             }
           } catch (error) {
             if (error.response && error.response.status === 404) {

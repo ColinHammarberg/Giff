@@ -155,7 +155,7 @@ function Profile() {
           const response = await SaveUserResolution(value);
           if (response.data) {
             handleUserUpdate({ resolution: value });
-            showNotification('success', 'Successfully updated your resolution for your gifs')
+            showNotification('Yay! You now have a new standard size.')
           }
         } catch(e) {
           showNotification('error', 'Successfully updated your resolution for your gifs')
