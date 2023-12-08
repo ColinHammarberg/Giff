@@ -244,8 +244,8 @@ function Profile() {
               <ResolutionSelect onChange={handleResolutionSizeChange} defaultValue={user?.resolution} setShowOptions={setShowOptions} showOptions={showOptions} />
             </div>
           </Box>
-          <Box className="password-details">
-            <LogoUploadForm userLogoSrc={userLogoSrc} setUser={setUser} />
+          <Box className="upload-logo-details">
+            <LogoUploadForm userLogoSrc={userLogoSrc} setUser={setUser} isMobile={isMobile} />
             {userLogoSrc && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>

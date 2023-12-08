@@ -59,17 +59,26 @@ function LogoUploadForm(props) {
       <form onSubmit={handleFormSubmit} encType="multipart/form-data">
         <div className="text">
           <span>Logo</span>
-          <button type="submit" disabled={!selectedFile}>
-            {props.userLogoSrc ? 'Delete Logo' : 'Upload Logo'}
-          </button>
+          {!props.isMobile && (
+            <button type="submit" disabled={!selectedFile}>
+              {props.userLogoSrc ? 'Delete Logo' : 'Upload Logo'}
+            </button>
+          )}
         </div>
-        {props.userLogoSrc ? (
-          <UserLogo userLogoSrc={props.userLogoSrc} />
-        ) : (
-          <label htmlFor="logo-file" id="custom-button" className="custom-button">
-            Choose File
-          </label>
-        )}
+        <div className="upload">
+          {props.isMobile && (
+            <button type="submit" disabled={!selectedFile}>
+              Edit
+            </button>
+          )}
+          {props.userLogoSrc ? (
+            <UserLogo userLogoSrc={props.userLogoSrc} />
+          ) : (
+            <label htmlFor="logo-file" id="custom-button" className="custom-button">
+              Choose File
+            </label>
+          )}
+        </div>
         <input
           type="file"
           id="logo-file"
