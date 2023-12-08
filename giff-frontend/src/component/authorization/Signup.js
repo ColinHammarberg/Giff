@@ -55,6 +55,7 @@ function UserSignup() {
       }
     } catch (error) {
       showNotification('error', error.response?.data?.message || "Signup failed");
+      setIsLoading(false);
     }
   };
 

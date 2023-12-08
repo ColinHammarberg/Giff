@@ -51,6 +51,7 @@ function UserSignin() {
       }
     } catch (error) {
       setError('error', "Signin failed");
+      setIsLoading(false);
     }
   };
   
