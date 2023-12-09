@@ -23,6 +23,7 @@ from models import UserGif, User
 import os
 import io
 import logging
+import traceback
 import time
 
 backend_gifs_folder = os.path.join(os.path.dirname(
@@ -60,6 +61,7 @@ def get_user_gifs():
         return jsonify({'error': str(e)}), 500
 
 # Endpoint for generating gif out of online pdfs
+
 
 @jwt_required()
 def generate_pdf_gif():
@@ -132,17 +134,17 @@ def generate_pdf_gif():
         upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
         s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                aws_secret_access_key='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', 
-                                region_name='eu-north-1')
+                                 aws_secret_access_key='UUCQR4Ix9eTgvmZjP+T7USang61ZPa6nqlHgp47G',
+                                 region_name='eu-north-1')
         presigned_url = s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'gift-resources',
-                                                                    'Key': f"{user_id}/{NAME}"},
-                                                        ExpiresIn=3600)
+                                                         Params={'Bucket': 'gift-resources',
+                                                                 'Key': f"{user_id}/{NAME}"},
+                                                         ExpiresIn=3600)
         print('presigned_url', presigned_url)
 
         description = analyze_gif_and_get_description(presigned_url)
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                           gif_url=output_path, resourceId=resource_id, ai_description=description))
+                               gif_url=output_path, resourceId=resource_id, ai_description=description))
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -268,12 +270,12 @@ def upload_pdf_and_generate_gif():
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}/{gif_name}", resource_id)
             s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                aws_secret_access_key='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', 
-                                region_name='eu-north-1')
+                                     aws_secret_access_key='UUCQR4Ix9eTgvmZjP+T7USang61ZPa6nqlHgp47G',
+                                     region_name='eu-north-1')
             presigned_url = s3_client.generate_presigned_url('get_object',
-                                                            Params={'Bucket': 'gift-resources',
-                                                                    'Key': f"{user_id}/{gif_name}"},
-                                                            ExpiresIn=3600)
+                                                             Params={'Bucket': 'gift-resources',
+                                                                     'Key': f"{user_id}/{gif_name}"},
+                                                             ExpiresIn=3600)
             print('presigned_url', presigned_url)
 
             description = analyze_gif_and_get_description(presigned_url)
@@ -293,6 +295,7 @@ def upload_pdf_and_generate_gif():
         return jsonify({'error': 'An error occurred while processing the PDF'}), 500
 
     return jsonify({'message': 'PDF uploaded and GIF generated!', 'data': [gif_data]}), 200
+
 
 def download_all_gifs():
     gifs_folder = backend_gifs_folder
@@ -358,6 +361,7 @@ def add_border_to_gif(gif_bytes_io, selected_color):
     output_gif_io.seek(0)
     return output_gif_io
 
+
 @jwt_required()
 def download_all_library_gifs():
     data = request.get_json()
@@ -389,13 +393,14 @@ def download_all_library_gifs():
                             resized_gif_bytes_io, selected_color)
                     elif selected_frame:
                         s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                    aws_secret_access_key='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', 
-                                    region_name='eu-north-1')
+                                                 aws_secret_access_key='UUCQR4Ix9eTgvmZjP+T7USang61ZPa6nqlHgp47G',
+                                                 region_name='eu-north-1')
                         presigned_url = s3_client.generate_presigned_url('get_object',
-                                                                        Params={'Bucket': 'gift-filter-options',
-                                                                                'Key': selected_frame},
-                                                                        ExpiresIn=3600)
-                        new_gif_bytes = overlay_filter_on_gif(resized_gif_bytes_io, presigned_url)
+                                                                         Params={'Bucket': 'gift-filter-options',
+                                                                                 'Key': selected_frame},
+                                                                         ExpiresIn=3600)
+                        new_gif_bytes = overlay_filter_on_gif(
+                            resized_gif_bytes_io, presigned_url)
                     else:
                         new_gif_bytes = resized_gif_bytes_io
 
@@ -432,6 +437,7 @@ def update_selected_color():
     else:
         return jsonify({'error': 'GIF not found'}), 404
 
+
 @jwt_required()
 def update_selected_frame():
     data = request.get_json()
@@ -451,6 +457,7 @@ def update_selected_frame():
     else:
         return jsonify({'error': 'GIF not found'}), 404
 
+
 def overlay_filter_on_gif(gif_bytes_io, filter_url):
     try:
         gif_bytes_io.seek(0)
@@ -458,7 +465,8 @@ def overlay_filter_on_gif(gif_bytes_io, filter_url):
 
         response = requests.get(filter_url)
         if response.status_code != 200:
-            raise Exception(f"Failed to download filter image, Status code: {response.status_code}")
+            raise Exception(
+                f"Failed to download filter image, Status code: {response.status_code}")
 
         filter_bytes_io = io.BytesIO(response.content)
         filter_image = Image.open(filter_bytes_io).convert('RGBA')
@@ -468,7 +476,8 @@ def overlay_filter_on_gif(gif_bytes_io, filter_url):
         for frame in ImageSequence.Iterator(pil_gif):
             frame = frame.convert('RGBA')
             overlayed_frame = Image.alpha_composite(frame, filter_image)
-            overlayed_frames.append((overlayed_frame, frame.info.get('duration', 1000)))
+            overlayed_frames.append(
+                (overlayed_frame, frame.info.get('duration', 1000)))
 
         output_gif_io = io.BytesIO()
         overlayed_frames[0][0].save(
@@ -486,6 +495,7 @@ def overlay_filter_on_gif(gif_bytes_io, filter_url):
         logging.exception("Error occurred in overlay_filter_on_gif")
         raise e
 
+
 @jwt_required()
 def download_individual_gif():
     try:
@@ -496,7 +506,8 @@ def download_individual_gif():
         gif_name = gif_data.get('name')
         user_id = get_jwt_identity()
         user = User.query.filter_by(id=user_id).first()
-        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get('resolution', "800x1280")
+        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get(
+            'resolution', "800x1280")
 
         if gif_url is None:
             return "Invalid GIF URL", 400
@@ -514,16 +525,18 @@ def download_individual_gif():
                 gif_bytes_io, f"{original_width}x{original_height}" if is_portrait else selected_resolution)
 
             if selected_color:
-                modified_gif_bytes_io = add_border_to_gif(resized_gif_bytes_io, selected_color)
+                modified_gif_bytes_io = add_border_to_gif(
+                    resized_gif_bytes_io, selected_color)
             elif selected_frame:
                 s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                             aws_secret_access_key='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', 
-                             region_name='eu-north-1')
+                                         aws_secret_access_key='UUCQR4Ix9eTgvmZjP+T7USang61ZPa6nqlHgp47G',
+                                         region_name='eu-north-1')
                 presigned_url = s3_client.generate_presigned_url('get_object',
-                                                                Params={'Bucket': 'gift-filter-options',
-                                                                        'Key': selected_frame},
-                                                                ExpiresIn=3600)
-                modified_gif_bytes_io = overlay_filter_on_gif(resized_gif_bytes_io, presigned_url)
+                                                                 Params={'Bucket': 'gift-filter-options',
+                                                                         'Key': selected_frame},
+                                                                 ExpiresIn=3600)
+                modified_gif_bytes_io = overlay_filter_on_gif(
+                    resized_gif_bytes_io, presigned_url)
             else:
                 modified_gif_bytes_io = resized_gif_bytes_io
 
@@ -542,67 +555,73 @@ def download_individual_gif():
         return "An error occurred", 500
 
 def generate_video_gif(data, user_id):
-    URL = data.get('url')
-    resource_id = str(uuid.uuid4())
-    resourceType = 'video'
-    NAME = data.get(
-        'name', f'{resource_id}.gif') if user_id else f"{resource_id}.gif"
-    start_frame = data.get('start_frame', 0)
-    end_frame = data.get('end_frame', 300)
+    try:
+        URL = data.get('url')
+        resource_id = str(uuid.uuid4())
+        resourceType = 'video'
+        NAME = data.get('name', f'{resource_id}.gif') if user_id else f"{resource_id}.gif"
+        start_frame = data.get('start_frame', 0)
+        end_frame = data.get('end_frame', 300)
+        print('data', data, user_id)
 
-    # Step 1: Download Video
-    yt = YouTube(URL)
-    video = yt.streams.filter(file_extension='mp4').first()
-    video_path = video.download()
-    cap = VideoCapture(video_path)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    start_frame = max(0, min(start_frame, total_frames - 1))
-    end_frame = max(0, min(end_frame, total_frames))
+        # Step 1: Download Video
+        yt = YouTube(URL)
+        video = yt.streams.filter(file_extension='mp4').first()
+        video_path = video.download()
+        cap = VideoCapture(video_path)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        start_frame = max(0, min(start_frame, total_frames - 1))
+        end_frame = max(0, min(end_frame, total_frames))
 
-    print('total_frames', total_frames)
-    frames = []
-    for i in range(start_frame + 5, end_frame):  # Start from the sixth frame
-        cap.set(1, i)
-        ret, frame = cap.read()
-        if ret:
-            rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
-            pil_img = Image.fromarray(rgb_frame)
-            frames.append(pil_img)
+        print('total_frames', total_frames)
+        frames = []
+        for i in range(start_frame, end_frame):
+            cap.set(1, i)
+            ret, frame = cap.read()
+            if ret:
+                rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
+                pil_img = Image.fromarray(rgb_frame)
+                frames.append(pil_img)
 
-    # Step 3: Save Frames as GIF
-    gifs_frontend_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    os.makedirs(gifs_frontend_folder, exist_ok=True)
-    output_gif_path = os.path.join(gifs_frontend_folder, NAME)
+        # Step 3: Save Frames as GIF
+        gifs_frontend_folder = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+        os.makedirs(gifs_frontend_folder, exist_ok=True)
+        output_gif_path = os.path.join(gifs_frontend_folder, NAME)
 
-    frames = frames[::3]
+        frames = frames[::3]
+        frame_durations = [1] * len(frames)
+        frames = frames[5:]
+        frames[0].save(output_gif_path, save_all=True,
+                       append_images=frames[1:], loop=0, duration=frame_durations)
 
-    frame_durations = [1] * len(frames)
+        folder_name = f"{user_id}/" if user_id else ""
+        upload_to_s3(output_gif_path, 'gift-resources',
+                     f"{folder_name}{NAME}", resource_id)
 
-    frames = frames[5:]
+        gif_data = {
+            "name": NAME,
+            "resourceId": resource_id,
+            "resourceType": resourceType
+        }
 
-    frames[0].save(output_gif_path, save_all=True,
-                   append_images=frames[1:], loop=0, duration=frame_durations)
+        if user_id:
+            db.session.add(UserGif(user_id=user_id, gif_name=NAME,
+                            gif_url=output_gif_path, resourceId=resource_id, resourcetype=resourceType))
+            db.session.commit()
 
-    folder_name = f"{user_id}/" if user_id else ""
-    upload_to_s3(output_gif_path, 'gift-resources',
-                 f"{folder_name}{NAME}", resource_id)
+        return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
 
-    gif_data = {
-        "name": NAME,
-        "resourceId": resource_id,
-        "resourceType": resourceType
-    }
+    except Exception as e:
+        logging.error(f"Error in generate_video_gif: {e}")
+        traceback.print_exc()
+        return jsonify({'error': 'An error occurred during GIF generation'}), 500
 
-    if user_id:
-        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                       gif_url=output_gif_path, resourceId=resource_id, resourcetype=resourceType))
-        db.session.commit()
 
-    return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
 
 def ease_in_quad(t):
     return t * t
+
 
 @jwt_required(optional=True)
 def generate_gif():
@@ -614,11 +633,12 @@ def generate_gif():
         try:
             user_id = get_jwt_identity()
         except RuntimeError:
-            pass # If JWT is not present, user_id remains None
+            pass  # If JWT is not present, user_id remains None
     URL = data.get('url')
     user_gif_count = UserGif.query.filter_by(user_id=user_id).count()
     next_gif_number = user_gif_count + 1
-    NAME = data.get('name', f"your_gif-{next_gif_number}.gif") if user_id else "your_gif-t.gif"
+    NAME = data.get(
+        'name', f"your_gif-{next_gif_number}.gif") if user_id else "your_gif-t.gif"
 
     if is_video_url(URL):
         return generate_video_gif(data, user_id)
@@ -665,7 +685,7 @@ def generate_gif():
         screenshot_path = os.path.join(screenshots_dir, screenshot)
         frame = Image.open(screenshot_path)
         frames_with_durations.append((frame, duration))
-    
+
     # user_logo = UserLogo.query.filter_by(user_id=user_id).first()
     # presigned_url = None
 
@@ -730,20 +750,20 @@ def generate_gif():
     folder_name = f"{user_id}/"
     if user_id:
         upload_to_s3(output_path, 'gift-resources',
-                 f"{folder_name}{NAME}", resource_id)
+                     f"{folder_name}{NAME}", resource_id)
         # Database Entry Here
         s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                aws_secret_access_key='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', 
-                                region_name='eu-north-1')
+                                 aws_secret_access_key='UUCQR4Ix9eTgvmZjP+T7USang61ZPa6nqlHgp47G',
+                                 region_name='eu-north-1')
         presigned_url = s3_client.generate_presigned_url('get_object',
-                                                        Params={'Bucket': 'gift-resources',
-                                                                    'Key': f"{user_id}/{NAME}"},
-                                                        ExpiresIn=3600)
+                                                         Params={'Bucket': 'gift-resources',
+                                                                 'Key': f"{user_id}/{NAME}"},
+                                                         ExpiresIn=3600)
         print('presigned_url', presigned_url)
 
         description = analyze_gif_and_get_description(presigned_url)
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                           gif_url=output_path, resourceId=resource_id, ai_description=description))
+                               gif_url=output_path, resourceId=resource_id, ai_description=description))
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -751,7 +771,6 @@ def generate_gif():
             "resourceType": resourceType,
             "ai_description": description
         }
-        
 
     for screenshot in os.listdir(screenshots_dir):
         os.remove(os.path.join(screenshots_dir, screenshot))
@@ -759,6 +778,7 @@ def generate_gif():
 
     # Return the generated GIF data as a list with a dictionary
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
+
 
 @jwt_required()
 def generate_gifs_from_list():
