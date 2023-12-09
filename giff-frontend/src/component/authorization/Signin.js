@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, InputLabel, TextField } from '@mui/material';
+import { Box, Button, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -33,6 +33,16 @@ function UserSignin() {
   function handleOnChangePassword(event) {
     setPassword(event.target.value);
   }
+
+  const ResetPasswordButton = () => (
+    <Button
+      color="primary" 
+      onClick={() => navigate('/reset-password')} 
+      style={{ padding: 0, minWidth: 'auto' }}
+    >
+      here.
+    </Button>
+  );
 
   const signInUserCredentials = async () => {
     setIsLoading(true);
@@ -91,7 +101,13 @@ function UserSignin() {
             }}
             onChange={handleOnChangePassword} 
             error={error} 
-            helperText={error ? 'Sorry, champ. Your password or email is wrong. Please give it another try.' : ''}
+            helperText={
+              error ? (
+                <span>
+                  Sorry, champ. Your password or email is wrong. Please give it another try or reset your password <ResetPasswordButton />
+                </span>
+              ) : ''
+            }
           />
         </div>
         <div className="buttons">

@@ -20,6 +20,8 @@ import Articles from './component/story/Articles';
 import GifLibrary from './component/gif-library/GifLibrary';
 import KeepAliveComponent from './component/authorization/KeepAlive';
 import VerfifyAccount from './component/authorization/VerifyAccount';
+import ResetPassword from './component/authorization/ResetPassword';
+import NewPassword from './component/authorization/NewPassword';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -63,12 +65,20 @@ function App() {
           <Navigator />
           <Routes>
             <Route
+              path={'/'}
+              element={<UserSignin />}
+            />
+            <Route
               path={`${REACT_APP_BASEURL}/signup`}
               element={<UserSignup />}
             />
             <Route
-              path={'/'}
-              element={<UserSignin />}
+              path={`${REACT_APP_BASEURL}/reset-password`}
+              element={<ResetPassword />}
+            />
+            <Route
+              path={`${REACT_APP_BASEURL}/new-password`}
+              element={<NewPassword />}
             />
             <Route
               path={`${REACT_APP_BASEURL}/profile`}

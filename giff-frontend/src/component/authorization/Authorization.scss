@@ -56,6 +56,13 @@
                 color: #F4149B;
                 font-family: 'Staatliches';
                 margin-left: 0;
+
+                .MuiButton-root {
+                    font-size: 0.75rem;
+                    font-family: "Staatliches";
+                    color: #fec901;
+                    text-decoration: underline;
+                }
             }
         }
 

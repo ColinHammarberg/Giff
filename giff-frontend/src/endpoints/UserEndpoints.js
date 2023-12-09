@@ -103,6 +103,11 @@ export async function SaveUserResolution(resolution) {
     return response;
   }
 
+  export async function ResetUserPassword(password, token) {
+    const response = await axios.post(`${Api}/new_user_password`, { password, token });
+    return response;
+}
+
   export async function UpdateEmailAddress(credentials) {
     const access_token = localStorage.getItem('access_token');
     try {
@@ -182,6 +187,11 @@ export async function SaveUserResolution(resolution) {
       }
     });
     return response.data;
+  }
+
+  export async function ResetPasswordRequest(email) {
+    const response = await axios.post(`${Api}/reset_password`, { email });
+    return response;
   }
 
   export async function ResendVerificationEmail() {

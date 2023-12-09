@@ -7,6 +7,7 @@ from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_log
 from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify, include_logo_in_gifs, send_verification_email_again
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
+from reset_password_helper import request_reset_password, reset_user_password
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -60,6 +61,13 @@ def update_gif_frame():
     print('generate')
     return update_selected_frame()
 
+@app.route('/reset_password', methods=['POST'])
+def reset_password():
+    return request_reset_password()
+
+@app.route('/new_user_password', methods=['POST'])
+def new_password():
+    return reset_user_password()
 
 @app.route('/toggle_include_logo', methods=['POST'])
 def toggle_include_logo():

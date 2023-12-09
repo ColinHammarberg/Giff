@@ -51,7 +51,7 @@ function ResolutionSelect({ defaultValue, onChange, showOptions, setShowOptions 
             options={ResolutionOptions}
             onChange={handleOnChange}
             value={value}
-            isOptionEqualToValue={(option, val) => option.id === val.id}
+            isOptionEqualToValue={(option, val) => option?.id === val?.id}
             getOptionLabel={(option) => option.value}
             className="resolution-size-select-autocomplete"
             renderInput={(params) => (
