@@ -8,7 +8,7 @@ import OfficialButton from '../buttons/OfficialButton';
 import { ResetPasswordRequest } from '../../endpoints/UserEndpoints';
 
 function ResetPassword() {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -24,7 +24,7 @@ function ResetPassword() {
 
   const handleRequestResetEmail = async () => {
     if (email !== confirmEmail) {
-        setError('error', "Champ! Emails doesn't match. Please try that again.");
+        setError("Champ! Emails doesn't match. Please try that again.");
     } else {
         setIsLoading(true);
         try {
@@ -37,12 +37,12 @@ function ResetPassword() {
             navigate('/');
             }, 3000)
         } else {
-            setError('error', response.data.message);
+            showNotification('error', "Aaarch! Something went wrong. Please contact refresh page or contact us at hello@gif-t.io!");
             setIsLoading(false);
         }
         } catch (error) {
-        setError('error', "Signin failed");
-        setIsLoading(false);
+          showNotification('error', "Aaarch! Something went wrong. Please contact refresh page or contact us at hello@gif-t.io!");
+          setIsLoading(false);
         }
     }
   };
@@ -70,8 +70,8 @@ function ResetPassword() {
             value={confirmEmail}
             name="password-field" 
             onChange={handleOnChangeConfirmEmail} 
-            error={error}
-            helperText={error ? "Champ! Emails doesn't match. Please try that again." : ''}
+            error={!!error}
+            helperText={error}
           />
         </div>
         <div className="buttons">

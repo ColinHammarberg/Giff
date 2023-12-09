@@ -10,7 +10,7 @@ import PasswordField from './PasswordField';
 import './Authorization.scss';
 
 function NewPassword() {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState('');
@@ -33,7 +33,7 @@ function NewPassword() {
 
   const ResetPassword = async () => {
     if (password !== confirmPassword) {
-        setError('error', 'Champ! Passwords do not match, please try it again.');
+      setError('Passwords do not match, please try again.');
     } else {
         setIsLoading(true);
         try {
@@ -45,12 +45,12 @@ function NewPassword() {
             navigate('/')
             }, 3000)
         } else {
-            setError('error', response.data.message);
+            showNotification('error', "Aaarch! Something went wrong. Please contact refresh page or contact us at hello@gif-t.io!");
             setIsLoading(false);
         }
         } catch (error) {
-        setError('error', "Signin failed");
-        setIsLoading(false);
+          showNotification('error', "Aaarch! Something went wrong. Please contact refresh page or contact us at hello@gif-t.io!");
+          setIsLoading(false);
         }
     }
   };
@@ -78,8 +78,8 @@ function NewPassword() {
             value={confirmPassword}
             name="password-field" 
             onChange={handleOnChangeConfirmEmail} 
-            error={error}
-            helperText={error ? 'Champ! Passwords do not match, please try it again.': ''}
+            error={!!error}
+            helperText={error}
           />
         </div>
         <div className="buttons">
