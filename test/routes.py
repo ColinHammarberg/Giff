@@ -38,6 +38,7 @@ def fetch_user_info():
             logo_url=presigned_url,
             has_logo=current_user.has_logo,
             include_logo=current_user.include_logo,
+            include_ai=current_user.include_ai,
             status="Success"
         ), 200
     else:
@@ -205,6 +206,8 @@ def include_logo_in_gifs():
         return jsonify({"status": "success", "data": user.include_logo}), 200
     else:
         return jsonify({"status": False, "message": "User not found"}), 404
+    
+
     
 @jwt_required()
 def update_email():

@@ -25,10 +25,7 @@ function LogoUploadForm(props) {
           // New logo URL from server response
           const newLogoUrl = data.logo_url;
   
-          props.setUser((prevUser) => {
-            const updatedUser = { ...prevUser, userLogoSrc: newLogoUrl };
-            return updatedUser;
-          });
+          props.setChangeUserDetails(newLogoUrl)
   
           const userData = sessionStorage.getItem('user');
           if (userData) {
@@ -37,7 +34,7 @@ function LogoUploadForm(props) {
             sessionStorage.setItem('user', JSON.stringify(parsedUserData));
           }
   
-          showNotification('success', 'Your logo was successfully uploaded!');
+          showNotification('success', 'Champ! Your logo was successfully uploaded!');
         }
       } catch (error) {
         showNotification('error', 'Your logo failed to be uploaded! Please try again.');

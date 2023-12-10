@@ -63,6 +63,7 @@ function Profile() {
         setLogoChecked(newValue);
         console.log('Settings saved:', response);
         if (response.data.status === 'success') {
+          setChangeUserDetails(newValue);
           showNotification('success', "Wohooo champ! You've added to use your logo as a part of your gifs!")
         }
       } catch (error) {
@@ -87,6 +88,7 @@ function Profile() {
           showNotification('error', "Ohh noo! There was an issue to add usage of AI to describe your gifs!");
         } else {
           // Show different messages based on newValue
+          setChangeUserDetails(newValue);
           const successMessage = newValue 
             ? "Wohooo champ! You've selected to use AI to describe your gifs!" 
             : "You have unselected the AI feature for describing your gifs.";
@@ -199,10 +201,7 @@ function Profile() {
         try {
           const response = await DeleteUserLogo();
           if (response.data) {
-            setUser((prevUser) => {
-              const updatedUser = { ...prevUser, userLogoSrc: null };
-              return updatedUser;
-            });
+            setChangeUserDetails(response.data);
             sessionStorage.removeItem('userLogoItem')
             const userData = sessionStorage.getItem('user');
             if (userData) {
@@ -283,7 +282,7 @@ function Profile() {
             </div>
           </Box>
           <Box className="upload-logo-details">
-            <LogoUploadForm userLogoSrc={userLogoSrc} setUser={setUser} isMobile={isMobile} />
+            <LogoUploadForm userLogoSrc={userLogoSrc} setChangeUserDetails={setChangeUserDetails} isMobile={isMobile} />
             {userLogoSrc && (
               <LightTooltip title="Remove logo">
                 <IconButton onClick={handleOnDeleteLogo}>

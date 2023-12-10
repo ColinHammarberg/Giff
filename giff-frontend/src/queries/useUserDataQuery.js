@@ -19,11 +19,11 @@ const fetchUser = async (access_token) => {
   }
 };
 
-const useFetchUser = () => {
+const useFetchUser = (changeUserDetails) => {
   const access_token = localStorage.getItem('access_token');
 
   const getUserData = useQuery(
-    ['userData', access_token],
+    ['userData', access_token, changeUserDetails],
     () => fetchUser(access_token),
     {
       retry: 1,
