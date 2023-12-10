@@ -103,8 +103,8 @@ export async function SaveUserResolution(resolution) {
     return response;
   }
 
-  export async function ResetUserPassword(password, token) {
-    const response = await axios.post(`${Api}/new_user_password`, { password, token });
+  export async function ResetUserPassword(password, code) {
+    const response = await axios.post(`${Api}/new_user_password`, { password, code });
     return response;
 }
 
