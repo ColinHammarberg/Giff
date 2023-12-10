@@ -5,8 +5,6 @@ from flask import jsonify, request
 from werkzeug.security import generate_password_hash
 from models import User
 import secrets
-import jwt
-from datetime import datetime, timedelta
 
 RESET_PASSWORD_URL = 'https://giveagif-t.com/new-password'
 SENDGRID_API_KEY = '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'
@@ -14,8 +12,8 @@ serializer_secret_key = secrets.token_urlsafe(16)
 SERIALIZER_SECRET_KEY = serializer_secret_key
 
 
-def send_reset_password_email(email, token):
-    reset_link = f"{RESET_PASSWORD_URL}?token={token}"
+def send_reset_password_email(email, reset_password_code):
+    reset_link = f"{RESET_PASSWORD_URL}?code={reset_password_code}"
     TEMPLATE_ID = 'd-83abe0bcf0db4281879d3351ce6706a6'
     message = Mail(
         from_email='hello@gif-t.io',
@@ -50,13 +48,11 @@ def request_reset_password():
         return jsonify({"status": "User not found"}), 404
 
     try:
-        # Generate JWT token
-        token = jwt.encode({
-            'email': email,
-            'exp': datetime.utcnow() + timedelta(hours=1)  # Token expires in 1 hour
-        }, SERIALIZER_SECRET_KEY, algorithm='HS256')
+        reset_password_code = secrets.token_urlsafe(16)
+        user.reset_password_code = reset_password_code
+        db.session.commit()
 
-        send_reset_password_email(email, token)
+        send_reset_password_email(email, reset_password_code)
         return jsonify({"status": "Reset password email sent"}), 200
     except Exception as e:
         print(e)
@@ -65,27 +61,22 @@ def request_reset_password():
 
 def reset_user_password():
     data = request.get_json()
-    token = data.get('token')
+    reset_password_code = data.get('code')
     new_password = data.get('password')
 
-    if not token or not new_password:
-        return jsonify({"status": "Token and password are required"}), 400
+    if not reset_password_code or not new_password:
+        return jsonify({"status": "Code and password are required"}), 400
+
+    user = User.query.filter_by(reset_password_code=reset_password_code).first()
+    if not user:
+        return jsonify({"status": "Invalid reset code"}), 400
 
     try:
-        # Decode and validate JWT token
-        payload = jwt.decode(token, SERIALIZER_SECRET_KEY,
-                             algorithms=['HS256'])
-        email = payload['email']
-
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            return jsonify({"status": "User not found"}), 404
-
         hashed_password = generate_password_hash(new_password, method='scrypt')
         user.password = hashed_password
+        user.reset_password_code = None
         db.session.commit()
         return jsonify({"status": "Password reset successfully"}), 200
-    except jwt.ExpiredSignatureError:
-        return jsonify({"status": "Reset link expired"}), 400
-    except jwt.InvalidTokenError:
-        return jsonify({"status": "Invalid reset link"}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({"status": "Error resetting password"}), 500

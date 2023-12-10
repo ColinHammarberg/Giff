@@ -13,6 +13,8 @@ class User(db.Model, UserMixin):
     has_logo = db.Column(db.Boolean, default=False)
     include_logo = db.Column(db.Boolean, default=False)
     include_ai = db.Column(db.Boolean, default=False)
+    reset_password_code = db.Column(db.String(255), default=None)
+    reset_password_status = db.Column(db.String(255), default=None)
     gifs = relationship("UserGif", backref="user")
     logos = relationship("UserLogo", backref="user")
 

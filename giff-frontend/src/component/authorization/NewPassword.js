@@ -21,7 +21,7 @@ function NewPassword() {
   };
 
   const query = useQuery();
-  const token = query.get('token');
+  const code = query.get('code');
 
   function handleOnChangeEmail(event) {
     setPassword(event.target.value);
@@ -31,7 +31,7 @@ function NewPassword() {
     setConfirmPassword(event.target.value);
   }
 
-  console.log('token', token);
+  console.log('code', code);
 
   const ResetPassword = async () => {
     if (password !== confirmPassword) {
@@ -39,7 +39,7 @@ function NewPassword() {
     } else {
         setIsLoading(true);
         try {
-        const response = await ResetUserPassword(password, token );
+        const response = await ResetUserPassword(password, code );
         console.log('response', response);
         if (response.status === 200) {
             setTimeout(() => {
