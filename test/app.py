@@ -8,6 +8,7 @@ from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_a
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, verify, include_logo_in_gifs, send_verification_email_again
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
 from reset_password_helper import request_reset_password, reset_user_password
+from include_ai_helper import include_ai_in_gifs
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -73,6 +74,9 @@ def new_password():
 def toggle_include_logo():
     return include_logo_in_gifs()
 
+@app.route('/toggle_include_ai', methods=['POST'])
+def toggle_include_ai():
+    return include_ai_in_gifs()
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():

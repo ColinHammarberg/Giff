@@ -68,6 +68,7 @@ def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
     user_id = data.get('user_id', get_jwt_identity())
+    current_user = User.query.get(user_id)
     gif_data = {}
     user_exists = User.query.filter_by(id=user_id).first()
     resourceType = 'pdf'
@@ -130,6 +131,7 @@ def generate_pdf_gif():
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/"
+    description = None
     if user_exists:
         upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
@@ -142,7 +144,9 @@ def generate_pdf_gif():
                                                          ExpiresIn=3600)
         print('presigned_url', presigned_url)
 
-        description = analyze_gif_and_get_description(presigned_url)
+        if current_user.include_ai:
+            description = analyze_gif_and_get_description(presigned_url)
+
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
                                gif_url=output_path, resourceId=resource_id, ai_description=description))
         db.session.commit()
@@ -203,6 +207,7 @@ def generate_pdf_gifs_from_list():
 @jwt_required()
 def upload_pdf_and_generate_gif():
     user_id = get_jwt_identity()
+    current_user = User.query.get(user_id)
     gif_data = {}
     resourceType = 'pdf'
 
@@ -266,6 +271,9 @@ def upload_pdf_and_generate_gif():
         if os.path.exists(temp_pdf_path):
             os.remove(temp_pdf_path)
 
+        
+        description = None
+
         if user_exists:
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}/{gif_name}", resource_id)
@@ -278,7 +286,9 @@ def upload_pdf_and_generate_gif():
                                                              ExpiresIn=3600)
             print('presigned_url', presigned_url)
 
-            description = analyze_gif_and_get_description(presigned_url)
+            if current_user.include_ai:
+                description = analyze_gif_and_get_description(presigned_url)
+
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
                            gif_url=output_path, resourceId=resource_id, ai_description=description))
             db.session.commit()
@@ -637,6 +647,7 @@ def generate_gif():
     URL = data.get('url')
     user_gif_count = UserGif.query.filter_by(user_id=user_id).count()
     next_gif_number = user_gif_count + 1
+    current_user = User.query.get(user_id)
     NAME = data.get(
         'name', f"your_gif-{next_gif_number}.gif") if user_id else "your_gif-t.gif"
 
@@ -748,6 +759,7 @@ def generate_gif():
     resource_id = str(uuid.uuid4())
     print('user_id', user_id)
     folder_name = f"{user_id}/"
+    description = None
     if user_id:
         upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
@@ -761,7 +773,9 @@ def generate_gif():
                                                          ExpiresIn=3600)
         print('presigned_url', presigned_url)
 
-        description = analyze_gif_and_get_description(presigned_url)
+        if current_user.include_ai:
+            description = analyze_gif_and_get_description(presigned_url)
+
         db.session.add(UserGif(user_id=user_id, gif_name=NAME,
                                gif_url=output_path, resourceId=resource_id, ai_description=description))
         db.session.commit()

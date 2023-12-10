@@ -13,7 +13,7 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import LightTooltip from '../overall/LightToolTip';
 import ResolutionSelect from './ResolutionSelect';
 import Tag from '../overall/Tag';
-import { ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
+import { ToggleIncludeAI, ToggleIncludeLogo } from '../../endpoints/GifCreationEndpoints';
 import { DeleteUserLogo, DeleteUserProfile, ResendVerificationEmail, SaveUserResolution, UpdateEmailAddress, UpdatePassword } from '../../endpoints/UserEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
 // import { useQueryClient } from 'react-query';
@@ -29,8 +29,10 @@ function Profile() {
     const { user } = useFetchUser(changeUserDetails);
     const [showOptions, setShowOptions] = useState(false);
     const { userLogoSrc } = useFetchUserLogo();
-    console.log('user', user);
-    const [checked, setChecked] = useState(user?.include_logo);
+    console.log('user.include_ai', user?.include_ai);
+    const [logoChecked, setLogoChecked] = useState(user?.include_ai);
+
+    const [aiChecked, setAiChecked] = useState(user?.include_ai);
     const [password, setPassword] = useState({
       currentPassword: '',
       newPassword: '',
@@ -54,25 +56,51 @@ function Profile() {
       });
     };
 
-    const handleUserUpdate = (updatedFields) => {
-      console.log('updatedFields', updatedFields);
-    };
-
-    const handleOnChangeCheckbox = async (event) => {
+    const handleOnChangeLogoCheckbox = async (event) => {
       try {
         const response = await ToggleIncludeLogo();
         const newValue = event.target.checked;
-        setChecked(newValue);
+        setLogoChecked(newValue);
         console.log('Settings saved:', response);
         if (response.data.status === 'success') {
-          showNotification('success', 'Successfully saved settings.')
-          handleUserUpdate({ include_logo: response.data.data });
+          showNotification('success', "Wohooo champ! You've added to use your logo as a part of your gifs!")
         }
       } catch (error) {
         console.error('Error saving settings:', error);
-        showNotification('error', 'Error while saving settings.')
+        showNotification('error', "Ohh noo! There was an issue to include your logo in your gifs!")
       } 
     };
+
+    const handleOnChangeAICheckbox = async (event) => {
+      const newValue = event.target.checked;
+      console.log('event', event.target.checked);
+    
+      try {
+        setAiChecked(newValue);
+    
+        const response = await ToggleIncludeAI();
+        console.log('Settings saved:', response);
+    
+        if (response.data.status !== 'success') {
+          // Revert the state if the API call is not successful
+          setAiChecked(!newValue);
+          showNotification('error', "Ohh noo! There was an issue to add usage of AI to describe your gifs!");
+        } else {
+          // Show different messages based on newValue
+          const successMessage = newValue 
+            ? "Wohooo champ! You've selected to use AI to describe your gifs!" 
+            : "You have unselected the AI feature for describing your gifs.";
+          showNotification('success', successMessage);
+        }
+      } catch (error) {
+        console.error('Error saving settings:', error);
+        // Revert the state in case of an error
+        setAiChecked(!newValue);
+        showNotification('error', "Ohh noo! There was an issue to add usage of AI to describe your gifs!");
+      } 
+    };
+    
+    
 
     const handleOnChangeEmail = (e, field) => {
       setEmail({
@@ -120,8 +148,6 @@ function Profile() {
       console.log('response', response);
       if (response.data.status === 'Email updated successfully') {
         showNotification('success', 'Email updated successfully');
-          // Update user state
-        handleUserUpdate({ email: email.newEmail });
       } else {
           showNotification('error', 'Email was not updated successfully. Please try again!');
       }
@@ -154,7 +180,6 @@ function Profile() {
         try {
           const response = await SaveUserResolution(value);
           if (response.data.status === "Settings updated successfully") {
-            handleUserUpdate({ resolution: value });
             setChangeUserDetails(value);
             showNotification('success', 'Yay! You now have a new standard size.')
           }
@@ -270,9 +295,13 @@ function Profile() {
           {userLogoSrc && (
             <Box className="checkbox">
               <div>Use logo as last frame of gifs</div>
-              <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
+              <Checkbox onChange={handleOnChangeLogoCheckbox} checked={logoChecked} />
             </Box>
           )}
+          <Box className="ai-checkbox">
+            <div>Use <span>AI</span> to analyse and describe your gif while creating it</div>
+            <Checkbox onChange={handleOnChangeAICheckbox} checked={aiChecked} />
+          </Box>
         </Box>
         <Box className="delete-account">
           <Button onClick={handleOnClickDeleteAccount}>Delete Account</Button>

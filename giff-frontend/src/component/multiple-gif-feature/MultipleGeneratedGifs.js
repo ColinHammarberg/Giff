@@ -92,17 +92,19 @@ function MultipleGeneratedGifs(props) {
                 <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
               </Box>
           </div>
-          <Box className="description" style={{ width: imageDimensions.width, backgroundColor: gif.selectedColor || '#ffffff'}}>
-            <p>
-              {isExpanded ? gif?.ai_description : shortDescription}
-            </p>
-            <Button
-              className="view-more-button"
-              onClick={() => setExpandedDescriptionIndex(isExpanded ? null : index)}
-            >
-              {isExpanded ? "View Less" : "See longer description"}
-            </Button>
+          {gif?.ai_description && (
+            <Box className="description" style={{ width: imageDimensions.width, backgroundColor: gif.selectedColor || '#ffffff'}}>
+              <p>
+                {isExpanded ? gif?.ai_description : shortDescription}
+              </p>
+              <Button
+                className="view-more-button"
+                onClick={() => setExpandedDescriptionIndex(isExpanded ? null : index)}
+              >
+                {isExpanded ? "View Less" : "See longer description"}
+              </Button>
           </Box>
+          )}
       </Box>
       )
     });
