@@ -9,19 +9,20 @@ import { VerifyUser } from '../../endpoints/UserEndpoints';
 function VerifyAccount() {
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-  console.log('token', token);
+  const code = urlParams.get('code');
+  console.log('code', code);
 
   const { data } = useQuery(
-    ['verifyUser', token],
-    () => VerifyUser(token),
+    ['verifyUser', code],
+    () => VerifyUser(code),
     {
       retry: 10,
       retryDelay: 1000,
-      enabled: !!token,
+      enabled: !!code,
       onSuccess: (data) => {
         if (data?.status === 200) {
           sessionStorage.removeItem('user');
+          showNotification('success', "Jippiee! Your account has been varified champ!");
           setTimeout(() => navigate('/'), 3000);
         }
       },
