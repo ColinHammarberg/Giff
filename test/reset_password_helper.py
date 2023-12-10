@@ -5,7 +5,7 @@ from flask import jsonify, request
 from werkzeug.security import generate_password_hash
 from models import User
 import secrets
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 RESET_PASSWORD_URL = 'https://giveagif-t.com/new-password'
 SENDGRID_API_KEY = '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'
@@ -62,8 +62,8 @@ def reset_user_password():
     token = data.get('token')
     new_password = data.get('password')
 
-    print('Token:', token)  # Debug print
-    print('New password:', new_password)  # Debug print
+    print('Token:', token)
+    print('New password:', new_password)
 
     if not token or not new_password:
         return jsonify({"status": "Token and password are required"}), 400
@@ -72,8 +72,8 @@ def reset_user_password():
         email = s.loads(token, salt='password-reset-salt', max_age=3600)
     except SignatureExpired:
         return jsonify({"status": "Reset link expired"}), 400
-    except BadSignature:
-        return jsonify({"status": "Invalid reset link"}), 400
+    # except BadSignature:
+    #     return jsonify({"status": "Invalid reset link"}), 400
 
     user = User.query.filter_by(email=email).first()
     if not user:

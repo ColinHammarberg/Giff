@@ -31,6 +31,8 @@ function NewPassword() {
     setConfirmPassword(event.target.value);
   }
 
+  console.log('token', token);
+
   const ResetPassword = async () => {
     if (password !== confirmPassword) {
       setError('Passwords do not match, please try again.');
@@ -38,6 +40,7 @@ function NewPassword() {
         setIsLoading(true);
         try {
         const response = await ResetUserPassword(password, token );
+        console.log('response', response);
         if (response.status === 200) {
             setTimeout(() => {
             setIsLoading(false);
