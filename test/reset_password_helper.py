@@ -79,7 +79,7 @@ def reset_user_password():
     if not user:
         return jsonify({"status": "User not found"}), 404
 
-    hashed_password = generate_password_hash(new_password, method='sha256')
+    hashed_password = generate_password_hash(new_password, method='scrypt')
     user.password = hashed_password
     db.session.commit()
     return jsonify({"status": "Password reset successfully"}), 200
