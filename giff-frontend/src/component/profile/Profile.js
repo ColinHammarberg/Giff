@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import _debounce from 'lodash/debounce';
 import './Profile.scss';
 import Header from '../overall/Header';
@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import ResetUserDetailsPopover from '../authorization/ResetUserDetailsPopover';
 import LogoUploadForm from './LogoUploadForm';
-import { GiftContext } from '../../context/GiftContextProvider';
 import LightTooltip from '../overall/LightToolTip';
 import ResolutionSelect from './ResolutionSelect';
 import Tag from '../overall/Tag';
@@ -25,7 +24,6 @@ function Profile() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [changeUserDetails, setChangeUserDetails] = useState(null);
     const { isMobile } = useMobileQuery();
-    const { setUser } = useContext(GiftContext); // Get the context value
     const { user } = useFetchUser(changeUserDetails);
     const [showOptions, setShowOptions] = useState(false);
     const { userLogoSrc } = useFetchUserLogo();
