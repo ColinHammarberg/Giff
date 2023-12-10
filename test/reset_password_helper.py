@@ -8,10 +8,11 @@ import secrets
 import jwt
 from datetime import datetime, timedelta
 
-RESET_PASSWORD_URL = 'http://localhost:3000/new-password'
+RESET_PASSWORD_URL = 'https://giveagif-t.com/new-password'
 SENDGRID_API_KEY = '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'
 serializer_secret_key = secrets.token_urlsafe(16)
 SERIALIZER_SECRET_KEY = serializer_secret_key
+
 
 def send_reset_password_email(email, token):
     reset_link = f"{RESET_PASSWORD_URL}?token={token}"
@@ -30,6 +31,7 @@ def send_reset_password_email(email, token):
         print(response.status_code, response.body, response.headers)
     except Exception as e:
         print(str(e))
+
 
 def request_reset_password():
     data = request.get_json()
@@ -59,7 +61,8 @@ def request_reset_password():
     except Exception as e:
         print(e)
         return jsonify({"status": "Failed to send reset password email"}), 500
-    
+
+
 def reset_user_password():
     data = request.get_json()
     token = data.get('token')
@@ -70,7 +73,8 @@ def reset_user_password():
 
     try:
         # Decode and validate JWT token
-        payload = jwt.decode(token, SERIALIZER_SECRET_KEY, algorithms=['HS256'])
+        payload = jwt.decode(token, SERIALIZER_SECRET_KEY,
+                             algorithms=['HS256'])
         email = payload['email']
 
         user = User.query.filter_by(email=email).first()
