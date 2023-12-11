@@ -9,9 +9,9 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
   Api = 'https://gift-server-eu-1.azurewebsites.net'; // azure
 }
 
-export async function VerifyUser(token) {
+export async function VerifyUser(code) {
     try {
-      const response = await axios.get(`${Api}/verify_user?token=${encodeURIComponent(token)}`);
+      const response = await axios.get(`${Api}/verify_user?code=${code}`);
       console.log('response', response);
       return { data: response.data, status: response.status };
     } catch (error) {

@@ -29,6 +29,8 @@ def send_verification_email(email, verify_account_code):
 
 def verify():
     verify_account_code = request.args.get('code')
+    if verify_account_code is None:
+        return jsonify({"status": "Verification code wasn't found"}), 404
     user = User.query.filter_by(verify_account_code=verify_account_code).first()
     if user:
         user.is_active = True

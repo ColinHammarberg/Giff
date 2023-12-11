@@ -20,6 +20,7 @@ function VerifyAccount() {
       retryDelay: 1000,
       enabled: !!code,
       onSuccess: (data) => {
+        console.log('data', data);
         if (data?.status === 200) {
           sessionStorage.removeItem('user');
           showNotification('success', "Jippiee! Your account has been varified champ!");
