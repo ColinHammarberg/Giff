@@ -11,7 +11,7 @@ SENDGRID_API_KEY = 'SG.RU_Pj2xlTSixO_4Vchtbdg.NMLj_xMH3pwk7IWMn-15w1Cqdye4GBIjmN
 
 def send_verification_email(email, verify_account_code):
     verification_link = f"{VERIFICATION_URL}?code={verify_account_code}"
-    TEMPLATE_ID = 'd-cea95aa2f8dc4caaa7ca8b1cb5d87520'
+    TEMPLATE_ID = 'd-4fb8071daea24a80b2ebcca2bf6311e1'
     message = Mail(
         from_email='hello@gif-t.io',
         to_emails=email,
