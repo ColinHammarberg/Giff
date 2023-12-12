@@ -9,9 +9,10 @@ import secrets
 VERIFICATION_URL = 'https://giveagif-t.com/verify'
 SENDGRID_API_KEY = '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'
 
+
 def send_verification_email(email, verify_account_code):
     verification_link = f"{VERIFICATION_URL}?code={verify_account_code}"
-    TEMPLATE_ID = 'd-4fb8071daea24a80b2ebcca2bf6311e1'
+    TEMPLATE_ID = 'd-3b5e54e9b21448168495f8b68919a8fa'
     message = Mail(
         from_email='hello@gif-t.io',
         to_emails=email,
@@ -27,11 +28,13 @@ def send_verification_email(email, verify_account_code):
     except Exception as e:
         print(str(e))
 
+
 def verify():
     verify_account_code = request.args.get('code')
     if verify_account_code is None:
         return jsonify({"status": "Verification code wasn't found"}), 404
-    user = User.query.filter_by(verify_account_code=verify_account_code).first()
+    user = User.query.filter_by(
+        verify_account_code=verify_account_code).first()
     if user:
         user.is_active = True
         user.verify_account_code = None
@@ -39,7 +42,8 @@ def verify():
         return jsonify({"status": "Email verified successfully"}), 200
     else:
         return jsonify({"status": "Invalid verification code"}), 404
-    
+
+
 @jwt_required()
 def send_verification_email_again():
     user_id = get_jwt_identity()

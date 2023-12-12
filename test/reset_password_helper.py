@@ -14,7 +14,7 @@ SERIALIZER_SECRET_KEY = serializer_secret_key
 
 def send_reset_password_email(email, reset_password_code):
     reset_link = f"{RESET_PASSWORD_URL}?code={reset_password_code}"
-    TEMPLATE_ID = 'd-83abe0bcf0db4281879d3351ce6706a6'
+    TEMPLATE_ID = 'd-4fb8071daea24a80b2ebcca2bf6311e1'
     message = Mail(
         from_email='hello@gif-t.io',
         to_emails=email,
