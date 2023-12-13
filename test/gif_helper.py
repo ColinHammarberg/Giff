@@ -8,6 +8,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from werkzeug.utils import secure_filename
+from utils_helper import is_vimeo_url, is_youtube_url
+# from vimeo_helper import download_vimeo_video
 from gpt_helper import analyze_gif_and_get_description
 from utils import resize_gif
 import io
@@ -574,16 +576,21 @@ def generate_video_gif(data, user_id):
         end_frame = data.get('end_frame', 300)
         print('data', data, user_id)
 
-        # Step 1: Download Video
-        yt = YouTube(URL)
-        video = yt.streams.filter(file_extension='mp4').first()
-        video_path = video.download()
+        # Determine video source and download video
+        if is_youtube_url(URL):
+            yt = YouTube(URL)
+            video = yt.streams.filter(file_extension='mp4').first()
+            video_path = video.download()
+        elif is_vimeo_url(URL):
+            return jsonify({'error': 'Unsupported video URL'}), 200
+        else:
+            return jsonify({'error': 'Unsupported video URL'}), 400
+
         cap = VideoCapture(video_path)
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         start_frame = max(0, min(start_frame, total_frames - 1))
         end_frame = max(0, min(end_frame, total_frames))
 
-        print('total_frames', total_frames)
         frames = []
         for i in range(start_frame, end_frame):
             cap.set(1, i)
@@ -593,31 +600,50 @@ def generate_video_gif(data, user_id):
                 pil_img = Image.fromarray(rgb_frame)
                 frames.append(pil_img)
 
-        # Step 3: Save Frames as GIF
-        gifs_frontend_folder = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-        os.makedirs(gifs_frontend_folder, exist_ok=True)
-        output_gif_path = os.path.join(gifs_frontend_folder, NAME)
-
         frames = frames[::3]
         frame_durations = [1] * len(frames)
-        frames = frames[5:]
-        frames[0].save(output_gif_path, save_all=True,
-                       append_images=frames[1:], loop=0, duration=frame_durations)
+        if len(frames) > 0:
+            gifs_frontend_folder = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+            backend_gifs_folder = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), 'gifs')
+            os.makedirs(gifs_frontend_folder, exist_ok=True)
+            os.makedirs(backend_gifs_folder, exist_ok=True)
+            output_path = os.path.join(gifs_frontend_folder, NAME)
+            backend_output_path = os.path.join(backend_gifs_folder, NAME)
 
-        folder_name = f"{user_id}/" if user_id else ""
-        upload_to_s3(output_gif_path, 'gift-resources',
-                     f"{folder_name}{NAME}", resource_id)
+            # Save the GIF
+            frames[0].save(
+                output_path,
+                save_all=True,
+                append_images=frames[1:],
+                duration=frame_durations,
+                loop=0
+            )
 
-        gif_data = {
-            "name": NAME,
-            "resourceId": resource_id,
-            "resourceType": resourceType
-        }
+            frames[0].save(
+                backend_output_path,
+                save_all=True,
+                append_images=frames[1:],
+                duration=frame_durations,
+                loop=0
+            )
+        else:
+            logging.error("Not enough frames to create a GIF.")
+            return jsonify({'error': 'Not enough frames to create a GIF'}), 500
 
         if user_id:
+            folder_name = f"{user_id}/"
+            upload_to_s3(output_path, 'gift-resources',
+                        f"{folder_name}{NAME}", resource_id)
+
+            gif_data = {
+                "name": NAME,
+                "resourceId": resource_id,
+                "resourceType": resourceType
+            }
             db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                            gif_url=output_gif_path, resourceId=resource_id, resourcetype=resourceType))
+                               gif_url=output_path, resourceId=resource_id))
             db.session.commit()
 
         return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
