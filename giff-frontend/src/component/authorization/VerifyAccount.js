@@ -6,34 +6,41 @@ import Verification from './Verifying.jpg';
 import './Verification.scss';
 import { VerifyUser } from '../../endpoints/UserEndpoints';
 
-function VerifyAccount() {
+const useVerificationNavigation = () => {
   const navigate = useNavigate();
+  const access_token = localStorage.getItem('access_token');
+
+  const handleSuccess = (data) => {
+    console.log('data', data);
+    const message = data?.status === 200 ? "Jippiee! Your account has been verified champ!" : "Ohh no! We couldn't verify your account. Please request a new link in your profile.";
+    showNotification(data?.status === 200 ? 'success' : 'error', message);
+    const navigatePath = access_token ? '/choose-option-create' : '/';
+    setTimeout(() => navigate(navigatePath), 3000);
+  };
+
+  const handleError = (error) => {
+    showNotification('error', error.message || 'Verification failed');
+  };
+
+  return { handleSuccess, handleError };
+};
+
+function VerifyAccount() {
+  const { handleSuccess, handleError } = useVerificationNavigation();
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
-  console.log('code', code);
 
-  const { data } = useQuery(
+  useQuery(
     ['verifyUser', code],
     () => VerifyUser(code),
     {
       retry: 10,
       retryDelay: 1000,
       enabled: !!code,
-      onSuccess: (data) => {
-        console.log('data', data);
-        if (data?.status === 200) {
-          sessionStorage.removeItem('user');
-          showNotification('success', "Jippiee! Your account has been varified champ!");
-          setTimeout(() => navigate('/'), 3000);
-        }
-      },
-      onError: (error) => {
-        showNotification('error', error.message || 'Verification failed');
-      }
+      onSuccess: handleSuccess,
+      onError: handleError
     }
   );
-
-  console.log('data', data);
 
   return (
     <div className="gif-landing">
