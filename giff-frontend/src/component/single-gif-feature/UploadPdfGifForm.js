@@ -70,7 +70,7 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
     <>
       <form encType="multipart/form-data" onSubmit={handleFormSubmit}>
       <label htmlFor="pdf-file" className="custom-button">
-            Upload PDF
+        Click here
       </label>
         <div 
           onDragOver={handleDragOver}

@@ -2,14 +2,29 @@
     .MuiPaper-root {
         width: 266px;
         // height: 149px;
-        padding: 44px;
-        background-color: rgba(244, 20, 155, 1);
+        padding: 34px;
+        background-color: #1B1A19;
+        color: #fff;
+
+        .close {
+            height: 15px;
+            width: 43px;
+            border-radius: 50px;
+            border: 1px solid #fff;
+            font-size: 8px;
+            color: #fff;
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-family: "Staatliches";
+        }
 
         .content {
             width: 100%;
             font-family: 'Staatliches';
             font-weight: 400;
             font-size: 12px;
+            position: relative;
         }
     }
 }

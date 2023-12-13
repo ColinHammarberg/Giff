@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Popover } from '@mui/material';
+import { Button, Popover } from '@mui/material';
 import './InfoDialog.scss';
 
 class InfoDialog extends PureComponent {
@@ -45,6 +45,7 @@ class InfoDialog extends PureComponent {
             )
           })}
         </div>
+        <Button className="close" onClick={this.handleClose}>Close</Button>
       </Popover>
     );
   }

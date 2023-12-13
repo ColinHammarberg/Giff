@@ -97,17 +97,19 @@
             font-family: "Staatliches";
         }
 
-        .MuiSvgIcon-root {
-            color: #fec901;
-        }
-
         .text-field-header {
             color: #fff;
             font-size: 20px;
             font-weight: 700;
+            font-family: "Staatliches";
             display: flex;
             gap: 8px;
             justify-content: center;
+
+            .info-icon {
+                cursor: pointer;
+                color: #fff;
+            }
         }
     }
 

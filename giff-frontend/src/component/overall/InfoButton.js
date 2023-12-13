@@ -16,7 +16,7 @@ function InfoButton({ infoButtonText }) {
 
     return (
         <>
-            <div>
+            <div className="info-icon">
                 <InfoIcon onClick={onClick} />
             </div>
             <InfoDialog onClosePopup={onClosePopup} anchorEl={anchorEl} infoButtonText={infoButtonText} />
