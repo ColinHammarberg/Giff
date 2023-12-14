@@ -104,7 +104,6 @@ function GifLibrary() {
           selectedColor: hoveredGif.selectedColor,
           selectedFrame: hoveredGif.selectedFrame,
           resolution: selectedResolution,
-          resourceType: hoveredGif.resourceType
         };
     
         try {
@@ -134,7 +133,7 @@ function GifLibrary() {
         if (!gifs) {
           return;
         }
-        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor }));
+        const gifData = gifs.map(gif => ({ url: gif.url, name: gif.name, selectedColor: gif.selectedColor, selectedFrame: gif.selectedFrame }));
         setIsLoading(true);
         try {
           const response = await DownloadAllLibraryGifs(gifData);

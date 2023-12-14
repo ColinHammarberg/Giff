@@ -391,7 +391,7 @@ def download_all_library_gifs():
                 gif_url = gif_info['url']
                 gif_name = gif_info['name']
                 selected_color = gif_info['selectedColor']
-                selected_frame = gif_info('selectedFrame')
+                selected_frame = gif_info['selectedFrame']
 
                 # Download the GIF
                 response = requests.get(gif_url)
