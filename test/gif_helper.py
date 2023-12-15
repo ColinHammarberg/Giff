@@ -339,10 +339,8 @@ def download_all_library_gifs():
     print('gif_data', data)
     gif_data = data.get('gifData', [])
     user_id = get_jwt_identity()
-    user = User.query.filter_by(
-        id=user_id).first()
-    selected_resolution = user.selected_resolution if user.selected_resolution else "800x1280"
-    print('selected_resolution', selected_resolution)
+    user = User.query.filter_by(id=user_id).first()
+
     try:
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_STORED) as zipf:
@@ -352,16 +350,21 @@ def download_all_library_gifs():
                 selected_color = gif_info['selectedColor']
                 selected_frame = gif_info['selectedFrame']
 
-                # Download the GIF
                 response = requests.get(gif_url)
                 if response.status_code == 200:
                     gif_bytes = io.BytesIO(response.content)
+                    original_gif = Image.open(gif_bytes)
+
+                    original_width, original_height = original_gif.size
+                    is_portrait = original_height > original_width
+
+                    selected_resolution = user.selected_resolution if user.selected_resolution else f"{original_width}x{original_height}"
+
                     resized_gif_bytes_io = resize_gif(
-                        gif_bytes, selected_resolution)
+                        gif_bytes, f"{original_width}x{original_height}" if is_portrait else selected_resolution)
 
                     if selected_color:
-                        new_gif_bytes = add_border_to_gif(
-                            resized_gif_bytes_io, selected_color)
+                        new_gif_bytes = add_border_to_gif(resized_gif_bytes_io, selected_color)
                     elif selected_frame:
                         s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                                                  aws_secret_access_key='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',
@@ -370,8 +373,7 @@ def download_all_library_gifs():
                                                                          Params={'Bucket': 'gift-filter-options',
                                                                                  'Key': selected_frame},
                                                                          ExpiresIn=3600)
-                        new_gif_bytes = overlay_filter_on_gif(
-                            resized_gif_bytes_io, presigned_url)
+                        new_gif_bytes = overlay_filter_on_gif(resized_gif_bytes_io, presigned_url)
                     else:
                         new_gif_bytes = resized_gif_bytes_io
 
@@ -387,6 +389,7 @@ def download_all_library_gifs():
     except Exception as e:
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
+
 
 
 @jwt_required()
@@ -477,8 +480,6 @@ def download_individual_gif():
         gif_name = gif_data.get('name')
         user_id = get_jwt_identity()
         user = User.query.filter_by(id=user_id).first()
-        selected_resolution = user.selected_resolution if user.selected_resolution else gif_data.get(
-            'resolution', "800x1280")
 
         if gif_url is None:
             return "Invalid GIF URL", 400
@@ -491,6 +492,7 @@ def download_individual_gif():
 
             # Determine the original dimensions
             original_width, original_height = original_gif.size
+            selected_resolution = user.selected_resolution if user.selected_resolution else f"{original_width}x{original_height}"
             is_portrait = original_height > original_width
             resized_gif_bytes_io = resize_gif(
                 gif_bytes_io, f"{original_width}x{original_height}" if is_portrait else selected_resolution)
