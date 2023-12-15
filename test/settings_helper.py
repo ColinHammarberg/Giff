@@ -9,10 +9,17 @@ def save_user_resolution():
     data = request.get_json()
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
+
     try:
-        current_user.selected_resolution = data['resolution']
+        resolution = data.get('resolution')
+        if resolution == "unset":
+            current_user.selected_resolution = None
+        else:
+            current_user.selected_resolution = resolution
+
         db.session.commit()
         return jsonify({"status": "Settings updated successfully"}), 200
+
     except Exception as e:
-        # Handle exceptions
+        print(f"Error updating user settings: {e}")
         return jsonify({"status": "Internal Server Error"}), 500

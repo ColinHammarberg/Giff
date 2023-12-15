@@ -13,6 +13,7 @@ const ResolutionOptions = [
     { id: 16, value: '800x800' },
     { id: 18, value: '1000x1000' },
     { id: 24, value: '1280x1000' },
+    { id: 14, value: 'unset' },
 ]
 
 function ResolutionSelect({ defaultValue, onChange, showOptions, setShowOptions }) {
