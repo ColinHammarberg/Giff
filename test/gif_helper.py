@@ -12,7 +12,8 @@ from utils_helper import is_vimeo_url, is_youtube_url
 # from vimeo_helper import download_vimeo_video
 from gpt_helper import analyze_gif_and_get_description
 from utils import resize_gif
-import io
+import shutil
+from io import BytesIO
 import os
 import zipfile
 import boto3
@@ -26,7 +27,6 @@ import os
 import io
 import logging
 import traceback
-import time
 
 backend_gifs_folder = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'gifs')
@@ -662,20 +662,12 @@ def ease_in_quad(t):
 @jwt_required(optional=True)
 def generate_gif():
     data = request.get_json()
-    user_id = data.get('user_id', None)
-    resourceType = 'webpage'
-
-    if user_id is None:
-        try:
-            user_id = get_jwt_identity()
-        except RuntimeError:
-            pass  # If JWT is not present, user_id remains None
-    URL = data.get('url')
-    user_gif_count = UserGif.query.filter_by(user_id=user_id).count()
-    next_gif_number = user_gif_count + 1
+    user_id = data.get('user_id', get_jwt_identity())
     current_user = User.query.get(user_id)
-    NAME = data.get(
-        'name', f"your_gif-{next_gif_number}.gif") if user_id else "your_gif-t.gif"
+    URL = data.get('url')
+    NAME = data.get('name', f"your_gif-{UserGif.query.filter_by(user_id=user_id).count() + 1}.gif") if user_id else "your_gif-t.gif"
+    if not NAME.endswith('.gif'):
+        NAME += '.gif'
 
     if is_video_url(URL):
         return generate_video_gif(data, user_id)
@@ -689,83 +681,31 @@ def generate_gif():
     service = Service(executable_path="/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service,options=options)
     driver.get(URL)
-    timer = 400
 
     scroll_height = driver.execute_script("return document.body.scrollHeight")
     if scroll_height < 1000:
+        driver.quit()
         return jsonify({'error': 'Invalid scroll height'})
 
-    duration = 1.0
-
-    if not NAME.endswith('.gif'):
-        NAME += '.gif'
-
-    screenshots_dir = 'screenshots'
-    os.makedirs(screenshots_dir, exist_ok=True)
+    screenshots = []
+    scroll_step = 400
     driver.execute_script("document.body.style.overflow = 'hidden'")
 
-    screenshot_dimensions = None
-
-    for i in range(0, scroll_height, timer):
+    for i in range(0, scroll_height, scroll_step):
         driver.execute_script(f"window.scrollTo(0, {i})")
-        time.sleep(1)
-        screenshot_path = os.path.join(screenshots_dir, f'screenshot_{i}.png')
-        driver.save_screenshot(screenshot_path)
-        if screenshot_dimensions is None:
-            first_screenshot = Image.open(screenshot_path)
-            screenshot_dimensions = first_screenshot.size
+        screenshots.append(driver.get_screenshot_as_png())
 
     driver.quit()
 
     frames_with_durations = []
-    for screenshot in os.listdir(screenshots_dir):
-        screenshot_path = os.path.join(screenshots_dir, screenshot)
-        frame = Image.open(screenshot_path)
-        frames_with_durations.append((frame, duration))
+    for screenshot in screenshots:
+        frame = Image.open(BytesIO(screenshot))
+        frames_with_durations.append((frame, 1.0))
 
-    # user_logo = UserLogo.query.filter_by(user_id=user_id).first()
-    # presigned_url = None
+    output_path = os.path.join('giff-frontend', 'src', 'gifs', NAME)
+    backend_output_path = os.path.join('gifs', NAME)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # If a user logo is found, generate the presigned URL
-    # s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-    #               aws_secret_access_key='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', region_name='eu-north-1')
-    # if user_logo:
-    #     resource_id = user_logo.resource_id
-    #     folder_name = f"{user_id}/logos/"
-    #     presigned_url = s3.generate_presigned_url('get_object',
-    #                                          Params={'Bucket': 'logo-resources',
-    #                                                  'Key': f"{folder_name}{resource_id}.png"},
-    #                                          ExpiresIn=3600)  # URL expires in 1 hour
-    #     response = requests.get(presigned_url)
-    #     logo_image = Image.open(BytesIO(response.content))
-    #     logo_image = logo_image.resize(screenshot_dimensions, Image.Resampling.LANCZOS)
-    #     outro_duration = 2.4
-    #     num_easing_frames = 8  # Number of frames for the easing animation
-    #     min_scale_factor = 0.3  # Minimum scale factor to avoid zero dimensions
-
-    #     for i in range(num_easing_frames):
-    #         t = i / float(num_easing_frames - 1)  # Normalized time (0 to 1)
-    #         scale_factor = ease_in_quad(t) * (1 - min_scale_factor) + min_scale_factor
-
-    #         # Resize logo for the current frame
-    #         current_size = tuple(int(dim * scale_factor) for dim in screenshot_dimensions)
-    #         easing_frame = logo_image.resize(current_size, Image.Resampling.LANCZOS)
-    #         easing_frame = ImageOps.pad(easing_frame, screenshot_dimensions, centering=(0.5, 0.5))
-
-    #         # Add easing frame to the list with a shorter duration
-    #         frames_with_durations.append((easing_frame, 0.3))  # 0.1 seconds per frame
-
-    #         # Add the final logo frame with the longer duration
-    #         frames_with_durations.append((logo_image, outro_duration))
-
-    gifs_frontend_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-    backend_gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), 'gifs')
-    os.makedirs(gifs_frontend_folder, exist_ok=True)
-    os.makedirs(backend_gifs_folder, exist_ok=True)
-    output_path = os.path.join(gifs_frontend_folder, NAME)
-    backend_output_path = os.path.join(backend_gifs_folder, NAME)
     frames_with_durations[0][0].save(
         output_path,
         save_all=True,
@@ -773,50 +713,32 @@ def generate_gif():
         duration=[int(d * 1000) for _, d in frames_with_durations],
         loop=0
     )
-
-    frames_with_durations[0][0].save(
-        backend_output_path,
-        save_all=True,
-        append_images=[frame for frame, _ in frames_with_durations[1:]],
-        duration=[int(d * 1000) for _, d in frames_with_durations],
-        loop=0
-    )
+    shutil.copy(output_path, backend_output_path)
 
     resource_id = str(uuid.uuid4())
-    print('user_id', user_id)
     folder_name = f"{user_id}/"
-    description = None
-    if user_id:
-        upload_to_s3(output_path, 'gift-resources',
+    upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
-        # Database Entry Here
-        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+    s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                                  aws_secret_access_key='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',
                                  region_name='eu-north-1')
-        presigned_url = s3_client.generate_presigned_url('get_object',
-                                                         Params={'Bucket': 'gift-resources',
-                                                                 'Key': f"{user_id}/{NAME}"},
-                                                         ExpiresIn=3600)
-        print('presigned_url', presigned_url)
+    presigned_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gift-resources',
+                                                                'Key': f"{user_id}/{NAME}"},
+                                                        ExpiresIn=3600)
+    description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
-        if current_user.include_ai:
-            description = analyze_gif_and_get_description(presigned_url)
+    new_gif = UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description)
+    db.session.add(new_gif)
+    db.session.commit()
 
-        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                               gif_url=output_path, resourceId=resource_id, ai_description=description))
-        db.session.commit()
-        gif_data = {
-            "name": NAME,
-            "resourceId": resource_id,
-            "resourceType": resourceType,
-            "ai_description": description
-        }
+    gif_data = {
+        "name": NAME,
+        "resourceId": resource_id,
+        "resourceType": 'webpage',
+        "ai_description": description
+    }
 
-    for screenshot in os.listdir(screenshots_dir):
-        os.remove(os.path.join(screenshots_dir, screenshot))
-    os.rmdir(screenshots_dir)
-
-    # Return the generated GIF data as a list with a dictionary
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
 
 
