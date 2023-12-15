@@ -9,10 +9,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from werkzeug.utils import secure_filename
 from utils_helper import is_vimeo_url, is_youtube_url
-# from vimeo_helper import download_vimeo_video
 from gpt_helper import analyze_gif_and_get_description
 from utils import resize_gif
-import shutil
 from io import BytesIO
 import os
 import zipfile
@@ -33,7 +31,6 @@ backend_gifs_folder = os.path.join(os.path.dirname(
 
 
 def is_video_url(URL):
-    # Check if the URL includes "youtube" or "vimeo"
     return "youtube" in URL or "vimeo" in URL
 
 
@@ -703,7 +700,6 @@ def generate_gif():
         frames_with_durations.append((frame, 1.0))
 
     output_path = os.path.join('giff-frontend', 'src', 'gifs', NAME)
-    backend_output_path = os.path.join('gifs', NAME)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     frames_with_durations[0][0].save(
@@ -713,7 +709,6 @@ def generate_gif():
         duration=[int(d * 1000) for _, d in frames_with_durations],
         loop=0
     )
-    shutil.copy(output_path, backend_output_path)
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/"
