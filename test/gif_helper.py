@@ -61,79 +61,43 @@ def get_user_gifs():
 
 # Endpoint for generating gif out of online pdfs
 
-
 @jwt_required()
 def generate_pdf_gif():
     data = request.get_json()
     URL = data.get('url')
     user_id = data.get('user_id', get_jwt_identity())
     current_user = User.query.get(user_id)
-    gif_data = {}
-    user_exists = User.query.filter_by(id=user_id).first()
     resourceType = 'pdf'
 
-    if not user_exists and user_id:
+    if not User.query.filter_by(id=user_id).first() and user_id:
         return jsonify({'error': f'User with id {user_id} not found'}), 400
 
-    if user_id is None:
-        try:
-            user_id = get_jwt_identity()
-        except RuntimeError:
-            pass
-
-    user_gif_count = UserGif.query.filter_by(user_id=user_id).count()
-    next_gif_number = user_gif_count + 1
-    NAME = data.get(
-        'name', f"your_gif-{next_gif_number}.gif") if user_id else "your_pdf_gif-t.gif"
-    images_dir = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), 'pdf_images')
+    NAME = data.get('name', f"your_gif-{UserGif.query.filter_by(user_id=user_id).count() + 1}.gif") if user_id else "your_pdf_gif-t.gif"
     if not NAME.endswith('.gif'):
         NAME += '.gif'
-    os.makedirs(images_dir, exist_ok=True)
 
     pdf_response = requests.get(URL)
-    pdf_path = os.path.join(images_dir, 'temp.pdf')
-
-    with open(pdf_path, 'wb') as pdf_file:
-        pdf_file.write(pdf_response.content)
-
-    pdf_document = fitz.open(pdf_path)
-    frame_durations = []
+    pdf_document = fitz.open("pdf", pdf_response.content)
+    frames = []
 
     for page_number in range(pdf_document.page_count):
         page = pdf_document[page_number]
         image_list = page.get_pixmap()
-        img = Image.frombytes(
-            "RGB", [image_list.width, image_list.height], image_list.samples)
-        img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
-        img.save(img_path, 'PNG')
-        frame_duration = 1.0
-        frame_durations.append(int(frame_duration * 1000))
+        img = Image.frombytes("RGB", [image_list.width, image_list.height], image_list.samples)
+        frames.append(img)
 
     pdf_document.close()
 
-    image_paths = sorted(os.listdir(images_dir))
-    frames = [Image.open(os.path.join(images_dir, img_path))
-              for img_path in image_paths if img_path.endswith('.png')]
-
-    gifs_folder = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
+    gifs_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
     os.makedirs(gifs_folder, exist_ok=True)
     output_path = os.path.join(gifs_folder, NAME)
 
-    frames[0].save(output_path, save_all=True,
-                   append_images=frames[1:], duration=frame_durations, loop=0)
-
-    for img_path in os.listdir(images_dir):
-        os.remove(os.path.join(images_dir, img_path))
-    os.rmdir(images_dir)
+    frames[0].save(output_path, save_all=True, append_images=frames[1:], duration=[1000] * len(frames), loop=0)
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/"
-    description = None
-    if user_exists:
-        upload_to_s3(output_path, 'gift-resources',
-                     f"{folder_name}{NAME}", resource_id)
+    if current_user:
+        upload_to_s3(output_path, 'gift-resources', f"{folder_name}{NAME}", resource_id)
         s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                                  aws_secret_access_key='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',
                                  region_name='eu-north-1')
@@ -141,13 +105,10 @@ def generate_pdf_gif():
                                                          Params={'Bucket': 'gift-resources',
                                                                  'Key': f"{user_id}/{NAME}"},
                                                          ExpiresIn=3600)
-        print('presigned_url', presigned_url)
 
-        if current_user.include_ai:
-            description = analyze_gif_and_get_description(presigned_url)
+        description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
-        db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                               gif_url=output_path, resourceId=resource_id, ai_description=description))
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description))
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -157,6 +118,7 @@ def generate_pdf_gif():
         }
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME, 'data': [gif_data]})
+
 
 
 @jwt_required()
