@@ -13,6 +13,7 @@ from io import BytesIO
 import fitz
 import requests
 import os
+import boto3
 
 @jwt_required()
 def generate_extension_pdf_gif():
@@ -51,6 +52,13 @@ def generate_extension_pdf_gif():
     folder_name = f"{user_id}/"
     if current_user:
         upload_to_s3(output_path, 'gift-resources', f"{folder_name}{NAME}", resource_id)
+        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                aws_secret_access_key='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', 
+                                region_name='eu-north-1')
+        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gift-resources',
+                                                                    'Key': f"{user_id}/{NAME}"},
+                                                        ExpiresIn=3600)
         
         db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id))
         db.session.commit()
@@ -58,6 +66,7 @@ def generate_extension_pdf_gif():
             "name": NAME,
             "resourceId": resource_id,
             "resourceType": resourceType,
+            "presigned_url": presigned_url
         }
 
     return jsonify({'message': 'GIF generated and uploaded!', 'name': NAME, 'data': [gif_data]})
@@ -120,6 +129,13 @@ def generate_extension_gif():
     folder_name = f"{user_id}/"
     upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
+    s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                aws_secret_access_key='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', 
+                                region_name='eu-north-1')
+    presigned_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gift-resources',
+                                                                    'Key': f"{user_id}/{NAME}"},
+                                                        ExpiresIn=3600)
     
     
     new_gif = UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id)
@@ -130,6 +146,7 @@ def generate_extension_gif():
         "name": NAME,
         "resourceId": resource_id,
         "resourceType": 'webpage',
+        "presigned_url": presigned_url
     }
 
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})

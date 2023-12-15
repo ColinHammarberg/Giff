@@ -92,7 +92,7 @@ function UserSignup() {
             <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signUpUserCredentials} label="Sign Up" variant="yellow" isProcessing={isLoading} />
+          <OfficialButton onClick={signUpUserCredentials} label="Sign Up" variant="pink" isProcessing={isLoading} />
         </div>
         <Box className="checkbox">
             <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />

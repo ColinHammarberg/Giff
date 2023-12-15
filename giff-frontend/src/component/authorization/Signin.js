@@ -111,7 +111,7 @@ function UserSignin() {
           />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="yellow" isProcessing={isLoading} />
+          <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="pink" isProcessing={isLoading} />
           <div className="no-account">Don’t have a Gif-t account yet? No worries. You can sign up <span onClick={() => navigate('/signup')}>here.</span></div>
         </div>
       </Box>
