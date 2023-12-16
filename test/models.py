@@ -24,6 +24,7 @@ class UserGif(db.Model):
     user_id = db.Column(db.Integer, ForeignKey('user.id'))
     gif_name = db.Column(db.String)
     gif_url = db.Column(db.String)
+    source = db.Column(db.String(255))
     resourceId = db.Column(db.String, unique=True)
     selectedColor = db.Column(db.String)
     selectedFrame = db.Column(db.String)

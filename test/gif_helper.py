@@ -108,7 +108,7 @@ def generate_pdf_gif():
 
         description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
-        db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description))
+        db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description, source=URL))
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -251,7 +251,7 @@ def upload_pdf_and_generate_gif():
                 description = analyze_gif_and_get_description(presigned_url)
 
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
-                           gif_url=output_path, resourceId=resource_id, ai_description=description))
+                           gif_url=output_path, resourceId=resource_id, ai_description=description, source="https://gif-t.io"))
             db.session.commit()
 
         gif_data = {
@@ -604,7 +604,7 @@ def generate_video_gif(data, user_id):
                 "resourceType": resourceType
             }
             db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                               gif_url=output_path, resourceId=resource_id))
+                               gif_url=output_path, resourceId=resource_id, source=URL))
             db.session.commit()
 
         return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
@@ -687,7 +687,7 @@ def generate_gif():
                                                         ExpiresIn=3600)
     description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
-    new_gif = UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description)
+    new_gif = UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description, source=URL)
     db.session.add(new_gif)
     db.session.commit()
 
