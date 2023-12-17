@@ -553,8 +553,11 @@ def generate_video_gif(data, user_id):
         cap = VideoCapture(video_path)
         print('cap', cap)
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print('total_frames', total_frames)
         start_frame = max(0, min(start_frame, total_frames - 1))
+        print('start_frame', start_frame)
         end_frame = max(0, min(end_frame, total_frames))
+        print('end_frame', end_frame)
 
         frames = []
         for i in range(start_frame, end_frame):
@@ -562,11 +565,14 @@ def generate_video_gif(data, user_id):
             ret, frame = cap.read()
             if ret:
                 rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
+                print('rgb_frame', rgb_frame)
                 pil_img = Image.fromarray(rgb_frame)
+                print('pil_img', pil_img)
                 frames.append(pil_img)
 
         frames = frames[::3]
         frame_durations = [1] * len(frames)
+        print('frame_durations', frame_durations)
         if len(frames) > 0:
             gifs_frontend_folder = os.path.join(os.path.dirname(
                 os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
@@ -599,6 +605,7 @@ def generate_video_gif(data, user_id):
 
         if user_id:
             folder_name = f"{user_id}/"
+            print('folder_name', folder_name)
             upload_to_s3(output_path, 'gift-resources',
                         f"{folder_name}{NAME}", resource_id)
 
@@ -607,6 +614,7 @@ def generate_video_gif(data, user_id):
                 "resourceId": resource_id,
                 "resourceType": resourceType
             }
+            print('gif_data', gif_data)
             db.session.add(UserGif(user_id=user_id, gif_name=NAME,
                                gif_url=output_path, resourceId=resource_id, source=URL))
             db.session.commit()
