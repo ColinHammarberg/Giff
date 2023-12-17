@@ -565,9 +565,7 @@ def generate_video_gif(data, user_id):
             ret, frame = cap.read()
             if ret:
                 rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
-                print('rgb_frame', rgb_frame)
                 pil_img = Image.fromarray(rgb_frame)
-                print('pil_img', pil_img)
                 frames.append(pil_img)
 
         frames = frames[::3]
