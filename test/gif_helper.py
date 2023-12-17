@@ -541,13 +541,17 @@ def generate_video_gif(data, user_id):
         if is_youtube_url(URL):
             yt = YouTube(URL)
             video = yt.streams.filter(file_extension='mp4').first()
+            print('video1', video)
             video_path = video.download()
+            print('video2', video_path)
+
         elif is_vimeo_url(URL):
             return jsonify({'error': 'Unsupported video URL'}), 200
         else:
             return jsonify({'error': 'Unsupported video URL'}), 400
 
         cap = VideoCapture(video_path)
+        print('cap', cap)
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         start_frame = max(0, min(start_frame, total_frames - 1))
         end_frame = max(0, min(end_frame, total_frames))
