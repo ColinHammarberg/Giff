@@ -560,15 +560,15 @@ def generate_video_gif(data, user_id):
         print('end_frame', end_frame)
 
         frames = []
-        for i in range(start_frame, end_frame):
-            cap.set(1, i)
+        frame_step = 5
+        for i in range(start_frame, end_frame, frame_step):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, i)
             ret, frame = cap.read()
             if ret:
                 rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
                 pil_img = Image.fromarray(rgb_frame)
                 frames.append(pil_img)
 
-        frames = frames[::3]
         frame_durations = [1] * len(frames)
         print('frame_durations', frame_durations)
         if len(frames) > 0:
