@@ -702,9 +702,9 @@ def generate_gif():
         gif_bytes = io.BytesIO(response.content)
 
     with open(output_path, "rb"):
-        resized_gif = resize_gif_add_on(gif_bytes, new_height=200)
+        resized_gif = resize_gif_add_on(gif_bytes, new_height=75)
         base64_string = b64encode(resized_gif.read()).decode('utf-8')
-        print('base64_string', base64_string)
+        print('base64_string', len(base64_string))
     description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
     new_gif = UserGif(
