@@ -11,7 +11,7 @@ from base64 import b64encode
 from werkzeug.utils import secure_filename
 from utils_helper import is_vimeo_url, is_youtube_url
 from gpt_helper import analyze_gif_and_get_description
-from utils import resize_gif
+from utils import resize_gif, resize_gif_add_on
 from io import BytesIO
 import os
 import zipfile
@@ -687,10 +687,7 @@ def generate_gif():
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/"
-    with open(output_path, "rb") as gif_file:
-        base64_string = b64encode(gif_file.read()).decode('utf-8')
 
-    print('base64_string', base64_string)
     upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
     s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
@@ -700,6 +697,14 @@ def generate_gif():
                                                         Params={'Bucket': 'gift-resources',
                                                                 'Key': f"{user_id}/{NAME}"},
                                                         ExpiresIn=3600)
+    response = requests.get(presigned_url)
+    if response.status_code == 200:
+        gif_bytes = io.BytesIO(response.content)
+
+    with open(output_path, "rb"):
+        resized_gif = resize_gif_add_on(gif_bytes, new_height=200)
+        base64_string = b64encode(resized_gif.read()).decode('utf-8')
+        print('base64_string', base64_string)
     description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
     new_gif = UserGif(
