@@ -15,7 +15,9 @@ def fetch_user_info():
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
     if current_user:
-        db.session.refresh(current_user) # Refresh to get the latest data
+        db.session.refresh(current_user)
+
+        user_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in current_user.tags]
         user_logo = UserLogo.query.filter_by(user_id=user_id).first()
         s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                   aws_secret_access_key='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', region_name='eu-north-1')
@@ -37,6 +39,7 @@ def fetch_user_info():
             has_logo=current_user.has_logo,
             include_logo=current_user.include_logo,
             include_ai=current_user.include_ai,
+            tags=user_tags,
             status="Success"
         ), 200
     else:

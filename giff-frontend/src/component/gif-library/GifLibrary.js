@@ -24,7 +24,7 @@ function GifLibrary() {
     const [isLoading, setIsLoading] = useState(false);
     const [showLoading, setShowLoading] = useState(true);
     const [isDesignOpen, setIsDesignOpen] = useState(false);
-    const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
+    const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'Tags']);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
     const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();
@@ -151,15 +151,17 @@ function GifLibrary() {
         setIsLoading(false);
       };
 
-      const editGif = (gifUrl, resourceId, selectedColor, selectedFrame) => {
+      const editGif = (gifUrl, resourceId, selectedColor, selectedFrame, resourceType, tags) => {
+        console.log('tags', tags, resourceType);
         setIsDesignOpen(true);
-        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame});
+        setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame, 'tags': tags});
       };
 
       const handleEditButtonClick = () => {
         if (selectedGif !== null) {
           const hoveredGif = gifs[selectedGif];
-          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType);
+          console.log('hoveredGif', hoveredGif);
+          editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType, hoveredGif.tags);
           setDesignChanges(false);
         }
       };

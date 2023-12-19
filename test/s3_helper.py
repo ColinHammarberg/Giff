@@ -59,8 +59,10 @@ def fetch_user_gifs():
                                                          Params={'Bucket': bucket_name,
                                                                  'Key': f"{user_id}/{gif.gif_name}"},
                                                          ExpiresIn=3600)  # URL expires in 1 hour
+        gif_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in gif.tags]
         gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId,
-                         "selectedColor": gif.selectedColor, "created_at": gif.created_at, "selectedFrame": gif.selectedFrame, "source": gif.source})
+                          "selectedColor": gif.selectedColor, "created_at": gif.created_at, 
+                          "selectedFrame": gif.selectedFrame, "source": gif.source, "tags": gif_tags})
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
 

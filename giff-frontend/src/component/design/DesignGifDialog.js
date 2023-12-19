@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import './DesignGifDialog.scss';
 import DialogWrapper from '../DialogWrapper';
-import { Box, Button, IconButton } from '@mui/material';
+import { Box, Button, IconButton, TextField } from '@mui/material';
 import { showNotification } from '../notification/Notification';
 import Tabs from '../tabs/Tabs';
 import LeftNavigation from '../../resources/left-nav.png'
@@ -28,6 +28,8 @@ import WomanIcon from '../../resources/icons/woman-icon.png'
 import GiraffeIcon from '../../resources/icons/girafe-icon.png'
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/GifCreationEndpoints';
+import Tag from '../overall/Tag';
+import { AddUserTag, AssignTagToGif, FetchUserTags } from '../../endpoints/TagManagementEndpoints';
 
 
 class DesignGifDialog extends PureComponent {
@@ -42,6 +44,11 @@ class DesignGifDialog extends PureComponent {
       visibleColorIndex: 0,
       isGifPortrait: false,
       frameWidth: null,
+      loadingTags: false,
+      newTag: '',
+      error: '',
+      tags: props.selectedGif.tags || [],
+      availableTags: [],
     };
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSaveGif = this.handleSaveGif.bind(this);
@@ -104,6 +111,67 @@ class DesignGifDialog extends PureComponent {
     }
   }
 
+  handleTagChange = (e) => {
+    this.setState({ newTag: e.target.value });
+  };
+
+  handleAddTag = async () => {
+    console.log('jsjsjs')
+    const { newTag, availableTags } = this.state;
+    if (availableTags?.length < 9) {
+      if (newTag.trim() !== '') {
+        const tagDetails = {
+          tagValue: newTag,
+          color: this.getRandomColor(),
+        };
+  
+        try {
+          const response = await AddUserTag(tagDetails);
+          const addedTag = response.data.tag;
+  
+          this.setState({
+            availableTags: [...availableTags, addedTag],
+            newTag: '',
+          });
+          showNotification('success', "New tag created!");
+        } catch (error) {
+          showNotification('error', "Failed to create new tag.");
+          console.error('Error adding tag:', error);
+        }
+      }
+    } else {
+      showNotification('error', "Champ! You've added the maximum number of tags.")
+    }
+  };
+
+  getRandomColor() {
+    const randomIndex = Math.floor(Math.random() * this.colorSelection?.length);
+    return this.colorSelection[randomIndex].color;
+  }
+
+  handleTagClick = async (tag) => {
+    const { selectedGif } = this.props;
+    if (this.state.tags?.length < 3) {
+      const tagDetails = {
+        resourceId: selectedGif.resourceId,
+        value: tag.value,
+        color: tag.color,
+      };
+    
+      try {
+        const response = await AssignTagToGif(tagDetails);
+        const updatedTags = response.data.tags;
+        this.setState({ tags: updatedTags });
+        showNotification('success', "Tag added successfully!");
+      } catch (error) {
+        showNotification('error', "Failed to add tag.");
+        console.error('Error adding tag:', error);
+      }
+    } else {
+      showNotification('error', "Champ! You've added the maximum number of tags to this gif.")
+    }
+  };
+
   updateFrameWidth() {
     const image = this.gifImageRef.current;
     if (image) {
@@ -114,11 +182,14 @@ class DesignGifDialog extends PureComponent {
   componentDidMount() {
     this.updateGifOrientation();
     window.addEventListener('popstate', this.handleCancel);
+    this.fetchAvailableTags();
+    this.setState({ tags: this.props.selectedGif.tags || [] });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
       this.setState({ selectedFrame: null })
+      this.setState({ tags: [] })
       this.updateGifOrientation();
       this.updateFrameWidth();
     }
@@ -132,10 +203,23 @@ class DesignGifDialog extends PureComponent {
     if (this.props.onClickCancel) {
       this.props.onClickCancel();
       this.setState({ selectedColor: null });
+      this.setState({ tags: [] });
     } else {
       this.setState({ isOpen: false });
+      this.setState({ tags: [] })
     }
   }
+
+  fetchAvailableTags = async () => {
+    this.setState({ loadingTags: true });
+    try {
+      const response = await FetchUserTags();
+      this.setState({ availableTags: response.data.tags, loadingTags: false });
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      this.setState({ loadingTags: false });
+    }
+  };
 
   handleSaveGif = async () => {
     const { selectedColor, selectedFrame } = this.state;
@@ -203,12 +287,16 @@ class DesignGifDialog extends PureComponent {
   
 
   render() {
-    const { selectedColor, visibleColorIndex } = this.state;
+    const { selectedColor, visibleColorIndex, tags, availableTags } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
     const filteredFrames = this.getFilteredFrames();
 
     const visibleColors = isMobile ? this.colorSelection.slice(visibleColorIndex, visibleColorIndex + 4) : this.colorSelection;
+
+    const gifTags = Array.isArray(tags) && tags.length > 0 ? tags : (selectedGif.tags || []);
+
+    console.log('availableTags', availableTags);
 
     return (
       <DialogWrapper
@@ -304,6 +392,65 @@ class DesignGifDialog extends PureComponent {
                         <img src={item?.icon} alt="" />
                       </Box>
                     ))}
+                  </div>
+                </div>
+              </div>
+              <div className="action-content">
+                <div className="buttons">
+                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
+                </div>
+              </div>
+            </>
+          )}
+          {activeTab === 2 && (
+            <>
+              <div className="title tag-title">
+                <span>Create a tag by typing it in the field and clicking enter. CHoose a tag by clicking one in the list.</span>
+              </div>
+              <div className="container">
+                <div className="image-with-tag">
+                  <div className="image-frame-container">
+                    <img 
+                      src={selectedGif.url}
+                      alt="Selected Gif"
+                      ref={this.gifImageRef}
+                      onLoad={this.updateFrameWidth.bind(this)}
+                    />
+                    {(this.state.selectedFrame || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)) && (
+                      <img 
+                        src={this.getFrameSourceByName(this.state.selectedFrame) || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)}
+                        style={{ width: this.state.frameWidth, height: '250px' }}
+                        alt="Selected Frame"
+                      />
+                    )}
+                  </div>
+                  <div className="tags-items" style={{ width: this.state.frameWidth }}>
+                    {gifTags.map((tag, index) => {
+                      return (
+                        <Tag label={tag.value} variant={tag.color} color={tag.color} onClick={() => this.handleTagClick(tag)} key={index} />
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className="tags">
+                  <div className="tags-input">
+                    <div className="label">Tag</div>
+                      <TextField
+                        value={this.state.newTag}
+                        onChange={this.handleTagChange}
+                        onKeyPress={(e) => { if (e.key === 'Enter') { this.handleAddTag(); }}}
+                        variant="outlined"
+                        fullWidth
+                      />
+                    </div>
+                  <div className="tags-display">
+                    <div className="tags-items">
+                    {!this.state.loadingTags && availableTags?.map((tag, index) => {
+                      return (
+                        <Tag label={tag.value} variant={tag.color} color={tag.color} onClick={() => this.handleTagClick(tag)} key={index} />
+                      )
+                    })}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,9 +1,9 @@
 import React from 'react';
 import './Tag.scss';
 
-function Tag({ label, variant }) {
+function Tag({ label, variant, color, onClick }) {
     return (
-        <span className={`tag ${variant}`}>{label}</span>
+        <span className={`tag ${variant}`} style={{backgroundColor: color && color }} onClick={onClick}>{label}</span>
     )
 }
 

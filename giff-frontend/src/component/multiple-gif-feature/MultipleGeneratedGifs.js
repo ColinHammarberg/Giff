@@ -14,7 +14,7 @@ function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload, setImportedGifs, importedGifs } = props;
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'AI Optimization']);
+  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'Tags']);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const [selectedGif, setSelectedGif] = useState(null);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
