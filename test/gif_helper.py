@@ -7,6 +7,7 @@ from PIL import Image, ImageOps, ImageSequence
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
+from base64 import b64encode
 from werkzeug.utils import secure_filename
 from utils_helper import is_vimeo_url, is_youtube_url
 from gpt_helper import analyze_gif_and_get_description
@@ -686,6 +687,10 @@ def generate_gif():
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/"
+    with open(output_path, "rb") as gif_file:
+        base64_string = b64encode(gif_file.read()).decode('utf-8')
+
+    print('base64_string', base64_string)
     upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
     s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
@@ -697,7 +702,15 @@ def generate_gif():
                                                         ExpiresIn=3600)
     description = analyze_gif_and_get_description(presigned_url) if current_user.include_ai else None
 
-    new_gif = UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id, ai_description=description, source=URL)
+    new_gif = UserGif(
+        user_id=user_id,
+        gif_name=NAME,
+        gif_url=output_path,
+        resourceId=resource_id,
+        ai_description=description,
+        source=URL,
+        base64_string=base64_string
+    )
     db.session.add(new_gif)
     db.session.commit()
 

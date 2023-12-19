@@ -47,6 +47,7 @@ class UserGif(db.Model):
     selectedColor = db.Column(db.String)
     selectedFrame = db.Column(db.String)
     resourcetype = db.Column(db.String(255))
+    base64_string = db.Column(db.Text)
     user = db.relationship('User', back_populates='gifs')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     ai_description = db.Column(db.String(1000))
