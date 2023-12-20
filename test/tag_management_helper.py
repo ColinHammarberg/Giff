@@ -56,6 +56,33 @@ def add_user_tag():
 
 
 @jwt_required()
+def delete_user_tag():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    tag_value = data.get('value')
+
+    # Query the tag to be deleted
+    tag = Tag.query.filter_by(tag_value=tag_value, user_id=user_id).first()
+    if not tag:
+        return jsonify({'error': 'Tag not found'}), 404
+
+    user_gifs = UserGif.query.filter(UserGif.tags.any(tag_value=tag_value)).all()
+    for user_gif in user_gifs:
+        if tag in user_gif.tags:
+            user_gif.tags.remove(tag)
+
+    db.session.delete(tag)
+    db.session.commit()
+
+    # Fetch updated tags
+    updated_user_tags = Tag.query.filter_by(user_id=user_id).all()
+    updated_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in updated_user_tags]
+
+    return jsonify({'message': 'Tag deleted successfully', 'tags': updated_tags}), 200
+
+
+
+@jwt_required()
 def fetch_user_tags():
     user_id = get_jwt_identity()
 

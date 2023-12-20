@@ -18,24 +18,24 @@ def fetch_user_info():
         db.session.refresh(current_user)
 
         user_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in current_user.tags]
-        user_logo = UserLogo.query.filter_by(user_id=user_id).first()
-        s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                  aws_secret_access_key='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', region_name='eu-north-1')
-        presigned_url = None
-        if user_logo:
-            resource_id = user_logo.resource_id
-            folder_name = f"{user_id}/logos/"
-            presigned_url = s3.generate_presigned_url('get_object',
-                                                     Params={'Bucket': 'logo-resources',
-                                                             'Key': f"{folder_name}{resource_id}.png"},
-                                                     ExpiresIn=3600)  # URL expires in 1 hour
+        # user_logo = UserLogo.query.filter_by(user_id=user_id).first()
+        # s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+        #           aws_secret_access_key='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', region_name='eu-north-1')
+        # presigned_url = None
+        # if user_logo:
+        #     resource_id = user_logo.resource_id
+        #     folder_name = f"{user_id}/logos/"
+        #     presigned_url = s3.generate_presigned_url('get_object',
+        #                                              Params={'Bucket': 'logo-resources',
+        #                                                      'Key': f"{folder_name}{resource_id}.png"},
+        #                                              ExpiresIn=3600)  # URL expires in 1 hour
         return jsonify(
             id=current_user.id,
             email=current_user.email,
             password=current_user.password,
             resolution=current_user.selected_resolution,
             is_active=current_user.is_active,
-            logo_url=presigned_url,
+            # logo_url=presigned_url,
             has_logo=current_user.has_logo,
             include_logo=current_user.include_logo,
             include_ai=current_user.include_ai,

@@ -8,7 +8,7 @@ from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_a
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, include_logo_in_gifs
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
 from reset_password_helper import request_reset_password, reset_user_password
-from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag
+from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag
 from verify_account_helper import send_verification_email_again, verify
 from include_ai_helper import include_ai_in_gifs
 from email_helper import send_email
@@ -207,6 +207,10 @@ def fetch_tags():
 @app.route('/assign-tag-to-gif', methods=['POST'])
 def assign_tag_to_gif():
     return assign_tag_relationship_gif()
+
+@app.route('/remove-tag', methods=['POST'])
+def remove_user_tag():
+    return delete_user_tag()
 
 @app.route('/add_tag_user_level', methods=['POST'])
 def add_user_tag_user_level():

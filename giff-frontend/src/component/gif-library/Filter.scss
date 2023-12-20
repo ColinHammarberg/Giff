@@ -1,0 +1,44 @@
+.filterPopover {
+    .MuiPaper-root {
+        width: 300px;
+        background-color: #fff;
+        border: 2px solid #F4149B;
+
+        .MuiListItem-root {
+            width: 100%;
+            justify-content: space-between;
+
+            .tag {
+                font-family: 'Staatliches';
+                height: 14px;
+                width: 60px;
+                font-size: 12px;
+            }
+
+            .MuiCheckbox-root {
+                color: #F4149B;
+            }
+        }
+    }
+}
+
+.filter {
+    .MuiIconButton-root {
+        width: 66px;
+        height: 66px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #FEC901;
+        border-radius: 50px;
+
+        &:hover {
+            background-color: #FEC901;
+            ;
+        }
+
+        img {
+            width: 40px;
+        }
+    }
+}

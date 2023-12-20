@@ -24,14 +24,21 @@
 
     .gif-showcase {
         .gif-showcase-info {
-            max-width: 459px;
+            max-width: 859px;
             margin: auto;
+            position: relative;
+
+            .library-actions {
+                display: flex;
+            }
 
             .title {
                 font-size: 25px;
                 color: #fff;
                 text-align: center;
                 margin-bottom: 50px;
+                width: 380px;
+                margin: auto;
 
                 span {
                     color: rgba(255, 255, 255, 0.5);
@@ -39,12 +46,25 @@
             }
 
             .download {
+                width: 100%;
+                margin: auto;
+                display: flex;
+                position: relative;
+                height: 100px;
+                align-items: center;
+
                 .MuiButton-root {
                     background-color: #FEC901;
-                    width: 100%;
                     border-radius: 50px;
                     color: #000;
                     font-family: 'Staatliches';
+                    width: 459px;
+                    margin: auto;
+                }
+
+                .filter {
+                    position: absolute;
+                    right: 0;
                 }
             }
 
@@ -166,6 +186,26 @@
         .gif-showcase {
             .gif-showcase-info {
                 padding: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+
+                .title {
+                    width: 100%;
+                }
+
+                .download {
+                    flex-direction: column;
+                    gap: 16px;
+
+                    .MuiButton-root {
+                        width: 100%;
+                    }
+
+                    .filter {
+                        position: unset;
+                    }
+                }
             }
 
             .gif-wrapper {

@@ -15,6 +15,8 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs } from '../../endpoints/GifCreationEndpoints';
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
 import LoopIcon from '@mui/icons-material/Loop';
+import useFetchUser from '../../queries/useUserTagsQuery';
+import Filter from './Filter';
 
 function GifLibrary() {
     const [gifs, setGifs] = useState([]);
@@ -32,6 +34,13 @@ function GifLibrary() {
     const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
     const imageRefs = useRef({});
     const access_token = localStorage.getItem('access_token');
+    const { tags } = useFetchUser();
+    const [selectedTags, setSelectedTags] = useState([]);
+    console.log('selectedTags', selectedTags);
+    const filteredGifs = gifs?.filter(gif => 
+      selectedTags.length === 0 || gif.tags.some(gifTag => 
+          selectedTags.some(selectedTag => selectedTag.value === gifTag.value))
+    );
     
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -211,6 +220,7 @@ function GifLibrary() {
       </>
     );
   }
+
   return (
     <div className="gif-library">
       <Header menu />
@@ -248,75 +258,82 @@ function GifLibrary() {
             </>
           )}
           </Box>
-          <Box className="download">
-            {gifs?.length > 0 ? (
-              openEditMode ? (
-                <OfficialButton 
-                  onClick={() => setOpenEditMode(false)} 
-                  isProcessing={isLoading} 
-                  label="Go back to library" 
-                  variant="yellow" 
-                />
+          <div className="library-actions">
+            <Box className="download">
+              {gifs?.length > 0 ? (
+                openEditMode ? (
+                  <OfficialButton 
+                    onClick={() => setOpenEditMode(false)} 
+                    isProcessing={isLoading} 
+                    label="Go back to library" 
+                    variant="yellow" 
+                  />
+                ) : (
+                  <OfficialButton 
+                    onClick={handleDownloadLibraryGifs} 
+                    isProcessing={isLoading} 
+                    label="Download all gifs" 
+                    variant="yellow"
+                  />
+                )
               ) : (
                 <OfficialButton 
-                  onClick={handleDownloadLibraryGifs} 
-                  isProcessing={isLoading} 
-                  label="Download all gifs" 
-                  variant="yellow"
+                  onClick={() => navigate('/choose-option-create')} 
+                  label="Create gifs" 
+                  variant="yellow" 
                 />
-              )
-            ) : (
-              <OfficialButton 
-                onClick={() => navigate('/choose-option-create')} 
-                label="Create gifs" 
-                variant="yellow" 
-              />
-            )}
-          </Box>
-          {gifs?.length > 0 && !openEditMode && (<Box className="edit"><Button onClick={handleOnClickOpenEditMode} className="edit-mode-btn">Edit Mode</Button></Box>)}
+              )}
+              <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
+            </Box>
+          </div>
+          {gifs?.length > 0 && !openEditMode && filteredGifs.length > 0 && (<Box className="edit"><Button onClick={handleOnClickOpenEditMode} className="edit-mode-btn">Edit Mode</Button></Box>)}
         </Box>
           <Box className="gif-wrapper">
-            {gifs?.map((item, index) => {
-              return (
-                <Box
-                  className="gif-box"
-                >
+            {filteredGifs.length > 0 ? (
+              filteredGifs.map((item, index) => {
+                return (
                   <Box
-                    className={`gif-container ${selectedGif === index ? 'hovered' : ''} ${isMobile ? 'hovered' : ''}`}
-                    onMouseEnter={() => setSelectedGif(index)}
-                    onMouseLeave={() => setSelectedGif(null)}
+                    className="gif-box"
                   >
-                    <img
-                      src={item.url} 
-                      ref={el => imageRefs.current[index] = el} 
-                      onLoad={() => handleImageLoad(index)}
-                      alt=""
-                      style={{ border: !item.selectedFrame && `4px solid ${item.selectedColor}`}} 
-                    />
-                    {item.selectedFrame && !item.selectedColor && (
-                      <img 
-                        src={getSelectedFramePath(item.selectedFrame)} 
-                        alt="" 
-                        style={imageDimensions[index] ? {width: imageDimensions[index].width, height: imageDimensions[index].height} : {}} 
+                    <Box
+                      className={`gif-container ${selectedGif === index ? 'hovered' : ''} ${isMobile ? 'hovered' : ''}`}
+                      onMouseEnter={() => setSelectedGif(index)}
+                      onMouseLeave={() => setSelectedGif(null)}
+                    >
+                      <img
+                        src={item.url} 
+                        ref={el => imageRefs.current[index] = el} 
+                        onLoad={() => handleImageLoad(index)}
+                        alt=""
+                        style={{ border: !item.selectedFrame && `4px solid ${item.selectedColor}`}} 
                       />
+                      {item.selectedFrame && !item.selectedColor && (
+                        <img 
+                          src={getSelectedFramePath(item.selectedFrame)} 
+                          alt="" 
+                          style={imageDimensions[index] ? {width: imageDimensions[index].width, height: imageDimensions[index].height} : {}} 
+                        />
+                      )}
+                      <Box className="gif-buttons">
+                      {!openEditMode ? (
+                        <>
+                          <Button className="download" onClick={handleDownloadIndividualGifs}>{isLoading ? 'Processing...' : 'Download'}</Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button className="download" onClick={handleOnDeleteGif}>Delete</Button>
+                          <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
+                        </>
                     )}
-                    <Box className="gif-buttons">
-                    {!openEditMode ? (
-                      <>
-                        <Button className="download" onClick={handleDownloadIndividualGifs}>{isLoading ? 'Processing...' : 'Download'}</Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button className="download" onClick={handleOnDeleteGif}>Delete</Button>
-                        <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
-                      </>
-                  )}
+                      </Box>
                     </Box>
+                    <span>{item.name}</span>
                   </Box>
-                  <span>{item.name}</span>
-                </Box>
-              )
-            })}
+                )
+              })
+            ) : (
+              <div style={{ color: '#fff' }}>No GIFs with that tag available</div>
+            )}
           </Box>
       </Box>
     </div>
