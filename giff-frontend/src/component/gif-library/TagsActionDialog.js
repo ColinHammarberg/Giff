@@ -91,8 +91,7 @@ class TagsActionDialog extends PureComponent {
         >
         <DialogContent className="dialog-content styled-scrollbar">
             <Box className="tags-content">
-                Are you sure, Champ? <br></br><br></br>
-                If you delete your logo, the logo will be removed and you'll have to upload a new file if you would like to use it again
+                What would you like to do, Champ? <br></br><br></br>
             </Box>
             <Box className="tags-btn-actions">
                 <Button onClick={this.handleConfirm} className="add-btn">Aassign tag to gif</Button>

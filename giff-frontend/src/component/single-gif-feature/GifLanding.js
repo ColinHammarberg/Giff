@@ -36,13 +36,13 @@ function GifLanding() {
   };
 
   const generateSingleGif = async () => {
-    // if (!isActive) {
-    //   // show popup asking them to verify their account
-    //   const { hasConfirmed } = await VerifyAccountDialog.show();
-    //   if (hasConfirmed) {
-    //     return;
-    //   }
-    // } else {
+    if (!isActive) {
+      // show popup asking them to verify their account
+      const { hasConfirmed } = await VerifyAccountDialog.show();
+      if (hasConfirmed) {
+        return;
+      }
+    } else {
       setIsLoading(true);
       try {
         setIsLoading(true);
@@ -61,7 +61,7 @@ function GifLanding() {
         setIsLoading(false);
       }
     setIsLoading(false);
-    // }
+    }
   };
 
   if (error) {

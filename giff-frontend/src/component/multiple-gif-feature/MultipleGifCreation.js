@@ -22,13 +22,13 @@ function MultipleGifLanding() {
   ]);
 
   const generateMultipleGifs = async () => {
-    // if (!isActive) {
-    //     // show popup asking them to verify their account
-    //   const { hasConfirmed } = await VerifyAccountDialog.show();
-    //   if (hasConfirmed) {
-    //     return;
-    //   }
-    // } else {
+    if (!isActive) {
+        // show popup asking them to verify their account
+      const { hasConfirmed } = await VerifyAccountDialog.show();
+      if (hasConfirmed) {
+        return;
+      }
+    } else {
         if (Object.values(duplicateNames).some(value => value === true)) {
           return;
         } else {
@@ -100,7 +100,7 @@ function MultipleGifLanding() {
             setError('general error');
             setIsLoading(false);
           }
-        // }
+        }
       }
   };
 
