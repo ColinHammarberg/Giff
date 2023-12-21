@@ -29,7 +29,7 @@ import GiraffeIcon from '../../resources/icons/girafe-icon.png'
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/GifCreationEndpoints';
 import Tag from '../overall/Tag';
-import { AddUserTag, AssignTagToGif, FetchUserTags, RemoveTag } from '../../endpoints/TagManagementEndpoints';
+import { AddUserTag, AssignTagToGif, FetchUserTags, RemoveTag, RemoveTagFromGif } from '../../endpoints/TagManagementEndpoints';
 import TagsActionDialog from '../gif-library/TagsActionDialog';
 
 
@@ -133,9 +133,9 @@ class DesignGifDialog extends PureComponent {
             availableTags: [...availableTags, addedTag],
             newTag: '',
           });
-          showNotification('success', "New tag created!");
+          showNotification('success', "Nice! You can now use your Tag");
         } catch (error) {
-          showNotification('error', "Failed to create new tag.");
+          showNotification('error', "Oh no! Please try that again");
           console.error('Error adding tag:', error);
         }
       }
@@ -147,6 +147,22 @@ class DesignGifDialog extends PureComponent {
   getRandomColor() {
     const randomIndex = Math.floor(Math.random() * this.colorSelection?.length);
     return this.colorSelection[randomIndex].color;
+  }
+
+  handleRemoveTagFromGif = async (tag) => {
+    const { selectedGif } = this.props;
+    const tagDetails = {
+      resourceId: selectedGif.resourceId,
+      value: tag.value,
+    }
+    try {
+      const response = await RemoveTagFromGif(tagDetails)
+      const updatedTags = response.data.tags;
+      this.setState({ tags: updatedTags });
+      showNotification('success', "Your tag is removed!");
+    } catch(error) {
+      showNotification('error', "Oh no! Please try that again")
+    }
   }
 
   handleTagClick = async (tag) => {
@@ -166,9 +182,9 @@ class DesignGifDialog extends PureComponent {
         const updatedTags = response.data.tags;
         this.setState({ availableTags: updatedTags, tags: tags.filter(t => t.value !== tag.value) });
         console.log('response', tags);
-        showNotification('success', "Tag added successfully!");
+        showNotification('success', "Your tag is removed!");
       } catch (error) {
-        showNotification('error', "Failed to remove tag")
+        showNotification('error', "Oh no! Please try that again")
       }
     } else {
         if (this.state.tags?.length < 3) {
@@ -176,9 +192,9 @@ class DesignGifDialog extends PureComponent {
             const response = await AssignTagToGif(tagDetails);
             const updatedTags = response.data.tags;
             this.setState({ tags: updatedTags });
-            showNotification('success', "Tag added successfully!");
+            showNotification('success', "Aaaand your gif has a tag");
           } catch (error) {
-            showNotification('error', "Failed to add tag.");
+            showNotification('error', "Oh no! Please try that again");
             console.error('Error adding tag:', error);
           }
         } else {
@@ -438,7 +454,7 @@ class DesignGifDialog extends PureComponent {
                   <div className="tags-items" style={{ width: this.state.frameWidth }}>
                     {gifTags.map((tag, index) => {
                       return (
-                        <Tag label={tag.value} variant={tag.color} color={tag.color} key={index} />
+                        <Tag label={tag.value} variant={tag.color} color={tag.color} key={index} onRemove={() => this.handleRemoveTagFromGif(tag)} />
                       )
                     })}
                   </div>

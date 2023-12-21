@@ -28,7 +28,29 @@ def assign_tag_relationship_gif():
     print('updated_tags', updated_tags)
     return jsonify({'message': 'Tag assigned to GIF successfully', 'tags': updated_tags}), 200
 
+@jwt_required()
+def remove_tag_from_gif():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    resource_id = data.get('resourceId')
+    tag_value = data.get('value')
 
+    # Find the tag and the GIF
+    tag = Tag.query.filter_by(user_id=user_id, tag_value=tag_value).first()
+    user_gif = UserGif.query.filter_by(user_id=user_id, resourceId=resource_id).first()
+
+    if not tag or not user_gif:
+        return jsonify({'error': 'Tag or GIF not found'}), 404
+
+    # Remove the tag from the GIF
+    if tag in user_gif.tags:
+        user_gif.tags.remove(tag)
+        db.session.commit()
+
+    updated_tags = [{'id': t.id, 'value': t.tag_value, 'color': t.color} for t in user_gif.tags]
+    return jsonify({'message': 'Tag removed from GIF successfully', 'tags': updated_tags}), 200
+
+    
 @jwt_required()
 def add_user_tag():
     data = request.get_json()

@@ -47,6 +47,24 @@ export async function RemoveTag(tagDetails) {
   }
 }
 
+export async function RemoveTagFromGif(tagDetails) {
+  const token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(`${Api}/remove_tag_gif`, 
+      tagDetails,
+      {
+      headers: {
+      'Authorization': `Bearer ${token}`
+      }
+     });
+    console.log('Response from server', response);
+    return response;
+  } catch (error) {
+    console.error('Error generating GIF:', error);
+    throw error;
+  }
+}
+
 export async function AddUserTag(tagDetails) {
   console.log('tagDetails', tagDetails);
   const token = localStorage.getItem('access_token');

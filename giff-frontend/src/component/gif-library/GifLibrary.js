@@ -191,13 +191,13 @@ function GifLibrary() {
             if (response.data) {        
               const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
               setGifs(updatedGifs);
-              showNotification('success', 'Your gif is deleted. Why not create a new one?');
+              showNotification('success', 'Your gif has been terminated.');
             }
           } catch (error) {
             if (error.response && error.response.status === 404) {
-              showNotification('error', 'GIF not found.');
+              showNotification('error', 'Oh no! Please try that again.');
             } else {
-              showNotification('error', 'Failed to delete the GIF.');
+              showNotification('error', 'Oh no! Please try that again.');
             }
           }
         }
@@ -283,7 +283,9 @@ function GifLibrary() {
                   variant="yellow" 
                 />
               )}
-              <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
+              {!openEditMode && (
+                <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
+              )}
             </Box>
           </div>
           {gifs?.length > 0 && !openEditMode && filteredGifs.length > 0 && (<Box className="edit"><Button onClick={handleOnClickOpenEditMode} className="edit-mode-btn">Edit Mode</Button></Box>)}

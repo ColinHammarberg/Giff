@@ -94,7 +94,7 @@ class TagsActionDialog extends PureComponent {
                 What would you like to do, Champ? <br></br><br></br>
             </Box>
             <Box className="tags-btn-actions">
-                <Button onClick={this.handleConfirm} className="add-btn">Aassign tag to gif</Button>
+                <Button onClick={this.handleConfirm} className="add-btn">Assign tag to gif</Button>
                 <Button onClick={this.handleRemove} className="remove-btn">Remove tag</Button>
             </Box>
         </DialogContent>
