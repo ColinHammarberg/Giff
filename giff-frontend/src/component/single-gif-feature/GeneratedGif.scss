@@ -33,6 +33,30 @@
         margin-top: 50px;
         flex-direction: column;
 
+        .name-box {
+            height: 40px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            font-family: 'Staatliches';
+        }
+
+        .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+            border: none !important;
+        }
+
+        .MuiInputBase-root {
+            height: 40px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            font-family: 'Staatliches';
+            color: #fff;
+            .MuiInputBase-input {
+                text-align: center;
+            }
+        }
+
         &.edit {
             background-color: #000;
         }

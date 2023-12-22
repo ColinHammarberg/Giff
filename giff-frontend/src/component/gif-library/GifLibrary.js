@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
-import { Box, Button } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
@@ -12,7 +12,7 @@ import DeleteGifDialog from './DeleteGifDialog';
 import ChooseResolutionDialog from './ChooseResolutionDialog';
 import { getSelectedFramePath } from './GifLibraryUtils';
 import { GiftContext } from '../../context/GiftContextProvider';
-import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs } from '../../endpoints/GifCreationEndpoints';
+import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs, UpdateGifName } from '../../endpoints/GifCreationEndpoints';
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
 import LoopIcon from '@mui/icons-material/Loop';
 import useFetchUserTags from '../../queries/useUserTagsQuery';
@@ -208,6 +208,22 @@ function GifLibrary() {
     setIsDesignOpen(false);
   };
 
+  const handleNameChange = (index, newName) => {
+    const updatedGifs = [...gifs];
+    updatedGifs[index].name = newName;
+    setGifs(updatedGifs);
+  };
+  
+  const handleNameSubmit = async (index) => {
+    const gif = gifs[index];
+    try {
+      await UpdateGifName(gif.resourceId, gif.name);
+      showNotification('success', 'Your gif name has been updated.');
+    } catch (error) {
+      showNotification('error', 'Ouch! Please try that again.');
+    }
+  };
+
   if (showLoading) {
     return (
       <>
@@ -327,7 +343,13 @@ function GifLibrary() {
                     )}
                       </Box>
                     </Box>
-                    <span>{item.name}</span>
+                    <TextField
+                      type="text"
+                      value={item.name}
+                      onChange={(e) => handleNameChange(index, e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleNameSubmit(index)}
+                      className="gif-name-input"
+                    />
                   </Box>
                 )
               })

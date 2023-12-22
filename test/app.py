@@ -10,6 +10,7 @@ from chrome_extension_helper import generate_extension_pdf_gif, generate_extensi
 from reset_password_helper import request_reset_password, reset_user_password
 from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag, remove_tag_from_gif
 from verify_account_helper import send_verification_email_again, verify
+from edit_exiting_gif_helper import update_gif_name
 from include_ai_helper import include_ai_in_gifs
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -57,6 +58,9 @@ def update_gif_color():
     print('generate')
     return update_selected_color()
 
+@app.route('/update-gif-name', methods=['POST'])
+def update_name_gif():
+    return update_gif_name()
 
 @app.route('/update_selected_frame', methods=['POST'])
 def update_gif_frame():

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from '../overall/Header';
 import LoadingGif from '../overall/LoadingGif';
@@ -7,8 +7,9 @@ import OfficialButton from '../buttons/OfficialButton';
 import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
-import { DownloadIndividualDesignedGifs, GetMultipleGifs } from '../../endpoints/GifCreationEndpoints';
+import { DownloadIndividualDesignedGifs, GetMultipleGifs, UpdateGifName } from '../../endpoints/GifCreationEndpoints';
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
+import { showNotification } from '../notification/Notification';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
@@ -77,6 +78,22 @@ function GeneratedGif(props) {
     }
   };
 
+  const handleNameChange = (index, newName) => {
+    const updatedGifs = [...importedGifs];
+    updatedGifs[index].name = newName;
+    setImportedGifs(updatedGifs);
+  };
+  
+  const handleNameSubmit = async (gif) => {
+    const updatedName = gif.name;
+    try {
+      await UpdateGifName(gif.resourceId, updatedName);
+      showNotification('success', 'Name updated successfully!');
+    } catch (error) {
+      showNotification('error', 'Error updating GIF name:');
+    }
+  };
+
   return (
     <div className="generated-gif" key={key}>
       <Header menu />
@@ -119,6 +136,15 @@ function GeneratedGif(props) {
                       </Button>
                   </Box>
                   )}
+                  <TextField
+                    value={gif?.name}
+                    onChange={(e) => handleNameChange(index, e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleNameSubmit(gif)}
+                    style={{ backgroundColor: 'transparent', border: 'none' }}
+                    InputProps={{
+                      disableUnderline: true,
+                  }}
+                />
                 </>
               )
             })}
