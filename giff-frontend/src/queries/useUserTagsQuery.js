@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
 import { FetchUserTags } from "../endpoints/TagManagementEndpoints";
 
-const useFetchUser = () => {
+const useFetchUserTags = (isDesignOpen) => {
     const getUserTags = useQuery(
-      ['userTags'],
+      ['userTags', isDesignOpen],
       () => FetchUserTags(),
       {
         retry: 3,
@@ -17,4 +17,4 @@ const useFetchUser = () => {
     };
   };
   
-  export default useFetchUser;
+  export default useFetchUserTags;

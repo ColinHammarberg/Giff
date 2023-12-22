@@ -15,7 +15,7 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import { DeleteGif, DownloadAllLibraryGifs, DownloadIndividualDesignedGifs } from '../../endpoints/GifCreationEndpoints';
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
 import LoopIcon from '@mui/icons-material/Loop';
-import useFetchUser from '../../queries/useUserTagsQuery';
+import useFetchUserTags from '../../queries/useUserTagsQuery';
 import Filter from './Filter';
 
 function GifLibrary() {
@@ -34,12 +34,11 @@ function GifLibrary() {
     const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
     const imageRefs = useRef({});
     const access_token = localStorage.getItem('access_token');
-    const { tags } = useFetchUser();
+    const { tags } = useFetchUserTags(isDesignOpen);
     const [selectedTags, setSelectedTags] = useState([]);
-    console.log('selectedTags', selectedTags);
     const filteredGifs = gifs?.filter(gif => 
       selectedTags.length === 0 || gif.tags.some(gifTag => 
-          selectedTags.some(selectedTag => selectedTag.value === gifTag.value))
+        selectedTags.some(selectedTag => selectedTag.value === gifTag.value))
     );
     
     useEffect(() => {
@@ -85,7 +84,6 @@ function GifLibrary() {
       if (image) {
         const width = image.offsetWidth;
         const height = image.offsetHeight;
-        // You might want to store dimensions per GIF, not as a single state
         setImageDimensions(prevDimensions => ({
           ...prevDimensions,
           [index]: { width, height }

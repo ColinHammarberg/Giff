@@ -53,6 +53,10 @@ function Filter({ tags, onTagSelectionChange }) {
                 className="filterPopover"
             >
                 <List>
+                    <>
+                    {tags?.length === 0 && (
+                        <div className="no-tags">No tags created</div>
+                    )}
                     {tags?.map((tag, index) => (
                         <ListItem key={index}>
                             <Tag label={tag.value} color={tag.color} />
@@ -62,6 +66,7 @@ function Filter({ tags, onTagSelectionChange }) {
                             />
                         </ListItem>
                     ))}
+                    </>
                 </List>
             </Popover>
         </div>

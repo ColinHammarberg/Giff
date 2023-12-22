@@ -1,6 +1,7 @@
 .filterPopover {
     .MuiPaper-root {
         width: 300px;
+        min-height: 300px;
         background-color: #fff;
         border: 2px solid #F4149B;
 
@@ -18,6 +19,15 @@
             .MuiCheckbox-root {
                 color: #F4149B;
             }
+        }
+
+        .no-tags {
+            text-align: center;
+            font-family: 'Staatliches';
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 }
