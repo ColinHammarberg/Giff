@@ -51,6 +51,7 @@ class UserGif(db.Model):
     user = db.relationship('User', back_populates='gifs')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     ai_description = db.Column(db.String(1000))
+    example_email = db.Column(db.Text)
     tags = db.relationship('Tag', secondary=tag_association, back_populates='gifs')
 
 

@@ -10,7 +10,7 @@ from selenium import webdriver
 from base64 import b64encode
 from werkzeug.utils import secure_filename
 from utils_helper import is_vimeo_url, is_youtube_url
-from gpt_helper import analyze_gif_and_get_description
+from gpt_helper import analyze_gif_and_get_description, analyze_gif
 from utils import resize_gif, resize_gif_add_on
 from io import BytesIO
 import os
@@ -235,6 +235,7 @@ def upload_pdf_and_generate_gif():
 
         
         description = None
+        example_email = None
 
         if user_exists:
             upload_to_s3(output_path, 'gift-resources',
@@ -248,18 +249,18 @@ def upload_pdf_and_generate_gif():
                                                              ExpiresIn=3600)
             print('presigned_url', presigned_url)
 
-            if current_user.include_ai:
-                description = analyze_gif_and_get_description(presigned_url)
+            description, example_email = analyze_gif(presigned_url, current_user)
 
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
-                           gif_url=output_path, resourceId=resource_id, ai_description=description, source="https://gif-t.io"))
+                           gif_url=output_path, resourceId=resource_id, ai_description=description, example_email=example_email, source="https://gif-t.io"))
             db.session.commit()
 
         gif_data = {
             "name": gif_name,
             "resourceId": resource_id,
             "resourceType": resourceType,
-            "ai_description": description
+            "ai_description": description,
+            "example_email": example_email
         }
 
     except Exception as e:
@@ -629,7 +630,6 @@ def generate_video_gif(data, user_id):
 
 def ease_in_quad(t):
     return t * t
-
 
 @jwt_required(optional=True)
 def generate_gif():

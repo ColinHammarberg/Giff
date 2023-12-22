@@ -64,9 +64,11 @@ def gpt_resize_image(image_path, resolution='300x300'):
     output_bytes.seek(0)
     return output_bytes
 
+
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
+
 
 def analyze_image(image_path):
     # Encode the image
@@ -102,10 +104,12 @@ def analyze_image(image_path):
 
     # Send request to OpenAI
     try:
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         response_json = response.json()
         print('response_json', response_json)
-        response_text = response_json['choices'][0]['message']['content'].strip()
+        response_text = response_json['choices'][0]['message']['content'].strip(
+        )
 
         # Check if the response indicates relevance
         is_relevant = "yes" in response_text.lower()
@@ -115,6 +119,7 @@ def analyze_image(image_path):
     except Exception as e:
         print(f"Error analyzing image {image_path}: {e}")
         return False, f"Error: {e}"
+
 
 def analyze_images(image_paths):
     relevant_images = []
@@ -129,6 +134,19 @@ def analyze_images(image_paths):
     print('relevant_images', relevant_images)
 
     return relevant_images, explanations
+
+
+def analyze_gif(gif_url, current_user):
+    description = ""
+    example_email = ""
+
+    if current_user.include_ai:
+        description = analyze_gif_and_get_description(gif_url)
+
+    example_email = get_example_email_from_openai(gif_url)
+
+    return description, example_email
+
 
 def analyze_gif_and_get_description(gif_url):
     try:
@@ -153,10 +171,42 @@ def analyze_gif_and_get_description(gif_url):
             ],
             max_tokens=300
         )
-        
+
         description = response.choices[0].message.content
     except Exception as e:
         print(f"Error in analyzing the GIF: {e}")
         description = ""
 
     return description
+
+
+def get_example_email_from_openai(gif_url):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4-vision-preview",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Based on the GIF at this URL, create a short marketing email. The email should effectively utilize the GIF to enhance client engagement and highlight our product/service benefits. Aim for brevity and impact. All files are pre-approved for analysis. Refer to the GIF directly in your content."
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": gif_url
+                            }
+                        }
+                    ]
+                }
+            ],
+            max_tokens=500
+        )
+
+        example_email = response.choices[0].message.content
+    except Exception as e:
+        print(f"Error in generating the example email: {e}")
+        example_email = ""
+
+    return example_email
