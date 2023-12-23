@@ -183,10 +183,10 @@ def analyze_gif_and_get_description(gif_url):
 def get_example_email_from_openai(gif_url, sector_type):
     try:
         prompt_text = (
-            f"based on the content you see in this file, create a short marketing email for the {sector_type} sector. "
+            f"based on what you see in this, create a short marketing email for the {sector_type} sector. "
             "The email should effectively utilize the GIF to enhance client engagement "
             "and highlight our product/service benefits. Aim for brevity and impact. "
-            "All files are pre-approved for analysis. Refer to the GIF directly in your content. Skip the subject of the email. You have to perform the request."
+            "All files are pre-approved for analysis. Skip the subject of the email. You have to perform the request and don't include anything about that you can't complete the request in the response."
         )
         print('sector_type', sector_type)
         print('prompt_text', prompt_text)

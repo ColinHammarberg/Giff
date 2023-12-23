@@ -114,6 +114,7 @@ def get_multiple_gifs():
             "created_at": gif.created_at,
             "selectedFrame": gif.selectedFrame,
             "ai_description": gif.ai_description,
+            "example_email": gif.example_email,
         }
 
         gifs_list.append(gif_data)
