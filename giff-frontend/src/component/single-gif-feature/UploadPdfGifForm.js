@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import { showNotification } from '../notification/Notification';
 import { UploadPdfThenCreateGif } from '../../endpoints/GifCreationEndpoints';
 
-const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading, setGifGenerated }, ref) => {
+const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading, setGifGenerated, sectorType }, ref) => {
   const [dragOver, setDragOver] = useState(false);
 
   const handleDragOver = (e) => {
@@ -43,7 +43,7 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
     if (selectedPdf) {
       setIsLoading(true);
       try {
-        const response = await UploadPdfThenCreateGif(selectedPdf);
+        const response = await UploadPdfThenCreateGif(selectedPdf, sectorType);
         if (response.data.message === "PDF uploaded and GIF generated!") {
           const responseData = response.data;
           setGifGenerated(responseData.data);

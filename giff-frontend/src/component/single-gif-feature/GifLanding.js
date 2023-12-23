@@ -7,6 +7,7 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import VerifyAccountDialog from '../authorization/VerifyAccountDialog';
 import { GeneratePdfGifs, GenerateSingleGif } from '../../endpoints/GifCreationEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
+import SectorTypeDialog from './SectorTypeDialog';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -18,6 +19,12 @@ function GifLanding() {
   const { user } = useFetchUser();
   const formRef = useRef();
   const isActive = user?.is_active;
+  const [sectorType, setSectorType] = useState('');
+  const [isSectorDialogOpen, setSectorDialogOpen] = useState(false);
+
+  const handleSectorSubmit = () => {
+    setSectorDialogOpen(false);
+  };
 
   const handleOnChangeUrl = (value) => {
     setUrl(value);
@@ -32,7 +39,11 @@ function GifLanding() {
   };
 
   const handleCreateGifClick = () => {
-    formRef.current.submit();
+    if (!sectorType) {
+      setSectorDialogOpen(true);
+    } else {
+      formRef.current.submit(sectorType);
+    }
   };
 
   const generateSingleGif = async () => {
@@ -43,24 +54,28 @@ function GifLanding() {
         return;
       }
     } else {
-      setIsLoading(true);
-      try {
-        setIsLoading(true);
-        const newUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
-        const response = await (newUrl.endsWith('.pdf') ? GeneratePdfGifs(newUrl) : GenerateSingleGif(newUrl));
-        console.log('response', response);
-        if (response?.data?.error) {
-          handleErrors(response.data.error);
-        } else if (response.data.message === 'GIF generated and uploaded!') {
-          const responseData = response.data;
-          setGifGenerated(responseData.data);
-        }
-        setIsLoading(false);
-      } catch (error) {
-        handleErrors('general error')
+      if (!sectorType) {
+        setSectorDialogOpen(true);
+      } else {
+          setIsLoading(true);
+          try {
+            setIsLoading(true);
+            const newUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+            const response = await (newUrl.endsWith('.pdf') ? GeneratePdfGifs(newUrl, sectorType) : GenerateSingleGif(newUrl, sectorType));
+            console.log('response', response);
+            if (response?.data?.error) {
+              handleErrors(response.data.error);
+            } else if (response.data.message === 'GIF generated and uploaded!') {
+              const responseData = response.data;
+              setGifGenerated(responseData.data);
+            }
+            setIsLoading(false);
+          } catch (error) {
+            handleErrors('general error')
+            setIsLoading(false);
+          }
         setIsLoading(false);
       }
-    setIsLoading(false);
     }
   };
 
@@ -77,18 +92,28 @@ function GifLanding() {
       {isLoading || gifGenerated ? (
         <GeneratedGif key={gifGenerated} url={url} gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
       ) : (
-        <SingleGifGenerator
-          onChange={handleOnChangeUrl}
-          generateSingleGif={generateSingleGif}
-          handleCreateGifClick={handleCreateGifClick}
-          gifGenerated={gifGenerated}
-          selectedPdf={selectedPdf}
-          setIsLoading={setIsLoading}
-          setGifGenerated={setGifGenerated}
-          setSelectedPdf={setSelectedPdf}
-          handlePdfChange={handlePdfChange}
-          ref={formRef}
-        />
+        <>
+          <SectorTypeDialog 
+            sectorType={sectorType} 
+            setSectorType={setSectorType} 
+            handleSectorSubmit={handleSectorSubmit} 
+            isSectorDialogOpen={isSectorDialogOpen} 
+            setSectorDialogOpen={setSectorDialogOpen} 
+          />
+          <SingleGifGenerator
+            onChange={handleOnChangeUrl}
+            generateSingleGif={generateSingleGif}
+            handleCreateGifClick={handleCreateGifClick}
+            gifGenerated={gifGenerated}
+            selectedPdf={selectedPdf}
+            setIsLoading={setIsLoading}
+            setGifGenerated={setGifGenerated}
+            setSelectedPdf={setSelectedPdf}
+            handlePdfChange={handlePdfChange}
+            sectorType={sectorType}
+            ref={formRef}
+          />
+        </>
       )}
       {!isLoading && (
         <Box className="bottom-content">

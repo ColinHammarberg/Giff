@@ -7,7 +7,7 @@ import LightTooltip from '../overall/LightToolTip';
 import Header from '../overall/Header';
 import InfoButton from '../overall/InfoButton';
 
-const SingleGifGenerator = forwardRef(({ onChange, gifGenerated, onKeyPress, generateSingleGif, selectedPdf, setSelectedPdf, handlePdfChange, handleCreateGifClick, setGifGenerated, setIsLoading }, ref) => {
+const SingleGifGenerator = forwardRef(({ onChange, gifGenerated, onKeyPress, generateSingleGif, selectedPdf, setSelectedPdf, handlePdfChange, handleCreateGifClick, setGifGenerated, setIsLoading, sectorType }, ref) => {
   const infoButtonText = [
     {text: 'With Gif-t, you can create a gif from an online pdf, web page or presentation. Simply add the url and click Create gif.'},
     {text: 'Our gif-machine (AKA the Gif-ter) will scroll through the place your url leads to, create a gif and make it ready for you to share.'},
@@ -42,7 +42,17 @@ const SingleGifGenerator = forwardRef(({ onChange, gifGenerated, onKeyPress, gen
           </div>
         </LightTooltip>
         <span>OR</span>
-        <UploadPdfGifForm setIsLoading={setIsLoading} setGifGenerated={setGifGenerated} setSelectedPdf={setSelectedPdf} selectedPdf={selectedPdf} handlePdfChange={handlePdfChange} ref={ref} handleCreateGifClick={handleCreateGifClick} generateSingleGif={generateSingleGif} />
+        <UploadPdfGifForm 
+          setIsLoading={setIsLoading} 
+          setGifGenerated={setGifGenerated} 
+          setSelectedPdf={setSelectedPdf} 
+          selectedPdf={selectedPdf} 
+          handlePdfChange={handlePdfChange} 
+          ref={ref} 
+          handleCreateGifClick={handleCreateGifClick} 
+          generateSingleGif={generateSingleGif} 
+          sectorType={sectorType} 
+        />
         <Box className="btn-content">
           {!gifGenerated && (
             <OfficialButton onClick={selectedPdf ? handleCreateGifClick : generateSingleGif} label="Create GIF" variant="yellow" />

@@ -1,0 +1,76 @@
+.sector-dialog {
+    .MuiBackdrop-root {
+        background-color: unset;
+    }
+
+    .MuiDialog-container {
+        .MuiPaper-root {
+            width: 300px;
+            height: 220px;
+            background-color: #1B1A19;
+            padding: 12px;
+            font-family: 'Staatliches';
+
+            .MuiDialogContent-root {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .title {
+                color: #fff;
+                text-align: center;
+
+                .MuiTypography-root {
+                    font-family: 'Staatliches';
+                }
+            }
+
+            .MuiFormControl-root {
+                margin: auto;
+
+                .MuiInput-root::after {
+                    border: none;
+                    border-bottom: none;
+                }
+            }
+
+            .MuiInputBase-root {
+                background-color: #fff;
+                border-radius: 0 !important;
+                height: 45px;
+                border: 1px solid #F4149B;
+            }
+
+            .MuiInputBase-input {
+                font-family: 'Staatliches';
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .dialog-content {
+                overflow: hidden;
+            }
+
+            .MuiDialogActions-root {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .MuiButton-root {
+                border: 1px solid #000;
+                border-radius: 50px;
+                color: #fff;
+                font-family: 'Staatliches';
+                font-size: 16px;
+                height: 35px;
+                background-color: #F4149B;
+                width: 175px;
+                color: #000;
+            }
+
+        }
+    }
+}

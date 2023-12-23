@@ -136,14 +136,14 @@ def analyze_images(image_paths):
     return relevant_images, explanations
 
 
-def analyze_gif(gif_url, current_user):
+def analyze_gif(gif_url, current_user, sector_type):
     description = ""
     example_email = ""
 
     if current_user.include_ai:
         description = analyze_gif_and_get_description(gif_url)
 
-    example_email = get_example_email_from_openai(gif_url)
+    example_email = get_example_email_from_openai(gif_url, sector_type)
 
     return description, example_email
 
@@ -180,8 +180,17 @@ def analyze_gif_and_get_description(gif_url):
     return description
 
 
-def get_example_email_from_openai(gif_url):
+def get_example_email_from_openai(gif_url, sector_type):
     try:
+        prompt_text = (
+            f"based on the content you see in this file, create a short marketing email for the {sector_type} sector. "
+            "The email should effectively utilize the GIF to enhance client engagement "
+            "and highlight our product/service benefits. Aim for brevity and impact. "
+            "All files are pre-approved for analysis. Refer to the GIF directly in your content. Skip the subject of the email. You have to perform the request."
+        )
+        print('sector_type', sector_type)
+        print('prompt_text', prompt_text)
+        print('gif_url', gif_url)
         response = openai.ChatCompletion.create(
             model="gpt-4-vision-preview",
             messages=[
@@ -190,7 +199,7 @@ def get_example_email_from_openai(gif_url):
                     "content": [
                         {
                             "type": "text",
-                            "text": "Based on the GIF at this URL, create a short marketing email. The email should effectively utilize the GIF to enhance client engagement and highlight our product/service benefits. Aim for brevity and impact. All files are pre-approved for analysis. Refer to the GIF directly in your content."
+                            "text": prompt_text
                         },
                         {
                             "type": "image_url",
