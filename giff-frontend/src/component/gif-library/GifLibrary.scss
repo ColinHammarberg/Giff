@@ -100,7 +100,7 @@
             .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
                 border: none !important;
             }
-    
+
             .MuiInputBase-root {
                 height: 40px;
                 margin-top: 24px;
@@ -108,6 +108,7 @@
                 align-items: center;
                 font-family: 'Staatliches';
                 color: #fff;
+
                 .MuiInputBase-input {
                     text-align: center;
                 }
@@ -121,6 +122,11 @@
                 margin-top: 24px;
                 gap: 24px;
                 text-align: center;
+                position: relative;
+
+                .MuiIconButton-root {
+                    display: none;
+                }
 
                 span {
                     color: #fff;
@@ -143,17 +149,35 @@
                         width: 100%;
                         height: 100%;
 
+                        .MuiIconButton-root {
+                            position: absolute;
+                            top: 0;
+                            right: 4px;
+                            z-index: 1599;
+                            color: #F4149B;
+                            display: block;
+                            height: 20px;
+                            display: flex;
+
+                            &:hover {
+                                background-color: transparent;
+                            }
+
+                            .MuiSvgIcon-root {
+                                font-size: 18px;
+                            }
+                        }
+
                         .gif-buttons {
                             position: absolute;
                             top: 50%;
                             display: block;
                             left: 50%;
                             transform: translate(-50%, -50%);
-                            background-color: rgba(0, 0, 0, 0.5);
                             display: grid;
                             align-items: center;
                             justify-content: center;
-                            width: 100%;
+                            width: 80%;
                             height: 100%;
                             z-index: 1299;
 

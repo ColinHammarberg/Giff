@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, IconButton, TextField } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
@@ -37,7 +38,7 @@ function GifLibrary() {
     const { tags } = useFetchUserTags(isDesignOpen);
     const [selectedTags, setSelectedTags] = useState([]);
     const filteredGifs = gifs?.filter(gif => 
-      selectedTags.length === 0 || gif.tags.some(gifTag => 
+      selectedTags.length === 0 || gif?.tags?.some(gifTag => 
         selectedTags.some(selectedTag => selectedTag.value === gifTag.value))
     );
     
@@ -186,9 +187,8 @@ function GifLibrary() {
         } else {
           try {
             const response = await DeleteGif(gifData);
-            if (response.data) {        
-              const updatedGifs = gifs.filter(gif => gif.resourceId !== hoveredGif.resourceId);
-              setGifs(updatedGifs);
+            if (response.data) {
+              setGifs(response.data.updatedGifs);
               showNotification('success', 'Your gif has been terminated.');
             }
           } catch (error) {
@@ -256,42 +256,24 @@ function GifLibrary() {
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
           <Box className="title">
-          {openEditMode ? (
-            <>
-              <span>You are in edit mode. Hover over </span>
-              the gif you want
-              <span> or </span>
-              When ready, click the big button to go back to your library.
-            </>
-          ) : (
             <>
               <span>This is your library. </span>
                Download all gifs at once
               <span> or </span>
               {isMobile ? 'click on' : 'hover over'} the gif you want to download.
             </>
-          )}
           </Box>
           <div className="library-actions">
             <Box className="download">
               {gifs?.length > 0 ? (
-                openEditMode ? (
-                  <OfficialButton 
-                    onClick={() => setOpenEditMode(false)} 
-                    isProcessing={isLoading} 
-                    label="Go back to library" 
-                    variant="yellow" 
-                  />
-                ) : (
                   <OfficialButton 
                     onClick={handleDownloadLibraryGifs} 
                     isProcessing={isLoading} 
                     label="Download all gifs" 
                     variant="yellow"
                   />
-                )
               ) : (
-                <OfficialButton 
+                <OfficialButton
                   onClick={() => navigate('/choose-option-create')} 
                   label="Create gifs" 
                   variant="yellow" 
@@ -302,7 +284,6 @@ function GifLibrary() {
               )}
             </Box>
           </div>
-          {gifs?.length > 0 && !openEditMode && filteredGifs.length > 0 && (<Box className="edit"><Button onClick={handleOnClickOpenEditMode} className="edit-mode-btn">Edit Mode</Button></Box>)}
         </Box>
           <Box className="gif-wrapper">
             {filteredGifs.length > 0 ? (
@@ -331,17 +312,12 @@ function GifLibrary() {
                         />
                       )}
                       <Box className="gif-buttons">
-                      {!openEditMode ? (
                         <>
                           <Button className="download" onClick={handleDownloadIndividualGifs}>{isLoading ? 'Processing...' : 'Download'}</Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button className="download" onClick={handleOnDeleteGif}>Delete</Button>
                           <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
                         </>
-                    )}
                       </Box>
+                      <IconButton onClick={handleOnDeleteGif} className="delete-icon"><DeleteIcon /></IconButton>
                     </Box>
                     <TextField
                       type="text"

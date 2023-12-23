@@ -258,7 +258,7 @@ def delete_gif():
 
         if gif is None:
             return jsonify({'error': 'GIF not found'}), 404
-        
+
         bucket_name = 'gift-resources'
 
         # Delete GIF from S3
@@ -268,7 +268,20 @@ def delete_gif():
         db.session.delete(gif)
         db.session.commit()
 
-        return jsonify({'message': 'GIF successfully deleted'}), 200
+        updated_gifs = UserGif.query.filter_by(user_id=user_id).all()
+        gifs_list = []
+        for gif in updated_gifs:
+            presigned_url = s3.generate_presigned_url('get_object',
+                                                      Params={'Bucket': bucket_name,
+                                                              'Key': f"{user_id}/{gif.gif_name}"},
+                                                      ExpiresIn=3600)
+            gifs_list.append({
+                "name": gif.gif_name, 
+                "url": presigned_url, 
+                "resourceId": gif.resourceId
+            })
+
+        return jsonify({'message': 'GIF successfully deleted', 'updatedGifs': gifs_list}), 200
 
     except Exception as e:
         print(f"Server Error: {e}")

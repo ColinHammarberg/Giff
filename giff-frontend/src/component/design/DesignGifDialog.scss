@@ -1,7 +1,7 @@
 // @import '../utils/responsiveUtils.scss';
 
 .design-gif-dialog {
-    z-index: 1499;
+    z-index: 1699;
 
     .tabs {
         gap: 0;
@@ -218,8 +218,8 @@
             justify-content: center;
 
             img {
-                width: 288px;
-                height: 240px;
+                max-width: 375px;
+                height: 250px;
             }
         }
 
