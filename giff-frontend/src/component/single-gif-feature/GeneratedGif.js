@@ -10,6 +10,7 @@ import { useTabs } from '../tabs/Tabs';
 import { DownloadIndividualDesignedGifs, GetMultipleGifs, UpdateGifName } from '../../endpoints/GifCreationEndpoints';
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import { showNotification } from '../notification/Notification';
+import ExampleEmailPopover from './EmailExamplePopover';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
@@ -22,12 +23,19 @@ function GeneratedGif(props) {
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
   const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
   const imageRef = useRef(null);
+  const [openExampleEmail, setOpenExampleEmail] = useState(null);
 
   const handleImageLoad = () => {
     const width = imageRef.current ? imageRef.current.offsetWidth : 0;
     const height = imageRef.current ? imageRef.current.offsetHeight : 0;
     setImageDimensions({ width, height });
   };
+
+  useEffect(() => {
+    if (gifGenerated && importedGifs?.length > 0) {
+      setOpenExampleEmail(true);
+    }
+  }, [gifGenerated, importedGifs?.length])
 
   useEffect(() => {
     if (gifGenerated) {
@@ -113,6 +121,12 @@ function GeneratedGif(props) {
                 <>
                   <div className="gif-container">
                     <img src={gif?.url} ref={imageRef} onLoad={handleImageLoad} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}} />
+                    <ExampleEmailPopover
+                      open={openExampleEmail}
+                      anchorEl={imageRef.current}
+                      content={gif.example_email}
+                      onClose={() => setOpenExampleEmail(false)}
+                    />
                     {gif.selectedFrame && !gif.selectedColor && (
                       <img src={getSelectedFramePath(gif.selectedFrame)} style={{width: imageDimensions.width, height: imageDimensions.height}} alt="" />
                     )}
