@@ -1,6 +1,10 @@
 {
-	"[python]": {
-		"editor.defaultFormatter": "ms-python.autopep8"
+	"editor.formatOnSave": true,
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
-	"python.formatting.provider": "none"
-}
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
+  }
+  

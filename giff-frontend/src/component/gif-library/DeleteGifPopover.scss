@@ -1,10 +1,9 @@
-.delete-gif-dialog {
+.delete-gif-popover {
     .MuiBackdrop-root {
         background-color: unset;
     }
 
-    .MuiDialog-container {
-        .MuiPaper-root {
+        .MuiPopover-paper {
             width: 300px;
             height: 220px;
             background-color: #1B1A19;
@@ -46,6 +45,5 @@
                     }
                 }
             }
-        }
     }
 }
