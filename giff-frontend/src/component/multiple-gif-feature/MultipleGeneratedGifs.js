@@ -14,7 +14,7 @@ function MultipleGeneratedGifs(props) {
   const { gifGenerated, isLoading, onDownload, setImportedGifs, importedGifs } = props;
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'Tags']);
+  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Tags', 'Email']);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const [selectedGif, setSelectedGif] = useState(null);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
@@ -22,11 +22,11 @@ function MultipleGeneratedGifs(props) {
   const imageRef = useRef(null);
   const { isMobile } = useMobileQuery();
 
-  const editGif = (gifUrl, resourceId, selectedColor, selectedFrame) => {
+  const editGif = (gifUrl, resourceId, selectedColor, selectedFrame, resourceType, tags, exampleEmail) => {
     console.log('Sharing GIF:', gifUrl);
-    console.log('Resource ID:', resourceId);
+    console.log('Resource ID:', resourceType);
     setIsDesignOpen(true);
-    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame});
+    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame, 'tags': tags, "exampleEmail": exampleEmail});
   };
 
   const handleImageLoad = () => {
@@ -38,7 +38,7 @@ function MultipleGeneratedGifs(props) {
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame);
+      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType, hoveredGif.tags, hoveredGif.example_email);
       setDesignChanges(false);
     }
   };

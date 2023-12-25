@@ -1,0 +1,25 @@
+.edit-email {
+    width: 50%;
+
+    .example-email {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        width: 100%;
+
+        label {
+            margin-bottom: 8px;
+        }
+
+        .email-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-family: 'Staatliches';
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+    }
+}

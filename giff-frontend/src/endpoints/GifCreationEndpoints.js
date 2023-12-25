@@ -129,6 +129,23 @@ export async function DeleteGif(selectedGif) {
   }
 }
 
+export async function updateEmailAPI(resourceId, exampleEmail) {
+  const access_token = localStorage.getItem('access_token');
+  console.log("resourceId", exampleEmail, resourceId);
+  
+  try {
+    const response = await axios.post(`${Api}/update-gif-email`, { resourceId, exampleEmail }, {
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log("Update email error:", error);
+    throw error;
+  }
+}
+
 export async function DownloadFolder() {
   const response = await axios.get(`${Api}/download-all-gifs`, {
     responseType: 'blob'

@@ -34,3 +34,20 @@ def update_gif_name():
     db.session.commit()
 
     return jsonify({'message': 'GIF name updated successfully', "data": new_name}), 200
+
+@jwt_required()
+def update_example_email():
+    data = request.get_json()
+    resource_id = data.get('resourceId')
+    new_example_email = data.get('exampleEmail')
+
+    user_id = get_jwt_identity()
+
+    gif = UserGif.query.filter_by(resourceId=resource_id, user_id=user_id).first()
+    if gif is None:
+        return jsonify({'error': 'GIF not found or access denied'}), 404
+
+    gif.example_email = new_example_email
+    db.session.commit()
+
+    return jsonify({'message': 'Example email updated successfully'})

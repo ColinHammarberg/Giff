@@ -5,33 +5,43 @@ import DialogWrapper from '../DialogWrapper';
 import { Box, Button, IconButton, TextField } from '@mui/material';
 import { showNotification } from '../notification/Notification';
 import Tabs from '../tabs/Tabs';
-import LeftNavigation from '../../resources/left-nav.png'
-import RightNavigation from '../../resources/right-nav.png'
-import EyeIcon from '../../resources/eye.png'
-import Frame1 from '../../resources/frames/alien.png'
-import Frame2 from '../../resources/frames/chicken.png'
-import Frame3 from '../../resources/frames/girafe.png'
-import Frame4 from '../../resources/frames/unicorn.png'
-import Frame5 from '../../resources/frames/robotic.png'
-import Frame6 from '../../resources/frames/woman.png'
-import Frame7 from '../../resources/frames/pdf-alien.png'
-import Frame8 from '../../resources/frames/pdf-chicken.png'
-import Frame9 from '../../resources/frames/pdf-girafe.png'
-import Frame10 from '../../resources/frames/pdf-unicorn.png'
-import Frame11 from '../../resources/frames/pdf-robotic.png'
-import Frame12 from '../../resources/frames/pdf-woman.png'
-import AlienIcon from '../../resources/icons/alien-icon.png'
-import ChickenIcon from '../../resources/icons/chicken-icon.png'
-import UnicornIcon from '../../resources/icons/unicorn-icon.png'
-import RoboticIcon from '../../resources/icons/robotic-icon.png'
-import WomanIcon from '../../resources/icons/woman-icon.png'
-import GiraffeIcon from '../../resources/icons/girafe-icon.png'
+import LeftNavigation from '../../resources/left-nav.png';
+import RightNavigation from '../../resources/right-nav.png';
+import EyeIcon from '../../resources/eye.png';
+import Frame1 from '../../resources/frames/alien.png';
+import Frame2 from '../../resources/frames/chicken.png';
+import Frame3 from '../../resources/frames/girafe.png';
+import Frame4 from '../../resources/frames/unicorn.png';
+import Frame5 from '../../resources/frames/robotic.png';
+import Frame6 from '../../resources/frames/woman.png';
+import Frame7 from '../../resources/frames/pdf-alien.png';
+import Frame8 from '../../resources/frames/pdf-chicken.png';
+import Frame9 from '../../resources/frames/pdf-girafe.png';
+import Frame10 from '../../resources/frames/pdf-unicorn.png';
+import Frame11 from '../../resources/frames/pdf-robotic.png';
+import Frame12 from '../../resources/frames/pdf-woman.png';
+import AlienIcon from '../../resources/icons/alien-icon.png';
+import ChickenIcon from '../../resources/icons/chicken-icon.png';
+import UnicornIcon from '../../resources/icons/unicorn-icon.png';
+import RoboticIcon from '../../resources/icons/robotic-icon.png';
+import WomanIcon from '../../resources/icons/woman-icon.png';
+import GiraffeIcon from '../../resources/icons/girafe-icon.png';
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
-import { ApplyGifColor, ApplyGifFrame } from '../../endpoints/GifCreationEndpoints';
+import {
+  ApplyGifColor,
+  ApplyGifFrame,
+  updateEmailAPI,
+} from '../../endpoints/GifCreationEndpoints';
 import Tag from '../overall/Tag';
-import { AddUserTag, AssignTagToGif, FetchUserTags, RemoveTag, RemoveTagFromGif } from '../../endpoints/TagManagementEndpoints';
+import {
+  AddUserTag,
+  AssignTagToGif,
+  FetchUserTags,
+  RemoveTag,
+  RemoveTagFromGif,
+} from '../../endpoints/TagManagementEndpoints';
 import TagsActionDialog from '../gif-library/TagsActionDialog';
-
+import EditEmail from './EditEmail';
 
 class DesignGifDialog extends PureComponent {
   constructor(props) {
@@ -41,6 +51,7 @@ class DesignGifDialog extends PureComponent {
       isOpen: true,
       selectedColor: null,
       selectedFrame: null,
+      exampleEmail: props.selectedGif?.exampleEmail || '',
       selectedFilter: null,
       visibleColorIndex: 0,
       isGifPortrait: false,
@@ -53,6 +64,7 @@ class DesignGifDialog extends PureComponent {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSaveGif = this.handleSaveGif.bind(this);
     this.handleOnChangeTab = this.handleOnChangeTab.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePrevColors = this.handlePrevColors.bind(this);
     this.handleNextColors = this.handleNextColors.bind(this);
     this.colorSelection = [
@@ -86,7 +98,7 @@ class DesignGifDialog extends PureComponent {
       { name: 'pdf-unicorn', frame: Frame10, icon: UnicornIcon },
       { name: 'pdf-robotic', frame: Frame11, icon: RoboticIcon },
       { name: 'pdf-woman', frame: Frame12, icon: WomanIcon },
-    ]
+    ];
   }
 
   determineGifOrientation = (gifUrl) => {
@@ -97,14 +109,16 @@ class DesignGifDialog extends PureComponent {
         const isPortrait = image.height > image.width;
         resolve({ isPortrait });
       };
-  
+
       image.onerror = reject;
     });
   };
 
   async updateGifOrientation() {
     try {
-      const { isPortrait } = await this.determineGifOrientation(this.props.selectedGif.url);
+      const { isPortrait } = await this.determineGifOrientation(
+        this.props.selectedGif.url
+      );
       this.setState({ isGifPortrait: isPortrait });
     } catch (error) {
       console.error('Error determining GIF orientation:', error);
@@ -116,7 +130,7 @@ class DesignGifDialog extends PureComponent {
   };
 
   handleAddTag = async () => {
-    console.log('jsjsjs')
+    console.log('jsjsjs');
     const { newTag, availableTags } = this.state;
     if (availableTags?.length < 9) {
       if (newTag.trim() !== '') {
@@ -124,23 +138,26 @@ class DesignGifDialog extends PureComponent {
           tagValue: newTag,
           color: this.getRandomColor(),
         };
-  
+
         try {
           const response = await AddUserTag(tagDetails);
           const addedTag = response.data.tag;
-  
+
           this.setState({
             availableTags: [...availableTags, addedTag],
             newTag: '',
           });
-          showNotification('success', "Nice! You can now use your Tag");
+          showNotification('success', 'Nice! You can now use your Tag');
         } catch (error) {
-          showNotification('error', "Oh no! Please try that again");
+          showNotification('error', 'Oh no! Please try that again');
           console.error('Error adding tag:', error);
         }
       }
     } else {
-      showNotification('error', "Champ! You've added the maximum number of tags.")
+      showNotification(
+        'error',
+        "Champ! You've added the maximum number of tags."
+      );
     }
   };
 
@@ -154,16 +171,16 @@ class DesignGifDialog extends PureComponent {
     const tagDetails = {
       resourceId: selectedGif.resourceId,
       value: tag.value,
-    }
+    };
     try {
-      const response = await RemoveTagFromGif(tagDetails)
+      const response = await RemoveTagFromGif(tagDetails);
       const updatedTags = response.data.tags;
       this.setState({ tags: updatedTags });
-      showNotification('success', "Your tag is removed!");
-    } catch(error) {
-      showNotification('error', "Oh no! Please try that again")
+      showNotification('success', 'Your tag is removed!');
+    } catch (error) {
+      showNotification('error', 'Oh no! Please try that again');
     }
-  }
+  };
 
   handleTagClick = async (tag) => {
     const { selectedGif } = this.props;
@@ -180,27 +197,33 @@ class DesignGifDialog extends PureComponent {
         const response = await RemoveTag(tagDetails);
         console.log('response', response);
         const updatedTags = response.data.tags;
-        this.setState({ availableTags: updatedTags, tags: tags.filter(t => t.value !== tag.value) });
+        this.setState({
+          availableTags: updatedTags,
+          tags: tags.filter((t) => t.value !== tag.value),
+        });
         console.log('response', tags);
-        showNotification('success', "Your tag is removed!");
+        showNotification('success', 'Your tag is removed!');
       } catch (error) {
-        showNotification('error', "Oh no! Please try that again")
+        showNotification('error', 'Oh no! Please try that again');
       }
     } else {
-        if (this.state.tags?.length < 3) {
-          try {
-            const response = await AssignTagToGif(tagDetails);
-            const updatedTags = response.data.tags;
-            this.setState({ tags: updatedTags });
-            showNotification('success', "Aaaand your gif has a tag");
-          } catch (error) {
-            showNotification('error', "Oh no! Please try that again");
-            console.error('Error adding tag:', error);
-          }
-        } else {
-          showNotification('error', "Champ! You've added the maximum number of tags to this gif.")
+      if (this.state.tags?.length < 3) {
+        try {
+          const response = await AssignTagToGif(tagDetails);
+          const updatedTags = response.data.tags;
+          this.setState({ tags: updatedTags });
+          showNotification('success', 'Aaaand your gif has a tag');
+        } catch (error) {
+          showNotification('error', 'Oh no! Please try that again');
+          console.error('Error adding tag:', error);
         }
+      } else {
+        showNotification(
+          'error',
+          "Champ! You've added the maximum number of tags to this gif."
+        );
       }
+    }
   };
 
   updateFrameWidth() {
@@ -215,12 +238,16 @@ class DesignGifDialog extends PureComponent {
     window.addEventListener('popstate', this.handleCancel);
     this.fetchAvailableTags();
     this.setState({ tags: this.props.selectedGif.tags || [] });
+    this.setState({ exampleEmail: this.props.selectedGif.exampleEmail || '' });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
-      this.setState({ selectedFrame: null })
-      this.setState({ tags: [] })
+      this.setState({ selectedFrame: null });
+      this.setState({ tags: [] });
+      this.setState({
+        exampleEmail: this.props.selectedGif.exampleEmail || '',
+      });
       this.updateGifOrientation();
       this.updateFrameWidth();
     }
@@ -237,7 +264,7 @@ class DesignGifDialog extends PureComponent {
       this.setState({ tags: [] });
     } else {
       this.setState({ isOpen: false });
-      this.setState({ tags: [] })
+      this.setState({ tags: [] });
     }
   }
 
@@ -251,26 +278,42 @@ class DesignGifDialog extends PureComponent {
   };
 
   handleSaveGif = async () => {
-    const { selectedColor, selectedFrame } = this.state;
+    const { selectedColor, selectedFrame, exampleEmail } = this.state;
     const { selectedGif } = this.props;
 
+    let isUpdated = false;
+    if (exampleEmail !== selectedGif.exampleEmail) {
+      try {
+        await updateEmailAPI(selectedGif.resourceId, exampleEmail);
+        isUpdated = true;
+      } catch (error) {
+        showNotification('error', 'Failed to update email.');
+      }
+    }
     try {
       let response;
       if (selectedColor) {
         response = await ApplyGifColor(selectedGif, selectedColor);
-      } else {
+      } else if (selectedFrame) {
         response = await ApplyGifFrame(selectedGif, selectedFrame);
       }
 
-      if (response.data.message) {
-        this.handleCancel();
-        this.props.setDesignChanges(true);
-        
-        showNotification('success', "Woa! Your gif looks great, champ!")
+      if (response && response.data.message) {
+        isUpdated = true;
       }
     } catch (error) {
-      showNotification('error', "Whoops! We couldn’t save those changes. Please try again.")
-      console.error('Error saving GIF:', error);
+      console.error('Error applying color/frame to GIF:', error);
+      showNotification(
+        'error',
+        'Whoops! We couldn’t apply the color/frame. Please try again.'
+      );
+    }
+
+    // If any update was successful, close the dialog and set design changes
+    if (isUpdated) {
+      showNotification('success', 'Woa! Your new gif details looks great, champ!');
+      this.handleCancel();
+      this.props.setDesignChanges(true);
     }
   };
 
@@ -284,9 +327,16 @@ class DesignGifDialog extends PureComponent {
     this.setState({ visibleColorIndex: prevIndex });
   }
 
+  handleEmailChange = (newEmail) => {
+    this.setState({ exampleEmail: newEmail });
+  };
+
   handleNextColors() {
     const { visibleColorIndex } = this.state;
-    const nextIndex = Math.min(visibleColorIndex + 4, this.colorSelection.length - 4);
+    const nextIndex = Math.min(
+      visibleColorIndex + 4,
+      this.colorSelection.length - 4
+    );
     this.setState({ visibleColorIndex: nextIndex });
   }
 
@@ -303,33 +353,45 @@ class DesignGifDialog extends PureComponent {
   }
 
   getFrameSourceByName(frameName) {
-    const frame = this.frameSelection.find(f => f.name === frameName);
+    const frame = this.frameSelection.find((f) => f.name === frameName);
     return frame ? frame.frame : null;
   }
 
   getFilteredFrames() {
     const { isGifPortrait } = this.state;
-    return this.frameSelection.filter(frame => 
-      isGifPortrait ? frame.name.startsWith('pdf-') : !frame.name.startsWith('pdf-')
+    return this.frameSelection.filter((frame) =>
+      isGifPortrait
+        ? frame.name.startsWith('pdf-')
+        : !frame.name.startsWith('pdf-')
     );
   }
-  
 
   render() {
-    const { selectedColor, visibleColorIndex, tags, availableTags } = this.state;
+    const {
+      selectedColor,
+      visibleColorIndex,
+      tags,
+      availableTags,
+      exampleEmail,
+    } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
-    const filteredFrames = this.getFilteredFrames();
+    // const filteredFrames = this.getFilteredFrames();
 
-    const visibleColors = isMobile ? this.colorSelection.slice(visibleColorIndex, visibleColorIndex + 4) : this.colorSelection;
+    const visibleColors = isMobile
+      ? this.colorSelection.slice(visibleColorIndex, visibleColorIndex + 4)
+      : this.colorSelection;
 
-    const gifTags = Array.isArray(tags) && tags.length > 0 ? tags : (selectedGif.tags || []);
+    const gifTags =
+      Array.isArray(tags) && tags.length > 0 ? tags : selectedGif.tags || [];
 
     return (
       <DialogWrapper
         modal
         maxWidth="lg"
-        className={`white new-popup design-gif-dialog ${isMobile ? 'mobile-view' : ''}`}
+        className={`white new-popup design-gif-dialog ${
+          isMobile ? 'mobile-view' : ''
+        }`}
         onClose={this.handleCancel}
         open={isOpen}
       >
@@ -339,22 +401,39 @@ class DesignGifDialog extends PureComponent {
               tabs={tabs}
               onChange={this.handleOnChangeTab}
               variant="tabs-level-3"
-          />
+            />
           )}
           {activeTab === 0 && (
             <>
               <div className="title">
-                <span>Choose a</span> good <span>frame,</span> see how it looks <span>and click save.</span>
+                <span>Choose a</span> good <span>frame,</span> see how it looks{' '}
+                <span>and click save.</span>
               </div>
               <div className="container">
                 <div>
                   <div className="image">
-                    <img src={selectedGif.url} alt="" style={{ border: `7px solid ${selectedColor || selectedGif.selectedColor || 'transparent'}` }} />
+                    <img
+                      src={selectedGif.url}
+                      alt=""
+                      style={{
+                        border: `7px solid ${
+                          selectedColor ||
+                          selectedGif.selectedColor ||
+                          'transparent'
+                        }`,
+                      }}
+                    />
                   </div>
                 </div>
-                <div className={`select-color-container ${isMobile ? 'mobile-view' : ''}`}>
+                <div
+                  className={`select-color-container ${
+                    isMobile ? 'mobile-view' : ''
+                  }`}
+                >
                   {isMobile && (
-                    <IconButton onClick={this.handlePrevColors}><img src={LeftNavigation} alt="" /></IconButton>
+                    <IconButton onClick={this.handlePrevColors}>
+                      <img src={LeftNavigation} alt="" />
+                    </IconButton>
                   )}
                   <div className="colors">
                     {visibleColors.map((item, index) => (
@@ -364,7 +443,10 @@ class DesignGifDialog extends PureComponent {
                         style={{
                           backgroundColor: item.color,
                           cursor: 'pointer',
-                          boxShadow: selectedColor === item.color ? '0 0 10px 5px rgba(0, 0, 0, 0.3)' : 'none',
+                          boxShadow:
+                            selectedColor === item.color
+                              ? '0 0 10px 5px rgba(0, 0, 0, 0.3)'
+                              : 'none',
                           position: 'relative',
                         }}
                       >
@@ -375,7 +457,9 @@ class DesignGifDialog extends PureComponent {
                     ))}
                   </div>
                   {isMobile && (
-                    <IconButton onClick={this.handleNextColors}><img src={RightNavigation} alt="" /></IconButton>
+                    <IconButton onClick={this.handleNextColors}>
+                      <img src={RightNavigation} alt="" />
+                    </IconButton>
                   )}
                 </div>
               </div>
@@ -386,34 +470,45 @@ class DesignGifDialog extends PureComponent {
               </div>
             </>
           )}
-          {activeTab === 1 && (
+          {/* {activeTab === 1 && (
             <>
               <div className="title">
-                <span>Choose a</span> good <span>frame,</span> see how it looks <span>and click save.</span>
+                <span>Choose a</span> good <span>frame,</span> see how it looks{' '}
+                <span>and click save.</span>
               </div>
               <div className="container">
-              <div className="image-frame-container">
-                <img 
-                  src={selectedGif.url}
-                  alt="Selected Gif"
-                  ref={this.gifImageRef}
-                  onLoad={this.updateFrameWidth.bind(this)}
-                />
-                {(this.state.selectedFrame || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)) && (
-                  <img 
-                    src={this.getFrameSourceByName(this.state.selectedFrame) || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)}
-                    style={{ width: this.state.frameWidth, height: '250px' }}
-                    alt="Selected Frame"
+                <div className="image-frame-container">
+                  <img
+                    src={selectedGif.url}
+                    alt="Selected Gif"
+                    ref={this.gifImageRef}
+                    onLoad={this.updateFrameWidth.bind(this)}
                   />
-                )}
-              </div>
+                  {(this.state.selectedFrame ||
+                    getSelectedFramePath(
+                      selectedGif.selectedFrame,
+                      this.state.isGifPortrait
+                    )) && (
+                    <img
+                      src={
+                        this.getFrameSourceByName(this.state.selectedFrame) ||
+                        getSelectedFramePath(
+                          selectedGif.selectedFrame,
+                          this.state.isGifPortrait
+                        )
+                      }
+                      style={{ width: this.state.frameWidth, height: '250px' }}
+                      alt="Selected Frame"
+                    />
+                  )}
+                </div>
                 <div className={`select-frame-container`}>
                   <div className="frames">
                     {filteredFrames.map((item, index) => (
                       <Box
                         key={index}
                         onClick={() => this.handleFrameClick(item.name)}
-                        style={{cursor: 'pointer'}}
+                        style={{ cursor: 'pointer' }}
                         className={item.name}
                       >
                         <img src={item?.icon} alt="" />
@@ -428,58 +523,138 @@ class DesignGifDialog extends PureComponent {
                 </div>
               </div>
             </>
-          )}
-          {activeTab === 2 && (
+          )} */}
+          {activeTab === 1 && (
             <>
               <div className="title tag-title">
-                <span>Create a tag by typing it in the field and clicking enter. CHoose a tag by clicking one in the list.</span>
+                <span>
+                  Create a tag by typing it in the field and clicking enter.
+                  CHoose a tag by clicking one in the list.
+                </span>
               </div>
               <div className="container">
                 <div className="image-with-tag">
                   <div className="image-frame-container">
-                    <img 
+                    <img
                       src={selectedGif.url}
                       alt="Selected Gif"
                       ref={this.gifImageRef}
                       onLoad={this.updateFrameWidth.bind(this)}
                     />
-                    {(this.state.selectedFrame || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)) && (
-                      <img 
-                        src={this.getFrameSourceByName(this.state.selectedFrame) || getSelectedFramePath(selectedGif.selectedFrame, this.state.isGifPortrait)}
-                        style={{ width: this.state.frameWidth, height: '250px' }}
+                    {(this.state.selectedFrame ||
+                      getSelectedFramePath(
+                        selectedGif.selectedFrame,
+                        this.state.isGifPortrait
+                      )) && (
+                      <img
+                        src={
+                          this.getFrameSourceByName(this.state.selectedFrame) ||
+                          getSelectedFramePath(
+                            selectedGif.selectedFrame,
+                            this.state.isGifPortrait
+                          )
+                        }
+                        style={{
+                          width: this.state.frameWidth,
+                          height: '250px',
+                        }}
                         alt="Selected Frame"
                       />
                     )}
                   </div>
-                  <div className="tags-items" style={{ width: this.state.frameWidth }}>
+                  <div
+                    className="tags-items"
+                    style={{ width: this.state.frameWidth }}
+                  >
                     {gifTags.map((tag, index) => {
                       return (
-                        <Tag label={tag.value} variant={tag.color} color={tag.color} key={index} onRemove={() => this.handleRemoveTagFromGif(tag)} />
-                      )
+                        <Tag
+                          label={tag.value}
+                          variant={tag.color}
+                          color={tag.color}
+                          key={index}
+                          onRemove={() => this.handleRemoveTagFromGif(tag)}
+                        />
+                      );
                     })}
                   </div>
                 </div>
                 <div className="tags">
                   <div className="tags-input">
                     <div className="label">Tag</div>
-                      <TextField
-                        value={this.state.newTag}
-                        onChange={this.handleTagChange}
-                        onKeyPress={(e) => { if (e.key === 'Enter') { this.handleAddTag(); }}}
-                        variant="outlined"
-                        fullWidth
-                      />
-                    </div>
+                    <TextField
+                      value={this.state.newTag}
+                      onChange={this.handleTagChange}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          this.handleAddTag();
+                        }
+                      }}
+                      variant="outlined"
+                      fullWidth
+                    />
+                  </div>
                   <div className="tags-display">
                     <div className="tags-items">
-                    {availableTags?.map((tag, index) => {
-                      return (
-                        <Tag label={tag.value} variant={tag.color} color={tag.color} onClick={() => this.handleTagClick(tag)} key={index} />
-                      )
-                    })}
+                      {availableTags?.map((tag, index) => {
+                        return (
+                          <Tag
+                            label={tag.value}
+                            variant={tag.color}
+                            color={tag.color}
+                            onClick={() => this.handleTagClick(tag)}
+                            key={index}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="action-content">
+                <div className="buttons">
+                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
+                </div>
+              </div>
+            </>
+          )}
+          {activeTab === 2 && (
+            <>
+              <div className="title">
+                View the example <span>email</span> and <span>edit it</span>.{' '}
+                <span>The email</span> is saved directly to your{' '}
+                <span>gif resource</span>.
+              </div>
+              <div className="container">
+                <div className="image-frame-container">
+                  <img
+                    src={selectedGif.url}
+                    alt="Selected Gif"
+                    ref={this.gifImageRef}
+                    onLoad={this.updateFrameWidth.bind(this)}
+                  />
+                  {(this.state.selectedFrame ||
+                    getSelectedFramePath(
+                      selectedGif.selectedFrame,
+                      this.state.isGifPortrait
+                    )) && (
+                    <img
+                      src={
+                        this.getFrameSourceByName(this.state.selectedFrame) ||
+                        getSelectedFramePath(
+                          selectedGif.selectedFrame,
+                          this.state.isGifPortrait
+                        )
+                      }
+                      style={{ width: this.state.frameWidth, height: '250px' }}
+                      alt="Selected Frame"
+                    />
+                  )}
+                </div>
+                <EditEmail
+                  defaultEmail={exampleEmail}
+                  onEmailChange={this.handleEmailChange}
+                />
               </div>
               <div className="action-content">
                 <div className="buttons">

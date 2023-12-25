@@ -34,8 +34,8 @@ function GifLibrary() {
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const { tabs, changeTab, activeTab } = useTabs([
     'Frame Design',
-    'Filter Design',
     'Tags',
+    'Email',
   ]);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const { isMobile } = useMobileQuery();
@@ -189,7 +189,8 @@ function GifLibrary() {
     selectedColor,
     selectedFrame,
     resourceType,
-    tags
+    tags,
+    exampleEmail
   ) => {
     console.log('resourceType', resourceType);
     setIsDesignOpen(true);
@@ -199,19 +200,22 @@ function GifLibrary() {
       selectedColor: selectedColor,
       selectedFrame: selectedFrame,
       tags: tags,
+      exampleEmail: exampleEmail,
     });
   };
 
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = gifs[selectedGif];
+      console.log('hoveredGif', hoveredGif);
       editGif(
         hoveredGif.url,
         hoveredGif.resourceId,
         hoveredGif.selectedColor,
         hoveredGif.selectedFrame,
         hoveredGif.resourceType,
-        hoveredGif.tags
+        hoveredGif.tags,
+        hoveredGif.example_email
       );
       setDesignChanges(false);
     }
