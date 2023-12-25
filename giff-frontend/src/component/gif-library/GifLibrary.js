@@ -29,7 +29,6 @@ function GifLibrary() {
     const [isDesignOpen, setIsDesignOpen] = useState(false);
     const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Filter Design', 'Tags']);
     const [selectedDesignGif, setSelectedDesignGif] = useState({});
-    const [openEditMode, setOpenEditMode] = useState(false);
     const { isMobile } = useMobileQuery();
     const navigate = useNavigate();
     const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
@@ -132,10 +131,6 @@ function GifLibrary() {
         }
       }
     };    
-
-      function handleOnClickOpenEditMode() {
-        setOpenEditMode(true);
-      }
       
       const handleDownloadLibraryGifs = async () => {
         if (!gifs) {
@@ -279,9 +274,7 @@ function GifLibrary() {
                   variant="yellow" 
                 />
               )}
-              {!openEditMode && (
-                <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
-              )}
+              <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
             </Box>
           </div>
         </Box>
