@@ -299,10 +299,6 @@ function Profile() {
             <div>Use <span>AI</span> to analyse and describe your gif while creating it</div>
             <Checkbox onChange={handleOnChangeAICheckbox} checked={aiChecked} />
           </Box>
-          <Box className="ai-checkbox">
-            <div>Use <span>AI</span> to craft an email to fit your gif while creating it</div>
-            <Checkbox onChange={handleOnChangeAICheckbox} checked={aiChecked} />
-          </Box>
         </Box>
         <Box className="delete-account">
           <Button onClick={handleOnClickDeleteAccount}>Delete Account</Button>
