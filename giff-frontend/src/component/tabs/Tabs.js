@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
 import './Tabs.scss';
+import LightTooltip from '../overall/LightToolTip';
 
 const convertString = (str, className = 'tabs') => {
   const value = `${className} ${str}`;
@@ -29,28 +30,35 @@ export const useTabs = (initialTabs, defaultActiveIndex = 0) => {
   };
 };
 
-const Tabs = ({ tabs, onChange, variant, className }) => {
+const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
   return (
     <ul className={`tabs ${variant} `}>
-      {tabs?.map((e, i) => (
-        <li
-          key={i}
-          className={`tab-item ${e.active === true ? 'active' : ''} ${className} ${
-            !e.label ? 'tab-item-hidden' : ''
-          }`}
+      {tabs?.map((tab, i) => (
+        <LightTooltip
+          disableHoverListener={!disabled[i]}
+          title="There is no example email available for this gif."
         >
-          <div
-            className="tab-wrapper"
-            data-id={convertString(e?.label, variant)}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onChange(i);
-            }}
+          <li
+            key={i}
+            className={`tab-item ${tab.active ? 'active' : ''} ${
+              disabled[i] ? 'disabled' : ''
+            } ${className} ${!tab.label ? 'tab-item-hidden' : ''}`}
           >
-            <span className="tab-label">{e?.label}</span>
-          </div>
-        </li>
+            <div
+              className="tab-wrapper"
+              data-id={convertString(tab.label, variant)}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!disabled[i]) {
+                  onChange(i);
+                }
+              }}
+            >
+              <span className="tab-label">{tab.label}</span>
+            </div>
+          </li>
+        </LightTooltip>
       ))}
     </ul>
   );

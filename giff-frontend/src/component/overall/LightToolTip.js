@@ -14,6 +14,7 @@ const CustomLightTooltip = withStyles(() => ({
     fontFamily: 'Staatliches',
     lineHeight: '20px',
     margin: '8px 0',
+    zIndex: '2001',
   },
 }))(Tooltip);
 

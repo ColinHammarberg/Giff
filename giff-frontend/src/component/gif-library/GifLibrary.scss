@@ -23,6 +23,13 @@
     overflow: hidden;
 
     .gif-showcase {
+        .MuiDivider-root {
+            background-color: grey;
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+        }
+
         .gif-showcase-info {
             max-width: 859px;
             margin: auto;
@@ -30,6 +37,7 @@
 
             .library-actions {
                 display: flex;
+                flex-direction: column;
             }
 
             .title {
@@ -61,11 +69,6 @@
                     width: 459px;
                     margin: auto;
                 }
-
-                .filter {
-                    position: absolute;
-                    right: 0;
-                }
             }
 
             .edit {
@@ -95,7 +98,7 @@
             justify-content: center;
             align-items: center;
             background-color: #000;
-            margin-top: 100px;
+            margin-top: 50px;
 
             .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
                 border: none !important;
@@ -124,10 +127,6 @@
                 text-align: center;
                 position: relative;
 
-                .MuiIconButton-root {
-                    display: none;
-                }
-
                 span {
                     color: #fff;
                     font-family: 'Staatliches';
@@ -148,25 +147,6 @@
                     &.hovered {
                         width: 100%;
                         height: 100%;
-
-                        .MuiIconButton-root {
-                            position: absolute;
-                            top: 0;
-                            right: 4px;
-                            z-index: 1599;
-                            color: #F4149B;
-                            display: block;
-                            height: 20px;
-                            display: flex;
-
-                            &:hover {
-                                background-color: transparent;
-                            }
-
-                            .MuiSvgIcon-root {
-                                font-size: 18px;
-                            }
-                        }
 
                         .gif-buttons {
                             position: absolute;
@@ -202,16 +182,6 @@
                                     background-color: rgba(185, 241, 64, 1);
                                 }
                             }
-                        }
-                    }
-
-                    img {
-                        height: 200px;
-
-                        &:nth-child(2) {
-                            position: absolute;
-                            top: 0;
-                            z-index: 10;
                         }
                     }
                 }

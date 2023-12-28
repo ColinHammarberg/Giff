@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
-import { Box, Button, IconButton, TextField } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
@@ -10,7 +9,7 @@ import OfficialButton from '../buttons/OfficialButton';
 import useMobileQuery from '../../queries/useMobileQuery';
 import { showNotification } from '../notification/Notification';
 import ChooseResolutionDialog from './ChooseResolutionDialog';
-import { getSelectedFramePath } from './GifLibraryUtils';
+// import { getSelectedFramePath } from './GifLibraryUtils';
 import { GiftContext } from '../../context/GiftContextProvider';
 import {
   DeleteGif,
@@ -23,6 +22,8 @@ import LoopIcon from '@mui/icons-material/Loop';
 import useFetchUserTags from '../../queries/useUserTagsQuery';
 import Filter from './Filter';
 import DeleteGifPopover from './DeleteGifPopover';
+import GifBoxes from './GifBoxes';
+import ActionMenu from './ActionMenu';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -40,16 +41,17 @@ function GifLibrary() {
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const { isMobile } = useMobileQuery();
   const navigate = useNavigate();
-  const [imageDimensions, setImageDimensions] = useState({
-    width: null,
-    height: null,
-  });
+  // const [imageDimensions, setImageDimensions] = useState({
+  //   width: null,
+  //   height: null,
+  // });
   const [deletePopoverAnchorEl, setDeletePopoverAnchorEl] = useState(null);
   const [currentGifIndex, setCurrentGifIndex] = useState(null);
   const imageRefs = useRef({});
   const access_token = localStorage.getItem('access_token');
   const { tags } = useFetchUserTags(isDesignOpen);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
   const filteredGifs = gifs?.filter(
     (gif) =>
       selectedTags.length === 0 ||
@@ -66,8 +68,8 @@ function GifLibrary() {
     return () => clearTimeout(timer);
   }, []);
 
-  const showDeletePopover = (anchorEl, index) => {
-    setDeletePopoverAnchorEl(anchorEl);
+  const showDeletePopover = (index) => {
+    setDeletePopoverAnchorEl(imageRefs.current[index]);
     setCurrentGifIndex(index);
   };
 
@@ -101,17 +103,47 @@ function GifLibrary() {
     fetchData();
   }, [designChanges]);
 
-  const handleImageLoad = (index) => {
-    const image = imageRefs.current[index];
-    if (image) {
-      const width = image.offsetWidth;
-      const height = image.offsetHeight;
-      setImageDimensions((prevDimensions) => ({
-        ...prevDimensions,
-        [index]: { width, height },
-      }));
-    }
+  const handleOpenActionMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentGifIndex(selectedGif);
   };
+
+  const handleCloseActionMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleActionSelect = (action) => {
+    // Handle the selected action here, for example, call a function based on the action
+    switch (action) {
+      case 'Edit':
+        handleEditButtonClick();
+        break;
+      case 'Delete':
+        handleOnOpenDeletePopover(currentGifIndex);
+        break;
+      case 'Download':
+        handleDownloadIndividualGifs();
+        break;
+      case 'Share':
+        // Handle the Share action
+        break;
+      default:
+        break;
+    }
+    setAnchorEl(null);
+  };
+
+  // const handleImageLoad = (index) => {
+  //   const image = imageRefs.current[index];
+  //   if (image) {
+  //     const width = image.offsetWidth;
+  //     const height = image.offsetHeight;
+  //     setImageDimensions((prevDimensions) => ({
+  //       ...prevDimensions,
+  //       [index]: { width, height },
+  //     }));
+  //   }
+  // };
 
   const handleDownloadIndividualGifs = async () => {
     if (selectedGif !== null) {
@@ -206,8 +238,7 @@ function GifLibrary() {
 
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
-      const hoveredGif = gifs[selectedGif];
-      console.log('hoveredGif', hoveredGif);
+      const hoveredGif = gifs[currentGifIndex];
       editGif(
         hoveredGif.url,
         hoveredGif.resourceId,
@@ -222,9 +253,8 @@ function GifLibrary() {
   };
 
   function handleOnOpenDeletePopover(index) {
-    setSelectedGif(index);
-    const anchorEl = imageRefs.current[index];
-    showDeletePopover(anchorEl, index);
+    setCurrentGifIndex(index);
+    showDeletePopover(index);
   }
 
   async function handleOnDeleteGif() {
@@ -339,34 +369,43 @@ function GifLibrary() {
                   variant="yellow"
                 />
               )}
-              <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
             </Box>
+            <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
           </div>
         </Box>
+        <Divider />
         <Box className="gif-wrapper">
           {filteredGifs.length > 0 ? (
             filteredGifs.map((item, index) => {
               return (
-                <Box className="gif-box">
+                <Box
+                  className="gif-box"
+                  onMouseEnter={() => setSelectedGif(index)}
+                  onMouseLeave={() => setSelectedGif(null)}
+                >
                   <Box
                     className={`gif-container ${
                       selectedGif === index ? 'hovered' : ''
                     } ${isMobile ? 'hovered' : ''}`}
-                    onMouseEnter={() => setSelectedGif(index)}
-                    onMouseLeave={() => setSelectedGif(null)}
+                    ref={(element) => (imageRefs.current[index] = element)}
                   >
-                    <img
-                      src={item.url}
-                      ref={(el) => (imageRefs.current[index] = el)}
-                      onLoad={() => handleImageLoad(index)}
-                      alt=""
-                      style={{
-                        border:
-                          !item.selectedFrame &&
-                          `4px solid ${item.selectedColor}`,
-                      }}
+                    <GifBoxes
+                      name={item.name}
+                      color={item.selectedColor}
+                      gifUrl={item.url}
+                      onClickMore={handleOpenActionMenu}
+                      onNameChange={(newName) =>
+                        handleNameChange(index, newName)
+                      }
+                      onNameSubmit={() => handleNameSubmit(index)}
                     />
-                    {item.selectedFrame && !item.selectedColor && (
+                    <ActionMenu
+                      anchorEl={anchorEl}
+                      onClose={handleCloseActionMenu}
+                      onSelect={handleActionSelect}
+                      index={index}
+                    />
+                    {/* {item.selectedFrame && !item.selectedColor && (
                       <img
                         src={getSelectedFramePath(item.selectedFrame)}
                         alt=""
@@ -379,39 +418,8 @@ function GifLibrary() {
                             : {}
                         }
                       />
-                    )}
-                    <Box className="gif-buttons">
-                      <>
-                        <Button
-                          className="download"
-                          onClick={handleDownloadIndividualGifs}
-                        >
-                          {isLoading ? 'Processing...' : 'Download'}
-                        </Button>
-                        <Button
-                          className="edit"
-                          onClick={handleEditButtonClick}
-                        >
-                          Edit
-                        </Button>
-                      </>
-                    </Box>
-                    <IconButton
-                      onClick={() => handleOnOpenDeletePopover(index)}
-                      className="delete-icon"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    )} */}
                   </Box>
-                  <TextField
-                    type="text"
-                    value={item.name}
-                    onChange={(e) => handleNameChange(index, e.target.value)}
-                    onKeyPress={(e) =>
-                      e.key === 'Enter' && handleNameSubmit(index)
-                    }
-                    className="gif-name-input"
-                  />
                 </Box>
               );
             })

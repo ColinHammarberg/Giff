@@ -1,4 +1,6 @@
 .tags-action-dialog {
+    z-index: 1999 !important;
+
     .MuiBackdrop-root {
         background-color: unset;
     }

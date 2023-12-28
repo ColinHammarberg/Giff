@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { IconButton, Popover, Checkbox, List, ListItem } from "@mui/material";
-import filterIcon from '../../resources/filter.png';
+import { Popover, Checkbox, List, ListItem, Button } from "@mui/material";
 import './Filter.scss';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Tag from '../overall/Tag';
 import LightTooltip from '../overall/LightToolTip';
 
@@ -37,9 +37,10 @@ function Filter({ tags, onTagSelectionChange }) {
     return (
         <div className="filter">
             <LightTooltip title="Filter on tags">
-                <IconButton onClick={handleClick}>
-                <img src={filterIcon} alt="Filter" />
-                </IconButton>
+                <Button onClick={handleClick} className="filter-btn">
+                    Filter
+                    <FilterAltIcon />
+                </Button>
             </LightTooltip>
             <Popover
                 id={id}

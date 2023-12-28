@@ -1,0 +1,91 @@
+import React, { useState } from 'react';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton, TextField } from '@mui/material';
+import './GifBoxes.scss';
+
+function GifBoxes({
+  name,
+  onClickMore,
+  color,
+  gifUrl,
+  onMouseEnter,
+  onNameChange,
+  onNameSubmit,
+}) {
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState(name);
+
+  const handleEditName = () => {
+    setEditingName(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingName(false);
+    setNewName(name);
+  };
+
+  const handleSubmit = () => {
+    setEditingName(false);
+    onNameChange(newName);
+    onNameSubmit();
+  };
+
+  return (
+    <div onMouseEnter={onMouseEnter}>
+      <div
+        className="gif-header"
+        style={{ backgroundColor: color || '#3F3F3F' }}
+      >
+        <div>
+          <IconButton>
+            <StarBorderIcon />
+          </IconButton>
+        </div>
+        <div className="name">
+          {editingName ? (
+            <>
+              <TextField
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <>
+                      <IconButton onClick={handleSubmit}>
+                        <CheckIcon className="confirm" />
+                      </IconButton>
+                      <IconButton onClick={handleCancelEdit}>
+                        <CloseIcon className="close" />
+                      </IconButton>
+                    </>
+                  ),
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <span>{name}</span>
+              <IconButton onClick={handleEditName}>
+                <EditIcon className="edit" />
+              </IconButton>
+            </>
+          )}
+        </div>
+        <div>
+          <IconButton onClick={(e) => onClickMore(e)}>
+            <MoreVertIcon />
+          </IconButton>
+        </div>
+      </div>
+      <div className="frame" style={{ border: `4px solid ${color || '#3F3F3F'}`}}>
+        <img src={gifUrl} alt="" />
+      </div>
+    </div>
+  );
+}
+
+export default GifBoxes;

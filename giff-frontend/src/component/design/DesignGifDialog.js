@@ -130,7 +130,6 @@ class DesignGifDialog extends PureComponent {
   };
 
   handleAddTag = async () => {
-    console.log('jsjsjs');
     const { newTag, availableTags } = this.state;
     if (availableTags?.length < 9) {
       if (newTag.trim() !== '') {
@@ -186,6 +185,7 @@ class DesignGifDialog extends PureComponent {
     const { selectedGif } = this.props;
     const { tags } = this.state;
     const { hasConfirmed } = await TagsActionDialog.show();
+    console.log('hasConfirmed', hasConfirmed);
     const tagDetails = {
       resourceId: selectedGif.resourceId,
       value: tag.value,
@@ -248,6 +248,7 @@ class DesignGifDialog extends PureComponent {
       this.setState({
         exampleEmail: this.props.selectedGif.exampleEmail || '',
       });
+      this.props.changeTab(0)
       this.updateGifOrientation();
       this.updateFrameWidth();
     }
@@ -308,10 +309,11 @@ class DesignGifDialog extends PureComponent {
         'Whoops! We couldn’t apply the color/frame. Please try again.'
       );
     }
-
-    // If any update was successful, close the dialog and set design changes
     if (isUpdated) {
-      showNotification('success', 'Woa! Your new gif details looks great, champ!');
+      showNotification(
+        'success',
+        'Woa! Your new gif details looks great, champ!'
+      );
       this.handleCancel();
       this.props.setDesignChanges(true);
     }
@@ -400,6 +402,11 @@ class DesignGifDialog extends PureComponent {
             <Tabs
               tabs={tabs}
               onChange={this.handleOnChangeTab}
+              disabled={tabs.map((tab, index) => {
+                if (index === 2 && !selectedGif?.exampleEmail) {
+                  return true;
+                } else return false;
+              })}
               variant="tabs-level-3"
             />
           )}

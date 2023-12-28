@@ -75,6 +75,10 @@
         .tab-item {
             background-color: transparent;
 
+            &.disabled {
+                opacity: 0.6;
+            }
+
             .tab-wrapper {
                 background-color: #1B1A19;
                 color: #fff;

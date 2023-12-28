@@ -1,0 +1,23 @@
+.action-menu-popover {
+    z-index: 1699;
+    background-color: #D9D9D9;
+    width: 178px;
+
+    .MuiListItem-root {
+        border-bottom: 1px solid #000;
+        height: 30px;
+        font-family: 'Staatliches';
+        font-size: 16px;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #FE6B01;
+        }
+
+        .MuiSvgIcon-root {
+            font-size: 16px;
+        }
+    }
+}
