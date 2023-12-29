@@ -12,7 +12,7 @@ from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, 
 from edit_exiting_gif_helper import update_example_email
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name
-from include_ai_helper import include_ai_in_gifs
+from include_ai_helper import include_ai_in_gifs, include_ai_email
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -86,6 +86,10 @@ def toggle_include_logo():
 @app.route('/toggle_include_ai', methods=['POST'])
 def toggle_include_ai():
     return include_ai_in_gifs()
+
+@app.route('/toggle_email_ai', methods=['POST'])
+def include_email_ai():
+    return include_ai_email()
 
 @app.route('/fetch_user_gifs', methods=['GET'])
 def fetch_all_user_gifs():

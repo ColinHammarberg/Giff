@@ -3,6 +3,9 @@ import { Box, Popover, Button, Typography } from '@mui/material';
 import './ExampleEmailPopover.scss';
 
 function ExampleEmailPopover({ open, anchorEl, content, onClose }) {
+  if (!content) {
+    return null;
+  }
   const handleGmailRedirect = () => {
     window.open('https://www.gmail.com', '_blank');
   };

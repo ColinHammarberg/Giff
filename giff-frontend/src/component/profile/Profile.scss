@@ -98,11 +98,17 @@
         }
 
         .ai-checkbox {
-            display: flex;
             justify-content: center;
             align-items: center;
             padding-left: 50px;
             margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+
+            .include {
+                display: flex;
+                align-items: center;
+            }
 
             span {
                 color: #F4149B;
@@ -126,14 +132,14 @@
             gap: 24px;
 
             .verify-email-btn {
-                background-color: #B9F140;
+                background-color: #FEC901;
                 font-family: 'Staatliches';
-                border: 2px solid #000;
+                border: 1px solid #000;
                 color: #000;
                 font-size: 15px;
-                height: 58px;
-                width: 120px;
-                margin-top: 5px;
+                height: 32px;
+                width: 110px;
+                margin-top: 15px;
                 margin-left: 5px;
             }
 

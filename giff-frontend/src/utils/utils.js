@@ -10,7 +10,7 @@ export const getMenuItems = (isAuthenticated, handleSignIn, handleSignOut) => [
     {title: 'My Gif library', url: 'gif-library', key: 2, isShow: isAuthenticated},
     {title: 'Insights & Inspiration', url: 'insights', key: 3, isShow: !isAuthenticated},
     {title: 'What is Gif-t?', url: 'https://gif-t.io/what-is-gift', isExternal: true, key: 4, isShow: true},
-    {title: 'Signin', url: '', key: 5, isShow: !isAuthenticated, onClick: handleSignIn},
+    {title: 'Sign in', url: '', key: 5, isShow: !isAuthenticated, onClick: handleSignIn},
     {title: 'Sign out', url: '', key: 6, isShow: isAuthenticated, onClick: handleSignOut},
 ]
 

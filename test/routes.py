@@ -39,6 +39,7 @@ def fetch_user_info():
             has_logo=current_user.has_logo,
             include_logo=current_user.include_logo,
             include_ai=current_user.include_ai,
+            include_example_email=current_user.include_example_email,
             tags=user_tags,
             status="Success"
         ), 200

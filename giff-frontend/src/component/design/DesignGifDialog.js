@@ -597,6 +597,7 @@ class DesignGifDialog extends PureComponent {
                           this.handleAddTag();
                         }
                       }}
+                      placeholder="MUSIC, MARKETING, HAPPY"
                       variant="outlined"
                       fullWidth
                     />

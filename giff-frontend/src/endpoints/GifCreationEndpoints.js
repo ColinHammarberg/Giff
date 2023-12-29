@@ -271,6 +271,21 @@ export async function ToggleIncludeAI() {
   }
 }
 
+export async function ToggleEmailAI() {
+  const access_token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(`${Api}/toggle_email_ai`, {},
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return response;
+  } catch (error) {
+    return { status: error.response?.status, data: error.response?.data };
+  }
+}
+
 export async function DownloadIndividualDesignedGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
   console.log('gifData', gifData);
