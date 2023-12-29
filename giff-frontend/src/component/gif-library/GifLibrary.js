@@ -147,7 +147,7 @@ function GifLibrary() {
 
   const handleDownloadIndividualGifs = async () => {
     if (selectedGif !== null) {
-      const hoveredGif = gifs[selectedGif];
+      const hoveredGif = gifs[currentGifIndex];
       let selectedResolution = user?.userInfo?.resolution;
       setIsLoading(true);
 
