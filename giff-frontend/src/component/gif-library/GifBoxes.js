@@ -30,8 +30,10 @@ function GifBoxes({
 
   const handleSubmit = () => {
     setEditingName(false);
-    onNameChange(newName);
-    onNameSubmit();
+    if (newName !== name) {
+      onNameChange(newName);
+      onNameSubmit();
+    }
   };
 
   return (
@@ -81,7 +83,10 @@ function GifBoxes({
           </IconButton>
         </div>
       </div>
-      <div className="frame" style={{ border: `4px solid ${color || '#3F3F3F'}`}}>
+      <div
+        className="frame"
+        style={{ border: `4px solid ${color || '#3F3F3F'}` }}
+      >
         <img src={gifUrl} alt="" />
       </div>
     </div>
