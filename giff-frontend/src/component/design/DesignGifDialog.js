@@ -83,7 +83,7 @@ class DesignGifDialog extends PureComponent {
       { color: '#626262' },
       { color: '#1B1A19' },
       { color: '#F5F5F5' },
-      { color: '#FEC901' },
+      { color: '#FA6CC1' },
     ];
     this.frameSelection = [
       { name: 'alien', frame: Frame1, icon: AlienIcon },
@@ -248,7 +248,7 @@ class DesignGifDialog extends PureComponent {
       this.setState({
         exampleEmail: this.props.selectedGif.exampleEmail || '',
       });
-      this.props.changeTab(0)
+      this.props.changeTab(0);
       this.updateGifOrientation();
       this.updateFrameWidth();
     }
@@ -343,7 +343,10 @@ class DesignGifDialog extends PureComponent {
   }
 
   handleColorClick(color) {
-    this.setState({ selectedColor: color, selectedFrame: null });
+    this.setState((prevState) => ({
+      selectedColor: prevState.selectedColor === color ? null : color,
+      selectedFrame: null,
+    }));
   }
 
   handleFrameClick(frameName) {
