@@ -19,6 +19,7 @@ function GifLanding() {
   const { user } = useFetchUser();
   const formRef = useRef();
   const isActive = user?.is_active;
+  const isEmailCreationActive = user?.include_example_email;
   const [sectorType, setSectorType] = useState('');
   const [isSectorDialogOpen, setSectorDialogOpen] = useState(false);
 
@@ -39,7 +40,7 @@ function GifLanding() {
   };
 
   const handleCreateGifClick = () => {
-    if (!sectorType) {
+    if (!sectorType && isEmailCreationActive) {
       setSectorDialogOpen(true);
     } else {
       formRef.current.submit(sectorType);
@@ -54,7 +55,7 @@ function GifLanding() {
         return;
       }
     } else {
-      if (!sectorType) {
+      if (!sectorType && isEmailCreationActive) {
         setSectorDialogOpen(true);
       } else {
           setIsLoading(true);
