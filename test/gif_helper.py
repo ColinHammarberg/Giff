@@ -723,14 +723,10 @@ def generate_gif():
                                                      Params={'Bucket': 'gift-resources',
                                                              'Key': f"{user_id}/{NAME}"},
                                                      ExpiresIn=3600)
-    response = requests.get(presigned_url)
-    if response.status_code == 200:
-        gif_bytes = io.BytesIO(response.content)
-
-    with open(output_path, "rb"):
-        resized_gif = resize_gif_add_on(gif_bytes, new_height=75)
-        base64_string = b64encode(resized_gif.read()).decode('utf-8')
-        print('base64_string', len(base64_string))
+    
+    with open(output_path, "rb") as gif_file:
+        gif_content = gif_file.read()
+        base64_string = b64encode(gif_content).decode('utf-8')
     description, example_email = analyze_gif(
                 presigned_url, current_user, sector_type)
 
