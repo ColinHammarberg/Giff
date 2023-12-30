@@ -40,10 +40,10 @@ class DeleteGifPopover extends PureComponent {
         </Box>
         <Box className="delete-btn-actions">
           <Button onClick={this.handleConfirm} className="confirm-btn">
-            No, delete my gif
+            Delete my gif
           </Button>
           <Button onClick={this.handleCancel} className="keep-gif-btn">
-            Ok, let's keep my gif
+            Let's keep my gif
           </Button>
         </Box>
       </Popover>
