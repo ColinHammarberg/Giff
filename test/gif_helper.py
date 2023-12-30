@@ -623,11 +623,19 @@ def generate_video_gif(data, user_id):
             print('folder_name', folder_name)
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}{NAME}", resource_id)
+            s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                aws_secret_access_key='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', 
+                                region_name='eu-north-1')
+            presigned_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gift-resources',
+                                                                    'Key': f"{user_id}/{NAME}"},
+                                                        ExpiresIn=3600)
 
             gif_data = {
                 "name": NAME,
                 "resourceId": resource_id,
-                "resourceType": resourceType
+                "resourceType": resourceType,
+                "presigned_url": presigned_url
             }
             print('gif_data', gif_data)
             db.session.add(UserGif(user_id=user_id, gif_name=NAME,
