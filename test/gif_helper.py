@@ -11,7 +11,7 @@ from base64 import b64encode
 from werkzeug.utils import secure_filename
 from utils_helper import is_vimeo_url, is_youtube_url
 from gpt_helper import analyze_gif
-from utils import resize_gif, resize_gif_add_on
+from utils import resize_gif
 from io import BytesIO
 import os
 import zipfile
@@ -114,6 +114,10 @@ def generate_pdf_gif():
                                                          Params={'Bucket': 'gift-resources',
                                                                  'Key': f"{user_id}/{NAME}"},
                                                          ExpiresIn=3600)
+        
+        with open(output_path, "rb") as gif_file:
+            gif_content = gif_file.read()
+            base64_string = b64encode(gif_content).decode('utf-8')
 
         description, example_email = analyze_gif(
                 presigned_url, current_user, sector_type)
@@ -121,7 +125,7 @@ def generate_pdf_gif():
         print('example_email', example_email)
 
         db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path,
-                       resourceId=resource_id, ai_description=description, source=URL, example_email=example_email))
+                       resourceId=resource_id, ai_description=description, source=URL, example_email=example_email, base64_string=base64_string))
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -258,13 +262,15 @@ def upload_pdf_and_generate_gif():
                                                              Params={'Bucket': 'gift-resources',
                                                                      'Key': f"{user_id}/{gif_name}"},
                                                              ExpiresIn=3600)
-            print('presigned_url', presigned_url)
+            with open(output_path, "rb") as gif_file:
+                gif_content = gif_file.read()
+                base64_string = b64encode(gif_content).decode('utf-8')
 
             description, example_email = analyze_gif(
                 presigned_url, current_user, sector_type)
 
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
-                           gif_url=output_path, resourceId=resource_id, ai_description=description, example_email=example_email, source="https://gif-t.io"))
+                           gif_url=output_path, resourceId=resource_id, ai_description=description, example_email=example_email, source="https://gif-t.io", base64_string=base64_string))
             db.session.commit()
 
         gif_data = {
@@ -630,6 +636,10 @@ def generate_video_gif(data, user_id):
                                                         Params={'Bucket': 'gift-resources',
                                                                     'Key': f"{user_id}/{NAME}"},
                                                         ExpiresIn=3600)
+            
+            with open(output_path, "rb") as gif_file:
+                gif_content = gif_file.read()
+                base64_string = b64encode(gif_content).decode('utf-8')
 
             gif_data = {
                 "name": NAME,
@@ -639,7 +649,7 @@ def generate_video_gif(data, user_id):
             }
             print('gif_data', gif_data)
             db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                                   gif_url=output_path, resourceId=resource_id, source=URL))
+                                   gif_url=output_path, resourceId=resource_id, source=URL, base64_string=base64_string))
             db.session.commit()
 
         return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
