@@ -726,7 +726,6 @@ def generate_gif():
     response = requests.get(presigned_url)
     if response.status_code == 200:
         gif_bytes = io.BytesIO(response.content)
-        gif_blob = response.content
 
     with open(output_path, "rb"):
         resized_gif = resize_gif_add_on(gif_bytes, new_height=75)
@@ -742,7 +741,7 @@ def generate_gif():
         resourceId=resource_id,
         ai_description=description,
         source=URL,
-        base64_string=gif_blob,
+        base64_string=base64_string,
         example_email=example_email
     )
     db.session.add(new_gif)
