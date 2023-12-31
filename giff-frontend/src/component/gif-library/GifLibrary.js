@@ -33,11 +33,7 @@ function GifLibrary() {
   const [isLoading, setIsLoading] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [isDesignOpen, setIsDesignOpen] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs([
-    'Frame Design',
-    'Tags',
-    'Email',
-  ]);
+  const { tabs, changeTab, activeTab } = useTabs(['Frame', 'Tags', 'Email']);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const { isMobile } = useMobileQuery();
   const navigate = useNavigate();
