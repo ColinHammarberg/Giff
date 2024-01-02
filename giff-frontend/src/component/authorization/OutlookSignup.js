@@ -16,11 +16,15 @@ const msalConfig = {
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 
-function OutlookSignUpButton() {
+function OutlookSignUpButton({ checked, setError }) {
   const { instance } = useMsal();
   const navigate = useNavigate();
 
   const handleSignUn = () => {
+    if (!checked) {
+        setError(true);
+        return;
+    }
     const loginRequest = {
       scopes: ['openid', 'profile', 'User.Read'],
     };

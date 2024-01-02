@@ -12,7 +12,7 @@
 
     .user-authentication {
         width: 480px;
-        gap: 24px;
+        gap: 16px;
         display: grid;
         margin: auto;
         font-family: 'Staatliches';
@@ -67,6 +67,9 @@
         }
 
         .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
 
             .no-account {
                 color: #fff;

@@ -20,11 +20,12 @@ function UserSignup() {
   });
   const navigate = useNavigate();
 
-  const GOOGLE_CLIENT_ID = '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
+  const GOOGLE_CLIENT_ID =
+    '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
 
   const handleGoogleResponse = useCallback(async (response) => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const googleResponse = await GoogleSignUp({ token: response.credential });
       handleSignUpResponse(googleResponse);
     } catch (error) {
@@ -39,17 +40,17 @@ function UserSignup() {
       if (window.google) {
         window.google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse
+          callback: handleGoogleResponse,
         });
         window.google.accounts.id.renderButton(
-          document.getElementById("google-sign-in-button"),
-          { theme: "outline", size: "large" }
+          document.getElementById('google-sign-in-button'),
+          { theme: 'outline', size: 'large' }
         );
       } else {
         setTimeout(loadGoogleSignIn, 300);
       }
     };
-  
+
     loadGoogleSignIn();
   }, [handleGoogleResponse]);
 
@@ -76,7 +77,10 @@ function UserSignup() {
       const response = await Signup(formData);
       handleSignUpResponse(response);
     } catch (error) {
-      showNotification('error', error.response?.data?.message || 'Signup failed');
+      showNotification(
+        'error',
+        error.response?.data?.message || 'Signup failed'
+      );
       setIsLoading(false);
     }
   };
@@ -89,7 +93,10 @@ function UserSignup() {
       showNotification('success', 'Successfully signed up');
     } else {
       setIsLoading(false);
-      showNotification('error', response.data.message || 'Signup failed for some reason');
+      showNotification(
+        'error',
+        response.data.message || 'Signup failed for some reason'
+      );
     }
   };
 
@@ -110,7 +117,10 @@ function UserSignup() {
             value={formData.email}
             name="email"
             error={error === 'Invalid email address'}
-            helperText={error === 'Invalid email address' && 'Please enter a valid email address'}
+            helperText={
+              error === 'Invalid email address' &&
+              'Please enter a valid email address'
+            }
             onKeyPress={handleKeyPressGenerateGif}
             onChange={handleOnChange}
           />
@@ -130,20 +140,26 @@ function UserSignup() {
             variant="pink"
             isProcessing={isLoading}
           />
+          <div
+            id="google-sign-in-button"
+            className="google-sign-in"
+            style={{ color: '#fff' }}
+          >
+            Google signin
+          </div>
+          <OutlookSignUpButton checked={checked} setError={setError} />
         </div>
-        <div id="google-sign-in-button" className="google-sign-in" style={{ color: '#fff' }}>
-          Google signin 
-        </div>
-        <OutlookSignUpButton />
         <Box className="checkbox">
           <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
           <div>
-            I agree that GiF-T can store my email and send me information, marketing, and newsletters.
+            I agree that GiF-T can store my email and send me information,
+            marketing, and newsletters.
           </div>
         </Box>
         {error && (
           <Box className="error">
-            Sorry, champ. Before you can sign up, you need to check the box and agree that we store your information and send you stuff.
+            Sorry, champ. Before you can sign up, you need to check the box and
+            agree that we store your information and send you stuff.
           </Box>
         )}
       </Box>
