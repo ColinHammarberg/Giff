@@ -13,6 +13,7 @@ from edit_exiting_gif_helper import update_example_email
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name
 from include_ai_helper import include_ai_in_gifs, include_ai_email
+from google_auth import google_user_signup, google_user_signin, outlook_user_signup
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -52,6 +53,18 @@ def ping():
 @app.route('/send_verification_email', methods=['GET'])
 def send_verification_email():
     return send_verification_email_again()
+
+@app.route('/google_signup', methods=['POST'])
+def google_signup():
+    return google_user_signup()
+
+@app.route('/google_signin', methods=['POST'])
+def google_signin():
+    return google_user_signin()
+
+@app.route('/outlook_user_signup', methods=['POST'])
+def microsoft_auth_signup():
+    return outlook_user_signup()
 
 @app.route('/update-gif-email', methods=['POST'])
 def update_gif_email():

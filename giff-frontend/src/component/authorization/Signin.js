@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { showNotification } from '../notification/Notification';
 import Header from '../overall/Header';
 import OfficialButton from '../buttons/OfficialButton';
-import { Signin } from '../../endpoints/UserEndpoints';
+import { GoogleSignIn, Signin } from '../../endpoints/UserEndpoints';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -25,6 +25,37 @@ function UserSignin() {
       setReturnUrl(url);
     }
   }, [location]);
+
+  const GOOGLE_CLIENT_ID = '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
+
+  const handleGoogleResponse = async (response) => {
+    setIsLoading(true);
+    try {
+      const googleResponse = await GoogleSignIn({ token: response.credential });
+      if (googleResponse.status === 200) {
+        localStorage.setItem('access_token', googleResponse.data.access_token);
+        navigate(returnUrl);
+        showNotification('success', 'Successfully signed in with Google');
+      } else {
+        showNotification('error', googleResponse.data.message || 'Google Sign-In failed');
+      }
+    } catch (error) {
+      showNotification('error', 'Google Sign-In failed');
+    }
+    setIsLoading(false);
+  };
+
+  React.useEffect(() => {
+    window?.google?.accounts?.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleResponse
+    });
+    window?.google?.accounts?.id.renderButton(
+      document.getElementById('google-sign-in-button'),
+      { theme: 'outline', size: 'large' }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleOnChangeEmail(event) {
     setEmail(event.target.value);
@@ -112,6 +143,7 @@ function UserSignin() {
         </div>
         <div className="buttons">
           <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="pink" isProcessing={isLoading} />
+          <div id="google-sign-in-button" className="google-sign-in"></div>
           <div className="no-account">Don’t have a Gif-t account yet? No worries. You can sign up <span onClick={() => navigate('/signup')}>here.</span></div>
         </div>
       </Box>

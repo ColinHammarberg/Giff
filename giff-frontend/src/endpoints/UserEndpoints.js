@@ -29,6 +29,42 @@ export async function VerifyUser(code) {
     }
   }
 
+  export async function GoogleSignUp(googleToken) {
+    try {
+      const response = await axios.post(`${Api}/google_signup`, {
+        token: googleToken
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error during Google sign up:', error.response || error);
+      throw error;
+    }
+  }
+
+  export async function GoogleSignIn(googleToken) {
+    try {
+      const response = await axios.post(`${Api}/google_signin`, {
+        token: googleToken
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error during Google sign in:', error.response || error);
+      throw error;
+    }
+  }
+
+  export async function MicrosoftAuthSignup(microsoftToken) {
+    try {
+      const response = await axios.post(`${Api}/outlook_user_signup`, {
+        token: microsoftToken
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error during Google sign in:', error.response || error);
+      throw error;
+    }
+  }
+
   export async function FetchUserInfo() {
     const access_token = localStorage.getItem('access_token');
     const response = await axios.get(`${Api}/fetch_user_info`, {

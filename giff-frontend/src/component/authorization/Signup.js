@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Checkbox, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
@@ -7,7 +7,8 @@ import { showNotification } from '../notification/Notification';
 import Header from '../overall/Header';
 import { isValidEmail } from '../../utils/utils';
 import OfficialButton from '../buttons/OfficialButton';
-import { Signup } from '../../endpoints/UserEndpoints';
+import { GoogleSignUp, Signup } from '../../endpoints/UserEndpoints';
+import OutlookSignInButton from './OutlookSignup';
 
 function UserSignup() {
   const [checked, setChecked] = useState(false);
@@ -18,17 +19,48 @@ function UserSignup() {
     password: '',
   });
   const navigate = useNavigate();
+
+  const GOOGLE_CLIENT_ID = '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
+
+  const handleGoogleResponse = useCallback(async (response) => {
+    setIsLoading(true);
+    try {
+      const googleResponse = await GoogleSignUp({ token: response.credential });
+      handleSignUpResponse(googleResponse);
+    } catch (error) {
+      showNotification('error', 'Google signup failed');
+      setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const loadGoogleSignIn = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("google-sign-in-button"),
+          { theme: "outline", size: "large" }
+        );
+      } else {
+        setTimeout(loadGoogleSignIn, 300);
+      }
+    };
+  
+    loadGoogleSignIn();
+  }, [handleGoogleResponse]);
+
   const handleOnChangeCheckbox = (event) => {
-    const newValue = event.target.checked;
-    setChecked(newValue);    
+    setChecked(event.target.checked);
   };
 
-  function handleOnChange(event) {
+  const handleOnChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
-  }
-
-  console.log('checked', checked);
+  };
 
   const signUpUserCredentials = async () => {
     if (!checked) {
@@ -41,27 +73,29 @@ function UserSignup() {
     }
     setIsLoading(true);
     try {
-      const response = await Signup({ email: formData.email, password: formData.password });
-      if (response.status === 200) {
-        setTimeout(() => {
-          localStorage.setItem('access_token', response.data.access_token); // changed from sessionId
-          setIsLoading(false);
-          navigate('/choose-option-create');
-          showNotification('success', 'Successfully signed up');
-        }, 2000);
-      } else {
-        setIsLoading(false);
-        showNotification('error', response.data.message || "Signup failed for some reason");
-      }
+      const response = await Signup(formData);
+      handleSignUpResponse(response);
     } catch (error) {
-      showNotification('error', error.response?.data?.message || "Signup failed");
+      showNotification('error', error.response?.data?.message || 'Signup failed');
       setIsLoading(false);
+    }
+  };
+
+  const handleSignUpResponse = (response) => {
+    if (response.status === 200) {
+      localStorage.setItem('access_token', response.data.access_token);
+      setIsLoading(false);
+      navigate('/choose-option-create');
+      showNotification('success', 'Successfully signed up');
+    } else {
+      setIsLoading(false);
+      showNotification('error', response.data.message || 'Signup failed for some reason');
     }
   };
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {
-        signUpUserCredentials();
+      signUpUserCredentials();
     }
   };
 
@@ -69,43 +103,52 @@ function UserSignup() {
     <div className="authorization">
       <Header />
       <Box className="user-authentication">
-      <Box className="user-title">Become a gif-ter</Box>
+        <Box className="user-title">Become a gif-ter</Box>
         <div className="user-details">
-            <InputLabel>
-                Email
-            </InputLabel>
-            <TextField 
-              value={formData.email} 
-              name="email" 
-              error={error === 'Invalid email address'}
-              helperText={error === 'Invalid email address' && 'Please enter a valid email address'}
-              onKeyPress={(event) => {
-                handleKeyPressGenerateGif(event);
-              }}
-              onChange={handleOnChange} 
-            />
+          <InputLabel>Email</InputLabel>
+          <TextField
+            value={formData.email}
+            name="email"
+            error={error === 'Invalid email address'}
+            helperText={error === 'Invalid email address' && 'Please enter a valid email address'}
+            onKeyPress={handleKeyPressGenerateGif}
+            onChange={handleOnChange}
+          />
         </div>
         <div className="password-details">
-            <InputLabel>
-              Password
-            </InputLabel>
-            <PasswordField value={formData.password}  name="password" onChange={handleOnChange} />
+          <InputLabel>Password</InputLabel>
+          <PasswordField
+            value={formData.password}
+            name="password"
+            onChange={handleOnChange}
+          />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signUpUserCredentials} label="Sign Up" variant="pink" isProcessing={isLoading} />
+          <OfficialButton
+            onClick={signUpUserCredentials}
+            label="Sign Up"
+            variant="pink"
+            isProcessing={isLoading}
+          />
         </div>
+        <div id="google-sign-in-button" className="google-sign-in" style={{ color: '#fff' }}>
+          Google signin 
+        </div>
+        <OutlookSignInButton />
         <Box className="checkbox">
-            <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
-            <div>I agree that GiF-T can store my email and send me information, marketing and newsletters.</div>
+          <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
+          <div>
+            I agree that GiF-T can store my email and send me information, marketing, and newsletters.
+          </div>
         </Box>
         {error && (
-            <Box className="error">
-                Sorry, champ. Before you can sign up, You need to check the box and agree that we store your information and send you stuff.
-            </Box>
+          <Box className="error">
+            Sorry, champ. Before you can sign up, you need to check the box and agree that we store your information and send you stuff.
+          </Box>
         )}
-    </Box>
-</div>
-  )
+      </Box>
+    </div>
+  );
 }
 
 export default UserSignup;

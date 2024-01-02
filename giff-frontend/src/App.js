@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
+import { Route, Routes, BrowserRouter, useNavigate } from 'react-router-dom';
 import { NotificationContainer } from 'react-notifications';
+import { MsalProvider } from '@azure/msal-react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import './App.css'
+import './App.css';
 import GifLanding from './component/single-gif-feature/GifLanding';
 import GiftContextProvider from './context/GiftContextProvider';
 import SendEmailComponent from './component/email/SendEmailComponent';
@@ -22,6 +23,7 @@ import KeepAliveComponent from './component/authorization/KeepAlive';
 import VerfifyAccount from './component/authorization/VerifyAccount';
 import ResetPassword from './component/authorization/ResetPassword';
 import NewPassword from './component/authorization/NewPassword';
+import { msalInstance } from './component/authorization/OutlookSignup';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -56,87 +58,81 @@ function App() {
 
   return (
     <GiftContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <NotificationContainer />
-        <BrowserRouter>
-          {access_token && (
-            <KeepAliveComponent />
-          )}
-          <Navigator />
-          <Routes>
-            <Route
-              path={'/'}
-              element={<UserSignin />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/signup`}
-              element={<UserSignup />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/reset-password`}
-              element={<ResetPassword />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/new-password`}
-              element={<NewPassword />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/profile`}
-              element={<Profile />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/verify`}
-              element={<VerfifyAccount />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/gif-library`}
-              element={<GifLibrary />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/gift`}
-              element={<Landing />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/single-gif-creation`}
-              element={<GifLanding />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/choose-option-create`}
-              element={<ChooseOptionCreate />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/send-via-own-email`}
-              element={<SendViaOwnEmail />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/multiple-gif-creation`}
-              element={<MultipleGifLanding />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/articles`}
-              element={<Articles />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/email-choice`}
-              element={<EmailChoice />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/send-gift-email`}
-              element={<SendEmailComponent />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/rights-and-privacy`}
-              element={<RightsAndPrivacy />}
-            />
-            <Route
-              path={`${REACT_APP_BASEURL}/mrs-gift`}
-              element={<OpenAiGenerator />}
-            />
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
+      <MsalProvider instance={msalInstance}>
+        <QueryClientProvider client={queryClient}>
+          <NotificationContainer />
+          <BrowserRouter>
+            {access_token && <KeepAliveComponent />}
+            <Navigator />
+            <Routes>
+              <Route path={'/'} element={<UserSignin />} />
+              <Route
+                path={`${REACT_APP_BASEURL}/signup`}
+                element={<UserSignup />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/reset-password`}
+                element={<ResetPassword />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/new-password`}
+                element={<NewPassword />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/profile`}
+                element={<Profile />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/verify`}
+                element={<VerfifyAccount />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/gif-library`}
+                element={<GifLibrary />}
+              />
+              <Route path={`${REACT_APP_BASEURL}/gift`} element={<Landing />} />
+              <Route
+                path={`${REACT_APP_BASEURL}/single-gif-creation`}
+                element={<GifLanding />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/choose-option-create`}
+                element={<ChooseOptionCreate />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/send-via-own-email`}
+                element={<SendViaOwnEmail />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/multiple-gif-creation`}
+                element={<MultipleGifLanding />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/articles`}
+                element={<Articles />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/email-choice`}
+                element={<EmailChoice />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/send-gift-email`}
+                element={<SendEmailComponent />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/rights-and-privacy`}
+                element={<RightsAndPrivacy />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/mrs-gift`}
+                element={<OpenAiGenerator />}
+              />
+            </Routes>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </MsalProvider>
     </GiftContextProvider>
-  )
+  );
 }
 
 export default App;
