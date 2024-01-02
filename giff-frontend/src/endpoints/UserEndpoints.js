@@ -60,7 +60,19 @@ export async function VerifyUser(code) {
       });
       return response.data;
     } catch (error) {
-      console.error('Error during Google sign in:', error.response || error);
+      console.error('Error during Outlook sign up:', error.response || error);
+      throw error;
+    }
+  }
+
+  export async function MicrosoftAuthSignin(microsoftToken) {
+    try {
+      const response = await axios.post(`${Api}/outlook_user_signin`, {
+        token: microsoftToken
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error during Outlook sign in:', error.response || error);
       throw error;
     }
   }

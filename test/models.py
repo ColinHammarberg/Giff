@@ -22,7 +22,7 @@ tag_association = db.Table('tag_association',
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(512), nullable=False)
+    password = db.Column(db.String(512))
     is_active = db.Column(db.Boolean, default=False)
     selected_resolution = db.Column(
         db.String(120), default=None, nullable=True)

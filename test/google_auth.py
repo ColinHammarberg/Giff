@@ -3,6 +3,7 @@ import requests
 from models import User
 from extensions import db
 from flask_jwt_extended import create_access_token
+import jwt
 
 def google_user_signin():
     data = request.get_json()
@@ -57,34 +58,25 @@ def google_user_signup():
     
 def outlook_user_signup():
     data = request.get_json()
-    authorization_code = data.get('token')
-    print('authorization_code', authorization_code)
+    access_token = data.get('token')
 
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    data = {
-        'client_id': '9c954b52-98e9-45b7-a5ed-da61c3048204',
-        'scope': 'openid profile User.Read',
-        'code': authorization_code,
-        'redirect_uri': 'https://giveagif-t.com',
-        'grant_type': 'authorization_code',
-        'client_secret': '6dfa8b1e-b981-4ea4-bac3-72a1509103c2'
-    }
-    microsoft_info = requests.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', headers=headers, data=data)
+    try:
+        # Decode token without verification
+        decoded_token = jwt.decode(access_token, options={"verify_signature": False})
+        print('decoded_token', decoded_token)
+        user_email = decoded_token.get('unique_name')
+        print('user_email', user_email)
+    except jwt.PyJWTError as e:
+        # Handle any decoding errors
+        return jsonify({"status": "Token decoding error", "message": str(e)}), 400
 
-    print('microsoft_info', microsoft_info)
-
-    if microsoft_info.status_code != 200:
-        return jsonify({"status": "Invalid Microsoft token", "details": microsoft_info.json()}), 400
-
-    user_info = microsoft_info.json()
-    # Extract user email from the ID token, additional decoding might be needed
-    user_email = user_info.get('email')
-
+    # Check if user exists or create a new user
     existing_user = User.query.filter_by(email=user_email).first()
     if existing_user:
         return jsonify({"status": "User already exists"}), 409
 
     new_user = User(email=user_email)
+    print('user_email', new_user)
     db.session.add(new_user)
     
     try:
@@ -94,3 +86,21 @@ def outlook_user_signup():
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "Signup failed", "message": str(e)}), 500
+    
+def outlook_user_signin():
+    data = request.get_json()
+    access_token = data.get('token')
+
+    try:
+        # Decode token without verification
+        decoded_token = jwt.decode(access_token, options={"verify_signature": False})
+        user_email = decoded_token.get('unique_name')
+    except jwt.PyJWTError as e:
+        return jsonify({"status": "Token decoding error", "message": str(e)}), 400
+
+    existing_user = User.query.filter_by(email=user_email).first()
+    if existing_user:
+        access_token = create_access_token(identity=existing_user.id)
+        return jsonify(access_token=access_token, status="Signin successful"), 200
+    else:
+        return jsonify({"status": "User does not exist"}), 404

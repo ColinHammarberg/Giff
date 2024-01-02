@@ -13,7 +13,7 @@ from edit_exiting_gif_helper import update_example_email
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name
 from include_ai_helper import include_ai_in_gifs, include_ai_email
-from google_auth import google_user_signup, google_user_signin, outlook_user_signup
+from google_auth import google_user_signup, google_user_signin, outlook_user_signup, outlook_user_signin
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -65,6 +65,10 @@ def google_signin():
 @app.route('/outlook_user_signup', methods=['POST'])
 def microsoft_auth_signup():
     return outlook_user_signup()
+
+@app.route('/outlook_user_signin', methods=['POST'])
+def microsoft_auth_signin():
+    return outlook_user_signin()
 
 @app.route('/update-gif-email', methods=['POST'])
 def update_gif_email():

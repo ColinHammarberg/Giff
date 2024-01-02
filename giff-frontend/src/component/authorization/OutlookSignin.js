@@ -1,8 +1,8 @@
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider, useMsal } from '@azure/msal-react';
-import { MicrosoftAuthSignup } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import { useNavigate } from 'react-router-dom';
+import { MicrosoftAuthSignin } from '../../endpoints/UserEndpoints';
 
 const msalConfig = {
   auth: {
@@ -14,7 +14,7 @@ const msalConfig = {
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 
-function OutlookSignUpButton() {
+function OutlookSignInButton() {
   const { instance } = useMsal();
   const navigate = useNavigate();
 
@@ -26,41 +26,35 @@ function OutlookSignUpButton() {
     instance
       .loginPopup(loginRequest)
       .then(async (response) => {
-        console.log('response:', response);
         const microsoftToken = response.accessToken;
 
         try {
-          const signUpResponse = await MicrosoftAuthSignup(microsoftToken);
-          console.log('Microsoft sign-up response:', signUpResponse);
-          if (signUpResponse.status === 'Signup successful') {
-            localStorage.setItem(
-              'access_token',
-              signUpResponse.access_token
-            );
+          const signInResponse = await MicrosoftAuthSignin(microsoftToken);
+          console.log('signInResponse', signInResponse);
+          if (signInResponse.status === 'Signin successful') {
+            localStorage.setItem('access_token', signInResponse.access_token);
             navigate('/choose-option-create');
-            showNotification('success', 'Successfully signup in with Outlook');
+            showNotification('success', 'Successfully signed in with Outlook');
           } else {
             showNotification(
               'error',
-              signUpResponse.data.message || 'Sign-in with Outlook failed'
+              signInResponse.data.message || 'Sign-in with Outlook failed'
             );
           }
         } catch (error) {
-          console.error('Error during Microsoft sign-up:', error);
           showNotification('error', 'Sign-in with Outlook failed');
         }
       })
       .catch((error) => {
-        console.error('Login error', error);
         showNotification('error', 'Sign-in with Outlook failed');
       });
   };
 
   return (
     <MsalProvider instance={msalInstance}>
-        <button onClick={handleSignIn}>Sign in with Outlook</button>
+      <button onClick={handleSignIn}>Sign in with Outlook</button>
     </MsalProvider>
   );
 }
 
-export default OutlookSignUpButton;
+export default OutlookSignInButton;

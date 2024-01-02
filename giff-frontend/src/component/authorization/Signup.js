@@ -8,7 +8,7 @@ import Header from '../overall/Header';
 import { isValidEmail } from '../../utils/utils';
 import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignUp, Signup } from '../../endpoints/UserEndpoints';
-import OutlookSignInButton from './OutlookSignup';
+import OutlookSignUpButton from './OutlookSignup';
 
 function UserSignup() {
   const [checked, setChecked] = useState(false);
@@ -134,7 +134,7 @@ function UserSignup() {
         <div id="google-sign-in-button" className="google-sign-in" style={{ color: '#fff' }}>
           Google signin 
         </div>
-        <OutlookSignInButton />
+        <OutlookSignUpButton />
         <Box className="checkbox">
           <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
           <div>
