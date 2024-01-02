@@ -3,6 +3,8 @@ import { MsalProvider, useMsal } from '@azure/msal-react';
 import { MicrosoftAuthSignup } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import { useNavigate } from 'react-router-dom';
+import './OutlookButton.scss';
+import MicrosoftLogo from '../../resources/Microsoft_logo.png'
 
 const msalConfig = {
   auth: {
@@ -18,7 +20,7 @@ function OutlookSignUpButton() {
   const { instance } = useMsal();
   const navigate = useNavigate();
 
-  const handleSignIn = () => {
+  const handleSignUn = () => {
     const loginRequest = {
       scopes: ['openid', 'profile', 'User.Read'],
     };
@@ -58,7 +60,12 @@ function OutlookSignUpButton() {
 
   return (
     <MsalProvider instance={msalInstance}>
-        <button onClick={handleSignIn}>Sign in with Outlook</button>
+        <button onClick={handleSignUn} className="outlook-btn">
+          <span className="outlook-logo">
+            <img src={MicrosoftLogo} alt="" />
+          </span>
+          Sign in with Outlook
+        </button>
     </MsalProvider>
   );
 }
