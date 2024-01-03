@@ -11,7 +11,7 @@ from reset_password_helper import request_reset_password, reset_user_password
 from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag, remove_tag_from_gif
 from edit_exiting_gif_helper import update_example_email
 from verify_account_helper import send_verification_email_again, verify
-from edit_exiting_gif_helper import update_gif_name
+from edit_exiting_gif_helper import update_gif_name, update_gif_duration
 from include_ai_helper import include_ai_in_gifs, include_ai_email
 from google_auth import google_user_signup, google_user_signin, outlook_user_signup, outlook_user_signin
 from email_helper import send_email
@@ -49,6 +49,9 @@ mail = Mail(app)
 def ping():
     return "pong2222111"
 
+@app.route('/update_gif_duration', methods=['POST'])
+def update_duration_gif():
+    return update_gif_duration()
 
 @app.route('/send_verification_email', methods=['GET'])
 def send_verification_email():

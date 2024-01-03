@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import './DesignGifDialog.scss';
 import DialogWrapper from '../DialogWrapper';
-import { Box, Button, IconButton, TextField } from '@mui/material';
+import { Box, Button, IconButton, Slider, TextField } from '@mui/material';
 import { showNotification } from '../notification/Notification';
 import Tabs from '../tabs/Tabs';
 import LeftNavigation from '../../resources/left-nav.png';
@@ -30,6 +30,7 @@ import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import {
   ApplyGifColor,
   ApplyGifFrame,
+  UpdateGifDuration,
   updateEmailAPI,
 } from '../../endpoints/GifCreationEndpoints';
 import Tag from '../overall/Tag';
@@ -42,6 +43,7 @@ import {
 } from '../../endpoints/TagManagementEndpoints';
 import TagsActionDialog from '../gif-library/TagsActionDialog';
 import EditEmail from './EditEmail';
+import LoadingGif from '../../resources/loading-gif.png';
 
 class DesignGifDialog extends PureComponent {
   constructor(props) {
@@ -54,6 +56,9 @@ class DesignGifDialog extends PureComponent {
       exampleEmail: props.selectedGif?.exampleEmail || '',
       selectedFilter: null,
       visibleColorIndex: 0,
+      gifDuration: 1,
+      currentGifUrl: props.selectedGif.url,
+      isLoading: false,
       isGifPortrait: false,
       frameWidth: null,
       newTag: '',
@@ -100,6 +105,30 @@ class DesignGifDialog extends PureComponent {
       { name: 'pdf-woman', frame: Frame12, icon: WomanIcon },
     ];
   }
+
+  handleDurationChange = async (event, newValue) => {
+    const { selectedGif } = this.props;
+    this.setState({ gifDuration: newValue, isLoading: true });
+
+    try {
+      const response = await UpdateGifDuration(
+        selectedGif.resourceId,
+        newValue * 1000
+      );
+      if (response && response.data && response.data.new_gif_url) {
+        setTimeout(() => {
+          this.setState({
+            currentGifUrl: response.data.new_gif_url,
+            isLoading: false,
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error updating GIF duration:', error);
+      this.setState({ isLoading: false });
+      showNotification('error', 'Failed to update GIF duration.');
+    }
+  };
 
   determineGifOrientation = (gifUrl) => {
     return new Promise((resolve, reject) => {
@@ -316,6 +345,9 @@ class DesignGifDialog extends PureComponent {
       );
       this.handleCancel();
       this.props.setDesignChanges(true);
+    } else {
+      this.handleCancel();
+      this.props.setDesignChanges(true);
     }
   };
 
@@ -371,6 +403,14 @@ class DesignGifDialog extends PureComponent {
     );
   }
 
+  sliderMarks = [
+    { value: 1, label: '1s' },
+    { value: 2, label: '2s' },
+    { value: 3, label: '3s' },
+    { value: 4, label: '4s' },
+    { value: 5, label: '5s' },
+  ];
+
   render() {
     const {
       selectedColor,
@@ -378,6 +418,8 @@ class DesignGifDialog extends PureComponent {
       tags,
       availableTags,
       exampleEmail,
+      currentGifUrl,
+      isLoading,
     } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
@@ -401,279 +443,210 @@ class DesignGifDialog extends PureComponent {
         open={isOpen}
       >
         <div className="content">
-          {!isMobile && (
-            <Tabs
-              tabs={tabs}
-              onChange={this.handleOnChangeTab}
-              disabled={tabs.map((tab, index) => {
-                if (index === 2 && !selectedGif?.exampleEmail) {
-                  return true;
-                } else return false;
-              })}
-              variant="tabs-level-3"
-            />
-          )}
-          {activeTab === 0 && (
-            <>
-              <div className="title">
-                <span>Choose a</span> good <span>frame,</span> see how it looks{' '}
-                <span>and click save.</span>
+          <div className="title">
+            <span className="main-title">
+              Your gif is ready, <span>it looks great!</span>
+            </span>
+            <span className="sub-title">
+              <span>Customize your gif to make it</span> extra special and
+              perfect for your target audience
+            </span>
+          </div>
+          <div className="style-content">
+            <div className="left-content">
+              <div className="left-title">
+                <span>Gif preview</span>
               </div>
-              <div className="container">
-                <div>
-                  <div className="image">
-                    <img
-                      src={selectedGif.url}
-                      alt=""
-                      style={{
-                        border: `7px solid ${
-                          selectedColor ||
-                          selectedGif.selectedColor ||
-                          'transparent'
-                        }`,
-                      }}
-                    />
-                  </div>
-                </div>
+              <div className="image-with-tag">
                 <div
-                  className={`select-color-container ${
-                    isMobile ? 'mobile-view' : ''
-                  }`}
+                  className="tags-items"
+                  style={{ width: this.state.frameWidth }}
                 >
-                  {isMobile && (
-                    <IconButton onClick={this.handlePrevColors}>
-                      <img src={LeftNavigation} alt="" />
-                    </IconButton>
-                  )}
-                  <div className="colors">
-                    {visibleColors.map((item, index) => (
-                      <Box
+                  {gifTags.map((tag, index) => {
+                    return (
+                      <Tag
+                        label={tag.value}
+                        variant={tag.color}
+                        color={tag.color}
                         key={index}
-                        onClick={() => this.handleColorClick(item.color)}
-                        style={{
-                          backgroundColor: item.color,
-                          cursor: 'pointer',
-                          boxShadow:
-                            selectedColor === item.color
-                              ? '0 0 10px 5px rgba(0, 0, 0, 0.3)'
-                              : 'none',
-                          position: 'relative',
-                        }}
-                      >
-                        {selectedColor === item.color && (
-                          <img src={EyeIcon} alt="" />
-                        )}
-                      </Box>
-                    ))}
-                  </div>
-                  {isMobile && (
-                    <IconButton onClick={this.handleNextColors}>
-                      <img src={RightNavigation} alt="" />
-                    </IconButton>
-                  )}
+                        onRemove={() => this.handleRemoveTagFromGif(tag)}
+                      />
+                    );
+                  })}
                 </div>
               </div>
-              <div className="action-content">
-                <div className="buttons">
-                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
-                </div>
-              </div>
-            </>
-          )}
-          {/* {activeTab === 1 && (
-            <>
-              <div className="title">
-                <span>Choose a</span> good <span>frame,</span> see how it looks{' '}
-                <span>and click save.</span>
-              </div>
-              <div className="container">
-                <div className="image-frame-container">
+              <div className="image-frame-container">
+                {isLoading ? (
+                  <img className="loading-spinner" src={LoadingGif} alt="" />
+                ) : (
                   <img
-                    src={selectedGif.url}
+                    src={currentGifUrl || selectedGif.url}
                     alt="Selected Gif"
                     ref={this.gifImageRef}
                     onLoad={this.updateFrameWidth.bind(this)}
+                    style={{
+                      border: `7px solid ${
+                        selectedColor ||
+                        selectedGif.selectedColor ||
+                        'transparent'
+                      }`,
+                    }}
                   />
-                  {(this.state.selectedFrame ||
-                    getSelectedFramePath(
-                      selectedGif.selectedFrame,
-                      this.state.isGifPortrait
-                    )) && (
-                    <img
-                      src={
-                        this.getFrameSourceByName(this.state.selectedFrame) ||
-                        getSelectedFramePath(
-                          selectedGif.selectedFrame,
-                          this.state.isGifPortrait
-                        )
-                      }
-                      style={{ width: this.state.frameWidth, height: '250px' }}
-                      alt="Selected Frame"
-                    />
-                  )}
-                </div>
-                <div className={`select-frame-container`}>
-                  <div className="frames">
-                    {filteredFrames.map((item, index) => (
-                      <Box
-                        key={index}
-                        onClick={() => this.handleFrameClick(item.name)}
-                        style={{ cursor: 'pointer' }}
-                        className={item.name}
-                      >
-                        <img src={item?.icon} alt="" />
-                      </Box>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="action-content">
-                <div className="buttons">
-                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
-                </div>
-              </div>
-            </>
-          )} */}
-          {activeTab === 1 && (
-            <>
-              <div className="title tag-title">
-                <span>
-                  Create a tag by typing it in the field and clicking enter.
-                  CHoose a tag by clicking one in the list.
-                </span>
-              </div>
-              <div className="container">
-                <div className="image-with-tag">
-                  <div className="image-frame-container">
-                    <img
-                      src={selectedGif.url}
-                      alt="Selected Gif"
-                      ref={this.gifImageRef}
-                      onLoad={this.updateFrameWidth.bind(this)}
-                    />
-                    {(this.state.selectedFrame ||
+                )}
+                {(this.state.selectedFrame ||
+                  getSelectedFramePath(
+                    selectedGif.selectedFrame,
+                    this.state.isGifPortrait
+                  )) && (
+                  <img
+                    src={
+                      this.getFrameSourceByName(this.state.selectedFrame) ||
                       getSelectedFramePath(
                         selectedGif.selectedFrame,
                         this.state.isGifPortrait
-                      )) && (
-                      <img
-                        src={
-                          this.getFrameSourceByName(this.state.selectedFrame) ||
-                          getSelectedFramePath(
-                            selectedGif.selectedFrame,
-                            this.state.isGifPortrait
-                          )
-                        }
-                        style={{
-                          width: this.state.frameWidth,
-                          height: '250px',
-                        }}
-                        alt="Selected Frame"
-                      />
-                    )}
-                  </div>
-                  <div
-                    className="tags-items"
-                    style={{ width: this.state.frameWidth }}
-                  >
-                    {gifTags.map((tag, index) => {
-                      return (
-                        <Tag
-                          label={tag.value}
-                          variant={tag.color}
-                          color={tag.color}
-                          key={index}
-                          onRemove={() => this.handleRemoveTagFromGif(tag)}
-                        />
-                      );
-                    })}
-                  </div>
+                      )
+                    }
+                    style={{
+                      width: this.state.frameWidth,
+                      height: '250px',
+                    }}
+                    alt="Selected Frame"
+                  />
+                )}
+              </div>
+              <div className="slider-container">
+                <span>Adjust GIF Duration:</span>
+                <div className="slider">
+                  <span>Slow</span>
+                  <Slider
+                    value={this.state.gifDuration}
+                    onChange={this.handleDurationChange}
+                    min={1}
+                    max={5}
+                    step={1}
+                    valueLabelDisplay="auto"
+                    aria-labelledby="duration-slider"
+                    marks={this.sliderMarks}
+                  />
+                  <span>Fast</span>
                 </div>
-                <div className="tags">
-                  <div className="tags-input">
-                    <div className="label">Tag</div>
-                    <TextField
-                      value={this.state.newTag}
-                      onChange={this.handleTagChange}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          this.handleAddTag();
-                        }
-                      }}
-                      placeholder="MUSIC, MARKETING, HAPPY"
-                      variant="outlined"
-                      fullWidth
-                    />
-                  </div>
-                  <div className="tags-display">
-                    <div className="tags-items">
-                      {availableTags?.map((tag, index) => {
-                        return (
-                          <Tag
-                            label={tag.value}
-                            variant={tag.color}
-                            color={tag.color}
-                            onClick={() => this.handleTagClick(tag)}
+              </div>
+            </div>
+            <div className="right-content">
+              <div className="top-right-content">
+                {!isMobile && (
+                  <Tabs
+                    tabs={tabs}
+                    onChange={this.handleOnChangeTab}
+                    disabled={tabs.map((tab, index) => {
+                      if (index === 2 && !selectedGif?.exampleEmail) {
+                        return true;
+                      } else return false;
+                    })}
+                    variant="tabs-level-3"
+                  />
+                )}
+                <div className="add-color-description">
+                  Choose a nice frame to wrap your gif. and why not decorate it
+                  with a sticker or logo
+                </div>
+              </div>
+              {activeTab === 0 && (
+                <>
+                  <div className="container">
+                    <div
+                      className={`select-color-container ${
+                        isMobile ? 'mobile-view' : ''
+                      }`}
+                    >
+                      {isMobile && (
+                        <IconButton onClick={this.handlePrevColors}>
+                          <img src={LeftNavigation} alt="" />
+                        </IconButton>
+                      )}
+                      <div className="colors">
+                        {visibleColors.map((item, index) => (
+                          <Box
                             key={index}
-                          />
-                        );
-                      })}
+                            onClick={() => this.handleColorClick(item.color)}
+                            style={{
+                              backgroundColor: item.color,
+                              cursor: 'pointer',
+                              boxShadow:
+                                selectedColor === item.color
+                                  ? '0 0 10px 5px rgba(0, 0, 0, 0.3)'
+                                  : 'none',
+                              position: 'relative',
+                            }}
+                          >
+                            {selectedColor === item.color && (
+                              <img src={EyeIcon} alt="" />
+                            )}
+                          </Box>
+                        ))}
+                      </div>
+                      {isMobile && (
+                        <IconButton onClick={this.handleNextColors}>
+                          <img src={RightNavigation} alt="" />
+                        </IconButton>
+                      )}
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="action-content">
-                <div className="buttons">
-                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
-                </div>
-              </div>
-            </>
-          )}
-          {activeTab === 2 && (
-            <>
-              <div className="title">
-                View the example <span>email</span> and <span>edit it</span>.{' '}
-                <span>The email</span> is saved directly to your{' '}
-                <span>gif resource</span>.
-              </div>
-              <div className="container">
-                <div className="image-frame-container">
-                  <img
-                    src={selectedGif.url}
-                    alt="Selected Gif"
-                    ref={this.gifImageRef}
-                    onLoad={this.updateFrameWidth.bind(this)}
+                </>
+              )}
+              {activeTab === 1 && (
+                <>
+                  <div className="container">
+                    <div className="tags">
+                      <div className="tags-input">
+                        <div className="label">Tag</div>
+                        <TextField
+                          value={this.state.newTag}
+                          onChange={this.handleTagChange}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              this.handleAddTag();
+                            }
+                          }}
+                          placeholder="MUSIC, MARKETING, HAPPY"
+                          variant="outlined"
+                          fullWidth
+                        />
+                      </div>
+                      <div className="tags-display">
+                        <div className="tags-items">
+                          {availableTags?.map((tag, index) => {
+                            return (
+                              <Tag
+                                label={tag.value}
+                                variant={tag.color}
+                                color={tag.color}
+                                onClick={() => this.handleTagClick(tag)}
+                                key={index}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+              {activeTab === 2 && (
+                <div className="container">
+                  <EditEmail
+                    defaultEmail={exampleEmail}
+                    onEmailChange={this.handleEmailChange}
                   />
-                  {(this.state.selectedFrame ||
-                    getSelectedFramePath(
-                      selectedGif.selectedFrame,
-                      this.state.isGifPortrait
-                    )) && (
-                    <img
-                      src={
-                        this.getFrameSourceByName(this.state.selectedFrame) ||
-                        getSelectedFramePath(
-                          selectedGif.selectedFrame,
-                          this.state.isGifPortrait
-                        )
-                      }
-                      style={{ width: this.state.frameWidth, height: '250px' }}
-                      alt="Selected Frame"
-                    />
-                  )}
                 </div>
-                <EditEmail
-                  defaultEmail={exampleEmail}
-                  onEmailChange={this.handleEmailChange}
-                />
-              </div>
-              <div className="action-content">
-                <div className="buttons">
-                  <Button onClick={this.handleSaveGif}>Save Gif</Button>
-                </div>
-              </div>
-            </>
-          )}
+              )}
+            </div>
+          </div>
+          <div className="action-content">
+            <div className="buttons">
+              <Button onClick={this.handleSaveGif}>Done</Button>
+            </div>
+          </div>
         </div>
       </DialogWrapper>
     );

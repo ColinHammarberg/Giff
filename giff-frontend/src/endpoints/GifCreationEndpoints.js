@@ -54,6 +54,18 @@ export async function UpdateGifName(resourceId, newName) {
     return response;
 }
 
+export async function UpdateGifDuration(resourceId, newDuration) {
+  const access_token = localStorage.getItem('access_token');
+    const response = await axios.post(`${Api}/update_gif_duration`, 
+    { resourceId, newDuration },
+    {
+      headers: {
+        'Authorization': `Bearer ${access_token}`
+      }
+    });
+    return response;
+}
+
 export async function GenerateMultipleGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
   console.log('access_tokentoken', access_token, gifData);
