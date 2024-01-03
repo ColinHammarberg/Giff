@@ -646,6 +646,9 @@ class DesignGifDialog extends PureComponent {
                               />
                             );
                           })}
+                          {availableTags.length > 0 && (
+                            <span className="info">press on a tag to select it</span>
+                          )}
                         </div>
                       </div>
                     </div>
