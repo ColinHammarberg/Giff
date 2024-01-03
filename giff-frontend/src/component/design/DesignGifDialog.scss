@@ -94,11 +94,15 @@
                         padding: 0;
                     }
 
-                    .add-color-description {
+                    .description {
                         color: #fff;
                         font-family: 'Staatliches';
                         width: 350px;
                         text-align: center;
+                        font-size: 18px;
+                        span {
+                            color: #808080;
+                        }
                     }
                 }
             }
