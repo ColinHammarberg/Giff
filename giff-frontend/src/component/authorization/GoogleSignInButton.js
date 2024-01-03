@@ -21,10 +21,11 @@ const GoogleSignInButton = ({ handleSignUpResponse }) => {
   );
 
   useEffect(() => {
-    window.google.accounts.id.initialize({
+    window?.google?.accounts?.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: (response) => handleGoogleResponse(response),
     });
+    console.log('window?.google?.accounts', window?.google?.accounts);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGoogleResponse]);
 
