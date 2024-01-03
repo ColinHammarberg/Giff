@@ -411,6 +411,27 @@ class DesignGifDialog extends PureComponent {
     { value: 5, label: '5s' },
   ];
 
+  renderTitles = {
+    0: (
+      <div>
+        Choose a <span>nice frame</span> to wrap your gif.
+      </div>
+    ),
+    1: (
+      <div>
+        Assign a tag to your gif! <span>Create a new one</span> by typing{' '}
+        <span>into the field</span> or use your existing tags by clicking on
+        them.
+      </div>
+    ),
+    2: (
+      <div>
+        Attach <span>an email text to your gif</span> that can be reused to
+        speed up the marketing process.
+      </div>
+    ),
+  };
+
   render() {
     const {
       selectedColor,
@@ -546,9 +567,8 @@ class DesignGifDialog extends PureComponent {
                     variant="tabs-level-3"
                   />
                 )}
-                <div className="add-color-description">
-                  Choose a nice frame to wrap your gif. and why not decorate it
-                  with a sticker or logo
+                <div className="description">
+                  {this.renderTitles[activeTab]}
                 </div>
               </div>
               {activeTab === 0 && (
