@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Button, InputLabel, TextField } from '@mui/material';
 import './Authorization.scss';
 import PasswordField from './PasswordField';
@@ -8,6 +8,7 @@ import Header from '../overall/Header';
 import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignIn, Signin } from '../../endpoints/UserEndpoints';
 import OutlookSignInButton from './OutlookSignin';
+import GoogleSignInButton from './GoogleSignInButton';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -27,36 +28,54 @@ function UserSignin() {
     }
   }, [location]);
 
-  const GOOGLE_CLIENT_ID = '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
+  const GOOGLE_CLIENT_ID =
+    '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
 
-  const handleGoogleResponse = async (response) => {
-    setIsLoading(true);
+  const handleGoogleResponse = useCallback(async (response) => {
     try {
+      setIsLoading(true);
       const googleResponse = await GoogleSignIn({ token: response.credential });
-      if (googleResponse.status === 200) {
-        localStorage.setItem('access_token', googleResponse.data.access_token);
-        navigate(returnUrl);
-        showNotification('success', 'Successfully signed in with Google');
-      } else {
-        showNotification('error', googleResponse.data.message || 'Google Sign-In failed');
-      }
+      handleSignUpResponse(googleResponse);
     } catch (error) {
-      showNotification('error', 'Google Sign-In failed');
+      showNotification('error', 'Google signup failed');
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  };
-
-  React.useEffect(() => {
-    window?.google?.accounts?.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: handleGoogleResponse
-    });
-    window?.google?.accounts?.id.renderButton(
-      document.getElementById('google-sign-in-button'),
-      { theme: 'outline', size: 'large' }
-    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const loadGoogleSignIn = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse,
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById('google-sign-in-button'),
+          { theme: 'outline', size: 'large' }
+        );
+      } else {
+        setTimeout(loadGoogleSignIn, 300);
+      }
+    };
+
+    loadGoogleSignIn();
+  }, [handleGoogleResponse]);
+
+  const handleSignUpResponse = (response) => {
+    if (response.status === 200) {
+      localStorage.setItem('access_token', response.data.access_token);
+      setIsLoading(false);
+      navigate('/choose-option-create');
+      showNotification('success', 'Successfully signed up');
+    } else {
+      setIsLoading(false);
+      showNotification(
+        'error',
+        response.data.message || 'Signup failed for some reason'
+      );
+    }
+  };
 
   function handleOnChangeEmail(event) {
     setEmail(event.target.value);
@@ -144,7 +163,7 @@ function UserSignin() {
         </div>
         <div className="buttons">
           <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="pink" isProcessing={isLoading} />
-          <div id="google-sign-in-button" className="google-sign-in"></div>
+          <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} />
           <OutlookSignInButton />
           <div className="no-account">Don’t have a Gif-t account yet? No worries. You can sign up <span onClick={() => navigate('/signup')}>here.</span></div>
         </div>
