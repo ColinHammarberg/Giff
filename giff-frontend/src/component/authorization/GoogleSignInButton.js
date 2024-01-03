@@ -34,7 +34,11 @@ const GoogleSignInButton = ({ handleSignUpResponse }) => {
   };
 
   return (
-    <button onClick={signInWithGoogle} className="google-sign-in">
+    <button
+      onClick={signInWithGoogle}
+      className="google-sign-in"
+      id="google-sign-in-button"
+    >
       Sign in with Google
     </button>
   );
