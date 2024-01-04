@@ -42,6 +42,7 @@ class UserGif(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey('user.id'))
     gif_name = db.Column(db.String)
+    duration = db.Column(db.Integer)
     gif_url = db.Column(db.String)
     source = db.Column(db.String(255))
     resourceId = db.Column(db.String, unique=True)

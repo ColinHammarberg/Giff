@@ -98,6 +98,11 @@ def update_gif_duration():
         duration=new_duration, loop=0)
     output_buffer.seek(0)
 
+    update_duration = new_duration / 1000
+
+    user_gif.duration = update_duration
+    db.session.commit()
+
     # Replace the existing GIF in S3
     s3_client.put_object(Bucket=bucket_name, Key=gif_key, Body=output_buffer.getvalue())
     

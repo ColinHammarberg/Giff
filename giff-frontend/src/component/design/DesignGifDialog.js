@@ -56,7 +56,7 @@ class DesignGifDialog extends PureComponent {
       exampleEmail: props.selectedGif?.exampleEmail || '',
       selectedFilter: null,
       visibleColorIndex: 0,
-      gifDuration: 1,
+      gifDuration: props.selectedGif.duration,
       currentGifUrl: props.selectedGif.url,
       isLoading: false,
       isGifPortrait: false,
@@ -272,7 +272,7 @@ class DesignGifDialog extends PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
-      this.setState({ selectedFrame: null });
+      this.setState({ selectedFrame: null, gifDuration: this.props.selectedGif.duration });
       this.setState({ tags: [] });
       this.setState({
         exampleEmail: this.props.selectedGif.exampleEmail || '',

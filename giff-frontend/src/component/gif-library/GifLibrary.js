@@ -218,7 +218,8 @@ function GifLibrary() {
     selectedFrame,
     resourceType,
     tags,
-    exampleEmail
+    exampleEmail,
+    duration
   ) => {
     console.log('resourceType', resourceType);
     setIsDesignOpen(true);
@@ -229,6 +230,7 @@ function GifLibrary() {
       selectedFrame: selectedFrame,
       tags: tags,
       exampleEmail: exampleEmail,
+      duration: duration,
     });
   };
 
@@ -242,7 +244,8 @@ function GifLibrary() {
         hoveredGif.selectedFrame,
         hoveredGif.resourceType,
         hoveredGif.tags,
-        hoveredGif.example_email
+        hoveredGif.example_email,
+        hoveredGif.duration
       );
       setDesignChanges(false);
     }
