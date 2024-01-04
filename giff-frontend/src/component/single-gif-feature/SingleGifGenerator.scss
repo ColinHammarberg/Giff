@@ -184,6 +184,10 @@
                             display: flex;
                             align-items: center;
                             justify-content: center;
+
+                            &:hover {
+                                color: #FEC901;
+                            }
                         }
 
                         input[type="file"] {
@@ -316,6 +320,7 @@
         .header-content {
             height: 80px;
         }
+
         .wrapper {
             display: unset;
 

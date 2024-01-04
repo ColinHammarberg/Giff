@@ -83,7 +83,9 @@ const SingleGifGenerator = forwardRef(
                   {selectedPdf
                     ? selectedPdf.name
                     : 'Uploaded files will be displayed here'}
-                  <DeleteIcon onClick={() => setSelectedPdf(null)} />
+                  {selectedPdf && (
+                    <DeleteIcon onClick={() => setSelectedPdf(null)} />
+                  )}
                 </span>
               </Box>
               {!isMobile && (
