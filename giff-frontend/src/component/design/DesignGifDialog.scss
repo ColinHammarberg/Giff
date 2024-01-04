@@ -1,6 +1,10 @@
 // @import '../utils/responsiveUtils.scss';
 
 .design-gif-dialog {
+    .header-content {
+        height: 50px;
+    }
+
     .tabs {
         gap: 0;
     }
@@ -45,7 +49,6 @@
             font-family: 'Staatliches';
             align-items: center;
             text-align: center;
-            margin-top: 20px;
 
             .main-title {
                 font-size: 32px;

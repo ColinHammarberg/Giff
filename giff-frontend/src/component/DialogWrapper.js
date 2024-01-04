@@ -1,7 +1,7 @@
 /* eslint react/jsx-props-no-spreading: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
+import { Dialog, DialogActions, DialogContent } from '@mui/material';
 import './DialogWrapper.scss';
 
 function DialogWrapper(props) {
@@ -12,7 +12,7 @@ function DialogWrapper(props) {
     actions,
     modal,
     maxWidth,
-    showCloseIcon,
+    // showCloseIcon,
     disableEscapeKeyDown,
   } = props;
 
@@ -35,14 +35,14 @@ function DialogWrapper(props) {
     >
       <DialogContent className="dialog-content styled-scrollbar">
         {renderTitle()}
-        {onClose && showCloseIcon ? (
+        {/* {onClose && showCloseIcon ? (
           <Button
             className="close-button"
             onClick={onClose}
           >
             Close
           </Button>
-        ) : null}
+        ) : null} */}
 
         {children}
       </DialogContent>
