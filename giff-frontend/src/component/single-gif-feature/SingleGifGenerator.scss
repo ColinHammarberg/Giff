@@ -313,6 +313,23 @@
 
 @media (max-width: 600px) {
     .gif-generator {
+        .header-content {
+            height: 80px;
+        }
+        .wrapper {
+            display: unset;
+
+            .container {
+                width: 100%;
+            }
+
+            .content {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
         .text-field-content {
             width: 80%;
             margin: auto;

@@ -6,6 +6,7 @@ import UploadPdfGifForm from './UploadPdfGifForm';
 import OfficialButton from '../buttons/OfficialButton';
 import LightTooltip from '../overall/LightToolTip';
 import Header from '../overall/Header';
+import useMobileQuery from '../../queries/useMobileQuery';
 
 const SingleGifGenerator = forwardRef(
   (
@@ -30,6 +31,7 @@ const SingleGifGenerator = forwardRef(
         onChange(event?.target?.value);
       }
     }
+    const { isMobile } = useMobileQuery();
 
     return (
       <div className="gif-generator">
@@ -84,34 +86,38 @@ const SingleGifGenerator = forwardRef(
                   <DeleteIcon onClick={() => setSelectedPdf(null)} />
                 </span>
               </Box>
-              <div className="divider"></div>
-              <Box className="right-content">
-                <div className="right-header">
-                  <span>Instructions</span>
-                </div>
-                <div className="instructions">
-                  <span>1: Finding your content:</span>
-                  <span className="step-a">
-                    A: Upload a pdf by dragging it to the box or{' '}
-                    <span>
-                      pressing “choose file” to add file from your computer.
-                    </span>
-                  </span>
-                  <span className="step-b">
-                    B: Paste a URl link to the website or page you want to
-                    create a gif from.{' '}
-                    <span>The page needs to be publicly available.</span>
-                  </span>
-                  <span className="step-c">
-                    2: Check your uploaded files to{' '}
-                    <span>make sure they are correct.</span>
-                  </span>
-                  <span className="step-d">
-                    3: Press create and enjoy your gif,{' '}
-                    <span>simple as that!</span>
-                  </span>
-                </div>
-              </Box>
+              {!isMobile && (
+                <>
+                  <div className="divider"></div>
+                  <Box className="right-content">
+                    <div className="right-header">
+                      <span>Instructions</span>
+                    </div>
+                    <div className="instructions">
+                      <span>1: Finding your content:</span>
+                      <span className="step-a">
+                        A: Upload a pdf by dragging it to the box or{' '}
+                        <span>
+                          pressing “choose file” to add file from your computer.
+                        </span>
+                      </span>
+                      <span className="step-b">
+                        B: Paste a URl link to the website or page you want to
+                        create a gif from.{' '}
+                        <span>The page needs to be publicly available.</span>
+                      </span>
+                      <span className="step-c">
+                        2: Check your uploaded files to{' '}
+                        <span>make sure they are correct.</span>
+                      </span>
+                      <span className="step-d">
+                        3: Press create and enjoy your gif,{' '}
+                        <span>simple as that!</span>
+                      </span>
+                    </div>
+                  </Box>
+                </>
+              )}
             </Box>
             <Box className="btn-content">
               {!gifGenerated && (
