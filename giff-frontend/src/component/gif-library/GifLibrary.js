@@ -18,12 +18,12 @@ import {
   UpdateGifName,
 } from '../../endpoints/GifCreationEndpoints';
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
-import LoopIcon from '@mui/icons-material/Loop';
 import useFetchUserTags from '../../queries/useUserTagsQuery';
 import Filter from './Filter';
 import DeleteGifPopover from './DeleteGifPopover';
 import GifBoxes from './GifBoxes';
 import ActionMenu from './ActionMenu';
+import LoadingGif from '../../resources/loading-gif.png';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -59,7 +59,7 @@ function GifLibrary() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoading(false);
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -308,7 +308,7 @@ function GifLibrary() {
       <>
         <Header menu />
         <div className="loading-gifs-container">
-          <LoopIcon className="loading-spinner" />
+          <img className="loading-spinner" src={LoadingGif} alt="" />
         </div>
       </>
     );

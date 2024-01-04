@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { TextField } from '@mui/material';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { showNotification } from '../notification/Notification';
 import { UploadPdfThenCreateGif } from '../../endpoints/GifCreationEndpoints';
 
@@ -69,6 +69,8 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
   return (
     <>
       <form encType="multipart/form-data" onSubmit={handleFormSubmit}>
+      <FileUploadIcon />
+      <span className="drag">Drag and drop a pdf</span>
       <label htmlFor="pdf-file" className="custom-button">
         Click here
       </label>
@@ -79,13 +81,6 @@ const UploadPdfGifForm = forwardRef(({ selectedPdf, setSelectedPdf, setIsLoading
           onDrop={handleDrop}
           style={{ position: 'relative' }}
         >
-          <TextField
-            disabled
-            value={selectedPdf?.name || ''}
-            placeholder="Drag and drop a PDF here or click to upload"
-            fullWidth
-          />
-          
           <div style={{
             position: 'absolute', 
             top: 0, 

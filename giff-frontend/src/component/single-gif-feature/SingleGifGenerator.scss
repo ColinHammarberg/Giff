@@ -8,58 +8,256 @@
     width: 100%;
     height: 90%;
 
-    form {
+    .header-content {
+        height: 150px;
+    }
+
+    .wrapper {
+        width: 100%;
+        height: 80%;
         display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .MuiOutlinedInput-input {
+    .container {
+        background-color: #1A1A1A;
+        width: 800px;
+        height: 600px;
+        padding: 8px;
+        border-radius: 12px;
+
+        .header {
+            height: 60px;
+            border-bottom: 1px solid #808080;
             font-family: "Staatliches";
-        }
+            font-size: 36px;
+            display: flex;
+            width: 90%;
+            margin: auto;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
 
-        .text {
-            button {
-                background-color: #fff;
-                width: 450px;
-                height: 84px;
-                border: 1px solid #B9F140;
-                font-family: "Staatliches";
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                cursor: pointer;
-                border: none;
-                color: #000;
+            span {
+                color: #FEC901;
             }
         }
 
-        .custom-button {
-            width: 95px;
-            height: 86px;
-            background-color: #F4149B;
-            cursor: pointer;
-            font-family: "Staatliches";
+        .content {
+            width: 100%;
             display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        input[type="file"] {
-            opacity: 0;
-            position: absolute;
-            width: 0;
-            height: 0;
-        }
+            .divider {
+                background-color: #808080;
+                height: 400px;
+                margin-top: 25px;
+                width: 1px;
+            }
 
-        .MuiFormControl-root {
-            width: 450px;
-            height: 84px;
-            border: 1px solid #F4149B;
-        }
+            .right-content {
+                width: 49%;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+                align-items: center;
 
-        .MuiInputBase-root {
-            background-color: #fff;
-            border-radius: 0 !important;
-            height: 85px;
-            border: 1px solid #F4149B;
+                .right-header {
+                    height: 60px;
+                    font-family: "Staatliches";
+                    color: #fff;
+                    font-size: 18px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .instructions {
+                    display: flex;
+                    flex-direction: column;
+                    text-align: left;
+                    color: #fff;
+                    font-family: "Staatliches";
+                    gap: 24px;
+                    font-size: 14px;
+                    width: 326px;
+                    height: 243px;
+
+                    .step- {
+
+                        &a,
+                        &b {
+                            margin-left: 20px;
+                        }
+
+                        &d {
+                            span {
+                                color: #FEC901;
+                            }
+                        }
+                    }
+
+                    span {
+                        span {
+                            color: #808080;
+                        }
+                    }
+                }
+            }
+
+            .left-content {
+                width: 49%;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+
+                .left-header {
+                    height: 60px;
+                    font-family: "Staatliches";
+                    color: #fff;
+                    font-size: 18px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .gif-creation {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+
+                    form {
+                        width: 215px;
+                        height: 225px;
+                        background-color: #3F3F3F;
+                        justify-content: center;
+                        align-items: center;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+                        border-radius: 6px;
+
+                        .MuiSvgIcon-root {
+                            font-size: 60px;
+                        }
+
+                        .drag {
+                            font-family: 'Staatliches';
+                            font-size: 14px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: normal;
+                        }
+
+                        .MuiOutlinedInput-input {
+                            font-family: "Staatliches";
+                        }
+
+                        .text {
+                            button {
+                                background-color: #fff;
+                                width: 450px;
+                                height: 84px;
+                                border: 1px solid #B9F140;
+                                font-family: "Staatliches";
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                cursor: pointer;
+                                border: none;
+                                color: #000;
+                            }
+                        }
+
+                        .custom-button {
+                            min-width: 90px;
+                            max-width: 147px;
+                            padding: 6px 24px 6px 23px;
+                            border-radius: 50px;
+                            color: #808080;
+                            border: 1px solid #808080;
+                            background-color: #3F3F3F;
+                            cursor: pointer;
+                            font-family: "Staatliches";
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        input[type="file"] {
+                            opacity: 0;
+                            position: absolute;
+                            width: 0;
+                            height: 0;
+                        }
+                    }
+
+                    .seperator {
+                        font-family: 'Staatliches';
+                        font-size: 16px;
+                        color: #fff;
+                    }
+
+                    .url {
+                        display: flex;
+
+                        .box {
+                            width: 31px;
+                            height: 30px;
+                            flex-shrink: 0;
+                            border-radius: 6px 0px 0px 6px;
+                            background-color: #F4149B;
+                            border: 1px solid #F4149B;
+                            font-family: "Staatliches";
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                        .MuiOutlinedInput-root {
+                            font-size: 12px;
+                        }
+
+                        .MuiOutlinedInput-input {
+                            font-family: "Staatliches";
+                        }
+
+                        .MuiFormControl-root {
+                            width: 215px;
+                            height: 30px;
+                            border: 1px solid #F4149B;
+                        }
+
+                        .MuiInputBase-root {
+                            background-color: #fff;
+                            border-radius: 0 !important;
+                            height: 30px;
+                        }
+                    }
+                }
+
+                .uploaded-pdf {
+                    font-family: 'Staatliches';
+                    color: #808080;
+                    font-size: 14px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin: auto;
+
+                    .MuiSvgIcon-root {
+                        font-size: 14px;
+                        display: flex;
+                        cursor: pointer;
+
+                        &:hover {
+                            color: #F4149B;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -68,37 +266,6 @@
         justify-content: center;
         align-items: center;
         gap: 25px;
-
-        .url {
-            display: flex;
-
-            .box {
-                width: 95px;
-                height: 86px;
-                background-color: #B9F140;
-                font-family: "Staatliches";
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .MuiOutlinedInput-input {
-                font-family: "Staatliches";
-            }
-
-            .MuiFormControl-root {
-                width: 450px;
-                height: 84px;
-                border: 1px solid #B9F140;
-            }
-
-            .MuiInputBase-root {
-                background-color: #fff;
-                border-radius: 0 !important;
-                height: 85px;
-                border: 1px solid #B9F140;
-            }
-        }
 
         span {
             color: #fff;
@@ -121,7 +288,7 @@
     }
 
     .btn-content {
-        margin-top: 25px;
+        margin-top: 20px;
 
         .official-btn {
             width: 225px;

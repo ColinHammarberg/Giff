@@ -9,10 +9,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 400px;
+    min-height: 500px;
+
+    img {
+        max-height: 300px;
+    }
 
     .loading-spinner {
-        animation: spin 1s linear infinite;
         color: #fff;
         font-size: 40px;
     }
