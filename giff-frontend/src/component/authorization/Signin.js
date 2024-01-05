@@ -8,6 +8,7 @@ import Header from '../overall/Header';
 import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignIn, Signin } from '../../endpoints/UserEndpoints';
 import OutlookSignInButton from './OutlookSignin';
+import GoogleSignInButton from './GoogleSignInButton';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -28,7 +29,7 @@ function UserSignin() {
   }, [location]);
 
   const GOOGLE_CLIENT_ID =
-    '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
+    '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com';
 
   const handleGoogleResponse = useCallback(async (response) => {
     try {
@@ -86,8 +87,8 @@ function UserSignin() {
 
   const ResetPasswordButton = () => (
     <Button
-      color="primary" 
-      onClick={() => navigate('/reset-password')} 
+      color="primary"
+      onClick={() => navigate('/reset-password')}
       style={{ padding: 0, minWidth: 'auto' }}
     >
       here.
@@ -104,17 +105,16 @@ function UserSignin() {
           setIsLoading(false);
           navigate(returnUrl);
           showNotification('success', 'Aaaaand you’re signed in!');
-        }, 3000)
+        }, 3000);
       } else {
         setError('error', response.data.message);
         setIsLoading(false);
       }
     } catch (error) {
-      setError('error', "Signin failed");
+      setError('error', 'Signin failed');
       setIsLoading(false);
     }
   };
-  
 
   const handleKeyPressGenerateGif = (event) => {
     if (event.key === 'Enter') {
@@ -128,46 +128,55 @@ function UserSignin() {
       <Box className="user-authentication">
         <Box className="user-title">Sign in to Gif-T</Box>
         <div className="username">
-          <InputLabel>
-            Email
-          </InputLabel>
-          <TextField 
+          <InputLabel>Email</InputLabel>
+          <TextField
             value={email}
             name="email-field"
             onChange={handleOnChangeEmail}
             onKeyPress={(event) => {
               handleKeyPressGenerateGif(event);
-            }} />
+            }}
+          />
         </div>
         <div className="password">
-          <InputLabel>
-            Password
-          </InputLabel>
-          <PasswordField 
+          <InputLabel>Password</InputLabel>
+          <PasswordField
             value={password}
-            name="password-field" 
+            name="password-field"
             onKeyPress={(event) => {
               handleKeyPressGenerateGif(event);
             }}
-            onChange={handleOnChangePassword} 
-            error={error} 
+            onChange={handleOnChangePassword}
+            error={error}
             helperText={
               error ? (
                 <span>
-                  Sorry, champ. Your password or email is wrong. Please give it another try or reset your password <ResetPasswordButton />
+                  Sorry, champ. Your password or email is wrong. Please give it
+                  another try or reset your password <ResetPasswordButton />
                 </span>
-              ) : ''
+              ) : (
+                ''
+              )
             }
           />
         </div>
         <div className="buttons">
-          <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="pink" isProcessing={isLoading} />
+          <OfficialButton
+            onClick={signInUserCredentials}
+            label="Sign in"
+            variant="pink"
+            isProcessing={isLoading}
+          />
           <OutlookSignInButton />
-          <div className="no-account">Don’t have a Gif-t account yet? No worries. You can sign up <span onClick={() => navigate('/signup')}>here.</span></div>
+          <GoogleSignInButton />
+          <div className="no-account">
+            Don’t have a Gif-t account yet? No worries. You can sign up{' '}
+            <span onClick={() => navigate('/signup')}>here.</span>
+          </div>
         </div>
       </Box>
     </div>
-  )
+  );
 }
 
 export default UserSignin;
