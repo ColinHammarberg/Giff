@@ -15,24 +15,36 @@ def verify_google_token(google_token):
 
 def google_user_signin():
     data = request.get_json()
-    token = data.get('token')
+    token_object = data.get('token')
     CLIENT_ID = '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com'
 
     # Verify the token with Google
-    print('token', token)
-    idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
-    print('idinfo', idinfo)
-
-    user_email = idinfo['email']
-    print('idinfo', user_email)
-    # Check if user already exists
-    existing_user = User.query.filter_by(email=user_email).first()
-    if existing_user:
-        # Generate a token for the existing user
-        access_token = create_access_token(identity=existing_user.id)
-        return jsonify(access_token=access_token, status="Signin successful"), 200
+    if isinstance(token_object, dict) and 'token' in token_object:
+        actual_token = token_object['token']
     else:
-        return jsonify({"status": "User does not exist"}), 404
+        # Handle the case where the token is not in the expected format
+        return jsonify({"status": "Invalid token format"}), 400
+
+    try:
+        idinfo = id_token.verify_oauth2_token(actual_token, google_requests.Request(), CLIENT_ID)
+        user_email = idinfo['email']
+
+        # Check if user already exists
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            # Create a new user since one doesn't exist
+            user = User(email=user_email)
+            db.session.add(user)
+            db.session.commit()
+
+        # Generate a token for the user
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token, status="Signin successful"), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "Error processing your request", "message": str(e)}), 500
+
 
 def google_user_signup():
     data = request.get_json()

@@ -6,14 +6,10 @@ import './GoogleSignInButton.scss';
 
 const GoogleSignInButton = ({ handleSignUpResponse }) => {
   const handleGoogleResponse = async (response) => {
-    try {
-      const googleResponse = await GoogleSignIn({
-        token: response.credential,
-      });
-      handleSignUpResponse(googleResponse);
-    } catch (error) {
-      showNotification('error', 'Google signup failed');
-    }
+    const googleResponse = await GoogleSignIn({
+      token: response.credential,
+    });
+    handleSignUpResponse(googleResponse);
   };
 
   return (
@@ -21,7 +17,11 @@ const GoogleSignInButton = ({ handleSignUpResponse }) => {
       onSuccess={handleGoogleResponse}
       onError={() => showNotification('error', 'Google login failed')}
       useOneTap
-      style={{ display: 'flex !important', justifyContent: 'center !important', alignItems: 'center !important' }}
+      style={{
+        display: 'flex !important',
+        justifyContent: 'center !important',
+        alignItems: 'center !important',
+      }}
       width={480}
       className="custom-google-login-button"
     />

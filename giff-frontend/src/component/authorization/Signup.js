@@ -87,8 +87,8 @@ function UserSignup() {
   };
 
   const handleSignUpResponse = (response) => {
-    if (response.status === 200) {
-      localStorage.setItem('access_token', response.data.access_token);
+    if (response.status === 'Signin successful') {
+      localStorage.setItem('access_token', response.access_token);
       setIsLoading(false);
       navigate('/choose-option-create');
       showNotification('success', 'Successfully signed up');

@@ -44,10 +44,10 @@ export async function GoogleSignUp(googleToken) {
   }
 }
 
-export async function GoogleSignIn(googleToken) {
+export async function GoogleSignIn(token) {
   try {
     const response = await axios.post(`${Api}/google_signin`, {
-      token: googleToken,
+      token,
     });
     return response.data;
   } catch (error) {

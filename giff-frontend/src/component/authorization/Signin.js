@@ -32,14 +32,9 @@ function UserSignin() {
     '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com';
 
   const handleGoogleResponse = useCallback(async (response) => {
-    try {
-      setIsLoading(true);
-      const googleResponse = await GoogleSignIn({ token: response.credential });
-      handleSignUpResponse(googleResponse);
-    } catch (error) {
-      showNotification('error', 'Google signup failed');
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    const googleResponse = await GoogleSignIn({ token: response.credential });
+    handleSignUpResponse(googleResponse);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -63,8 +58,8 @@ function UserSignin() {
   }, [handleGoogleResponse]);
 
   const handleSignUpResponse = (response) => {
-    if (response.status === 200) {
-      localStorage.setItem('access_token', response.data.access_token);
+    if (response.status === 'Signin successful') {
+      localStorage.setItem('access_token', response.access_token);
       setIsLoading(false);
       navigate('/choose-option-create');
       showNotification('success', 'Successfully signed up');
@@ -168,7 +163,7 @@ function UserSignin() {
             isProcessing={isLoading}
           />
           <OutlookSignInButton />
-          <GoogleSignInButton />
+          <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} />
           <div className="no-account">
             Don’t have a Gif-t account yet? No worries. You can sign up{' '}
             <span onClick={() => navigate('/signup')}>here.</span>
