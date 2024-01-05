@@ -1,0 +1,11 @@
+.custom-google-login-button {
+    width: 480px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: auto !important;
+
+    .google-sign-in-button {
+        width: 480px;
+    }
+}

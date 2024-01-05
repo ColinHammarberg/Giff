@@ -58,7 +58,7 @@ function OutlookSignInButton() {
         <span className="outlook-logo">
             <img src={MicrosoftLogo} alt="" />
           </span>
-          Sign in with Outlook
+          <div>Sign in with Outlook</div>
         </button>
     </MsalProvider>
   );

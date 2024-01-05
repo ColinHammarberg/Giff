@@ -5,26 +5,37 @@ from extensions import db
 from flask_jwt_extended import create_access_token
 import jwt
 
+def verify_google_token(google_token):
+    google_info = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={google_token}")
+    if google_info.status_code != 200:
+        return None
+    return google_info.json()
+
 def google_user_signin():
     data = request.get_json()
     google_token = data.get('token')
 
     # Verify the token with Google
-    google_info = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={google_token}")
-    if google_info.status_code != 200:
+    user_info = verify_google_token(google_token)
+    if not user_info:
         return jsonify({"status": "Invalid Google token"}), 400
 
-    user_info = google_info.json()
     user_email = user_info.get('email')
 
-    # Check if user already exists
-    existing_user = User.query.filter_by(email=user_email).first()
-    if existing_user:
-        # Generate a token for the existing user
-        access_token = create_access_token(identity=existing_user.id)
-        return jsonify(access_token=access_token, status="Signin successful"), 200
-    else:
-        return jsonify({"status": "User does not exist"}), 404
+    # Check if user already exists or create a new user
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        user = User(email=user_email)  # Add other fields as necessary
+        db.session.add(user)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"status": "Error creating user", "message": str(e)}), 500
+
+    # Generate a token for the user
+    access_token = create_access_token(identity=user.id)
+    return jsonify(access_token=access_token, status="Signin/signup successful"), 200
 
 def google_user_signup():
     data = request.get_json()

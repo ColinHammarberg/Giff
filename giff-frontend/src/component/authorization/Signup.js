@@ -9,7 +9,7 @@ import { isValidEmail } from '../../utils/utils';
 import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignUp, Signup } from '../../endpoints/UserEndpoints';
 import OutlookSignUpButton from './OutlookSignup';
-// import GoogleSignInButton from './GoogleSignInButton';
+import GoogleSignInButton from './GoogleSignInButton';
 
 function UserSignup() {
   const [checked, setChecked] = useState(false);
@@ -141,8 +141,8 @@ function UserSignup() {
             variant="pink"
             isProcessing={isLoading}
           />
-          {/* <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} /> */}
           <OutlookSignUpButton checked={checked} setError={setError} />
+          <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} />
         </div>
         <Box className="checkbox">
           <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />

@@ -1,13 +1,13 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { GoogleSignIn } from '../../endpoints/UserEndpoints';
+import { GoogleSignUp } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import './GoogleSignInButton.scss';
 
-const GoogleSignInButton = ({ handleSignUpResponse }) => {
+const GoogleSignUpButton = ({ handleSignUpResponse }) => {
   const handleGoogleResponse = async (response) => {
     try {
-      const googleResponse = await GoogleSignIn({
+      const googleResponse = await GoogleSignUp({
         token: response.credential,
       });
       handleSignUpResponse(googleResponse);
@@ -28,4 +28,4 @@ const GoogleSignInButton = ({ handleSignUpResponse }) => {
   );
 };
 
-export default GoogleSignInButton;
+export default GoogleSignUpButton;
