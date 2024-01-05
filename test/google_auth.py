@@ -3,6 +3,8 @@ import requests
 from models import User
 from extensions import db
 from flask_jwt_extended import create_access_token
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token
 import jwt
 
 def verify_google_token(google_token):
@@ -13,29 +15,24 @@ def verify_google_token(google_token):
 
 def google_user_signin():
     data = request.get_json()
-    google_token = data.get('token')
+    token = data.get('token')
+    CLIENT_ID = '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com'
 
     # Verify the token with Google
-    user_info = verify_google_token(google_token)
-    if not user_info:
-        return jsonify({"status": "Invalid Google token"}), 400
+    print('token', token)
+    idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+    print('idinfo', idinfo)
 
-    user_email = user_info.get('email')
-
-    # Check if user already exists or create a new user
-    user = User.query.filter_by(email=user_email).first()
-    if not user:
-        user = User(email=user_email)  # Add other fields as necessary
-        db.session.add(user)
-        try:
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({"status": "Error creating user", "message": str(e)}), 500
-
-    # Generate a token for the user
-    access_token = create_access_token(identity=user.id)
-    return jsonify(access_token=access_token, status="Signin/signup successful"), 200
+    user_email = idinfo['email']
+    print('idinfo', user_email)
+    # Check if user already exists
+    existing_user = User.query.filter_by(email=user_email).first()
+    if existing_user:
+        # Generate a token for the existing user
+        access_token = create_access_token(identity=existing_user.id)
+        return jsonify(access_token=access_token, status="Signin successful"), 200
+    else:
+        return jsonify({"status": "User does not exist"}), 404
 
 def google_user_signup():
     data = request.get_json()
