@@ -3,20 +3,22 @@ import requests
 from models import User
 from extensions import db
 from flask_jwt_extended import create_access_token
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token
 import jwt
 
 def google_user_signin():
     data = request.get_json()
-    google_token = data.get('token')
+    token = data.get('token')
+    CLIENT_ID = '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com'
 
     # Verify the token with Google
-    google_info = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={google_token}")
-    if google_info.status_code != 200:
-        return jsonify({"status": "Invalid Google token"}), 400
+    print('token', token)
+    idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+    print('idinfo', idinfo)
 
-    user_info = google_info.json()
-    user_email = user_info.get('email')
-
+    user_email = idinfo['email']
+    print('idinfo', user_email)
     # Check if user already exists
     existing_user = User.query.filter_by(email=user_email).first()
     if existing_user:
