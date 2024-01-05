@@ -88,8 +88,8 @@ class DeleteProfileDialog extends PureComponent {
                 If you delete your logo, the logo will be removed and you'll have to upload a new file if you would like to use it again
             </Box>
             <Box className="delete-btn-actions">
-                <Button onClick={this.handleConfirm} className="confirm-btn">No, delete my account now</Button>
-                <Button onClick={this.handleCancel} className="keep-account-btn">Ok, I’ll think about it</Button>
+                <Button onClick={this.handleConfirm} className="confirm-btn">Delete my account now</Button>
+                <Button onClick={this.handleCancel} className="keep-account-btn">I’ll think about it</Button>
             </Box>
         </DialogContent>
       </Dialog>

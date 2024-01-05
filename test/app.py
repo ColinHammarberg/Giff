@@ -5,7 +5,7 @@ from extensions import db
 from flask_cors import CORS
 from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
 from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
-from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, include_logo_in_gifs
+from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, include_logo_in_gifs, update_additional_profile
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
 from reset_password_helper import request_reset_password, reset_user_password
 from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag, remove_tag_from_gif
@@ -169,6 +169,10 @@ def signup_user():
 @app.route('/update-email', methods=['POST'])
 def update_email_address():
     return update_email()
+
+@app.route('/update_additional_profile', methods=['POST'])
+def update_additional_user_details():
+    return update_additional_profile()
 
 
 @app.route('/delete_user_logo', methods=['GET'])

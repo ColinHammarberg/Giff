@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
 import './Tabs.scss';
-import LightTooltip from '../overall/LightToolTip';
 
 const convertString = (str, className = 'tabs') => {
   const value = `${className} ${str}`;

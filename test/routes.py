@@ -37,6 +37,8 @@ def fetch_user_info():
             is_active=current_user.is_active,
             logo_url=presigned_url,
             has_logo=current_user.has_logo,
+            organization=current_user.organization,
+            country=current_user.country,
             include_logo=current_user.include_logo,
             include_ai=current_user.include_ai,
             include_example_email=current_user.include_example_email,
@@ -164,13 +166,29 @@ def update_email():
     current_user = User.query.get(user_id)
     print(f"Current user: {current_user.email}")
     try:
-        if not check_password_hash(current_user.password, data['password']):
-            return jsonify({"status": "Incorrect current password"}), 401
-        
         new_email = data['newEmail']
         current_user.email = new_email
         db.session.commit()
         return jsonify({"status": "Email updated successfully"}), 200
+        
+    except Exception as e:
+        print(f"Exception: {e}")
+        return jsonify({"status": "Internal Server Error"}), 500
+    
+@jwt_required()
+def update_additional_profile():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    current_user = User.query.get(user_id)
+    try:
+        country = data['country']
+        company = data['company']
+        if country is not None:
+            current_user.country = country
+        if company is not None:
+            current_user.organization = company
+        db.session.commit()
+        return jsonify({"status": "Profile updated successfully"}), 200
         
     except Exception as e:
         print(f"Exception: {e}")

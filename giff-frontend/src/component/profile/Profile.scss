@@ -2,202 +2,82 @@
 
 .profile {
     font-family: 'Staatliches';
+    height: 100%;
+    width: 100%;
 
-    .title {
-        font-size: 30px;
-        color: #fff;
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .profile-info {
-        padding: 24px;
-        color: #fff;
-        text-align: center;
-        display: grid;
-        justify-content: center;
-        align-items: center;
-        gap: 24px;
-
-        .MuiFormControl-root {
-            background-color: #fff;
-            width: 343px;
-
-            .Mui-disabled {
-                -webkit-text-fill-color: #000;
-            }
-
-            .MuiInputBase-root {
-                font-family: 'Staatliches';
-                font-size: 25px;
-            }
-        }
-
-        .MuiButton-root {
-            font-size: 8px;
-            border: 1px solid #fff;
-            border-radius: 50px;
-            height: 15px;
-            color: #fff;
-            width: 50px;
-            font-family: 'Staatliches';
-        }
-
-        .text {
-            font-size: 25px;
-            font-family: 'Staatliches';
-            width: 146px;
-            display: grid;
-            text-align: left;
-
-            button {
-                font-size: 8px;
-                border: 1px solid #fff;
-                border-radius: 50px;
-                height: 15px;
-                color: #fff;
-                width: 60px;
-                font-family: 'Staatliches';
-                background-color: #000;
-                cursor: pointer;
-            }
-        }
-
-        form {
-            display: flex;
-            gap: 24px;
-
-            .upload {
-                .custom-button {
-                    background-color: #fff;
-                    width: 343px;
-                    font-family: "Staatliches";
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    cursor: pointer;
-                    border: none;
-                    height: 68px;
-                    color: #000;
-                }
-            }
-
-            input[type="file"] {
-                opacity: 0;
-                position: absolute;
-                width: 0;
-                height: 0;
-            }
-        }
-
-        .checkbox {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-left: 50px;
-        }
-
-        .ai-checkbox {
-            justify-content: center;
-            align-items: center;
-            padding-left: 50px;
-            margin-top: 24px;
-            display: flex;
-            flex-direction: column;
-
-            .include {
-                display: flex;
-                align-items: center;
-            }
-
-            span {
-                color: #F4149B;
-            }
-        }
-
-        .MuiButtonBase-root {
-            &:hover {
-                .MuiSvgIcon-root {
-                    color: #F4149B;
-                }
-            }
-
-            .MuiSvgIcon-root {
-                color: #fff;
-            }
-        }
-
-        .email-details {
-            display: flex;
-            gap: 24px;
-
-            .verify-email-btn {
-                background-color: #FEC901;
-                font-family: 'Staatliches';
-                border: 1px solid #000;
-                color: #000;
-                font-size: 15px;
-                height: 32px;
-                width: 110px;
-                margin-top: 15px;
-                margin-left: 5px;
-            }
-
-            .tag {
-                margin-bottom: 4px;
-            }
-
-            .text {
-                color: #B9F140;
-            }
-        }
-
-        .resolution-details {
-            display: flex;
-            gap: 24px;
-
-            .text {
-                color: #FE6B01;
-            }
-        }
-
-        .password-details {
-            display: flex;
-            gap: 24px;
-
-            .text {
-                color: #F4149B;
-            }
-        }
-
-        .upload-logo-details {
-            .text {
-                color: #FEC901;
-            }
-        }
-    }
-
-    .delete-account {
+    .wrapper {
+        height: 100%;
         width: 100%;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-top: 50px;
 
-        .MuiButton-root {
-            border: 1px solid #fff;
-            border-radius: 50px;
-            color: #fff;
-            font-family: 'Staatliches';
-            font-size: 10px;
-            height: 32px;
-            width: 110px;
+        .profile-actions {
+            width: 860px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .category-header {
+                font-family: 'Staatliches';
+                color: #fff;
+            }
+
+            .action-box {
+                background-color: #1A1A1A;
+                height: 60px;
+                color: #fff;
+                align-items: center;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                cursor: pointer;
+
+                .left {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding-left: 24px;
+
+                    .icon {
+                        width: 40px;
+                        height: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: #3F3F3F;
+                        border-radius: 4px;
+
+                        .MuiSvgIcon-root {
+                            color: #808080;
+                        }
+                    }
+
+                    .label {
+                        font-family: 'Staatliches';
+                    }
+                }
+
+                .right {
+                    padding-right: 24px;
+
+                    .MuiSvgIcon-root {
+                        color: #808080;
+                    }
+                }
+            }
         }
     }
 }
 
 @media (max-width: 600px) {
     .profile {
+        .wrapper {
+            .profile-actions {
+                width: 80%;
+            }
+        }
         .title {
             margin-bottom: 10px;
         }

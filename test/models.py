@@ -28,6 +28,8 @@ class User(db.Model, UserMixin):
         db.String(120), default=None, nullable=True)
     has_logo = db.Column(db.Boolean, default=False)
     include_logo = db.Column(db.Boolean, default=False)
+    country = db.Column(db.String(120))
+    organization = db.Column(db.String(120))
     include_ai = db.Column(db.Boolean, default=False)
     include_example_email = db.Column(db.Boolean, default=False)
     reset_password_code = db.Column(db.String(255), default=None)
