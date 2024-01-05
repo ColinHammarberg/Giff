@@ -8,7 +8,6 @@ import Header from '../overall/Header';
 import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignIn, Signin } from '../../endpoints/UserEndpoints';
 import OutlookSignInButton from './OutlookSignin';
-import GoogleSignInButton from './GoogleSignInButton';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -163,7 +162,6 @@ function UserSignin() {
         </div>
         <div className="buttons">
           <OfficialButton onClick={signInUserCredentials} label="Sign in" variant="pink" isProcessing={isLoading} />
-          <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} />
           <OutlookSignInButton />
           <div className="no-account">Don’t have a Gif-t account yet? No worries. You can sign up <span onClick={() => navigate('/signup')}>here.</span></div>
         </div>

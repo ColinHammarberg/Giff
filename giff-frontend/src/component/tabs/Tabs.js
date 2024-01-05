@@ -30,35 +30,28 @@ export const useTabs = (initialTabs, defaultActiveIndex = 0) => {
   };
 };
 
-const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
+const Tabs = ({ tabs, onChange, variant, className }) => {
   return (
     <ul className={`tabs ${variant} `}>
       {tabs?.map((tab, i) => (
-        <LightTooltip
-          disableHoverListener={!disabled[i]}
-          title="There is no example email available for this gif."
+        <li
+          key={i}
+          className={`tab-item ${tab.active ? 'active' : ''}  ${className} ${
+            !tab.label ? 'tab-item-hidden' : ''
+          }`}
         >
-          <li
-            key={i}
-            className={`tab-item ${tab.active ? 'active' : ''} ${
-              disabled[i] ? 'disabled' : ''
-            } ${className} ${!tab.label ? 'tab-item-hidden' : ''}`}
+          <div
+            className="tab-wrapper"
+            data-id={convertString(tab.label, variant)}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onChange(i);
+            }}
           >
-            <div
-              className="tab-wrapper"
-              data-id={convertString(tab.label, variant)}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                if (!disabled[i]) {
-                  onChange(i);
-                }
-              }}
-            >
-              <span className="tab-label">{tab.label}</span>
-            </div>
-          </li>
-        </LightTooltip>
+            <span className="tab-label">{tab.label}</span>
+          </div>
+        </li>
       ))}
     </ul>
   );

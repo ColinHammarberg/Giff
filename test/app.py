@@ -10,6 +10,7 @@ from chrome_extension_helper import generate_extension_pdf_gif, generate_extensi
 from reset_password_helper import request_reset_password, reset_user_password
 from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag, remove_tag_from_gif
 from edit_exiting_gif_helper import update_example_email
+from gpt_helper import get_example_email_from_gif
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name, update_gif_duration
 from include_ai_helper import include_ai_in_gifs, include_ai_email
@@ -94,6 +95,10 @@ def update_gif_frame():
 @app.route('/reset_password', methods=['POST'])
 def reset_password():
     return request_reset_password()
+
+@app.route('/get_example_email_from_gif', methods=['POST'])
+def get_example_email():
+    return get_example_email_from_gif()
 
 @app.route('/new_user_password', methods=['POST'])
 def new_password():

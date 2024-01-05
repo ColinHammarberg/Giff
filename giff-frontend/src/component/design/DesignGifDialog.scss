@@ -109,6 +109,30 @@
                         }
                     }
                 }
+
+                .container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+
+                    .MuiButtonBase-root {
+                        background-color: #000;
+                        border: 1px solid #FEC901;
+                        border-radius: 50px;
+                        color: #FEC901;
+                        min-width: 148px;
+                        max-width: 237px;
+                        padding: 7px 45px 7px 37px;
+                        margin: auto;
+                        font-family: 'Staatliches';
+                        display: flex;
+                        gap: 8px;
+
+                        .MuiSvgIcon-root {
+                            font-size: 20px;
+                        }
+                    }
+                }
             }
 
             .left-content {

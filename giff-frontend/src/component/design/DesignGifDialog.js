@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import './DesignGifDialog.scss';
 import DialogWrapper from '../DialogWrapper';
 import { Box, Button, IconButton, Slider, TextField } from '@mui/material';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { showNotification } from '../notification/Notification';
 import Tabs from '../tabs/Tabs';
 import LeftNavigation from '../../resources/left-nav.png';
@@ -44,6 +45,7 @@ import {
 import TagsActionDialog from '../gif-library/TagsActionDialog';
 import EditEmail from './EditEmail';
 import LoadingGif from '../../resources/loading-gif.png';
+import { GenerateGifEmail } from '../../endpoints/AiEndpoints';
 
 class DesignGifDialog extends PureComponent {
   constructor(props) {
@@ -59,6 +61,7 @@ class DesignGifDialog extends PureComponent {
       gifDuration: props.selectedGif.duration,
       currentGifUrl: props.selectedGif.url,
       isLoading: false,
+      isLoadingEmail: false,
       isGifPortrait: false,
       frameWidth: null,
       newTag: '',
@@ -272,7 +275,10 @@ class DesignGifDialog extends PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
-      this.setState({ selectedFrame: null, gifDuration: this.props.selectedGif.duration });
+      this.setState({
+        selectedFrame: null,
+        gifDuration: this.props.selectedGif.duration,
+      });
       this.setState({ tags: [] });
       this.setState({
         exampleEmail: this.props.selectedGif.exampleEmail || '',
@@ -402,6 +408,24 @@ class DesignGifDialog extends PureComponent {
         : !frame.name.startsWith('pdf-')
     );
   }
+
+  handleGenerateEmail = async () => {
+    const { currentGifUrl } = this.state;
+    try {
+      this.setState({ isLoadingEmail: true });
+      console.log('currentGifUrl', currentGifUrl);
+      const response = await GenerateGifEmail(currentGifUrl);
+      console.log('response', response);
+      this.setState({
+        exampleEmail: response.data.example_email,
+        isLoadingEmail: false,
+      });
+    } catch (error) {
+      console.error('Error generating email:', error);
+      this.setState({ isLoading: false });
+      showNotification('error', 'Failed to generate email.');
+    }
+  };
 
   sliderMarks = [
     { value: 1, label: '1s' },
@@ -647,7 +671,9 @@ class DesignGifDialog extends PureComponent {
                             );
                           })}
                           {availableTags.length > 0 && (
-                            <span className="info">press on a tag to select it</span>
+                            <span className="info">
+                              press on a tag to select it
+                            </span>
                           )}
                         </div>
                       </div>
@@ -658,9 +684,20 @@ class DesignGifDialog extends PureComponent {
               {activeTab === 2 && (
                 <div className="container">
                   <EditEmail
-                    defaultEmail={exampleEmail}
+                    defaultEmail={
+                      exampleEmail ||
+                      'You currently have no email text attached to this email...No worries! Just start typing one right now or use our ai feature to generate your message based on the gifs content and your intended target audience.'
+                    }
                     onEmailChange={this.handleEmailChange}
                   />
+                  {!exampleEmail && (
+                    <Button onClick={this.handleGenerateEmail}>
+                      <SmartToyIcon />
+                      {this.state.isLoadingEmail
+                        ? 'Processing'
+                        : 'Ai generate an email'}
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
