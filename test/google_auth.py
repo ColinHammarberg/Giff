@@ -44,14 +44,10 @@ def google_user_signin():
     token_object = data.get('token')
     CLIENT_ID = '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com'
 
-    print('token_object', token_object)
-
     # Verify the token with Google
     if isinstance(token_object, dict) and 'token' in token_object:
         actual_token = token_object['token']
-        print('actual_token', actual_token)
     else:
-        # Handle the case where the token is not in the expected format
         return jsonify({"status": "Invalid token format"}), 400
 
     try:
@@ -60,11 +56,15 @@ def google_user_signin():
 
         # Check if user already exists
         user = User.query.filter_by(email=user_email).first()
-        if not user:
-            # Create a new user since one doesn't exist
-            user = User(email=user_email)
+        if user:
+            # Set the user as active if they aren't already
+            user.is_active = True
+        else:
+            # Create a new user since one doesn't exist and set as active
+            user = User(email=user_email, is_active=True)
             db.session.add(user)
-            db.session.commit()
+
+        db.session.commit()
 
         # Generate a token for the user
         access_token = create_access_token(identity=user.id)
@@ -124,7 +124,7 @@ def outlook_user_signup():
     if existing_user:
         return jsonify({"status": "User already exists"}), 409
 
-    new_user = User(email=user_email)
+    new_user = User(email=user_email, is_active=True)
     print('user_email', new_user)
     db.session.add(new_user)
     
