@@ -13,6 +13,40 @@ def verify_google_token(google_token):
         return None
     return google_info.json()
 
+def google_user_signin_google_script():
+    data = request.get_json()
+    token = data.get('token')
+    CLIENT_ID = '537947018056-tfi773rnqp0218nc3e29q9klogfevham.apps.googleusercontent.com'
+
+    print('token', token)
+
+    # Verify the token with Google
+    if isinstance(token, dict) and 'token' in token:
+        actual_token = token['token']
+        print('actual_token', actual_token)
+    else:
+        actual_token = token
+
+    try:
+        idinfo = id_token.verify_oauth2_token(actual_token, google_requests.Request(), CLIENT_ID)
+        user_email = idinfo['email']
+
+        # Check if user already exists
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            # Create a new user since one doesn't exist
+            user = User(email=user_email)
+            db.session.add(user)
+            db.session.commit()
+
+        # Generate a token for the user
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token, status="Signin successful"), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "Error processing your request", "message": str(e)}), 500
+
 def google_user_signin():
     data = request.get_json()
     token_object = data.get('token')
