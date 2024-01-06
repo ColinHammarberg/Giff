@@ -18,9 +18,12 @@ def google_user_signin():
     token_object = data.get('token')
     CLIENT_ID = '780954759358-cqnev3bau95uvbk80jltofofr4qc4m38.apps.googleusercontent.com'
 
+    print('token_object', token_object)
+
     # Verify the token with Google
     if isinstance(token_object, dict) and 'token' in token_object:
         actual_token = token_object['token']
+        print('actual_token', actual_token)
     else:
         # Handle the case where the token is not in the expected format
         return jsonify({"status": "Invalid token format"}), 400
