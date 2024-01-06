@@ -17,7 +17,7 @@ def login_with_email():
         access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token, status="Login successful"), 200
     else:
-        return jsonify({"status": "User does not exist"}), 404
+        return jsonify({"status": "User does not exist"}), 200
 
 def get_user_email():
     data = request.get_json()
