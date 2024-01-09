@@ -18,6 +18,7 @@ import {
 import { showNotification } from '../notification/Notification';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 const countries = [
   'Afghanistan',
@@ -227,7 +228,11 @@ const countries = [
   'Zimbabwe',
 ];
 
-function EditProfileComponent({ user, setActiveComponent }) {
+function EditProfileComponent({
+  user,
+  setActiveComponent,
+  setChangeUserDetails,
+}) {
   const [email, setEmail] = useState(user?.email || '');
   const [company, setCompany] = useState(user?.organization || '');
   const [password, setPassword] = useState({
@@ -312,14 +317,16 @@ function EditProfileComponent({ user, setActiveComponent }) {
     if (password.currentPassword && password.newPassword) {
       await requestChangeUserPassword(password);
     }
-    if (country !== initialValues.country) {
-      console.log('country', country);
+    if (
+      country !== initialValues.country ||
+      company !== initialValues.company
+    ) {
       await UpdateAdditionalUserDetails(country, company);
     }
     showNotification('success', 'Your details were successfully updated!');
-    // Add more checks for other fields like country if needed
-    // Reset initial values after successful save
+    
     setInitialValues({ email, country });
+    setChangeUserDetails(true);
   };
   const handleOnClickDeleteAccount = async () => {
     const { hasConfirmed } = await DeleteProfileDialog.show();
@@ -357,8 +364,8 @@ function EditProfileComponent({ user, setActiveComponent }) {
         {' '}
         Edit Profile
       </div>
-      <div style={{ color: '#fff' }} onClick={() => setActiveComponent(null)}>
-        Back
+      <div className="back-button">
+        <BackButton onClick={() => setActiveComponent(null)} variant="white" />
       </div>
       <div className="edit-profile">
         <div className="content">

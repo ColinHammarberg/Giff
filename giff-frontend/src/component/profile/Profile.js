@@ -12,7 +12,8 @@ import useFetchUser from '../../queries/useUserDataQuery';
 import EditProfileComponent from './EditProfileComponent';
 // import PaymentComponent from './PaymentComponent';
 // import GifSettingsComponent from './GifSettingsComponent';
-import AiSettingsComponent from './AiSettingsComponent';
+import LightTooltip from '../overall/LightToolTip';
+import GifSettingsComponent from './GifSettingsComponent';
 
 function Profile() {
   // const navigate = useNavigate();
@@ -39,22 +40,26 @@ function Profile() {
           <EditProfileComponent
             user={user}
             setActiveComponent={setActiveComponent}
+            setChangeUserDetails={setChangeUserDetails}
           />
         );
         break;
       // case 'Payment':
       //   setActiveComponent(<PaymentComponent />);
       //   break;
-      // case 'GIF settings':
-      //   setActiveComponent(<GifSettingsComponent />);
-      //   break;
-      case 'AI settings':
-        setActiveComponent(<AiSettingsComponent user={user} setChangeUserDetails={setChangeUserDetails} setActiveComponent={setActiveComponent} />);
+      case 'GIF settings':
+        setActiveComponent(
+          <GifSettingsComponent
+            user={user}
+            setActiveComponent={setActiveComponent}
+            setChangeUserDetails={setChangeUserDetails}
+          />
+        );
         break;
       default:
         setActiveComponent(null);
     }
-  }
+  };
 
   // const handleResolutionSizeChange = _debounce(async (value) => {
   //   if (value) {
@@ -102,13 +107,15 @@ function Profile() {
 
   const profileActions = [
     { label: 'Edit profile', icon: <EditIcon /> },
-    { label: 'Payment', icon: <EditIcon /> },
+    {
+      label: 'Payment',
+      icon: <EditIcon />,
+      disabled: true,
+      toolTipMessage: 'Currently Gif-t is 100% free.',
+    },
   ];
 
-  const settingsActions = [
-    { label: 'GIF settings', icon: <EditIcon /> },
-    { label: 'AI settings', icon: <EditIcon /> },
-  ];
+  const settingsActions = [{ label: 'GIF settings', icon: <EditIcon /> }];
 
   return (
     <div className="profile">
@@ -122,20 +129,26 @@ function Profile() {
           <Box className="profile-actions">
             <div className="category-header">Profile</div>
             {profileActions.map((item) => (
-              <div
-                className="action-box"
-                onClick={() => handleActionClick(item.label)}
+              <LightTooltip
+                title={item.toolTipMessage}
+                disableHoverListener={!item.disabled}
+                placement="top"
               >
-                <div className="left">
-                  <div className="icon">{item.icon}</div>
-                  <div className="label">{item.label}</div>
+                <div
+                  className={`action-box ${item.disabled ? 'disabled' : ''}`}
+                  onClick={() => handleActionClick(item.label)}
+                >
+                  <div className="left">
+                    <div className="icon">{item.icon}</div>
+                    <div className="label">{item.label}</div>
+                  </div>
+                  <div className="right">
+                    <IconButton>
+                      <KeyboardArrowRightIcon />
+                    </IconButton>
+                  </div>
                 </div>
-                <div className="right">
-                  <IconButton>
-                    <KeyboardArrowRightIcon />
-                  </IconButton>
-                </div>
-              </div>
+              </LightTooltip>
             ))}
             <div className="category-header">Settings</div>
             {settingsActions.map((item) => (

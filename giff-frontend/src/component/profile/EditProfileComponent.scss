@@ -13,6 +13,19 @@
         gap: 40px;
         color: #fff;
 
+        .info {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 30px;
+
+            .MuiSvgIcon-root {
+                font-size: 18px;
+                cursor: pointer;
+            }
+        }
+
         .group {
             display: flex;
             flex-direction: column;
@@ -117,12 +130,20 @@
 
 .wrapper {
     .action-save {
-        width: 60%;
         display: flex;
         justify-content: space-between;
         margin-right: 50px;
         margin-left: 50px;
         margin-top: 40px;
+        gap: 24px;
+    }
+
+    .back-button {
+        width: 860px;
+        display: flex;
+        justify-content: left;
+        width: 860px;
+        margin-bottom: 40px;
     }
 
     .save {
@@ -133,13 +154,23 @@
         color: #fff;
         font-family: 'Staatliches';
         border-radius: 50px;
+
+        &:hover {
+            color: #FEC901;
+        }
     }
 }
 
 @media (max-width: 600px) {
     .edit-profile {
+
         .content {
             padding: 10px;
+        }
+    }
+    .wrapper {
+        .back-button {
+            width: 100%;
         }
     }
 }

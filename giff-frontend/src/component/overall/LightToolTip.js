@@ -5,8 +5,8 @@ import { withStyles } from '@mui/styles';
 
 const CustomLightTooltip = withStyles(() => ({
   tooltip: {
-    backgroundColor: 'rgba(244, 20, 155, 1)',
-    color: '#000000',
+    backgroundColor: '#fff',
+    color: '#000',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
     fontSize: 15,
     padding: '16px',
