@@ -9,7 +9,8 @@ import React, { useEffect, useState } from 'react';
 import './EditProfileComponent.scss';
 import PasswordField from '../authorization/PasswordField';
 import {
-    DeleteUserProfile,
+  DeleteUserProfile,
+  ResendVerificationEmail,
   UpdateAdditionalUserDetails,
   UpdateEmailAddress,
   UpdatePassword,
@@ -239,6 +240,20 @@ function EditProfileComponent({ user, setActiveComponent }) {
     setCountry(event.target.value);
   };
 
+  async function handleOnResendEmailVerification() {
+    try {
+      const response = await ResendVerificationEmail();
+      if (response.status === 'Sent new email verification link') {
+        showNotification(
+          'success',
+          `Sent verification email to ${user?.email}`
+        );
+      }
+    } catch (error) {
+      showNotification('error', 'Failed to send verification email.');
+    }
+  }
+
   const handleCompanyChange = (event) => {
     setCompany(event.target.value);
   };
@@ -356,6 +371,11 @@ function EditProfileComponent({ user, setActiveComponent }) {
                   onChange={(e) => handleOnChangeEmail(e, 'newEmail')}
                   defaultValue={user?.email}
                 />
+                {!user?.is_active && (
+                  <Button onClick={handleOnResendEmailVerification}>
+                    Verify
+                  </Button>
+                )}
               </div>
             </div>
             <div className="password">
@@ -364,6 +384,7 @@ function EditProfileComponent({ user, setActiveComponent }) {
                   <span>Current password</span>
                   <PasswordField
                     type="password"
+                    placeholder="******"
                     onChange={(e) =>
                       handleOnChangePassword(e, 'currentPassword')
                     }
@@ -374,6 +395,7 @@ function EditProfileComponent({ user, setActiveComponent }) {
                   <span>New password</span>
                   <PasswordField
                     type="password"
+                    placeholder="******"
                     onChange={(e) => handleOnChangePassword(e, 'newPassword')}
                     defaultValue={password?.newPassword}
                   />
