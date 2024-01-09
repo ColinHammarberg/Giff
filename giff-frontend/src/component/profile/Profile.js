@@ -54,22 +54,7 @@ function Profile() {
       default:
         setActiveComponent(null);
     }
-  };
-
-  // async function handleOnResendEmailVerification() {
-  //   try {
-  //     const response = await ResendVerificationEmail();
-  //     console.log('response', response);
-  //     if (response.status === 'Sent new email verification link') {
-  //       showNotification(
-  //         'success',
-  //         `Sent verification email to ${user?.email}`
-  //       );
-  //     }
-  //   } catch (error) {
-  //     showNotification('error', 'Failed to send verification email.');
-  //   }
-  // }
+  }
 
   // const handleResolutionSizeChange = _debounce(async (value) => {
   //   if (value) {

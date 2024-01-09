@@ -33,6 +33,25 @@
 
         .actions {
             display: flex;
+            gap: 24px;
+            align-items: center;
+
+            .MuiButtonBase-root {
+                width: 70px;
+                height: 32px;
+                padding: 15px 10px;
+                justify-content: center;
+                align-items: center;
+                border-radius: 30px;
+                border: 1px solid #000;
+                font-family: 'Staatliches';
+                background-color: #FEC901;
+                color: #000;
+
+                &:hover {
+                    color: #fff;
+                }
+            }
         }
 
         .email,
