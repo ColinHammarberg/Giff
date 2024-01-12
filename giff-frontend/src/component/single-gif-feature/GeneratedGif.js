@@ -19,7 +19,7 @@ function GeneratedGif(props) {
   const [selectedGif, setSelectedGif] = useState(null);
   const [downloadLoading, setDownloadLoading] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs(['Frame Design', 'Tags', 'Email']);
+  const { tabs, changeTab, activeTab } = useTabs(['Cut', 'Frame Design', 'Tags', 'Email']);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
   const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
   const imageRef = useRef(null);
@@ -81,7 +81,7 @@ function GeneratedGif(props) {
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType, hoveredGif.tags, hoveredGif.example_email);
+      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType, hoveredGif.tags, hoveredGif.example_email, hoveredGif.frame_urls);
       setDesignChanges(false);
     }
   };

@@ -38,6 +38,33 @@ def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
         return False
     return True
 
+def upload_frame_to_s3(frame_data, bucket, object_name=None, resource_id=None):
+    print('Uploading frame to:', object_name)
+    try:
+        s3.put_object(
+            Body=frame_data,
+            Bucket=bucket,
+            Key=object_name,
+            Metadata={'resourceId': resource_id} if resource_id else {}
+        )
+    except Exception as e:
+        print(f"Upload Failed: {e}")
+        return False
+    return True
+
+def upload_pdf_frame_to_s3(file_path, bucket, object_name, resource_id):
+    try:
+        with open(file_path, 'rb') as file_data:
+            s3.upload_fileobj(
+                Fileobj=file_data,
+                Bucket=bucket,
+                Key=object_name,
+                ExtraArgs={'Metadata': {'resourceId': resource_id}}
+            )
+    except Exception as e:
+        print(f"Upload Failed: {e}")
+        return False
+    return True
 
 @jwt_required()
 def fetch_user_gifs():
@@ -112,6 +139,7 @@ def get_multiple_gifs():
             "resourceId": gif.resourceId,
             "selectedColor": gif.selectedColor,
             "created_at": gif.created_at,
+            "frame_urls": gif.frame_urls,
             "selectedFrame": gif.selectedFrame,
             "ai_description": gif.ai_description,
             "example_email": gif.example_email,

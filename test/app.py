@@ -12,7 +12,7 @@ from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, 
 from edit_exiting_gif_helper import update_example_email
 from gpt_helper import get_example_email_from_gif
 from verify_account_helper import send_verification_email_again, verify
-from edit_exiting_gif_helper import update_gif_name, update_gif_duration
+from edit_exiting_gif_helper import update_gif_name, update_gif_duration, update_gif_frames
 from include_ai_helper import include_ai_in_gifs, include_ai_email
 from google_auth import google_user_signup, google_user_signin, outlook_user_signup, outlook_user_signin, login_with_email, get_user_email
 from email_helper import send_email
@@ -99,6 +99,12 @@ def update_name_gif():
 def update_gif_frame():
     print('generate')
     return update_selected_frame()
+
+
+@app.route('/update_gif_frames', methods=['POST'])
+def update_gif_images_frames():
+    print('generate')
+    return update_gif_frames()
 
 @app.route('/reset_password', methods=['POST'])
 def reset_password():

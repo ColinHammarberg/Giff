@@ -32,6 +32,7 @@ import {
   ApplyGifColor,
   ApplyGifFrame,
   UpdateGifDuration,
+  UpdateGifFrames,
   updateEmailAPI,
 } from '../../endpoints/GifCreationEndpoints';
 import Tag from '../overall/Tag';
@@ -58,12 +59,14 @@ class DesignGifDialog extends PureComponent {
       exampleEmail: props.selectedGif?.exampleEmail || '',
       selectedFilter: null,
       visibleColorIndex: 0,
+      selectedFrames: this.props.selectedGif.frame_urls || [],
       gifDuration: props.selectedGif.duration,
       currentGifUrl: props.selectedGif.url,
       isLoading: false,
       isLoadingEmail: false,
       isGifPortrait: false,
       frameWidth: null,
+      frameUrls: this.props.selectedGif.frame_urls || [],
       newTag: '',
       error: '',
       tags: props.selectedGif.tags || [],
@@ -278,6 +281,8 @@ class DesignGifDialog extends PureComponent {
       this.setState({
         selectedFrame: null,
         gifDuration: this.props.selectedGif.duration,
+        frameUrls: this.props.selectedGif.frame_urls,
+        selectedFrames: this.props.selectedGif.frame_urls,
       });
       this.setState({ tags: [] });
       this.setState({
@@ -427,6 +432,36 @@ class DesignGifDialog extends PureComponent {
     }
   };
 
+  updateGif = async (updatedFrames) => {
+    const { selectedGif } = this.props;
+    const gifData = {
+      resourceId: selectedGif.resourceId,
+      frameUrls: updatedFrames,
+      // include gifName if necessary
+    };
+
+    try {
+      this.setState({ isLoading: true });
+      const response = await UpdateGifFrames(gifData);
+      this.setState({ currentGifUrl: response.new_gif_url });
+      this.setState({ isLoading: false });
+    } catch (error) {
+      console.error('Error updating GIF frames:', error);
+    }
+  };
+
+  toggleGifFrameSelection = async (frameUrl) => {
+    this.setState((prevState) => {
+      const isSelected = prevState.selectedFrames.includes(frameUrl);
+      const updatedFrames = isSelected
+        ? prevState.selectedFrames.filter((url) => url !== frameUrl)
+        : [...prevState.selectedFrames, frameUrl];
+
+      this.updateGif(updatedFrames);
+      return { selectedFrames: updatedFrames };
+    });
+  };
+
   sliderMarks = [
     { value: 1, label: '1s' },
     { value: 2, label: '2s' },
@@ -438,17 +473,23 @@ class DesignGifDialog extends PureComponent {
   renderTitles = {
     0: (
       <div>
-        Choose a <span>nice frame</span> to wrap your gif.
+        Show your <span>director skills</span> and edit your gif so that it
+        displays the best parts <span>of your content.</span>
       </div>
     ),
     1: (
+      <div>
+        Choose a <span>nice frame</span> to wrap your gif.
+      </div>
+    ),
+    2: (
       <div>
         Assign a tag to your gif! <span>Create a new one</span> by typing{' '}
         <span>into the field</span> or use your existing tags by clicking on
         them.
       </div>
     ),
-    2: (
+    3: (
       <div>
         Attach <span>an email text to your gif</span> that can be reused to
         speed up the marketing process.
@@ -465,6 +506,7 @@ class DesignGifDialog extends PureComponent {
       exampleEmail,
       currentGifUrl,
       isLoading,
+      frameUrls,
     } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
@@ -584,7 +626,7 @@ class DesignGifDialog extends PureComponent {
                     tabs={tabs}
                     onChange={this.handleOnChangeTab}
                     disabled={tabs.map((tab, index) => {
-                      if (index === 2 && !selectedGif?.exampleEmail) {
+                      if (index === 0 && !selectedGif?.frameUrls) {
                         return true;
                       } else return false;
                     })}
@@ -596,6 +638,38 @@ class DesignGifDialog extends PureComponent {
                 </div>
               </div>
               {activeTab === 0 && (
+                <>
+                  <div className="container">
+                    <div className="gif-images">
+                      {isMobile && (
+                        <IconButton onClick={this.handlePrevColors}>
+                          <img src={LeftNavigation} alt="" />
+                        </IconButton>
+                      )}
+                      <div className="gifImages">
+                        {frameUrls?.map((url, index) => (
+                          <img
+                            src={url}
+                            key={index}
+                            className={
+                              this.state.selectedFrames.includes(url)
+                                ? 'selected'
+                                : 'deselected'
+                            }
+                            onClick={() => this.toggleGifFrameSelection(url)}
+                          />
+                        ))}
+                      </div>
+                      {isMobile && (
+                        <IconButton onClick={this.handleNextColors}>
+                          <img src={RightNavigation} alt="" />
+                        </IconButton>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+              {activeTab === 1 && (
                 <>
                   <div className="container">
                     <div
@@ -638,7 +712,7 @@ class DesignGifDialog extends PureComponent {
                   </div>
                 </>
               )}
-              {activeTab === 1 && (
+              {activeTab === 2 && (
                 <>
                   <div className="container">
                     <div className="tags">
@@ -681,7 +755,7 @@ class DesignGifDialog extends PureComponent {
                   </div>
                 </>
               )}
-              {activeTab === 2 && (
+              {activeTab === 3 && (
                 <div className="container">
                   <EditEmail
                     defaultEmail={

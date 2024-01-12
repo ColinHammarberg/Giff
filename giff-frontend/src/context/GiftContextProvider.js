@@ -83,10 +83,10 @@ const GiftContextProvider = ({ children }) => {
 
   // design actions
 
-  const editGif = (gifUrl, resourceId, selectedColor, selectedFrame, resourceType, tags, exampleEmail) => {
+  const editGif = (gifUrl, resourceId, selectedColor, selectedFrame, resourceType, tags, exampleEmail, frameUrls) => {
     console.log('tags', tags, resourceType);
     setIsDesignOpen(true);
-    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame, 'tags': tags, "exampleEmail": exampleEmail});
+    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame, 'tags': tags, "exampleEmail": exampleEmail, "frame_urls": frameUrls});
   };
 
   const onChange = (fieldIdentifier, value) => {

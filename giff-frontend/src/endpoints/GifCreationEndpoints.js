@@ -328,6 +328,28 @@ export async function ToggleEmailAI(includeExampleEmail) {
   }
 }
 
+export async function UpdateGifFrames(gifData) {
+  const accessToken = localStorage.getItem('access_token');
+  console.log('Updating GIF with data:', gifData);
+
+  try {
+    const response = await axios.post(
+      `${Api}/update_gif_frames`,
+      gifData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    return response.data;  // Assuming the response contains the necessary data
+  } catch (error) {
+    console.error('Error updating GIF:', error);
+    throw error;  // Rethrow the error for handling it in the calling component
+  }
+}
+
 export async function DownloadIndividualDesignedGifs(gifData) {
   const access_token = localStorage.getItem('access_token');
   console.log('gifData', gifData);

@@ -18,7 +18,7 @@ import zipfile
 import boto3
 import requests
 import fitz
-from s3_helper import upload_to_s3
+from s3_helper import upload_to_s3, upload_frame_to_s3, upload_pdf_frame_to_s3
 import uuid
 from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB
 from models import UserGif, User
@@ -33,6 +33,10 @@ backend_gifs_folder = os.path.join(os.path.dirname(
 
 def is_video_url(URL):
     return "youtube" in URL or "vimeo" in URL
+
+s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                                 aws_secret_access_key='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',
+                                 region_name='eu-north-1')
 
 
 @jwt_required()
@@ -84,6 +88,9 @@ def generate_pdf_gif():
     pdf_response = requests.get(URL)
     pdf_document = fitz.open("pdf", pdf_response.content)
     frames = []
+    frame_urls = [] # List to store pre-signed URLs of frames
+    frame_folder_name = f"{user_id}/{NAME.split('.')[0]}/"
+    frame_number = 0
 
     for page_number in range(pdf_document.page_count):
         page = pdf_document[page_number]
@@ -91,6 +98,18 @@ def generate_pdf_gif():
         img = Image.frombytes(
             "RGB", [image_list.width, image_list.height], image_list.samples)
         frames.append(img)
+        temp_img_path = os.path.join('/tmp', f'frame_{frame_number}.png')
+        img.save(temp_img_path, 'PNG')
+
+        # Upload each frame to S3 and get the pre-signed URL
+        frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
+        upload_pdf_frame_to_s3(temp_img_path, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
+        frame_url = s3_client.generate_presigned_url('get_object',
+                                                     Params={'Bucket': 'gif-frames',
+                                                             'Key': frame_s3_path},
+                                                     ExpiresIn=3600)
+        frame_urls.append(frame_url)
+        frame_number += 1
 
     pdf_document.close()
 
@@ -107,9 +126,6 @@ def generate_pdf_gif():
     if current_user:
         upload_to_s3(output_path, 'gift-resources',
                      f"{folder_name}{NAME}", resource_id)
-        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                 aws_secret_access_key='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',
-                                 region_name='eu-north-1')
         presigned_url = s3_client.generate_presigned_url('get_object',
                                                          Params={'Bucket': 'gift-resources',
                                                                  'Key': f"{user_id}/{NAME}"},
@@ -125,7 +141,7 @@ def generate_pdf_gif():
         print('example_email', example_email)
 
         db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path,
-                       resourceId=resource_id, ai_description=description, source=URL, example_email=example_email, base64_string=base64_string))
+                       resourceId=resource_id, ai_description=description, source=URL, example_email=example_email, base64_string=base64_string, frame_urls=frame_urls))
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -215,7 +231,9 @@ def upload_pdf_and_generate_gif():
     try:
         pdf_document = fitz.open(temp_pdf_path)
         frame_durations = []
-        print('pdf_document.page_count', pdf_document.page_count)
+        frame_urls = []
+        frame_folder_name = f"{user_id}/{pdf_file.filename.split('.')[0]}/"
+        frame_number = 0
 
         for page_number in range(pdf_document.page_count):
             print(f"Processing page: {page_number}")
@@ -228,6 +246,19 @@ def upload_pdf_and_generate_gif():
             print(f"Image saved at: {img_path}")
             frame_duration = 1.0
             frame_durations.append(int(frame_duration * 1000))
+            img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
+            img.save(img_path, 'PNG')
+
+            # Use frame number in the file path
+            frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
+            upload_pdf_frame_to_s3(img_path, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
+            frame_number += 1
+
+            frame_url = s3_client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': 'gif-frames',
+                                                                'Key': frame_s3_path},
+                                                        ExpiresIn=3600)
+            frame_urls.append(frame_url)
 
         pdf_document.close()
 
@@ -255,9 +286,6 @@ def upload_pdf_and_generate_gif():
         if user_exists:
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}/{gif_name}", resource_id)
-            s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                     aws_secret_access_key='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',
-                                     region_name='eu-north-1')
             presigned_url = s3_client.generate_presigned_url('get_object',
                                                              Params={'Bucket': 'gift-resources',
                                                                      'Key': f"{user_id}/{gif_name}"},
@@ -270,7 +298,7 @@ def upload_pdf_and_generate_gif():
                 presigned_url, current_user, sector_type)
 
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
-                           gif_url=output_path, resourceId=resource_id, ai_description=description, example_email=example_email, source="https://gif-t.io", base64_string=base64_string))
+                           gif_url=output_path, resourceId=resource_id, ai_description=description, example_email=example_email, source="https://gif-t.io", base64_string=base64_string, frame_urls=frame_urls))
             db.session.commit()
 
         gif_data = {
@@ -387,9 +415,6 @@ def download_all_library_gifs():
                         new_gif_bytes = add_border_to_gif(
                             resized_gif_bytes_io, selected_color)
                     elif selected_frame:
-                        s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                                 aws_secret_access_key='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',
-                                                 region_name='eu-north-1')
                         presigned_url = s3_client.generate_presigned_url('get_object',
                                                                          Params={'Bucket': 'gift-filter-options',
                                                                                  'Key': selected_frame},
@@ -522,9 +547,6 @@ def download_individual_gif():
                 modified_gif_bytes_io = add_border_to_gif(
                     resized_gif_bytes_io, selected_color)
             elif selected_frame:
-                s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                         aws_secret_access_key='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',
-                                         region_name='eu-north-1')
                 presigned_url = s3_client.generate_presigned_url('get_object',
                                                                  Params={'Bucket': 'gift-filter-options',
                                                                          'Key': selected_frame},
@@ -629,9 +651,6 @@ def generate_video_gif(data, user_id):
             print('folder_name', folder_name)
             upload_to_s3(output_path, 'gift-resources',
                          f"{folder_name}{NAME}", resource_id)
-            s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                                aws_secret_access_key='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', 
-                                region_name='eu-north-1')
             presigned_url = s3_client.generate_presigned_url('get_object',
                                                         Params={'Bucket': 'gift-resources',
                                                                     'Key': f"{user_id}/{NAME}"},
@@ -687,7 +706,7 @@ def generate_gif():
     options.add_argument('--disable-gpu')
 
     service = Service(executable_path="/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service,options=options)
+    driver = webdriver.Chrome(service=service, options=options)
     driver.get(URL)
 
     scroll_height = driver.execute_script("return document.body.scrollHeight")
@@ -698,10 +717,21 @@ def generate_gif():
     screenshots = []
     scroll_step = 400
     driver.execute_script("document.body.style.overflow = 'hidden'")
-
+    frame_folder_name = f"{user_id}/{NAME.split('.')[0]}/"
+    frame_number = 0
+    frame_urls = []
     for i in range(0, scroll_height, scroll_step):
         driver.execute_script(f"window.scrollTo(0, {i})")
         screenshots.append(driver.get_screenshot_as_png())
+        screenshot = driver.get_screenshot_as_png()
+        frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
+        upload_frame_to_s3(screenshot, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
+        frame_number += 1
+        frame_url = s3_client.generate_presigned_url('get_object',
+                                                Params={'Bucket': 'gif-frames',
+                                                        'Key': frame_s3_path},
+                                                ExpiresIn=3600)
+        frame_urls.append(frame_url)
 
     driver.quit()
 
@@ -722,13 +752,11 @@ def generate_gif():
     )
 
     resource_id = str(uuid.uuid4())
+
     folder_name = f"{user_id}/"
 
     upload_to_s3(output_path, 'gift-resources',
                  f"{folder_name}{NAME}", resource_id)
-    s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                             aws_secret_access_key='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',
-                             region_name='eu-north-1')
     presigned_url = s3_client.generate_presigned_url('get_object',
                                                      Params={'Bucket': 'gift-resources',
                                                              'Key': f"{user_id}/{NAME}"},
@@ -747,6 +775,7 @@ def generate_gif():
         resourceId=resource_id,
         ai_description=description,
         source=URL,
+        frame_urls=frame_urls,
         base64_string=base64_string,
         example_email=example_email
     )
@@ -757,7 +786,7 @@ def generate_gif():
         "name": NAME,
         "resourceId": resource_id,
         "resourceType": 'webpage',
-        "ai_description": description
+        "ai_description": description,
     }
 
     return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
