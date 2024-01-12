@@ -284,11 +284,15 @@ class DesignGifDialog extends PureComponent {
         frameUrls: this.props.selectedGif.frame_urls,
         selectedFrames: this.props.selectedGif.frame_urls,
       });
+      if (!this.props.selectedGif.frame_urls) {
+        this.props.setActiveTab(1)
+      } else {
+        this.props.setActiveTab(0)
+      }
       this.setState({ tags: [] });
       this.setState({
         exampleEmail: this.props.selectedGif.exampleEmail || '',
       });
-      this.props.changeTab(0);
       this.updateGifOrientation();
       this.updateFrameWidth();
     }
@@ -363,7 +367,9 @@ class DesignGifDialog extends PureComponent {
   };
 
   handleOnChangeTab(value) {
-    this.props.changeTab(value);
+    if (this.props.activeTab !== value) {
+      this.props.changeTab(value);
+    }
   }
 
   handlePrevColors() {
@@ -437,9 +443,7 @@ class DesignGifDialog extends PureComponent {
     const gifData = {
       resourceId: selectedGif.resourceId,
       frameUrls: updatedFrames,
-      // include gifName if necessary
     };
-
     try {
       this.setState({ isLoading: true });
       const response = await UpdateGifFrames(gifData);
@@ -626,7 +630,7 @@ class DesignGifDialog extends PureComponent {
                     tabs={tabs}
                     onChange={this.handleOnChangeTab}
                     disabled={tabs.map((tab, index) => {
-                      if (index === 0 && !selectedGif?.frameUrls) {
+                      if (index === 0 && !selectedGif?.frame_urls) {
                         return true;
                       } else return false;
                     })}
@@ -651,6 +655,7 @@ class DesignGifDialog extends PureComponent {
                           <img
                             src={url}
                             key={index}
+                            alt=""
                             className={
                               this.state.selectedFrames.includes(url)
                                 ? 'selected'

@@ -15,9 +15,9 @@ const getTabs = memoizeOne((tabs, activeIndex) => {
   });
 });
 
-export const useTabs = (initialTabs, defaultActiveIndex = 0) => {
+export const useTabs = (initialTabs) => {
   const [tabs, setTabs] = React.useState(initialTabs);
-  const [activeTab, setActiveTab] = React.useState(defaultActiveIndex);
+  const [activeTab, setActiveTab] = React.useState(0);
   const changeTab = React.useCallback((index) => {
     setActiveTab(index);
   }, []);
@@ -63,7 +63,6 @@ const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
     </ul>
   );
 };
-
 
 Tabs.propTypes = {
   tabs: PropTypes.instanceOf(Array),

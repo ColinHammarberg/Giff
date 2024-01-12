@@ -89,7 +89,7 @@ def fetch_user_gifs():
         gif_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in gif.tags]
         gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId,
                           "selectedColor": gif.selectedColor, "created_at": gif.created_at, 
-                          "selectedFrame": gif.selectedFrame, "source": gif.source, "tags": gif_tags, "base64": gif.base64_string, "example_email": gif.example_email, "duration": gif.duration})
+                          "selectedFrame": gif.selectedFrame, "source": gif.source, "tags": gif_tags, "base64": gif.base64_string, "example_email": gif.example_email, "duration": gif.duration, "frame_urls": gif.frame_urls,})
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
 

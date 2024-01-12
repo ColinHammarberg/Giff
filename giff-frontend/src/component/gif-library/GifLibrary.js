@@ -33,7 +33,6 @@ function GifLibrary() {
   const [isLoading, setIsLoading] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [isDesignOpen, setIsDesignOpen] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs(['Cut', 'Frame', 'Tags', 'Email']);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const { isMobile } = useMobileQuery();
   const navigate = useNavigate();
@@ -54,6 +53,10 @@ function GifLibrary() {
       gif?.tags?.some((gifTag) =>
         selectedTags.some((selectedTag) => selectedTag.value === gifTag.value)
       )
+  );
+  const { tabs, changeTab, activeTab, setActiveTab,  } = useTabs(
+    ['Cut', 'Frame', 'Tags', 'Email'],
+    0
   );
 
   useEffect(() => {
@@ -219,9 +222,10 @@ function GifLibrary() {
     resourceType,
     tags,
     exampleEmail,
-    duration
+    duration,
+    frameUrls
   ) => {
-    console.log('resourceType', resourceType);
+    console.log('duration', duration, resourceType);
     setIsDesignOpen(true);
     setSelectedDesignGif({
       url: gifUrl,
@@ -230,7 +234,7 @@ function GifLibrary() {
       selectedFrame: selectedFrame,
       tags: tags,
       exampleEmail: exampleEmail,
-      duration: duration,
+      frame_urls: frameUrls,
     });
   };
 
@@ -245,7 +249,8 @@ function GifLibrary() {
         hoveredGif.resourceType,
         hoveredGif.tags,
         hoveredGif.example_email,
-        hoveredGif.duration
+        hoveredGif.duration,
+        hoveredGif.frame_urls
       );
       setDesignChanges(false);
     }
@@ -333,6 +338,7 @@ function GifLibrary() {
         tabs={tabs}
         isMobile={isMobile}
         changeTab={changeTab}
+        setActiveTab={setActiveTab}
         activeTab={activeTab}
         onClickOk={() => {
           handleOpenDesign();

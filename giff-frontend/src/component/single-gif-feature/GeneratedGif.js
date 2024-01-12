@@ -19,7 +19,7 @@ function GeneratedGif(props) {
   const [selectedGif, setSelectedGif] = useState(null);
   const [downloadLoading, setDownloadLoading] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab } = useTabs(['Cut', 'Frame Design', 'Tags', 'Email']);
+  const { tabs, changeTab, activeTab, setActiveTab } = useTabs(['Cut', 'Frame Design', 'Tags', 'Email']);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
   const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
   const imageRef = useRef(null);
@@ -174,6 +174,7 @@ function GeneratedGif(props) {
             tabs={tabs}
             isMobile={isMobile}
             changeTab={changeTab}
+            setActiveTab={setActiveTab}
             activeTab={activeTab}
             onClickOk={() => {
               handleOpenDesign();
