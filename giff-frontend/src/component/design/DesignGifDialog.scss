@@ -45,6 +45,7 @@
             font-family: 'Staatliches';
             align-items: center;
             text-align: center;
+            margin-top: 20px;
 
             .main-title {
                 font-size: 32px;
@@ -112,18 +113,17 @@
                     gap: 16px;
 
                     .gifImages {
-                        width: 452px;
-                    }
-
-                    .gifImages {
                         display: flex;
                         flex-wrap: wrap;
                         gap: 8px;
+                        width: 452px;
+                        justify-content: center;
 
                         img {
                             width: 100px;
                             height: 80px;
                             cursor: pointer;
+
                             &.selected {
                                 border: 1px solid #F4149B;
                             }
@@ -156,6 +156,80 @@
                 flex-direction: column;
                 gap: 24px;
                 align-items: center;
+
+                .gif-name-section {
+                    color: #fff;
+                    display: flex;
+                    align-items: center;
+
+                    span {
+                        max-width: 180px;
+                        align-items: center;
+                        display: flex;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        font-family: 'Staatliches';
+                    }
+
+                    .MuiOutlinedInput-input:focus {
+                        border-color: transparent !important;
+                        border: transparent !important;
+
+                        &:focus {
+                            border-color: transparent !important;
+                            border: transparent !important;
+                            outline: 0;
+                        }
+
+                        &.Mui-focused {
+                            border-color: transparent !important;
+                        }
+                    }
+
+                    .MuiOutlinedInput-root {
+                        &.Mui-focused .MuiOutlinedInput-notchedOutline {
+                            border-color: transparent;
+                        }
+                    }
+
+                    .MuiInputBase-root {
+                        height: 20px !important;
+                        margin-top: 0 !important;
+                        width: 180px;
+                        color: #fff;
+                        font-family: 'Staatliches';
+                        border: transparent;
+
+                        &:focus {
+                            border-color: transparent !important;
+                            border: transparent !important;
+                            outline: 0;
+                        }
+                    }
+
+                    .MuiIconButton-root {
+                        width: 24px;
+                        height: 24px;
+
+                        .MuiSvgIcon-root {
+                            color: #fff;
+                            font-size: 16px;
+                        }
+
+                        .edit {
+                            font-size: 12px;
+                        }
+
+                        .confirm {
+                            color: #B9F140;
+                        }
+
+                        .close {
+                            color: #FE6B01;
+                        }
+                    }
+                }
 
                 .image-with-tag {
                     .tags-items {
@@ -369,7 +443,10 @@
             text-align: center;
             gap: 16px;
             padding: 24px;
-            margin-top: 40px;
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
 
             .title {
                 font-size: 28px;

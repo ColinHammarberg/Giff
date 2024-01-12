@@ -47,6 +47,24 @@ function GeneratedGif(props) {
     setImageDimensions({ width, height });
   };
 
+  const handleEditButtonClick = () => {
+    if (selectedGif !== null) {
+      const hoveredGif = importedGifs[selectedGif];
+      editGif(
+        hoveredGif.url,
+        hoveredGif.resourceId,
+        hoveredGif.selectedColor,
+        hoveredGif.selectedFrame,
+        hoveredGif.resourceType,
+        hoveredGif.tags,
+        hoveredGif.example_email,
+        hoveredGif.frame_urls,
+        hoveredGif.name
+      );
+      setDesignChanges(false);
+    }
+  };
+
   useEffect(() => {
     if (gifGenerated && importedGifs?.length > 0) {
       setOpenExampleEmail(true);
@@ -64,6 +82,16 @@ function GeneratedGif(props) {
       fetchData();
     }
   }, [gifGenerated, designChanges]);
+
+  // useEffect(() => {
+  //   if (gifGenerated && importedGifs && importedGifs.length > 0) {
+  //     console.log('importedGifs[0]', importedGifs[0]);
+  //     setSelectedGif(importedGifs[0]);
+  //     if (selectedGif) {
+        
+  //     }
+  //   }
+  // }, [gifGenerated, importedGifs, handleEditButtonClick]);
 
   async function handleDownloadClick() {
     if (!gifGenerated) return;
@@ -100,23 +128,6 @@ function GeneratedGif(props) {
     document.body.removeChild(a);
     setDownloadLoading(false);
   }
-
-  const handleEditButtonClick = () => {
-    if (selectedGif !== null) {
-      const hoveredGif = importedGifs[selectedGif];
-      editGif(
-        hoveredGif.url,
-        hoveredGif.resourceId,
-        hoveredGif.selectedColor,
-        hoveredGif.selectedFrame,
-        hoveredGif.resourceType,
-        hoveredGif.tags,
-        hoveredGif.example_email,
-        hoveredGif.frame_urls
-      );
-      setDesignChanges(false);
-    }
-  };
 
   const handleNameChange = (index, newName) => {
     const updatedGifs = [...importedGifs];

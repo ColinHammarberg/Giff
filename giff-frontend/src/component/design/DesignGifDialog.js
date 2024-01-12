@@ -1,5 +1,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 import './DesignGifDialog.scss';
 import DialogWrapper from '../DialogWrapper';
 import { Box, Button, IconButton, Slider, TextField } from '@mui/material';
@@ -33,6 +36,7 @@ import {
   ApplyGifFrame,
   UpdateGifDuration,
   UpdateGifFrames,
+  UpdateGifName,
   updateEmailAPI,
 } from '../../endpoints/GifCreationEndpoints';
 import Tag from '../overall/Tag';
@@ -62,6 +66,8 @@ class DesignGifDialog extends PureComponent {
       selectedFrames: this.props.selectedGif.frame_urls || [],
       gifDuration: props.selectedGif.duration,
       currentGifUrl: this.props.selectedGif.url,
+      isEditingName: false,
+      editedName: this.props.selectedGif?.gifName || '',
       isLoading: false,
       isLoadingEmail: false,
       isGifPortrait: false,
@@ -283,11 +289,12 @@ class DesignGifDialog extends PureComponent {
         gifDuration: this.props.selectedGif.duration,
         frameUrls: this.props.selectedGif.frame_urls,
         selectedFrames: this.props.selectedGif.frame_urls,
+        editedName: this.props.selectedGif.gifName,
       });
       if (!this.props.selectedGif.frame_urls) {
-        this.props.setActiveTab(1)
+        this.props.setActiveTab(1);
       } else {
-        this.props.setActiveTab(0)
+        this.props.setActiveTab(0);
       }
       this.setState({ tags: [] });
       this.setState({
@@ -438,6 +445,23 @@ class DesignGifDialog extends PureComponent {
     }
   };
 
+  handleSaveEditedName = async () => {
+    const { editedName } = this.state;
+    const { selectedGif } = this.props;
+
+    try {
+      await UpdateGifName(selectedGif.resourceId, editedName);
+      showNotification('success', 'GIF name updated successfully');
+      this.setState({ isEditingName: false });
+    } catch (error) {
+      showNotification('error', 'Failed to update GIF name');
+    }
+  };
+
+  handleCancelNameEdit = () => {
+    this.setState({ isEditingName: false });
+  }
+
   updateGif = async (updatedFrames) => {
     const { selectedGif } = this.props;
     const gifData = {
@@ -483,7 +507,8 @@ class DesignGifDialog extends PureComponent {
     ),
     1: (
       <div>
-        Choose a <span>nice frame</span> to wrap your gif.
+        Choose a <span>nice frame</span> to wrap your gif by{' '}
+        <span>clicking on the</span> color selections.
       </div>
     ),
     2: (
@@ -511,6 +536,8 @@ class DesignGifDialog extends PureComponent {
       currentGifUrl,
       isLoading,
       frameUrls,
+      isEditingName,
+      editedName,
     } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
@@ -603,6 +630,41 @@ class DesignGifDialog extends PureComponent {
                     }}
                     alt="Selected Frame"
                   />
+                )}
+              </div>
+              <div className="gif-name-section">
+                {isEditingName ? (
+                  <>
+                    <TextField
+                      value={editedName}
+                      type="text"
+                      onChange={(e) =>
+                        this.setState({ editedName: e.target.value })
+                      }
+                      InputProps={{
+                        endAdornment: (
+                          <>
+                            <IconButton onClick={this.handleSaveEditedName}>
+                              <CheckIcon className="confirm" />
+                            </IconButton>
+                            <IconButton onClick={this.handleCancelNameEdit}>
+                              <CloseIcon className="close" />
+                            </IconButton>
+                          </>
+                        ),
+                      }}
+                      
+                    />
+                  </>
+                ) : (
+                  <>
+                    <span>{editedName}</span>
+                    <IconButton
+                      onClick={() => this.setState({ isEditingName: true })}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </>
                 )}
               </div>
               <div className="slider-container">

@@ -221,7 +221,8 @@ function GifLibrary() {
     tags,
     exampleEmail,
     duration,
-    frameUrls
+    frameUrls,
+    gifName
   ) => {
     console.log('duration', duration, resourceType);
     setIsDesignOpen(true);
@@ -233,6 +234,7 @@ function GifLibrary() {
       tags: tags,
       exampleEmail: exampleEmail,
       frame_urls: frameUrls,
+      gifName: gifName
     });
   };
 
@@ -249,7 +251,8 @@ function GifLibrary() {
           hoveredGif.tags,
           hoveredGif.example_email,
           hoveredGif.duration,
-          hoveredGif.frame_urls
+          hoveredGif.frame_urls,
+          hoveredGif.name
         );
       }
       setDesignChanges(false);
