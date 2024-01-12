@@ -4,11 +4,6 @@ import memoizeOne from 'memoize-one';
 import './Tabs.scss';
 import LightTooltip from '../overall/LightToolTip';
 
-const convertString = (str, className = 'tabs') => {
-  const value = `${className} ${str}`;
-  return value?.replace(/\s/g, '-').toLowerCase();
-};
-
 const getTabs = memoizeOne((tabs, activeIndex) => {
   return tabs.map((label, i) => {
     return { label, active: i === activeIndex };
@@ -31,6 +26,7 @@ export const useTabs = (initialTabs) => {
 };
 
 const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
+  console.log('tabs', tabs);
   return (
     <ul className={`tabs ${variant} `}>
       {tabs?.map((tab, i) => (
@@ -43,19 +39,19 @@ const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
             className={`tab-item ${tab.active ? 'active' : ''} ${
               disabled[i] ? 'disabled' : ''
             } ${className} ${!tab.label ? 'tab-item-hidden' : ''}`}
+            onClick={(event) => {
+              if (!disabled[i]) {
+                event.preventDefault();
+                event.stopPropagation();
+                onChange(i);
+              }
+            }}
           >
             <div
               className="tab-wrapper"
-              data-id={convertString(tab.label, variant)}
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                if (!disabled[i]) {
-                  onChange(i);
-                }
-              }}
             >
-              <span className="tab-label">{tab.label}</span>
+              <span className="tab-label">{tab.label.label}</span>
+              {tab.label.icon}
             </div>
           </li>
         </LightTooltip>

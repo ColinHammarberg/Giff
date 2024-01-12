@@ -15,6 +15,7 @@ import {
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import { showNotification } from '../notification/Notification';
 import ExampleEmailPopover from './EmailExamplePopover';
+import { tabsData } from '../tabs/TabsData';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
@@ -30,12 +31,7 @@ function GeneratedGif(props) {
   const [selectedGif, setSelectedGif] = useState(null);
   const [downloadLoading, setDownloadLoading] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab, setActiveTab } = useTabs([
-    'Cut',
-    'Frame Design',
-    'Tags',
-    'Email',
-  ]);
+  const { tabs, changeTab, activeTab, setActiveTab } = useTabs(tabsData);
   const [expandedDescriptionIndex, setExpandedDescriptionIndex] =
     useState(null);
   const [imageDimensions, setImageDimensions] = useState({

@@ -24,6 +24,7 @@ import DeleteGifPopover from './DeleteGifPopover';
 import GifBoxes from './GifBoxes';
 import ActionMenu from './ActionMenu';
 import LoadingGif from '../../resources/loading-gif.png';
+import { tabsData } from '../tabs/TabsData';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -54,10 +55,7 @@ function GifLibrary() {
         selectedTags.some((selectedTag) => selectedTag.value === gifTag.value)
       )
   );
-  const { tabs, changeTab, activeTab, setActiveTab,  } = useTabs(
-    ['Cut', 'Frame', 'Tags', 'Email'],
-    0
-  );
+  const { tabs, changeTab, activeTab, setActiveTab } = useTabs(tabsData, 0);
 
   useEffect(() => {
     const timer = setTimeout(() => {

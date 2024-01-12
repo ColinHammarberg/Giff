@@ -93,6 +93,11 @@
                 width: 119px;
                 border-radius: 6px;
                 font-size: 18px;
+                gap: 8px;
+
+                .MuiSvgIcon-root {
+                    font-size: 18px;
+                }
             }
 
             &.active {
