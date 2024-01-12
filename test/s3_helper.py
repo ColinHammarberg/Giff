@@ -125,7 +125,7 @@ def get_multiple_gifs():
             user_id=user_id, resourceId=resource_id, gif_name=gif_name).first()
 
         if gif is None:
-            return jsonify({'error': 'GIF not found'}), 404
+            return jsonify({'message': 'GIF not found'}), 200
 
         # Generate a presigned URL for the specific GIF
         presigned_url = s3_client.generate_presigned_url('get_object',
