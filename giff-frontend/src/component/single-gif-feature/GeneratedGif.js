@@ -7,7 +7,11 @@ import OfficialButton from '../buttons/OfficialButton';
 import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
-import { DownloadIndividualDesignedGifs, GetMultipleGifs, UpdateGifName } from '../../endpoints/GifCreationEndpoints';
+import {
+  DownloadIndividualDesignedGifs,
+  GetMultipleGifs,
+  UpdateGifName,
+} from '../../endpoints/GifCreationEndpoints';
 import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import { showNotification } from '../notification/Notification';
 import ExampleEmailPopover from './EmailExamplePopover';
@@ -15,13 +19,29 @@ import ExampleEmailPopover from './EmailExamplePopover';
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
   const [importedGifs, setImportedGifs] = useState(null);
-  const { editGif, isDesignOpen, isMobile, selectedDesignGif, handleOpenDesign, handleCloseDesign } = useContext(GiftContext);
+  const {
+    editGif,
+    isDesignOpen,
+    isMobile,
+    selectedDesignGif,
+    handleOpenDesign,
+    handleCloseDesign,
+  } = useContext(GiftContext);
   const [selectedGif, setSelectedGif] = useState(null);
   const [downloadLoading, setDownloadLoading] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const { tabs, changeTab, activeTab, setActiveTab } = useTabs(['Cut', 'Frame Design', 'Tags', 'Email']);
-  const [expandedDescriptionIndex, setExpandedDescriptionIndex] = useState(null);
-  const [imageDimensions, setImageDimensions] = useState({ width: null, height: null });
+  const { tabs, changeTab, activeTab, setActiveTab } = useTabs([
+    'Cut',
+    'Frame Design',
+    'Tags',
+    'Email',
+  ]);
+  const [expandedDescriptionIndex, setExpandedDescriptionIndex] =
+    useState(null);
+  const [imageDimensions, setImageDimensions] = useState({
+    width: null,
+    height: null,
+  });
   const imageRef = useRef(null);
   const [openExampleEmail, setOpenExampleEmail] = useState(null);
 
@@ -35,14 +55,14 @@ function GeneratedGif(props) {
     if (gifGenerated && importedGifs?.length > 0) {
       setOpenExampleEmail(true);
     }
-  }, [gifGenerated, importedGifs?.length])
+  }, [gifGenerated, importedGifs?.length]);
 
   useEffect(() => {
     if (gifGenerated) {
       const fetchData = async () => {
         const response = await GetMultipleGifs(gifGenerated);
         if (response.data) {
-          setImportedGifs(response.data)
+          setImportedGifs(response.data);
         }
       };
       fetchData();
@@ -51,12 +71,19 @@ function GeneratedGif(props) {
 
   async function handleDownloadClick() {
     if (!gifGenerated) return;
-  
-    const { url, name, selectedColor, selectedFrame, resourceType } = importedGifs[0];
-    const gifData = JSON.stringify({ url, name, selectedColor, selectedFrame, resourceType });
-  
+
+    const { url, name, selectedColor, selectedFrame, resourceType } =
+      importedGifs[0];
+    const gifData = JSON.stringify({
+      url,
+      name,
+      selectedColor,
+      selectedFrame,
+      resourceType,
+    });
+
     try {
-      setDownloadLoading(true)
+      setDownloadLoading(true);
       const response = await DownloadIndividualDesignedGifs(gifData);
       const blob = new Blob([response.data], { type: 'image/gif' });
       initiateDownload(blob, name);
@@ -64,7 +91,7 @@ function GeneratedGif(props) {
       console.error('Error downloading individual GIF:', error);
     }
   }
-  
+
   function initiateDownload(blob, filename) {
     const downloadUrl = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -81,7 +108,16 @@ function GeneratedGif(props) {
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = importedGifs[selectedGif];
-      editGif(hoveredGif.url, hoveredGif.resourceId, hoveredGif.selectedColor, hoveredGif.selectedFrame, hoveredGif.resourceType, hoveredGif.tags, hoveredGif.example_email, hoveredGif.frame_urls);
+      editGif(
+        hoveredGif.url,
+        hoveredGif.resourceId,
+        hoveredGif.selectedColor,
+        hoveredGif.selectedFrame,
+        hoveredGif.resourceType,
+        hoveredGif.tags,
+        hoveredGif.example_email,
+        hoveredGif.frame_urls
+      );
       setDesignChanges(false);
     }
   };
@@ -91,7 +127,7 @@ function GeneratedGif(props) {
     updatedGifs[index].name = newName;
     setImportedGifs(updatedGifs);
   };
-  
+
   const handleNameSubmit = async (gif) => {
     const updatedName = gif.name;
     try {
@@ -111,61 +147,102 @@ function GeneratedGif(props) {
         </Box>
       ) : (
         <>
-        <Box className="title">Your gif is ready. It looks great.</Box>
-        {gifGenerated && importedGifs?.length > 0 && (
-          <Box className="gif">
-            {importedGifs.map((gif, index) => {
-              const isExpanded = expandedDescriptionIndex === index;
-              const shortDescription = gif?.ai_description?.substring(0, 100) + "...";
-              return (
-                <>
-                  <div className="gif-container">
-                    <img src={gif?.url} ref={imageRef} onLoad={handleImageLoad} alt="Generated GIF" style={{ border: `4px solid ${gif.selectedColor || '#ffffff'}`}} />
-                    <ExampleEmailPopover
-                      open={openExampleEmail}
-                      anchorEl={imageRef.current}
-                      content={gif.example_email}
-                      onClose={() => setOpenExampleEmail(false)}
-                    />
-                    {gif.selectedFrame && !gif.selectedColor && (
-                      <img src={getSelectedFramePath(gif.selectedFrame)} style={{width: imageDimensions.width, height: imageDimensions.height}} alt="" />
-                    )}
-                    <Box className="gif-buttons"
-                      onMouseEnter={() => setSelectedGif(index)}
-                      onMouseLeave={() => setSelectedGif(null)}
-                    >
-                      <Button className="edit" onClick={handleEditButtonClick}>Edit</Button>
-                    </Box>
-                  </div>
-                  {gif?.ai_description && (
-                    <Box className="description" style={{ width: imageDimensions.width, backgroundColor: gif.selectedColor || '#ffffff'}}>
-                      <p>
-                        {isExpanded ? gif?.ai_description : shortDescription}
-                      </p>
-                      <Button
-                        className="view-more-button"
-                        onClick={() => setExpandedDescriptionIndex(isExpanded ? null : index)}
+          <Box className="title">Your gif is ready. It looks great.</Box>
+          {gifGenerated && importedGifs?.length > 0 && (
+            <Box className="gif">
+              {importedGifs.map((gif, index) => {
+                const isExpanded = expandedDescriptionIndex === index;
+                const shortDescription =
+                  gif?.ai_description?.substring(0, 100) + '...';
+                return (
+                  <>
+                    <div className="gif-container">
+                      <img
+                        src={gif?.url}
+                        ref={imageRef}
+                        onLoad={handleImageLoad}
+                        alt="Generated GIF"
+                        style={{
+                          border: `4px solid ${gif.selectedColor || '#ffffff'}`,
+                        }}
+                      />
+                      <ExampleEmailPopover
+                        open={openExampleEmail}
+                        anchorEl={imageRef.current}
+                        content={gif.example_email}
+                        onClose={() => setOpenExampleEmail(false)}
+                      />
+                      {gif.selectedFrame && !gif.selectedColor && (
+                        <img
+                          src={getSelectedFramePath(gif.selectedFrame)}
+                          style={{
+                            width: imageDimensions.width,
+                            height: imageDimensions.height,
+                          }}
+                          alt=""
+                        />
+                      )}
+                      {!isMobile && (
+                        <Box
+                          className="gif-buttons"
+                          onMouseEnter={() => setSelectedGif(index)}
+                          onMouseLeave={() => setSelectedGif(null)}
+                        >
+                          <Button
+                            className="edit"
+                            onClick={handleEditButtonClick}
+                          >
+                            Edit
+                          </Button>
+                        </Box>
+                      )}
+                    </div>
+                    {gif?.ai_description && (
+                      <Box
+                        className="description"
+                        style={{
+                          width: imageDimensions.width,
+                          backgroundColor: gif.selectedColor || '#ffffff',
+                        }}
                       >
-                        {isExpanded ? "View Less" : "See longer description"}
-                      </Button>
-                  </Box>
-                  )}
-                  <TextField
-                    value={gif?.name}
-                    onChange={(e) => handleNameChange(index, e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleNameSubmit(gif)}
-                    style={{ backgroundColor: 'transparent', border: 'none' }}
-                    InputProps={{
-                      disableUnderline: true,
-                  }}
-                />
-                </>
-              )
-            })}
-          </Box>
-        )}  
+                        <p>
+                          {isExpanded ? gif?.ai_description : shortDescription}
+                        </p>
+                        <Button
+                          className="view-more-button"
+                          onClick={() =>
+                            setExpandedDescriptionIndex(
+                              isExpanded ? null : index
+                            )
+                          }
+                        >
+                          {isExpanded ? 'View Less' : 'See longer description'}
+                        </Button>
+                      </Box>
+                    )}
+                    <TextField
+                      value={gif?.name}
+                      onChange={(e) => handleNameChange(index, e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === 'Enter' && handleNameSubmit(gif)
+                      }
+                      style={{ backgroundColor: 'transparent', border: 'none' }}
+                      InputProps={{
+                        disableUnderline: true,
+                      }}
+                    />
+                  </>
+                );
+              })}
+            </Box>
+          )}
           <Box className="generated-gif-btn-box">
-            <OfficialButton variant="yellow" label="Download GIF" onClick={handleDownloadClick} isProcessing={downloadLoading} />
+            <OfficialButton
+              variant="yellow"
+              label="Download GIF"
+              onClick={handleDownloadClick}
+              isProcessing={downloadLoading}
+            />
           </Box>
           <DesignGifDialog
             isOpen={isDesignOpen}

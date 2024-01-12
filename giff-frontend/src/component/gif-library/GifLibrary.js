@@ -408,6 +408,7 @@ function GifLibrary() {
                       anchorEl={anchorEl}
                       onClose={handleCloseActionMenu}
                       onSelect={handleActionSelect}
+                      isMobile={isMobile}
                       index={index}
                     />
                     {/* {item.selectedFrame && !item.selectedColor && (

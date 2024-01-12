@@ -6,7 +6,7 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './ActionMenu.scss';
 
-function ActionMenuPopover({ anchorEl, onClose, onSelect }) {
+function ActionMenuPopover({ anchorEl, onClose, onSelect, isMobile }) {
   return (
     <Popover
       open={Boolean(anchorEl)}
@@ -22,12 +22,14 @@ function ActionMenuPopover({ anchorEl, onClose, onSelect }) {
       }}
     >
       <div className="action-menu-popover">
-        <ListItem onClick={() => onSelect('Edit')}>
-          Edit{' '}
-          <span>
-            <EditIcon />
-          </span>
-        </ListItem>
+        {!isMobile && (
+          <ListItem onClick={() => onSelect('Edit')}>
+            Edit{' '}
+            <span>
+              <EditIcon />
+            </span>
+          </ListItem>
+        )}
         <ListItem onClick={() => onSelect('Delete')}>
           Delete{' '}
           <span>
