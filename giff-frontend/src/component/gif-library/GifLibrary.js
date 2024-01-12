@@ -239,17 +239,19 @@ function GifLibrary() {
   const handleEditButtonClick = () => {
     if (selectedGif !== null) {
       const hoveredGif = gifs[currentGifIndex];
-      editGif(
-        hoveredGif.url,
-        hoveredGif.resourceId,
-        hoveredGif.selectedColor,
-        hoveredGif.selectedFrame,
-        hoveredGif.resourceType,
-        hoveredGif.tags,
-        hoveredGif.example_email,
-        hoveredGif.duration,
-        hoveredGif.frame_urls
-      );
+      if (hoveredGif) {
+        editGif(
+          hoveredGif.url,
+          hoveredGif.resourceId,
+          hoveredGif.selectedColor,
+          hoveredGif.selectedFrame,
+          hoveredGif.resourceType,
+          hoveredGif.tags,
+          hoveredGif.example_email,
+          hoveredGif.duration,
+          hoveredGif.frame_urls
+        );
+      }
       setDesignChanges(false);
     }
   };

@@ -61,7 +61,7 @@ class DesignGifDialog extends PureComponent {
       visibleColorIndex: 0,
       selectedFrames: this.props.selectedGif.frame_urls || [],
       gifDuration: props.selectedGif.duration,
-      currentGifUrl: props.selectedGif.url,
+      currentGifUrl: this.props.selectedGif.url,
       isLoading: false,
       isLoadingEmail: false,
       isGifPortrait: false,
