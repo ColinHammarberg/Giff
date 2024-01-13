@@ -142,7 +142,11 @@ function UserSignup() {
             isProcessing={isLoading}
           />
           <OutlookSignUpButton checked={checked} setError={setError} />
-          <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} />
+          <GoogleSignInButton
+            checked={checked}
+            setError={setError}
+            handleSignUpResponse={handleSignUpResponse}
+          />
         </div>
         <Box className="checkbox">
           <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />

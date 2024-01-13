@@ -4,8 +4,12 @@ import { GoogleSignIn } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import './GoogleSignInButton.scss';
 
-const GoogleSignInButton = ({ handleSignUpResponse }) => {
+const GoogleSignInButton = ({ handleSignUpResponse, checked, setError }) => {
   const handleGoogleResponse = async (response) => {
+    if (!checked) {
+      setError(true);
+      return;
+    }
     const googleResponse = await GoogleSignIn({
       token: response.credential,
     });

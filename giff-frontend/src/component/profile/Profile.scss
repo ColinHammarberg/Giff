@@ -5,6 +5,10 @@
     height: 100%;
     width: 100%;
 
+    .header-content {
+        height: 100px;
+    }
+
     .wrapper {
         height: 100%;
         width: 100%;
@@ -12,6 +16,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        min-height: 500px;
 
         .profile-actions {
             width: 860px;
@@ -82,6 +87,7 @@
                 width: 80%;
             }
         }
+
         .title {
             margin-bottom: 10px;
         }
