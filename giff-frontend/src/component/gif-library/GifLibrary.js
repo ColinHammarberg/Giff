@@ -180,7 +180,10 @@ function GifLibrary() {
         document.body.removeChild(a);
       } catch (error) {
         console.error('Error downloading individual GIF:', error);
-        showNotification('error', 'Ohhh no! Something went wrong downloading your GIF. Please try again champ!')
+        showNotification(
+          'error',
+          'Ohhh no! Something went wrong downloading your GIF. Please try again champ!'
+        );
       }
     }
   };
@@ -378,9 +381,9 @@ function GifLibrary() {
                 />
               )}
             </Box>
-            <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
           </div>
         </Box>
+        <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
         <Divider />
         <Box className="gif-wrapper">
           {filteredGifs.length > 0 ? (
