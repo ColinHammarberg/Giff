@@ -59,7 +59,8 @@ function GeneratedGif(props) {
         hoveredGif.tags,
         hoveredGif.example_email,
         hoveredGif.frame_urls,
-        hoveredGif.name
+        hoveredGif.name,
+        hoveredGif.duration
       );
       setDesignChanges(false);
     }

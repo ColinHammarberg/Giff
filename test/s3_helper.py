@@ -142,6 +142,7 @@ def get_multiple_gifs():
             "frame_urls": gif.frame_urls,
             "selectedFrame": gif.selectedFrame,
             "ai_description": gif.ai_description,
+            "duration": gif.duration,
             "example_email": gif.example_email,
         }
 

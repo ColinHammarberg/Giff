@@ -64,8 +64,8 @@ class DesignGifDialog extends PureComponent {
       selectedFilter: null,
       visibleColorIndex: 0,
       selectedFrames: this.props.selectedGif.frame_urls || [],
-      gifDuration: props.selectedGif.duration,
-      currentGifUrl: this.props.selectedGif.url,
+      gifDuration: '',
+      currentGifUrl: '',
       isEditingName: false,
       editedName: this.props.selectedGif?.gifName || '',
       isLoading: false,
@@ -460,7 +460,7 @@ class DesignGifDialog extends PureComponent {
 
   handleCancelNameEdit = () => {
     this.setState({ isEditingName: false });
-  }
+  };
 
   updateGif = async (updatedFrames) => {
     const { selectedGif } = this.props;
@@ -540,6 +540,8 @@ class DesignGifDialog extends PureComponent {
       editedName,
     } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
+
+    console.log('selectedGif', selectedGif);
 
     // const filteredFrames = this.getFilteredFrames();
 
@@ -653,7 +655,6 @@ class DesignGifDialog extends PureComponent {
                           </>
                         ),
                       }}
-                      
                     />
                   </>
                 ) : (
