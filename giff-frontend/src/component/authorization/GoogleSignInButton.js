@@ -4,9 +4,9 @@ import { GoogleSignIn } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import './GoogleSignInButton.scss';
 
-const GoogleSignInButton = ({ handleSignUpResponse, checked, setError }) => {
+const GoogleSignInButton = ({ handleSignUpResponse, checked, setError, signupFlow }) => {
   const handleGoogleResponse = async (response) => {
-    if (!checked) {
+    if (!checked && signupFlow) {
       setError(true);
       return;
     }

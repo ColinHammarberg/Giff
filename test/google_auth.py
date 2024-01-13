@@ -104,52 +104,33 @@ def google_user_signup():
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "Signup failed", "message": str(e)}), 500
-    
-def outlook_user_signup():
+
+def outlook_user_signin_or_signup():
     data = request.get_json()
     access_token = data.get('token')
 
     try:
-        # Decode token without verification
-        decoded_token = jwt.decode(access_token, options={"verify_signature": False})
-        print('decoded_token', decoded_token)
-        user_email = decoded_token.get('unique_name')
-        print('user_email', user_email)
-    except jwt.PyJWTError as e:
-        # Handle any decoding errors
-        return jsonify({"status": "Token decoding error", "message": str(e)}), 400
-
-    # Check if user exists or create a new user
-    existing_user = User.query.filter_by(email=user_email).first()
-    if existing_user:
-        return jsonify({"status": "User already exists"}), 409
-
-    new_user = User(email=user_email, is_active=True)
-    print('user_email', new_user)
-    db.session.add(new_user)
-    
-    try:
-        db.session.commit()
-        access_token = create_access_token(identity=new_user.id)
-        return jsonify(access_token=access_token, status="Signup successful"), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"status": "Signup failed", "message": str(e)}), 500
-    
-def outlook_user_signin():
-    data = request.get_json()
-    access_token = data.get('token')
-
-    try:
-        # Decode token without verification
         decoded_token = jwt.decode(access_token, options={"verify_signature": False})
         user_email = decoded_token.get('unique_name')
     except jwt.PyJWTError as e:
         return jsonify({"status": "Token decoding error", "message": str(e)}), 400
 
-    existing_user = User.query.filter_by(email=user_email).first()
-    if existing_user:
-        access_token = create_access_token(identity=existing_user.id)
+    # Check if the user exists in the database
+    user = User.query.filter_by(email=user_email).first()
+
+    if user:
+        access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token, status="Signin successful"), 200
     else:
-        return jsonify({"status": "User does not exist"}), 404
+        # User doesn't exist, so create a new user and then log them in
+        new_user = User(email=user_email, is_active=True)
+        db.session.add(new_user)
+
+        try:
+            db.session.commit()
+            access_token = create_access_token(identity=new_user.id)
+            return jsonify(access_token=access_token, status="Signup successful"), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"status": "Signup failed", "message": str(e)}), 500
+
