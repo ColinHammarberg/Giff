@@ -1,7 +1,7 @@
 import React from 'react';
 import { Popover, ListItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import DownloadIcon from '@mui/icons-material/Download';
+// import DownloadIcon from '@mui/icons-material/Download';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './ActionMenu.scss';
@@ -36,12 +36,12 @@ function ActionMenuPopover({ anchorEl, onClose, onSelect, isMobile }) {
             <DeleteIcon />
           </span>
         </ListItem>
-        <ListItem onClick={() => onSelect('Download')}>
+        {/* <ListItem onClick={() => onSelect('Download')}>
           Download{' '}
           <span>
             <DownloadIcon />
           </span>
-        </ListItem>
+        </ListItem> */}
         <ListItem onClick={() => onSelect('Share')}>
           Share{' '}
           <span>

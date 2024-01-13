@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DownloadIcon from '@mui/icons-material/Download';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +14,8 @@ function GifBoxes({
   color,
   gifUrl,
   onMouseEnter,
+  onClickDownload,
+  index,
   onNameChange,
   onNameSubmit,
 }) {
@@ -88,6 +91,9 @@ function GifBoxes({
         style={{ border: `4px solid ${color || '#3F3F3F'}` }}
       >
         <img src={gifUrl} alt="" />
+        <IconButton className="download-icon" onClick={() => onClickDownload(index)}>
+          <DownloadIcon />
+        </IconButton>
       </div>
     </div>
   );

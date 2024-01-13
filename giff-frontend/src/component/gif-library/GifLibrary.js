@@ -110,7 +110,6 @@ function GifLibrary() {
   };
 
   const handleActionSelect = (action) => {
-    // Handle the selected action here, for example, call a function based on the action
     switch (action) {
       case 'Edit':
         handleEditButtonClick();
@@ -118,9 +117,9 @@ function GifLibrary() {
       case 'Delete':
         handleOnOpenDeletePopover(currentGifIndex);
         break;
-      case 'Download':
-        handleDownloadIndividualGifs();
-        break;
+      // case 'Download':
+      //   handleDownloadIndividualGifs(index);
+      //   break;
       case 'Share':
         // Handle the Share action
         break;
@@ -142,9 +141,9 @@ function GifLibrary() {
   //   }
   // };
 
-  const handleDownloadIndividualGifs = async () => {
+  const handleDownloadIndividualGifs = async (index) => {
     if (selectedGif !== null) {
-      const hoveredGif = gifs[currentGifIndex];
+      const hoveredGif = gifs[index];
       let selectedResolution = user?.userInfo?.resolution;
       setIsLoading(true);
 
@@ -181,6 +180,7 @@ function GifLibrary() {
         document.body.removeChild(a);
       } catch (error) {
         console.error('Error downloading individual GIF:', error);
+        showNotification('error', 'Ohhh no! Something went wrong downloading your GIF. Please try again champ!')
       }
     }
   };
@@ -234,7 +234,7 @@ function GifLibrary() {
       tags: tags,
       exampleEmail: exampleEmail,
       frame_urls: frameUrls,
-      gifName: gifName
+      gifName: gifName,
     });
   };
 
@@ -401,7 +401,9 @@ function GifLibrary() {
                       name={item.name}
                       color={item.selectedColor}
                       gifUrl={item.url}
+                      index={index}
                       onClickMore={handleOpenActionMenu}
+                      onClickDownload={handleDownloadIndividualGifs}
                       onNameChange={(newName) =>
                         handleNameChange(index, newName)
                       }
@@ -412,7 +414,6 @@ function GifLibrary() {
                       onClose={handleCloseActionMenu}
                       onSelect={handleActionSelect}
                       isMobile={isMobile}
-                      index={index}
                     />
                     {/* {item.selectedFrame && !item.selectedColor && (
                       <img

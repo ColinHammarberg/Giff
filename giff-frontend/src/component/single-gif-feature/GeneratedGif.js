@@ -16,7 +16,6 @@ import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import { showNotification } from '../notification/Notification';
 import ExampleEmailPopover from './EmailExamplePopover';
 import { tabsData } from '../tabs/TabsData';
-import { useNavigate } from 'react-router-dom';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
@@ -39,7 +38,6 @@ function GeneratedGif(props) {
     width: null,
     height: null,
   });
-  const navigate = useNavigate();
   const imageRef = useRef(null);
   const [openExampleEmail, setOpenExampleEmail] = useState(null);
 
@@ -82,7 +80,7 @@ function GeneratedGif(props) {
             setImportedGifs(response.data);
           }
         } catch (error) {
-          navigate('/gif-library');
+          console.error(error);
         }
       };
       fetchData();

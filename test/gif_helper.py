@@ -220,6 +220,7 @@ def upload_pdf_and_generate_gif():
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}"
+    NAME = f"{pdf_file.filename}-{UserGif.query.filter_by(user_id=user_id).count() + 1}"
 
     images_dir = os.path.join(os.path.dirname(__file__), 'pdf_images')
     os.makedirs(images_dir, exist_ok=True)
@@ -268,9 +269,8 @@ def upload_pdf_and_generate_gif():
 
         gifs_folder = os.path.join(os.path.dirname(__file__), 'generated_gifs')
         os.makedirs(gifs_folder, exist_ok=True)
-        gif_name = f'{pdf_file.filename}.gif'
+        gif_name = f'{NAME}.gif'
         output_path = os.path.join(gifs_folder, gif_name)
-        print('gif_name', gif_name)
 
         frames[0].save(output_path, save_all=True,
                        append_images=frames[1:], duration=frame_durations, loop=0)
