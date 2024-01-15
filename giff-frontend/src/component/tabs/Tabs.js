@@ -25,14 +25,18 @@ export const useTabs = (initialTabs) => {
   };
 };
 
-const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
-  console.log('tabs', tabs);
+const Tabs = ({ tabs, onChange, variant, className, disabled, gifLibrary }) => {
+  console.log('gifLibrary', gifLibrary);
   return (
     <ul className={`tabs ${variant} `}>
       {tabs?.map((tab, i) => (
         <LightTooltip
           disableHoverListener={!disabled[i]}
-          title="There is no example email available for this gif."
+          title={
+            gifLibrary
+              ? 'Currently cutting frames is not available in edit mode.'
+              : 'There is no example email available for this gif.'
+          }
         >
           <li
             key={i}
@@ -47,9 +51,7 @@ const Tabs = ({ tabs, onChange, variant, className, disabled }) => {
               }
             }}
           >
-            <div
-              className="tab-wrapper"
-            >
+            <div className="tab-wrapper">
               <span className="tab-label">{tab.label.label}</span>
               {tab.label.icon}
             </div>

@@ -342,6 +342,7 @@ function GifLibrary() {
         selectedGif={selectedDesignGif}
         setDesignChanges={setDesignChanges}
         tabs={tabs}
+        gifLibrary
         isMobile={isMobile}
         changeTab={changeTab}
         setActiveTab={setActiveTab}

@@ -291,7 +291,7 @@ class DesignGifDialog extends PureComponent {
         selectedFrames: this.props.selectedGif.frame_urls,
         editedName: this.props.selectedGif.gifName,
       });
-      if (!this.props.selectedGif.frame_urls) {
+      if (!this.props.selectedGif.frame_urls || this.props.gifLibrary) {
         this.props.setActiveTab(1);
       } else {
         this.props.setActiveTab(0);
@@ -693,10 +693,11 @@ class DesignGifDialog extends PureComponent {
                     tabs={tabs}
                     onChange={this.handleOnChangeTab}
                     disabled={tabs.map((tab, index) => {
-                      if (index === 0 && !selectedGif?.frame_urls) {
+                      if ((index === 0 && !selectedGif?.frame_urls) || (index === 0 && this.props.gifLibrary)) {
                         return true;
                       } else return false;
                     })}
+                    gifLibrary={this.props.gifLibrary}
                     variant="tabs-level-3"
                   />
                 )}
