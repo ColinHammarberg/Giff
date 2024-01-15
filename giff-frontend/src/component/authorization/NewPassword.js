@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, InputLabel } from '@mui/material';
+import { Box } from '@mui/material';
 import './Authorization.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { showNotification } from '../notification/Notification';

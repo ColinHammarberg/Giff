@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, InputLabel, TextField } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import './Authorization.scss';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '../notification/Notification';

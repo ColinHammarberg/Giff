@@ -55,13 +55,14 @@ function ResetPassword() {
             value={email}
             name="email-field"
             onChange={handleOnChangeEmail}
+            error={!!error}
             onKeyPress={(event) => {
               handleKeyPressGenerateGif(event);
             }} />
         </div>
         <div className="buttons">
           <Button onClick={requestResetPassword}>
-            Change Password 
+            {isLoading ? 'Processing...' : 'Change Password'}
           </Button>
           <div className="no-account">Don't have an account yet champ? <span onClick={() => navigate('/signup')}>Sign up here then.</span></div>
         </div>
