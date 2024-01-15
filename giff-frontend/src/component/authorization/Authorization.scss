@@ -259,6 +259,10 @@
             display: grid;
             justify-content: center;
 
+            .checkbox div {
+                width: unset;
+            }
+
             .user-title {
                 margin: auto;
                 margin-top: 10px;
@@ -283,6 +287,14 @@
                 .divider-container {
                     .divider {
                         width: 80px;
+                    }
+                }
+
+                .signup-fields {
+                    gap: 12px;
+                    margin: auto;
+                    .MuiTextField-root {
+                        width: 100%;
                     }
                 }
 

@@ -26,7 +26,7 @@ function Header({ menu, nonAuthenticated }) {
                 <MenuButton />
             )}
             {nonAuthenticated && (
-                <a className="what-is-gift" href="https://gif-t.io/what-is-gift" target="_blank">What is gif-t?</a>
+                <a className="what-is-gift" href="https://gif-t.io/what-is-gift" target="_blank" rel="noreferrer">What is gif-t?</a>
             )}
         </Box>
     )
