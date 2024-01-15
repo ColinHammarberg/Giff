@@ -7,7 +7,7 @@ import DesktopLogo from '../../resources/app_logo.png'
 import MobileLogo from '../../resources/gif_logo_mobile.gif'
 import useMobileQuery from '../../queries/useMobileQuery';
 
-function Header({ menu }) {
+function Header({ menu, nonAuthenticated }) {
     const navigate = useNavigate();
     const { isMobile } = useMobileQuery();
     const access_token = localStorage.getItem('access_token');
@@ -24,6 +24,9 @@ function Header({ menu }) {
             </div>
             {menu && (
                 <MenuButton />
+            )}
+            {nonAuthenticated && (
+                <a className="what-is-gift" href="https://gif-t.io/what-is-gift" target="_blank">What is gif-t?</a>
             )}
         </Box>
     )

@@ -4,7 +4,13 @@ import { GoogleSignIn } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import './GoogleSignInButton.scss';
 
-const GoogleSignInButton = ({ handleSignUpResponse, checked, setError, signupFlow }) => {
+const GoogleSignInButton = ({
+  handleSignUpResponse,
+  checked,
+  setError,
+  signupFlow,
+  isMobile
+}) => {
   const handleGoogleResponse = async (response) => {
     if (!checked && signupFlow) {
       setError(true);
@@ -25,8 +31,10 @@ const GoogleSignInButton = ({ handleSignUpResponse, checked, setError, signupFlo
         display: 'flex !important',
         justifyContent: 'center !important',
         alignItems: 'center !important',
+        backgroundColor: 'transparent !important',
       }}
-      width={480}
+      width={isMobile ? 200 : 480}
+      height={50}
       className="custom-google-login-button"
     />
   );

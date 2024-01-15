@@ -10,6 +10,8 @@ import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignUp, Signup } from '../../endpoints/UserEndpoints';
 import GoogleSignInButton from './GoogleSignInButton';
 import OutlookSignInButton from './OutlookSignin';
+import BackButton from '../profile/BackButton';
+import useMobileQuery from '../../queries/useMobileQuery';
 
 function UserSignup() {
   const [checked, setChecked] = useState(false);
@@ -20,6 +22,7 @@ function UserSignup() {
     password: '',
   });
   const navigate = useNavigate();
+  const { isMobile } = useMobileQuery();
 
   const GOOGLE_CLIENT_ID =
     '780954759358-8kkg6m7kdtg9dn26449mfnpsvnpqtnv4.apps.googleusercontent.com';
@@ -65,6 +68,7 @@ function UserSignup() {
   };
 
   const signUpUserCredentials = async () => {
+    console.log('formData', formData);
     if (!checked) {
       setError(true);
       return;
@@ -109,59 +113,71 @@ function UserSignup() {
 
   return (
     <div className="authorization">
-      <Header />
+      <Header nonAuthenticated />
       <Box className="user-authentication">
-        <Box className="user-title">Become a gif-ter</Box>
-        <div className="user-details">
-          <InputLabel>Email</InputLabel>
-          <TextField
-            value={formData.email}
-            name="email"
-            error={error === 'Invalid email address'}
-            helperText={
-              error === 'Invalid email address' &&
-              'Please enter a valid email address'
-            }
-            onKeyPress={handleKeyPressGenerateGif}
-            onChange={handleOnChange}
-          />
-        </div>
-        <div className="password-details">
-          <InputLabel>Password</InputLabel>
-          <PasswordField
-            value={formData.password}
-            name="password"
-            onChange={handleOnChange}
-          />
-        </div>
-        <div className="buttons">
-          <OfficialButton
-            onClick={signUpUserCredentials}
-            label="Sign Up"
-            variant="pink"
-            isProcessing={isLoading}
-          />
-          <OutlookSignInButton checked={checked} setError={setError} signupFlow />
-          <GoogleSignInButton
-            checked={checked}
-            setError={setError}
-            handleSignUpResponse={handleSignUpResponse}
-            signupFlow
-          />
-        </div>
-        <Box className="checkbox">
-          <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
-          <div>
-            I agree that GiF-T can store my email and send me information,
-            marketing, and newsletters.
-          </div>
+        <Box className="user-title">
+          <BackButton onClick={() => navigate('/')} variant="yellow" />
+          <div className="title">Sign up</div>
         </Box>
-        {error && (
-          <Box className="error">
-            Sorry, champ. Before you can sign up, you need to check the box and
-            agree that we store your information and send you stuff.
+        <div className="content">
+          <div className="signup-fields">
+            <div className="user-details">
+              <InputLabel>Become a gif-ter</InputLabel>
+              <TextField
+                value={formData.email}
+                name="email"
+                placeholder="Email"
+                error={error === 'Invalid email address'}
+                helperText={
+                  error === 'Invalid email address' &&
+                  'Please enter a valid email address'
+                }
+                onKeyPress={handleKeyPressGenerateGif}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="password-details">
+              <PasswordField
+                value={formData.password}
+                placeholder="Password"
+                name="password"
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+          <Box className="checkbox">
+            <Checkbox onChange={handleOnChangeCheckbox} checked={checked} />
+            <div className={error && 'error'}>
+              I agree that GiF-T can store my email and send me information,
+              marketing, and newsletters.
+            </div>
           </Box>
-        )}
+          <div className="divider-container">
+            <div className="divider"></div>
+            <div>Or</div>
+            <div className="divider"></div>
+          </div>
+          <div className="buttons">
+            <OfficialButton
+              onClick={signUpUserCredentials}
+              label="Sign Up"
+              variant="pink"
+              isProcessing={isLoading}
+            />
+            <OutlookSignInButton
+              checked={checked}
+              setError={setError}
+              signupFlow
+            />
+            <GoogleSignInButton
+              checked={checked}
+              isMobile={isMobile}
+              setError={setError}
+              handleSignUpResponse={handleSignUpResponse}
+              signupFlow
+            />
+          </div>
+        </div>
       </Box>
     </div>
   );

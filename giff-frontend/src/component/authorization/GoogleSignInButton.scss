@@ -4,8 +4,16 @@
     align-items: center !important;
     justify-content: center !important;
     margin: auto !important;
+    background-color: transparent !important;
+    height: 50px !important;
 
-    .google-sign-in-button {
+    .custom-google-login-button {
         width: 480px;
+        background-color: transparent !important;
     }
+}
+
+.custom-google-login-button {
+    width: 480px;
+    background-color: transparent !important;
 }

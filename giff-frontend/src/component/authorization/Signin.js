@@ -5,10 +5,11 @@ import PasswordField from './PasswordField';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { showNotification } from '../notification/Notification';
 import Header from '../overall/Header';
-import OfficialButton from '../buttons/OfficialButton';
 import { GoogleSignIn, Signin } from '../../endpoints/UserEndpoints';
 import OutlookSignInButton from './OutlookSignin';
 import GoogleSignInButton from './GoogleSignInButton';
+import BackButton from '../profile/BackButton';
+import useMobileQuery from '../../queries/useMobileQuery';
 
 function UserSignin() {
   const [error, setError] = useState(false);
@@ -17,7 +18,15 @@ function UserSignin() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const [returnUrl, setReturnUrl] = useState('/choose-option-create'); // Default return URL
+  const [returnUrl, setReturnUrl] = useState('/choose-option-create');
+  const [isEmailEntered, setIsEmailEntered] = useState(false);
+  const { isMobile } = useMobileQuery();
+
+  const handleContinue = () => {
+    if (email) {
+      setIsEmailEntered(true);
+    }
+  };
 
   React.useEffect(() => {
     // Extract returnUrl from the query string
@@ -80,16 +89,6 @@ function UserSignin() {
     setPassword(event.target.value);
   }
 
-  const ResetPasswordButton = () => (
-    <Button
-      color="primary"
-      onClick={() => navigate('/reset-password')}
-      style={{ padding: 0, minWidth: 'auto' }}
-    >
-      here.
-    </Button>
-  );
-
   const signInUserCredentials = async () => {
     setIsLoading(true);
     try {
@@ -119,55 +118,96 @@ function UserSignin() {
 
   return (
     <div className="authorization">
-      <Header />
+      <Header nonAuthenticated />
       <Box className="user-authentication">
-        <Box className="user-title">Sign in to Gif-T</Box>
-        <div className="username">
-          <InputLabel>Email</InputLabel>
-          <TextField
-            value={email}
-            name="email-field"
-            onChange={handleOnChangeEmail}
-            onKeyPress={(event) => {
-              handleKeyPressGenerateGif(event);
-            }}
-          />
-        </div>
-        <div className="password">
-          <InputLabel>Password</InputLabel>
-          <PasswordField
-            value={password}
-            name="password-field"
-            onKeyPress={(event) => {
-              handleKeyPressGenerateGif(event);
-            }}
-            onChange={handleOnChangePassword}
-            error={error}
-            helperText={
-              error ? (
-                <span>
-                  Sorry, champ. Your password or email is wrong. Please give it
-                  another try or reset your password <ResetPasswordButton />
-                </span>
-              ) : (
-                ''
-              )
-            }
-          />
-        </div>
-        <div className="buttons">
-          <OfficialButton
-            onClick={signInUserCredentials}
-            label="Sign in"
-            variant="pink"
-            isProcessing={isLoading}
-          />
-          <OutlookSignInButton />
-          <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} />
-          <div className="no-account">
-            Don’t have a Gif-t account yet? No worries. You can sign up{' '}
-            <span onClick={() => navigate('/signup')}>here.</span>
+        <Box className="user-title">
+          {isEmailEntered && (
+            <BackButton
+              onClick={() => setIsEmailEntered(false)}
+              variant="yellow"
+            />
+          )}
+          <div className="title">
+            {isEmailEntered ? 'Type password' : 'Log in or sign up'}
           </div>
+        </Box>
+        <div className="content">
+          {!isEmailEntered ? (
+            <div className="username">
+              <InputLabel>welcome to gif-t</InputLabel>
+              <TextField
+                value={email}
+                placeholder="Email"
+                name="email-field"
+                onChange={handleOnChangeEmail}
+                onKeyPress={(event) => {
+                  if (event.key === 'Enter') handleContinue();
+                }}
+              />
+              <div className="extra-actions">
+                <div className="no-account">
+                  New user?{' '}
+                  <span onClick={() => navigate('/signup')}>
+                    &nbsp;Sign up.
+                  </span>
+                </div>
+                <div className="continue-container">
+                  <Button className="continue" onClick={handleContinue}>
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="password">
+              <InputLabel>Log in champ</InputLabel>
+              <PasswordField
+                value={password}
+                placeholder="Password"
+                name="password-field"
+                onChange={handleOnChangePassword}
+                onKeyPress={(event) => {
+                  handleKeyPressGenerateGif(event);
+                }}
+                error={error}
+                // helperText={
+                //   error ? (
+                //     <span>
+                //       Sorry, champ. Your password or email is wrong.
+                //     </span>
+                //   ) : (
+                //     ''
+                //   )
+                // }
+              />
+              <div className="extra-actions">
+                <div className="continue-container">
+                  <Button className="continue" onClick={signInUserCredentials}>
+                    {isLoading ? 'Processing...' : 'Sign in'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="divider-container">
+            <div className="divider"></div>
+            <div>Or</div>
+            <div className="divider"></div>
+          </div>
+          <div className="buttons">
+            <OutlookSignInButton />
+            <GoogleSignInButton handleSignUpResponse={handleSignUpResponse} isMobile={isMobile} />
+          </div>
+          {isEmailEntered && (
+            <div className="bottom-actions">
+              <span onClick={() => navigate('/reset-password')}>
+                Reset password
+              </span>
+              <span onClick={() => setIsEmailEntered(null)}>
+                Log in with another account
+              </span>
+            </div>
+          )}
         </div>
       </Box>
     </div>
