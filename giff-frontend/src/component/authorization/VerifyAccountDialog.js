@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Box, Button, Dialog, DialogContent } from '@mui/material';
 import './VerifyAccountDialog.scss';
+import { showNotification } from '../notification/Notification';
+import { ResendVerificationEmail } from '../../endpoints/UserEndpoints';
 
 let resolve;
 let containerElement;
@@ -17,6 +19,8 @@ class VerifyAccountDialog extends PureComponent {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleHistoryStateChanged = this.handleHistoryStateChanged.bind(this);
+    this.handleOnResendEmailVerification =
+      this.handleOnResendEmailVerification.bind(this);
   }
 
   componentDidMount() {
@@ -45,19 +49,31 @@ class VerifyAccountDialog extends PureComponent {
 
   handleCancel() {
     this.setState({ isOpen: false, hasConfirmed: false }, () => {
-        VerifyAccountDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
+      VerifyAccountDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
     });
   }
 
+  async handleOnResendEmailVerification() {
+    const response = await ResendVerificationEmail();
+    if (response.status === 'Sent new email verification link') {
+      showNotification('success', `Sent new verification email`);
+      this.setState({ isOpen: false, hasConfirmed: false }, () => {
+        VerifyAccountDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
+      });
+    } else {
+      showNotification('error', `Oh no! Something went wrong!`);
+    }
+  }
+
   handleHistoryStateChanged() {
-    this.setState({ isOpen: false,  }, () => {
-        VerifyAccountDialog.destroy();
+    this.setState({ isOpen: false }, () => {
+      VerifyAccountDialog.destroy();
     });
   }
 
   handleConfirm() {
     this.setState({ isOpen: false, hasConfirmed: true }, () => {
-        VerifyAccountDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
+      VerifyAccountDialog.destroy({ hasConfirmed: this.state.hasConfirmed });
     });
   }
 
@@ -75,35 +91,39 @@ class VerifyAccountDialog extends PureComponent {
       return null;
     }
     return (
-        <Dialog
-            className="verify-account-dialog"
-            open={true}
-            fullScreen={null}
-            maxWidth={'sm'}
-            transitionDuration={400}
-        >
+      <Dialog
+        className="verify-account-dialog"
+        open={true}
+        fullScreen={null}
+        maxWidth={'sm'}
+        transitionDuration={400}
+      >
         <DialogContent className="dialog-content styled-scrollbar">
-            <Box className="header-content">
-                You need to verify your email
-            </Box>
-            <Box className="verify-account-content">
-                <div>
-                    Sorry, Champ. You need to verify your email <br></br>
-                    before you can use Gif-T. Just click the link in <br></br>
-                    the email you've received from hello@gif-t.io.
-                    <Box className="confirm-btn-actions">
-                        <Button onClick={this.handleCancel} className="confirm-btn">Ok</Button>
-                    </Box>
-                </div>
-            </Box>
+          <Box className="header-content">You need to verify your email</Box>
+          <Box className="verify-account-content">
+            <div>
+              Sorry, Champ. You need to verify your email <br></br>
+              before you can use Gif-T. Just click the link in <br></br>
+              the email you've received from hello@gif-t.io.
+              <Box className="confirm-btn-actions">
+                <Button onClick={this.handleCancel} className="confirm-btn">
+                  Ok
+                </Button>
+                <Button
+                  onClick={this.handleOnResendEmailVerification}
+                  className="confirm-btn"
+                >
+                  Send verification link
+                </Button>
+              </Box>
+            </div>
+          </Box>
         </DialogContent>
       </Dialog>
     );
   }
 }
 
-VerifyAccountDialog.propTypes = {
-  
-};
+VerifyAccountDialog.propTypes = {};
 
 export default VerifyAccountDialog;
