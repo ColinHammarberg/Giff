@@ -26,7 +26,6 @@ export const useTabs = (initialTabs) => {
 };
 
 const Tabs = ({ tabs, onChange, variant, className, disabled, gifLibrary }) => {
-  console.log('gifLibrary', gifLibrary);
   return (
     <ul className={`tabs ${variant} `}>
       {tabs?.map((tab, i) => (

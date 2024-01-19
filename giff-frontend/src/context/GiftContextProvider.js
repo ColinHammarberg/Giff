@@ -19,8 +19,6 @@ const GiftContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [singleGif, setSingleGif] = useState(null);
   const [user, setUser] = useState(null); // State to store user info and user logo
-  const [selectedDesignGif, setSelectedDesignGif] = useState({});
-  const [isDesignOpen, setIsDesignOpen] = useState(false);
   const { isMobile } = useMobileQuery();
   const access_token = localStorage.getItem('access_token');
 
@@ -83,12 +81,6 @@ const GiftContextProvider = ({ children }) => {
 
   // design actions
 
-  const editGif = (gifUrl, resourceId, selectedColor, selectedFrame, resourceType, tags, exampleEmail, frameUrls, gifName, duration) => {
-    console.log('tags', tags, resourceType);
-    setIsDesignOpen(true);
-    setSelectedDesignGif({'url': gifUrl, 'resourceId': resourceId, 'selectedColor': selectedColor, 'selectedFrame': selectedFrame, 'tags': tags, "exampleEmail": exampleEmail, "frame_urls": frameUrls, "gifName": gifName, "duration": duration});
-  };
-
   const onChange = (fieldIdentifier, value) => {
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
@@ -119,14 +111,6 @@ const GiftContextProvider = ({ children }) => {
     }
   };
 
-  const handleOpenDesign = () => {
-    setIsDesignOpen(true);
-  };
-
-  const handleCloseDesign = () => {
-    setIsDesignOpen(false);
-  };
-
   function handleDownloadClick() {
     const singleGif = localStorage.getItem('singleGif');
     console.log('singleGif', singleGif);
@@ -140,8 +124,6 @@ const GiftContextProvider = ({ children }) => {
       document.body.removeChild(link);
     }
   }
-
-  console.log('isDesignOpen', isDesignOpen);
 
   return (
     <GiftContext.Provider
@@ -157,12 +139,7 @@ const GiftContextProvider = ({ children }) => {
         handleDownloadClick,
         user,
         setUser: debouncedUpdateUserData,
-        isDesignOpen,
-        editGif,
-        selectedDesignGif,
         isMobile,
-        handleOpenDesign,
-        handleCloseDesign
       }}
     >
       {children}

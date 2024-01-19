@@ -61,7 +61,6 @@ function GifLibrary() {
     const timer = setTimeout(() => {
       setShowLoading(false);
     }, 3000);
-
     return () => clearTimeout(timer);
   }, []);
 

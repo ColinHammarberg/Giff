@@ -1,108 +1,173 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, Button, TextField } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 import './GeneratedGif.scss';
 import Header from '../overall/Header';
 import LoadingGif from '../overall/LoadingGif';
-import OfficialButton from '../buttons/OfficialButton';
 import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
 import {
   DownloadIndividualDesignedGifs,
   GetMultipleGifs,
-  UpdateGifName,
 } from '../../endpoints/GifCreationEndpoints';
-import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
-import { showNotification } from '../notification/Notification';
-import ExampleEmailPopover from './EmailExamplePopover';
+// import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
+// import { showNotification } from '../notification/Notification';
+// import ExampleEmailPopover from './EmailExamplePopover';
 import { tabsData } from '../tabs/TabsData';
+import { useNavigate } from 'react-router-dom';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
   const [importedGifs, setImportedGifs] = useState(null);
-  const {
-    editGif,
-    isDesignOpen,
-    isMobile,
-    selectedDesignGif,
-    handleOpenDesign,
-    handleCloseDesign,
-  } = useContext(GiftContext);
-  const [selectedGif, setSelectedGif] = useState(null);
+  const { isMobile } = useContext(GiftContext);
+  const [selectedDesignGif, setSelectedDesignGif] = useState({});
+  // const [selectedGif, setSelectedGif] = useState(null);
   const [downloadLoading, setDownloadLoading] = useState(null);
-  const [designChanges, setDesignChanges] = useState(false);
+  const [isDesignOpen, setIsDesignOpen] = useState(false);
+  // const [designChanges, setDesignChanges] = useState(false);
   const { tabs, changeTab, activeTab, setActiveTab } = useTabs(tabsData);
-  const [expandedDescriptionIndex, setExpandedDescriptionIndex] =
-    useState(null);
-  const [imageDimensions, setImageDimensions] = useState({
-    width: null,
-    height: null,
-  });
-  const imageRef = useRef(null);
-  const [openExampleEmail, setOpenExampleEmail] = useState(null);
+  const navigate = useNavigate();
+  // const [expandedDescriptionIndex, setExpandedDescriptionIndex] =
+  //   useState(null);
+  // const [imageDimensions, setImageDimensions] = useState({
+  //   width: null,
+  //   height: null,
+  // });
+  // const imageRef = useRef(null);
+  // const [openExampleEmail, setOpenExampleEmail] = useState(null);
 
-  const handleImageLoad = () => {
-    const width = imageRef.current ? imageRef.current.offsetWidth : 0;
-    const height = imageRef.current ? imageRef.current.offsetHeight : 0;
-    setImageDimensions({ width, height });
+  // const handleImageLoad = () => {
+  //   const width = imageRef.current ? imageRef.current.offsetWidth : 0;
+  //   const height = imageRef.current ? imageRef.current.offsetHeight : 0;
+  //   setImageDimensions({ width, height });
+  // };
+
+  // const handleEditButtonClick = () => {
+  //   if (selectedGif !== null) {
+  //     const hoveredGif = importedGifs[selectedGif];
+  //     editGif(
+  //       hoveredGif.url,
+  //       hoveredGif.resourceId,
+  //       hoveredGif.selectedColor,
+  //       hoveredGif.selectedFrame,
+  //       hoveredGif.resourceType,
+  //       hoveredGif.tags,
+  //       hoveredGif.example_email,
+  //       hoveredGif.frame_urls,
+  //       hoveredGif.name,
+  //       hoveredGif.duration
+  //     );
+  //     setDesignChanges(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (gifGenerated && importedGifs?.length > 0) {
+  //     setOpenExampleEmail(true);
+  //   }
+  // }, [gifGenerated, importedGifs?.length]);
+
+  // useEffect(() => {
+  //   if (gifGenerated) {
+  //     const fetchData = async () => {
+  //       const response = await GetMultipleGifs(gifGenerated);
+  //       try {
+  //         if (response.data) {
+  //           setImportedGifs(response.data);
+  //         }
+  //       } catch (error) {
+  //         console.error(error);
+  //       }
+  //     };
+  //     fetchData();
+  //   }
+  // }, [gifGenerated, designChanges]);
+
+  const handleOpenDesign = useCallback(() => {
+    setIsDesignOpen(true);
+  }, []);
+
+  const handleCloseDesign = () => {
+    setIsDesignOpen(false);
   };
 
-  const handleEditButtonClick = () => {
-    if (selectedGif !== null) {
-      const hoveredGif = importedGifs[selectedGif];
-      editGif(
-        hoveredGif.url,
-        hoveredGif.resourceId,
-        hoveredGif.selectedColor,
-        hoveredGif.selectedFrame,
-        hoveredGif.resourceType,
-        hoveredGif.tags,
-        hoveredGif.example_email,
-        hoveredGif.frame_urls,
-        hoveredGif.name,
-        hoveredGif.duration
-      );
-      setDesignChanges(false);
-    }
-  };
+  const editGif = useCallback(
+    (
+      gifUrl,
+      resourceId,
+      selectedColor,
+      selectedFrame,
+      resourceType,
+      tags,
+      exampleEmail,
+      frameUrls,
+      gifName,
+      duration
+    ) => {
+      console.log('tags', tags, resourceType);
+      setIsDesignOpen(true);
+      setSelectedDesignGif({
+        url: gifUrl,
+        resourceId: resourceId,
+        selectedColor: selectedColor,
+        selectedFrame: selectedFrame,
+        tags: tags,
+        exampleEmail: exampleEmail,
+        frame_urls: frameUrls,
+        gifName: gifName,
+        duration: duration,
+      });
+    },
+    []
+  );
 
   useEffect(() => {
-    if (gifGenerated && importedGifs?.length > 0) {
-      setOpenExampleEmail(true);
-    }
-  }, [gifGenerated, importedGifs?.length]);
-
-  useEffect(() => {
-    if (gifGenerated) {
-      const fetchData = async () => {
-        const response = await GetMultipleGifs(gifGenerated);
+    const openDesignDialogWithImportedGif = async () => {
+      if (gifGenerated) {
         try {
-          if (response.data) {
-            setImportedGifs(response.data);
+          const response = await GetMultipleGifs(gifGenerated);
+          if (response.data && response.data.length > 0) {
+            const importedGif = response.data[0];
+            const {
+              url,
+              resourceId,
+              selectedColor,
+              selectedFrame,
+              resourceType,
+              tags,
+              example_email,
+              frame_urls,
+              name,
+              duration,
+            } = importedGif;
+            editGif(
+              url,
+              resourceId,
+              selectedColor,
+              selectedFrame,
+              resourceType,
+              tags,
+              example_email,
+              frame_urls,
+              name,
+              duration
+            );
           }
         } catch (error) {
           console.error(error);
         }
-      };
-      fetchData();
-    }
-  }, [gifGenerated, designChanges]);
+      }
+    };
 
-  // useEffect(() => {
-  //   if (gifGenerated && importedGifs && importedGifs.length > 0) {
-  //     console.log('importedGifs[0]', importedGifs[0]);
-  //     setSelectedGif(importedGifs[0]);
-  //     if (selectedGif) {
-        
-  //     }
-  //   }
-  // }, [gifGenerated, importedGifs, handleEditButtonClick]);
+    openDesignDialogWithImportedGif();
+  }, [gifGenerated, editGif, handleOpenDesign]);
 
   async function handleDownloadClick() {
     if (!gifGenerated) return;
 
     const { url, name, selectedColor, selectedFrame, resourceType } =
-      importedGifs[0];
+      selectedDesignGif;
+    console.log('selectedDesignGif', selectedDesignGif);
     const gifData = JSON.stringify({
       url,
       name,
@@ -134,21 +199,21 @@ function GeneratedGif(props) {
     setDownloadLoading(false);
   }
 
-  const handleNameChange = (index, newName) => {
-    const updatedGifs = [...importedGifs];
-    updatedGifs[index].name = newName;
-    setImportedGifs(updatedGifs);
-  };
+  // const handleNameChange = (index, newName) => {
+  //   const updatedGifs = [...importedGifs];
+  //   updatedGifs[index].name = newName;
+  //   setImportedGifs(updatedGifs);
+  // };
 
-  const handleNameSubmit = async (gif) => {
-    const updatedName = gif.name;
-    try {
-      await UpdateGifName(gif.resourceId, updatedName);
-      showNotification('success', 'Name updated successfully!');
-    } catch (error) {
-      showNotification('error', 'Error updating GIF name:');
-    }
-  };
+  // const handleNameSubmit = async (gif) => {
+  //   const updatedName = gif.name;
+  //   try {
+  //     await UpdateGifName(gif.resourceId, updatedName);
+  //     showNotification('success', 'Name updated successfully!');
+  //   } catch (error) {
+  //     showNotification('error', 'Error updating GIF name:');
+  //   }
+  // };
 
   return (
     <div className="generated-gif" key={key}>
@@ -159,8 +224,8 @@ function GeneratedGif(props) {
         </Box>
       ) : (
         <>
-          <Box className="title">Your gif is ready. It looks great.</Box>
-          {gifGenerated && importedGifs?.length > 0 && (
+          {/* <Box className="title">Your gif is ready. It looks great.</Box> */}
+          {/* {gifGenerated && importedGifs?.length > 0 && (
             <Box className="gif">
               {importedGifs.map((gif, index) => {
                 const isExpanded = expandedDescriptionIndex === index;
@@ -247,27 +312,28 @@ function GeneratedGif(props) {
                 );
               })}
             </Box>
-          )}
-          <Box className="generated-gif-btn-box">
+          )} */}
+          {/* <Box className="generated-gif-btn-box">
             <OfficialButton
               variant="yellow"
               label="Download GIF"
               onClick={handleDownloadClick}
               isProcessing={downloadLoading}
             />
-          </Box>
+          </Box> */}
           <DesignGifDialog
             isOpen={isDesignOpen}
-            setDesignChanges={setDesignChanges}
+            // setDesignChanges={setDesignChanges}
+            handleDownloadClick={handleDownloadClick}
+            downloadLoading={downloadLoading}
             selectedGif={selectedDesignGif}
+            gifCreationFlow
             tabs={tabs}
+            navigate={navigate}
             isMobile={isMobile}
             changeTab={changeTab}
             setActiveTab={setActiveTab}
             activeTab={activeTab}
-            onClickOk={() => {
-              handleOpenDesign();
-            }}
             onClickCancel={() => {
               handleCloseDesign();
             }}

@@ -226,14 +226,12 @@ class DesignGifDialog extends PureComponent {
     const { selectedGif } = this.props;
     const { tags } = this.state;
     const { hasConfirmed } = await TagsActionDialog.show();
-    console.log('hasConfirmed', hasConfirmed);
     const tagDetails = {
       resourceId: selectedGif.resourceId,
       value: tag.value,
       color: tag.color,
     };
     if (!hasConfirmed) {
-      // remove tag logic
       try {
         const response = await RemoveTag(tagDetails);
         console.log('response', response);
@@ -365,11 +363,12 @@ class DesignGifDialog extends PureComponent {
         'success',
         'Woa! Your new gif details looks great, champ!'
       );
-      this.handleCancel();
-      this.props.setDesignChanges(true);
+    }
+    if (this.props.gifCreationFlow) {
+      this.props.navigate('/gif-library');
     } else {
-      this.handleCancel();
       this.props.setDesignChanges(true);
+      this.handleCancel();
     }
   };
 
