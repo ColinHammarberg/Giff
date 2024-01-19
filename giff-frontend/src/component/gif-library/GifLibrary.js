@@ -144,7 +144,6 @@ function GifLibrary() {
     if (selectedGif !== null) {
       const hoveredGif = gifs[index];
       let selectedResolution = user?.userInfo?.resolution;
-      setIsLoading(true);
 
       if (!selectedResolution && !hoveredGif.resourceType === 'pdf') {
         const resolutionDialogResult = await ChooseResolutionDialog.show();
@@ -169,7 +168,6 @@ function GifLibrary() {
         const blob = new Blob([response.data], { type: 'image/gif' });
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        setIsLoading(false);
         a.style.display = 'none';
         a.href = downloadUrl;
         a.download = `${hoveredGif.name}`;
