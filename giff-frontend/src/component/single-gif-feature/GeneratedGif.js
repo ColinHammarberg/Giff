@@ -123,41 +123,43 @@ function GeneratedGif(props) {
 
   useEffect(() => {
     const openDesignDialogWithImportedGif = async () => {
-      if (gifGenerated && !isMobile) {
-        try {
-          const response = await GetMultipleGifs(gifGenerated);
-          if (response.data && response.data.length > 0) {
-            const importedGif = response.data[0];
-            const {
-              url,
-              resourceId,
-              selectedColor,
-              selectedFrame,
-              resourceType,
-              tags,
-              example_email,
-              frame_urls,
-              name,
-              duration,
-            } = importedGif;
-            editGif(
-              url,
-              resourceId,
-              selectedColor,
-              selectedFrame,
-              resourceType,
-              tags,
-              example_email,
-              frame_urls,
-              name,
-              duration
-            );
+      if (gifGenerated) {
+        if (!isMobile) {
+          try {
+            const response = await GetMultipleGifs(gifGenerated);
+            if (response.data && response.data.length > 0) {
+              const importedGif = response.data[0];
+              const {
+                url,
+                resourceId,
+                selectedColor,
+                selectedFrame,
+                resourceType,
+                tags,
+                example_email,
+                frame_urls,
+                name,
+                duration,
+              } = importedGif;
+              editGif(
+                url,
+                resourceId,
+                selectedColor,
+                selectedFrame,
+                resourceType,
+                tags,
+                example_email,
+                frame_urls,
+                name,
+                duration
+              );
+            }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
+        } else {
+          navigate('/gif-library')
         }
-      } else {
-        navigate('/gif-library')
       }
     };
 
