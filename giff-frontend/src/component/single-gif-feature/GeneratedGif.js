@@ -123,7 +123,7 @@ function GeneratedGif(props) {
 
   useEffect(() => {
     const openDesignDialogWithImportedGif = async () => {
-      if (gifGenerated) {
+      if (gifGenerated && !isMobile) {
         try {
           const response = await GetMultipleGifs(gifGenerated);
           if (response.data && response.data.length > 0) {
@@ -156,11 +156,13 @@ function GeneratedGif(props) {
         } catch (error) {
           console.error(error);
         }
+      } else {
+        navigate('/gif-library')
       }
     };
 
     openDesignDialogWithImportedGif();
-  }, [gifGenerated, editGif, handleOpenDesign]);
+  }, [gifGenerated, editGif, handleOpenDesign, navigate, isMobile]);
 
   async function handleDownloadClick() {
     if (!gifGenerated) return;
