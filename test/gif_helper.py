@@ -5,7 +5,13 @@ import cv2
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from PIL import Image, ImageOps, ImageSequence
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, TimeoutException, ElementNotInteractableException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
+import time
 from selenium import webdriver
 from base64 import b64encode
 from werkzeug.utils import secure_filename
@@ -682,7 +688,6 @@ def generate_video_gif(data, user_id):
 def ease_in_quad(t):
     return t * t
 
-
 @jwt_required(optional=True)
 def generate_gif():
     data = request.get_json()
@@ -704,10 +709,29 @@ def generate_gif():
     options.add_argument('--headless')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
-
+    options.add_argument("--disable-notifications")
+    options.add_argument("disable-infobars")
     service = Service(executable_path="/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(URL)
+
+    try:
+        WebDriverWait(driver, 4).until(
+            EC.presence_of_element_located((By.XPATH, "//button | //a"))
+        )
+        cookie_elements = driver.find_elements(By.XPATH, "//button[contains(., 'Accept') or contains(., 'Agree') or contains(., 'Godkänn') or contains(., 'OK') or contains(., 'Continue') or contains(., 'Fortsätt') or contains(., 'Jag godkänner') or contains(., 'Okej') or contains(., 'Accept All Cookies')] | //a[contains(., 'Accept') or contains(., 'Agree') or contains(., 'OK') or contains(., 'Godkänn') or contains(., 'Continue') or contains(., 'Fortsätt') or contains(., 'Jag godkänner' or contains(., 'Okej') or contains(., 'Accept All Cookies'))]")
+        for element in cookie_elements:
+            try:
+                WebDriverWait(driver, 2).until(EC.element_to_be_clickable(element))
+                ActionChains(driver).move_to_element(element).perform()
+                element.click()
+                break
+            except (ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException):
+                continue
+    except TimeoutException:
+        print("No relevant elements found or they were not clickable")
+
+    time.sleep(1)
 
     scroll_height = driver.execute_script("return document.body.scrollHeight")
     if scroll_height < 1000:
@@ -725,12 +749,13 @@ def generate_gif():
         screenshots.append(driver.get_screenshot_as_png())
         screenshot = driver.get_screenshot_as_png()
         frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
+        # Assuming the function 'upload_frame_to_s3' is defined elsewhere
         upload_frame_to_s3(screenshot, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
         frame_number += 1
         frame_url = s3_client.generate_presigned_url('get_object',
-                                                Params={'Bucket': 'gif-frames',
-                                                        'Key': frame_s3_path},
-                                                ExpiresIn=3600)
+                                                     Params={'Bucket': 'gif-frames',
+                                                             'Key': frame_s3_path},
+                                                     ExpiresIn=3600)
         frame_urls.append(frame_url)
 
     driver.quit()
@@ -752,9 +777,8 @@ def generate_gif():
     )
 
     resource_id = str(uuid.uuid4())
-
     folder_name = f"{user_id}/"
-
+    # Assuming the function 'upload_to_s3' is defined elsewhere
     upload_to_s3(output_path, 'gift-resources',
                  f"{folder_name}{NAME}", resource_id)
     presigned_url = s3_client.generate_presigned_url('get_object',

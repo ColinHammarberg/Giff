@@ -112,9 +112,16 @@
                     flex-direction: column;
                     gap: 16px;
 
+                    .gif-images {
+                        overflow: hidden;
+                    }
+
                     .gifImages {
                         display: flex;
                         flex-wrap: wrap;
+                        overflow: auto;
+                        height: 100%;
+                        max-height: 300px;
                         gap: 8px;
                         width: 452px;
                         justify-content: center;

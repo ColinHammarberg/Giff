@@ -7,6 +7,12 @@ from s3_helper import upload_to_s3
 from gif_helper import is_video_url, generate_video_gif
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, TimeoutException, ElementNotInteractableException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 from selenium import webdriver
 import uuid
 from io import BytesIO
@@ -93,6 +99,24 @@ def generate_extension_gif():
     service = Service(executable_path="/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service,options=options)
     driver.get(URL)
+
+    try:
+        WebDriverWait(driver, 4).until(
+            EC.presence_of_element_located((By.XPATH, "//button | //a"))
+        )
+        cookie_elements = driver.find_elements(By.XPATH, "//button[contains(., 'Accept') or contains(., 'Agree') or contains(., 'Godkänn') or contains(., 'OK') or contains(., 'Continue') or contains(., 'Fortsätt') or contains(., 'Jag godkänner') or contains(., 'Okej') or contains(., 'Accept All Cookies')] | //a[contains(., 'Accept') or contains(., 'Agree') or contains(., 'OK') or contains(., 'Godkänn') or contains(., 'Continue') or contains(., 'Fortsätt') or contains(., 'Jag godkänner' or contains(., 'Okej') or contains(., 'Accept All Cookies'))]")
+        for element in cookie_elements:
+            try:
+                WebDriverWait(driver, 2).until(EC.element_to_be_clickable(element))
+                ActionChains(driver).move_to_element(element).perform()
+                element.click()
+                break
+            except (ElementClickInterceptedException, NoSuchElementException, ElementNotInteractableException):
+                continue
+    except TimeoutException:
+        print("No relevant elements found or they were not clickable")
+
+    time.sleep(1)
 
     scroll_height = driver.execute_script("return document.body.scrollHeight")
     if scroll_height < 1000:
