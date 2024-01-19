@@ -10,6 +10,9 @@ import boto3
 
 # Fetch user info endpoint
 
+s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
+                  aws_secret_access_key='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', region_name='eu-north-1')
+
 @jwt_required()
 def fetch_user_info():
     user_id = get_jwt_identity()
@@ -19,8 +22,6 @@ def fetch_user_info():
 
         user_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in current_user.tags]
         user_logo = UserLogo.query.filter_by(user_id=user_id).first()
-        s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
-                  aws_secret_access_key='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', region_name='eu-north-1')
         presigned_url = None
         if user_logo:
             resource_id = user_logo.resource_id
@@ -81,10 +82,7 @@ def signup():
         return jsonify({"status": "Email already exists"}), 409
     
     hashed_password = generate_password_hash(data['password'], method='sha256')
-
-    # Generate a unique verification code
     verify_account_code = secrets.token_urlsafe(16)
-
     new_user = User(email=data['email'], password=hashed_password, verify_account_code=verify_account_code)
     db.session.add(new_user)
     
@@ -117,14 +115,28 @@ def delete_user_profile():
     if not current_user:
         return jsonify({"status": "User not found"}), 404
 
-    db.session.delete(current_user)
+    # Configure S3 client
+    bucket_name = 'gift-resources'
+
+    # Define the user's folder in the S3 bucket
+    user_folder = f"{user_id}/"
+
     try:
+        objects_to_delete = s3.list_objects_v2(Bucket=bucket_name, Prefix=user_folder)
+
+        if 'Contents' in objects_to_delete:
+            delete_keys = {'Objects': [{'Key': obj['Key']} for obj in objects_to_delete['Contents']]}
+            s3.delete_objects(Bucket=bucket_name, Delete=delete_keys)
+
+        db.session.delete(current_user)
         db.session.commit()
-        return jsonify({"status": "Profile deleted"}), 200
+
+        return jsonify({"status": "Profile and associated GIFs deleted"}), 200
     except Exception as e:
         print(f"Error occurred: {e}")
         db.session.rollback()
         return jsonify({"status": "Internal Server Error"}), 500
+
 
 @jwt_required()
 def update_password():

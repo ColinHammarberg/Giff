@@ -336,7 +336,7 @@ function EditProfileComponent({
     } else {
       try {
         response = await DeleteUserProfile();
-        if (response.data.status === 'Profile deleted') {
+        if (response.data.status === 'Profile and associated GIFs deleted') {
           localStorage.removeItem('access_token');
           navigate('/');
           showNotification('success', response.data.status);
