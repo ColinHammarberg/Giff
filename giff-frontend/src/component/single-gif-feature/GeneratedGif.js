@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
-  const [importedGifs, setImportedGifs] = useState(null);
+  // const [importedGifs, setImportedGifs] = useState(null);
   const { isMobile } = useContext(GiftContext);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   // const [selectedGif, setSelectedGif] = useState(null);
