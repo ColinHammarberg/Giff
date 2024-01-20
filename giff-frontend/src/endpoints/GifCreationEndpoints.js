@@ -157,6 +157,22 @@ export async function DeleteGif(selectedGif) {
   }
 }
 
+export async function DeleteGifFrames(selectedGif) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('Delete Gif Frames', selectedGif);
+  try {
+    const response = await axios.post(`${Api}/delete_gif_frames`, selectedGif, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log('Delete Gif Frames error:', error);
+    throw error;
+  }
+}
+
 export async function updateEmailAPI(resourceId, exampleEmail) {
   const access_token = localStorage.getItem('access_token');
   console.log('resourceId', exampleEmail, resourceId);

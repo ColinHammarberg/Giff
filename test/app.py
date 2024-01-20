@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from extensions import db
 from flask_cors import CORS
-from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif
+from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif, delete_gif_frames
 from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, include_logo_in_gifs, update_additional_profile
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
@@ -77,6 +77,10 @@ def google_get_user_email():
 @app.route('/outlook_user_signin', methods=['POST'])
 def microsoft_auth_signin():
     return outlook_user_signin_or_signup()
+
+@app.route('/delete_gif_frames', methods=['POST'])
+def delete_gif_frames_after_creation():
+    return delete_gif_frames()
 
 @app.route('/update-gif-email', methods=['POST'])
 def update_gif_email():

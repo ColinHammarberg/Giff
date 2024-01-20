@@ -34,6 +34,7 @@ import { getSelectedFramePath } from '../gif-library/GifLibraryUtils';
 import {
   ApplyGifColor,
   ApplyGifFrame,
+  DeleteGifFrames,
   UpdateGifDuration,
   UpdateGifFrames,
   UpdateGifName,
@@ -70,6 +71,7 @@ class DesignGifDialog extends PureComponent {
       editedName: this.props.selectedGif?.gifName || '',
       isLoading: false,
       isLoadingEmail: false,
+      isSaving: false,
       isGifPortrait: false,
       frameWidth: null,
       frameUrls: this.props.selectedGif.frame_urls || [],
@@ -328,10 +330,12 @@ class DesignGifDialog extends PureComponent {
   };
 
   handleSaveGif = async () => {
-    const { selectedColor, selectedFrame, exampleEmail } = this.state;
+    const { selectedColor, selectedFrame, exampleEmail, editedName } =
+      this.state;
     const { selectedGif } = this.props;
 
     let isUpdated = false;
+    this.setState({ isSaving: true });
     if (exampleEmail !== selectedGif.exampleEmail) {
       try {
         await updateEmailAPI(selectedGif.resourceId, exampleEmail);
@@ -342,6 +346,9 @@ class DesignGifDialog extends PureComponent {
     }
     try {
       let response;
+      if (editedName !== selectedGif.gifName) {
+        await UpdateGifName(selectedGif.resourceId, editedName);
+      }
       if (selectedColor) {
         response = await ApplyGifColor(selectedGif, selectedColor);
       } else if (selectedFrame) {
@@ -364,12 +371,26 @@ class DesignGifDialog extends PureComponent {
         'Woa! Your new gif details looks great, champ!'
       );
     }
-    if (this.props.gifCreationFlow) {
-      this.props.navigate('/gif-library');
-    } else {
-      this.props.setDesignChanges(true);
-      this.handleCancel();
+    try {
+      if (this.props.gifCreationFlow) {
+        const gifFramesData = {
+          name: selectedGif.gifName,
+          resourceId: selectedGif.resourceId,
+        };
+        const resp = await DeleteGifFrames(gifFramesData);
+        console.log('resp', resp);
+        this.props.navigate('/gif-library');
+      } else {
+        this.props.setDesignChanges(true);
+        this.handleCancel();
+      }
+    } catch (error) {
+      showNotification(
+        'error',
+        'Something went sideways champ! Please try it again!'
+      );
     }
+    this.setState({ isSaving: false });
   };
 
   handleOnChangeTab(value) {
@@ -445,16 +466,7 @@ class DesignGifDialog extends PureComponent {
   };
 
   handleSaveEditedName = async () => {
-    const { editedName } = this.state;
-    const { selectedGif } = this.props;
-
-    try {
-      await UpdateGifName(selectedGif.resourceId, editedName);
-      showNotification('success', 'GIF name updated successfully');
-      this.setState({ isEditingName: false });
-    } catch (error) {
-      showNotification('error', 'Failed to update GIF name');
-    }
+    this.setState({ isEditingName: false });
   };
 
   handleCancelNameEdit = () => {
@@ -692,7 +704,10 @@ class DesignGifDialog extends PureComponent {
                     tabs={tabs}
                     onChange={this.handleOnChangeTab}
                     disabled={tabs.map((tab, index) => {
-                      if ((index === 0 && !selectedGif?.frame_urls) || (index === 0 && this.props.gifLibrary)) {
+                      if (
+                        (index === 0 && !selectedGif?.frame_urls) ||
+                        (index === 0 && this.props.gifLibrary)
+                      ) {
                         return true;
                       } else return false;
                     })}
@@ -846,7 +861,7 @@ class DesignGifDialog extends PureComponent {
           </div>
           <div className="action-content">
             <div className="buttons">
-              <Button onClick={this.handleSaveGif}>Done</Button>
+              <Button onClick={this.handleSaveGif}>{this.state.isSaving ? 'Processing...' : 'Done'}</Button>
             </div>
           </div>
         </div>

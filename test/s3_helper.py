@@ -315,3 +315,47 @@ def delete_gif():
     except Exception as e:
         print(f"Server Error: {e}")
         return jsonify({'error': 'Internal Server Error'}), 500
+    
+
+@jwt_required()
+def delete_gif_frames():
+    try:
+        user_id = get_jwt_identity()
+        if user_id is None:
+            return jsonify({'error': 'User not authenticated'}), 401
+
+        data = request.get_json()
+        gif_name = data.get('name')
+        resource_id = data.get('resourceId')
+
+        if not gif_name or not resource_id:
+            return jsonify({'error': 'Bad request: Missing name or resourceId'}), 400
+
+        gif = UserGif.query.filter_by(
+            user_id=user_id, resourceId=resource_id).first()
+
+        if gif is None:
+            return jsonify({'error': 'GIF not found'}), 404
+
+        bucket_name = 'gif-frames'
+        frame_folder_name = f"{user_id}/{gif_name}/"
+
+        print('frame_folder_name', frame_folder_name)
+
+        # List all objects in the frame folder
+        objects_to_delete = s3.list_objects_v2(Bucket=bucket_name, Prefix=frame_folder_name)
+
+        # Bulk delete the objects
+        if 'Contents' in objects_to_delete:
+            delete_keys = {'Objects': [{'Key': obj['Key']} for obj in objects_to_delete['Contents']]}
+            s3.delete_objects(Bucket=bucket_name, Delete=delete_keys)
+
+        # Clear frame URLs in the database
+        gif.frame_urls = []
+        db.session.commit()
+
+        return jsonify({'message': 'GIF frames successfully deleted'}), 200
+
+    except Exception as e:
+        print(f"Server Error: {e}")
+        return jsonify({'error': 'Internal Server Error'}), 500

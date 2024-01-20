@@ -95,7 +95,7 @@ def generate_pdf_gif():
     pdf_document = fitz.open("pdf", pdf_response.content)
     frames = []
     frame_urls = [] # List to store pre-signed URLs of frames
-    frame_folder_name = f"{user_id}/{NAME.split('.')[0]}/"
+    frame_folder_name = f"{user_id}/{NAME}"
     frame_number = 0
 
     for page_number in range(pdf_document.page_count):
@@ -108,7 +108,7 @@ def generate_pdf_gif():
         img.save(temp_img_path, 'PNG')
 
         # Upload each frame to S3 and get the pre-signed URL
-        frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
+        frame_s3_path = f"{frame_folder_name}/frame_{frame_number}.png"
         upload_pdf_frame_to_s3(temp_img_path, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
         frame_url = s3_client.generate_presigned_url('get_object',
                                                      Params={'Bucket': 'gif-frames',
@@ -212,6 +212,7 @@ def upload_pdf_and_generate_gif():
     resourceType = 'pdf'
 
     user_exists = User.query.filter_by(id=user_id).first()
+    gif_count = UserGif.query.filter_by(user_id=user_id).count() + 1
     if not user_exists and user_id:
         return jsonify({'error': f'User with id {user_id} not found'}), 400
 
@@ -219,14 +220,13 @@ def upload_pdf_and_generate_gif():
         return jsonify({'error': 'No PDF file provided'}), 400
 
     pdf_file = request.files['pdf']
-    print('pdf_file', pdf_file)
 
     if pdf_file.filename == '':
         return jsonify({'error': 'Empty PDF file provided'}), 400
 
     resource_id = str(uuid.uuid4())
+    NAME = f"{pdf_file.filename}-{gif_count}"
     folder_name = f"{user_id}"
-    NAME = f"{pdf_file.filename}-{UserGif.query.filter_by(user_id=user_id).count() + 1}"
 
     images_dir = os.path.join(os.path.dirname(__file__), 'pdf_images')
     os.makedirs(images_dir, exist_ok=True)
@@ -239,7 +239,7 @@ def upload_pdf_and_generate_gif():
         pdf_document = fitz.open(temp_pdf_path)
         frame_durations = []
         frame_urls = []
-        frame_folder_name = f"{user_id}/{pdf_file.filename.split('.')[0]}/"
+        frame_folder_name = f"{user_id}/{NAME}.gif"
         frame_number = 0
 
         for page_number in range(pdf_document.page_count):
@@ -257,7 +257,7 @@ def upload_pdf_and_generate_gif():
             img.save(img_path, 'PNG')
 
             # Use frame number in the file path
-            frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
+            frame_s3_path = f"{frame_folder_name}/frame_{frame_number}.png"
             upload_pdf_frame_to_s3(img_path, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
             frame_number += 1
 
@@ -741,15 +741,14 @@ def generate_gif():
     screenshots = []
     scroll_step = 400
     driver.execute_script("document.body.style.overflow = 'hidden'")
-    frame_folder_name = f"{user_id}/{NAME.split('.')[0]}/"
+    frame_folder_name = f"{user_id}/{NAME}"
     frame_number = 0
     frame_urls = []
     for i in range(0, scroll_height, scroll_step):
         driver.execute_script(f"window.scrollTo(0, {i})")
         screenshots.append(driver.get_screenshot_as_png())
         screenshot = driver.get_screenshot_as_png()
-        frame_s3_path = f"{frame_folder_name}frame_{frame_number}.png"
-        # Assuming the function 'upload_frame_to_s3' is defined elsewhere
+        frame_s3_path = f"{frame_folder_name}/frame_{frame_number}.png"
         upload_frame_to_s3(screenshot, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
         frame_number += 1
         frame_url = s3_client.generate_presigned_url('get_object',
@@ -778,7 +777,6 @@ def generate_gif():
 
     resource_id = str(uuid.uuid4())
     folder_name = f"{user_id}/"
-    # Assuming the function 'upload_to_s3' is defined elsewhere
     upload_to_s3(output_path, 'gift-resources',
                  f"{folder_name}{NAME}", resource_id)
     presigned_url = s3_client.generate_presigned_url('get_object',
