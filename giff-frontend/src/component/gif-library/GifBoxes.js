@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, TextField } from '@mui/material';
 import './GifBoxes.scss';
+import LightTooltip from '../overall/LightToolTip';
 
 function GifBoxes({
   name,
@@ -91,9 +92,14 @@ function GifBoxes({
         style={{ border: `4px solid ${color || '#3F3F3F'}` }}
       >
         <img src={gifUrl} alt="" />
-        <IconButton className="download-icon" onClick={() => onClickDownload(index)}>
-          <DownloadIcon />
-        </IconButton>
+        <LightTooltip title={`Download ${name}`} placement="bottom-start">
+          <IconButton
+            className="download-icon"
+            onClick={() => onClickDownload(index)}
+          >
+            <DownloadIcon />
+          </IconButton>
+        </LightTooltip>
       </div>
     </div>
   );
