@@ -119,6 +119,8 @@ def outlook_user_signin_or_signup():
     user = User.query.filter_by(email=user_email).first()
 
     if user:
+        user.is_active = True
+        db.session.commit()
         access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token, status="Signin successful"), 200
     else:
@@ -133,4 +135,3 @@ def outlook_user_signin_or_signup():
         except Exception as e:
             db.session.rollback()
             return jsonify({"status": "Signup failed", "message": str(e)}), 500
-
