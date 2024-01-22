@@ -42,10 +42,7 @@ function GifBoxes({
 
   return (
     <div onMouseEnter={onMouseEnter}>
-      <div
-        className="gif-header"
-        style={{ backgroundColor: color || '#3F3F3F' }}
-      >
+      <div className="gif-header" style={{ backgroundColor: '#3F3F3F' }}>
         <div>
           <IconButton>
             <StarBorderIcon />
@@ -87,10 +84,7 @@ function GifBoxes({
           </IconButton>
         </div>
       </div>
-      <div
-        className="frame"
-        style={{ border: `4px solid ${color || '#3F3F3F'}` }}
-      >
+      <div className="frame">
         <img src={gifUrl} alt="" />
         <LightTooltip title={`Download ${name}`} placement="bottom-start">
           <IconButton

@@ -10,7 +10,6 @@ from selenium.common.exceptions import NoSuchElementException, ElementClickInter
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 import time
 from selenium import webdriver
@@ -447,25 +446,63 @@ def download_all_library_gifs():
         print(f"Error creating ZIP file: {e}")
         return "An error occurred", 500
 
-
 @jwt_required()
 def update_selected_color():
     data = request.get_json()
     user_id = get_jwt_identity()
     resource_id = data.get('resourceId')
-    selected_color = data.get('selectedColor')
+    selected_color = data.get('selectedColor', '#FFFFFF')
 
-    # Update the selectedColor for the specified GIF
-    user_gif = UserGif.query.filter_by(
-        user_id=user_id, resourceId=resource_id).first()
-
-    if user_gif:
-        user_gif.selectedColor = selected_color
-        user_gif.selectedFrame = None
-        db.session.commit()
-        return jsonify({'message': 'Selected color updated successfully'}), 200
-    else:
+    user_gif = UserGif.query.filter_by(user_id=user_id, resourceId=resource_id).first()
+    if not user_gif:
         return jsonify({'error': 'GIF not found'}), 404
+
+    bucket_name = 'gift-resources'
+    gif_key = f"{user_id}/{user_gif.gif_name}"
+
+    # Download the existing GIF
+    gif_object = s3_client.get_object(Bucket=bucket_name, Key=gif_key)
+    gif_bytes_io = io.BytesIO(gif_object['Body'].read())
+    gif_bytes_io.seek(0)
+    pil_gif = Image.open(gif_bytes_io)
+    selected_color_tuple = hex_to_rgb(selected_color)
+
+    frames_with_durations = []
+    for frame in ImageSequence.Iterator(pil_gif):
+        frame = frame.convert("P")
+
+        palette = frame.getpalette()
+        colors = frame.getcolors()
+        least_used_color = min(colors, key=lambda x: x[0])[1]
+
+        palette[least_used_color * 3: least_used_color * 3 + 3] = selected_color_tuple
+        frame.putpalette(palette)
+
+        frame = ImageOps.expand(frame, border=30, fill=least_used_color)
+        frames_with_durations.append((frame, 1000))
+
+    output_gif_io = io.BytesIO()
+    frames_with_durations[0][0].save(
+        output_gif_io,
+        format='GIF',
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[d for _, d in frames_with_durations],
+        loop=0
+    )
+    output_gif_io.seek(0)
+
+    user_gif.selectedColor = selected_color
+    db.session.commit()
+
+    s3_client.put_object(Bucket=bucket_name, Key=gif_key, Body=output_gif_io.getvalue())
+
+    presigned_url = s3_client.generate_presigned_url('get_object',
+                                                     Params={'Bucket': bucket_name,
+                                                             'Key': gif_key},
+                                                     ExpiresIn=3600)  # URL expiry time
+
+    return jsonify({'message': 'GIF updated with border successfully', 'new_gif_url': presigned_url}), 200
 
 
 @jwt_required()
