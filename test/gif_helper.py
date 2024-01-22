@@ -10,6 +10,7 @@ from selenium.common.exceptions import NoSuchElementException, ElementClickInter
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 import time
 from selenium import webdriver
@@ -39,6 +40,9 @@ backend_gifs_folder = os.path.join(os.path.dirname(
 
 def is_video_url(URL):
     return "youtube" in URL or "vimeo" in URL
+
+def is_space_instance(URL):
+    return "spce" in URL
 
 s3_client = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                                  aws_secret_access_key='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',
@@ -703,6 +707,9 @@ def generate_gif():
 
     if is_video_url(URL):
         return generate_video_gif(data, user_id)
+        
+    if is_space_instance(URL):
+        return generate_space_gif(data, user_id)
 
     options = Options()
     options.add_argument('--no-sandbox')
@@ -851,3 +858,134 @@ def generate_gifs_from_list():
         return jsonify({'error': '\n'.join(error_messages)})
 
     return jsonify({'message': 'GIFs generated successfully for all URLs', 'data': generated_gifs_data})
+
+
+@jwt_required(optional=True)
+def generate_space_gif(data, user_id):
+    current_user = User.query.get(user_id)
+    URL = data.get('url')
+    sector_type = data.get('sectorType')
+    print('sector_type', sector_type)
+    NAME = data.get(
+        'name', f"your_gif-{UserGif.query.filter_by(user_id=user_id).count() + 1}.gif") if user_id else "your_gif-t.gif"
+    if not NAME.endswith('.gif'):
+        NAME += '.gif'
+
+    options = Options()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    options.add_argument("--disable-notifications")
+    options.add_argument("disable-infobars")
+    driver = webdriver.Chrome(options=options)
+    driver.get(URL)
+
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.frame_to_be_available_and_switch_to_it((By.XPATH, "//iframe[@title='cookieFirst']"))
+        )
+
+        cookie_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@data-cookiefirst-action='accept']"))
+        )
+        cookie_button.click()
+        print('cookie_button', cookie_button)
+
+        driver.switch_to.default_content()
+
+    except TimeoutException:
+        print("Cookie consent button not found or not clickable.")
+        driver.switch_to.default_content()  # Ensure to switch back even if the button is not found
+
+    time.sleep(1)
+
+    scroll_pause_time = 1
+    scroll_increment = 400
+
+    screenshots = []
+    frame_folder_name = f"{user_id}/{NAME}"
+    frame_number = 0
+    frame_urls = []
+
+    scrollable_element = driver.find_element(By.CLASS_NAME, "cms-theme-preview-container")
+    driver.execute_script("arguments[0].style.overflow = 'hidden'", scrollable_element)
+    
+    last_scroll_position = 0
+
+    while True:
+        driver.execute_script("arguments[0].scrollTop += arguments[1]", scrollable_element, scroll_increment)
+        time.sleep(scroll_pause_time)
+
+        current_scroll_position = driver.execute_script("return arguments[0].scrollTop", scrollable_element)
+        if current_scroll_position <= last_scroll_position:
+            break
+
+        last_scroll_position = current_scroll_position
+
+        screenshot = driver.get_screenshot_as_png()
+        screenshots.append(screenshot)
+        frame_number += 1
+        frame_s3_path = f"{frame_folder_name}/frame_{frame_number}.png"
+        upload_frame_to_s3(screenshot, 'gif-frames', frame_s3_path, str(uuid.uuid4()))
+        frame_url = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': 'gif-frames',
+                                                            'Key': frame_s3_path},
+                                                    ExpiresIn=3600)
+        frame_urls.append(frame_url)
+
+    driver.quit()
+
+    frames_with_durations = []
+    for screenshot in screenshots:
+        frame = Image.open(BytesIO(screenshot))
+        frames_with_durations.append((frame, 1.0))
+
+    output_path = os.path.join('giff-frontend', 'src', 'gifs', NAME)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    frames_with_durations[0][0].save(
+        output_path,
+        save_all=True,
+        append_images=[frame for frame, _ in frames_with_durations[1:]],
+        duration=[int(d * 1000) for _, d in frames_with_durations],
+        loop=0
+    )
+
+    resource_id = str(uuid.uuid4())
+    folder_name = f"{user_id}/"
+    upload_to_s3(output_path, 'gift-resources',
+                 f"{folder_name}{NAME}", resource_id)
+    presigned_url = s3_client.generate_presigned_url('get_object',
+                                                     Params={'Bucket': 'gift-resources',
+                                                             'Key': f"{user_id}/{NAME}"},
+                                                     ExpiresIn=3600)
+    
+    with open(output_path, "rb") as gif_file:
+        gif_content = gif_file.read()
+        base64_string = b64encode(gif_content).decode('utf-8')
+    description, example_email = analyze_gif(
+                presigned_url, current_user, sector_type)
+
+    new_gif = UserGif(
+        user_id=user_id,
+        gif_name=NAME,
+        gif_url=output_path,
+        resourceId=resource_id,
+        ai_description=description,
+        source=URL,
+        frame_urls=frame_urls,
+        base64_string=base64_string,
+        example_email=example_email
+    )
+    db.session.add(new_gif)
+    db.session.commit()
+
+    gif_data = {
+        "name": NAME,
+        "resourceId": resource_id,
+        "resourceType": 'webpage',
+        "ai_description": description,
+    }
+
+    return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
