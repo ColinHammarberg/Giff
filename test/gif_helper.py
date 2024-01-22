@@ -492,7 +492,11 @@ def update_selected_color():
     )
     output_gif_io.seek(0)
 
+    gif_content = output_gif_io.getvalue()
+    base64_string = b64encode(gif_content).decode('utf-8')
+
     user_gif.selectedColor = selected_color
+    user_gif.base64_string = base64_string
     db.session.commit()
 
     s3_client.put_object(Bucket=bucket_name, Key=gif_key, Body=output_gif_io.getvalue())
