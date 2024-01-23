@@ -466,11 +466,13 @@ def update_selected_color():
     gif_bytes_io.seek(0)
     pil_gif = Image.open(gif_bytes_io)
     selected_color_tuple = hex_to_rgb(selected_color)
+    resize_percentage = 0.6
+    new_size = (int(pil_gif.width * resize_percentage), int(pil_gif.height * resize_percentage))
 
     frames_with_durations = []
     for frame in ImageSequence.Iterator(pil_gif):
         frame = frame.convert("P")
-
+        frame = frame.resize(new_size, Image.Resampling.LANCZOS)
         palette = frame.getpalette()
         colors = frame.getcolors()
         least_used_color = min(colors, key=lambda x: x[0])[1]
