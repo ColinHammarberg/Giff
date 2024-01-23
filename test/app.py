@@ -10,6 +10,7 @@ from chrome_extension_helper import generate_extension_pdf_gif, generate_extensi
 from reset_password_helper import request_reset_password, reset_user_password
 from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag, remove_tag_from_gif
 from edit_exiting_gif_helper import update_example_email
+from gif_count_helper import get_gif_count
 from gpt_helper import get_example_email_from_gif
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name, update_gif_duration, update_gif_frames
@@ -49,6 +50,10 @@ mail = Mail(app)
 @app.route('/ping', methods=['GET'])
 def ping():
     return "pong2222111"
+
+@app.route('/count_currently_created_gifs', methods=['GET'])
+def count_currently_created_gifs():
+    return get_gif_count()
 
 @app.route('/update_gif_duration', methods=['POST'])
 def update_duration_gif():
