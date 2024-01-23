@@ -68,7 +68,7 @@ class UserLogo(db.Model):
 
 class GifCounter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    count = db.Column(db.Integer, default=200)
+    count = db.Column(db.Integer, default=0)
 
     @classmethod
     def increment_count(cls):
@@ -77,7 +77,7 @@ class GifCounter(db.Model):
             counter = cls(count=1)
             db.session.add(counter)
         else:
-            counter.count += 1
+            counter.count += 320
         db.session.commit()
 
 
