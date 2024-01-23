@@ -24,6 +24,7 @@ import VerfifyAccount from './component/authorization/VerifyAccount';
 import ResetPassword from './component/authorization/ResetPassword';
 import NewPassword from './component/authorization/NewPassword';
 import { msalInstance } from './component/authorization/OutlookSignup';
+import GifCounter from './counter/GifCounter';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -110,6 +111,10 @@ function App() {
               <Route
                 path={`${REACT_APP_BASEURL}/articles`}
                 element={<Articles />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/current-gif-counter`}
+                element={<GifCounter />}
               />
               <Route
                 path={`${REACT_APP_BASEURL}/email-choice`}
