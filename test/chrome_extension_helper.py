@@ -4,7 +4,7 @@ from flask import jsonify, request
 from extensions import db
 from PIL import Image
 from s3_helper import upload_to_s3
-from gif_helper import is_video_url, generate_video_gif
+from gif_helper import is_video_url, generate_video_gif, generate_space_gif, is_space_instance
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, TimeoutException, ElementNotInteractableException
@@ -90,6 +90,9 @@ def generate_extension_gif():
 
     if is_video_url(URL):
         return generate_video_gif(data, user_id)
+    
+    if is_space_instance(URL):
+        return generate_space_gif(data, user_id)
 
     options = Options()
     options.add_argument('--no-sandbox')

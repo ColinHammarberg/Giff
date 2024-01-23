@@ -1036,6 +1036,7 @@ def generate_space_gif(data, user_id):
         "name": NAME,
         "resourceId": resource_id,
         "resourceType": 'webpage',
+        "presigned_url": presigned_url,
         "ai_description": description,
     }
 
