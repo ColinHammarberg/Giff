@@ -293,6 +293,8 @@ class DesignGifDialog extends PureComponent {
       });
       if (!this.props.selectedGif.frame_urls || this.props.gifLibrary) {
         this.props.setActiveTab(1);
+      } if (this.props.selectedGif.selectedColor) {
+        this.props.setActiveTab(2);
       } else {
         this.props.setActiveTab(0);
       }
@@ -706,11 +708,13 @@ class DesignGifDialog extends PureComponent {
                     disabled={tabs.map((tab, index) => {
                       if (
                         (index === 0 && !selectedGif?.frame_urls) ||
-                        (index === 0 && this.props.gifLibrary)
+                        (index === 0 && this.props.gifLibrary) || 
+                        (index === 1 && selectedGif?.selectedColor)
                       ) {
                         return true;
                       } else return false;
                     })}
+                    selectedGif={selectedGif}
                     gifLibrary={this.props.gifLibrary}
                     variant="tabs-level-3"
                   />
