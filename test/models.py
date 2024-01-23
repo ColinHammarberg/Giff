@@ -66,6 +66,20 @@ class UserLogo(db.Model):
     resource_id = db.Column(db.String, unique=True)
     user = db.relationship('User', back_populates='logos')
 
+class GifCounter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    count = db.Column(db.Integer, default=200)
+
+    @classmethod
+    def increment_count(cls):
+        counter = cls.query.first()
+        if not counter:
+            counter = cls(count=1)
+            db.session.add(counter)
+        else:
+            counter.count += 1
+        db.session.commit()
+
 
 User.tags = db.relationship('Tag', back_populates='user')
 User.gifs = db.relationship('UserGif', back_populates='user')

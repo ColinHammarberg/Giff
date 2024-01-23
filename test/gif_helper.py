@@ -27,7 +27,7 @@ import fitz
 from s3_helper import upload_to_s3, upload_frame_to_s3, upload_pdf_frame_to_s3
 import uuid
 from cv2 import VideoCapture, cvtColor, COLOR_BGR2RGB
-from models import UserGif, User
+from models import UserGif, User, GifCounter
 import os
 import io
 import logging
@@ -151,6 +151,7 @@ def generate_pdf_gif():
 
         db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path,
                        resourceId=resource_id, ai_description=description, source=URL, example_email=example_email, base64_string=base64_string, frame_urls=frame_urls))
+        GifCounter.increment_count()
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -308,6 +309,7 @@ def upload_pdf_and_generate_gif():
 
             db.session.add(UserGif(user_id=user_id, gif_name=gif_name,
                            gif_url=output_path, resourceId=resource_id, ai_description=description, example_email=example_email, source="https://gif-t.io", base64_string=base64_string, frame_urls=frame_urls))
+            GifCounter.increment_count()
             db.session.commit()
 
         gif_data = {
@@ -854,7 +856,9 @@ def generate_gif():
         example_email=example_email
     )
     db.session.add(new_gif)
+    GifCounter.increment_count()
     db.session.commit()
+
 
     gif_data = {
         "name": NAME,
@@ -1025,6 +1029,7 @@ def generate_space_gif(data, user_id):
         example_email=example_email
     )
     db.session.add(new_gif)
+    GifCounter.increment_count()
     db.session.commit()
 
     gif_data = {

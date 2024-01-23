@@ -1,4 +1,4 @@
-from models import UserGif, User
+from models import UserGif, User, GifCounter
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import jsonify, request
 from extensions import db
@@ -67,6 +67,7 @@ def generate_extension_pdf_gif():
                                                         ExpiresIn=3600)
         
         db.session.add(UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id))
+        GifCounter.increment_count()
         db.session.commit()
         gif_data = {
             "name": NAME,
@@ -164,6 +165,7 @@ def generate_extension_gif():
     
     new_gif = UserGif(user_id=user_id, gif_name=NAME, gif_url=output_path, resourceId=resource_id)
     db.session.add(new_gif)
+    GifCounter.increment_count()
     db.session.commit()
 
     gif_data = {
