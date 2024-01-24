@@ -19,6 +19,7 @@ from google_auth import google_user_signup, google_user_signin, outlook_user_sig
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
+from tracking_cklicks_helper import track_gif_click
 from flask_mail import Mail
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
@@ -66,6 +67,10 @@ def send_verification_email():
 @app.route('/google_signup', methods=['POST'])
 def google_signup():
     return google_user_signup()
+
+@app.route('/track-gif-click/<int:gif_id>')
+def track_gif_click_count(gif_id):
+    return track_gif_click(gif_id)
 
 @app.route('/google_signin', methods=['POST'])
 def google_signin():

@@ -51,6 +51,7 @@ class UserGif(db.Model):
     selectedColor = db.Column(db.String)
     selectedFrame = db.Column(db.String)
     frame_urls = db.Column(ARRAY(String), nullable=True)
+    click_count = db.Column(db.Integer, default=0)
     resourcetype = db.Column(db.String(255))
     base64_string = db.Column(db.Text)
     user = db.relationship('User', back_populates='gifs')
