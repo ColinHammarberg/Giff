@@ -1,6 +1,6 @@
 from models import UserGif
 from extensions import db
-from flask import redirect, request
+from flask import request, jsonify
 
 def track_gif_click():
     # Find the UserGif entry by ID
@@ -14,7 +14,7 @@ def track_gif_click():
         user_gif.click_count += 1
         db.session.commit()
 
-        return redirect(user_gif.source)
+        return jsonify({'verified': user_gif.source})
     else:
         # Handle case where GIF does not exist
         return "GIF not found", 404
