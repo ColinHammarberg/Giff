@@ -25,6 +25,7 @@ import ResetPassword from './component/authorization/ResetPassword';
 import NewPassword from './component/authorization/NewPassword';
 import { msalInstance } from './component/authorization/OutlookSignup';
 import GifCounter from './counter/GifCounter';
+import ValidateGifSource from './tracking/ValidateGifSource';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -107,6 +108,10 @@ function App() {
               <Route
                 path={`${REACT_APP_BASEURL}/multiple-gif-creation`}
                 element={<MultipleGifLanding />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/validate-gif`}
+                element={<ValidateGifSource />}
               />
               <Route
                 path={`${REACT_APP_BASEURL}/articles`}

@@ -1,20 +1,20 @@
 from models import UserGif
 from extensions import db
-from flask import redirect
+from flask import redirect, request
 
-def track_gif_click(gif_id):
+def track_gif_click():
     # Find the UserGif entry by ID
+    data = request.get_json()
+    gif_id = data.get('gif_id')
     print('gif_id', gif_id)
     user_gif = UserGif.query.filter_by(id=gif_id).first()
-    print('user_gif', user_gif)
 
     if user_gif:
         # Increment the click count
         user_gif.click_count += 1
         db.session.commit()
 
-        # Redirect to the actual GIF URL
-        return redirect(user_gif.gif_url)
+        return redirect(user_gif.source)
     else:
         # Handle case where GIF does not exist
         return "GIF not found", 404
