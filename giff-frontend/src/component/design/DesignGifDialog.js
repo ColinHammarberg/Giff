@@ -283,6 +283,7 @@ class DesignGifDialog extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
+    const { selectedGif, setActiveTab, gifLibrary } = this.props;
     if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
       this.setState({
         selectedFrame: null,
@@ -291,12 +292,12 @@ class DesignGifDialog extends PureComponent {
         selectedFrames: this.props.selectedGif.frame_urls,
         editedName: this.props.selectedGif.gifName,
       });
-      if (!this.props.selectedGif.frame_urls || this.props.gifLibrary) {
-        this.props.setActiveTab(1);
-      } if (this.props.selectedGif.selectedColor) {
-        this.props.setActiveTab(2);
+      if (selectedGif.selectedColor) {
+        setActiveTab(2);
+      } else if (selectedGif.frame_urls.length === 0 || gifLibrary) {
+        setActiveTab(1);
       } else {
-        this.props.setActiveTab(0);
+        setActiveTab(0);
       }
       this.setState({ tags: [] });
       this.setState({
@@ -708,7 +709,7 @@ class DesignGifDialog extends PureComponent {
                     disabled={tabs.map((tab, index) => {
                       if (
                         (index === 0 && !selectedGif?.frame_urls) ||
-                        (index === 0 && this.props.gifLibrary) || 
+                        (index === 0 && this.props.gifLibrary) ||
                         (index === 1 && selectedGif?.selectedColor)
                       ) {
                         return true;
@@ -865,7 +866,9 @@ class DesignGifDialog extends PureComponent {
           </div>
           <div className="action-content">
             <div className="buttons">
-              <Button onClick={this.handleSaveGif}>{this.state.isSaving ? 'Processing...' : 'Done'}</Button>
+              <Button onClick={this.handleSaveGif}>
+                {this.state.isSaving ? 'Processing...' : 'Done'}
+              </Button>
             </div>
           </div>
         </div>
