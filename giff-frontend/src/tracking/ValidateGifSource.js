@@ -1,15 +1,20 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { trackGifClick } from './useValidateGifQuery';
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 function ValidateGifSource() {
-  const { gif_id } = useParams();
+  const query = useQuery();
+  const gif_id = query.get('gif_id');
 
   console.log('gif_id', gif_id);
 
   React.useEffect(() => {
     if (gif_id) {
-      console.log('gif_id2', gif_id);
+      console.log('Tracking gif_id:', gif_id);
       trackGifClick(gif_id);
     }
   }, [gif_id]);
