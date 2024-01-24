@@ -1,22 +1,21 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import './ValidateGifSource.scss';
-import { useTrackGifClick } from './useValidateGifQuery';
+import { trackGifClick } from './useValidateGifQuery';
 
 function ValidateGifSource() {
   const { gif_id } = useParams();
-  const { mutate: trackClick } = useTrackGifClick();
-
-  console.log('GIF ID:', gif_id);
 
   React.useEffect(() => {
     if (gif_id) {
-      console.log('GIF ID2:', gif_id);
-      trackClick(gif_id);
+      trackGifClick(gif_id);
     }
-  }, [gif_id, trackClick]);
+  }, [gif_id]);
 
-  return <div className="gif-validator">Testing</div>;
+  return (
+    <div className="gif-validator">
+      Testing
+    </div>
+  );
 }
 
 export default ValidateGifSource;
