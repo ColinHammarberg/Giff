@@ -7,6 +7,7 @@ def track_gif_click():
     data = request.get_json()
     gif_id = data.get('gif_id')
     print('gif_id', gif_id)
+    print('data', data)
     user_gif = UserGif.query.filter_by(id=gif_id).first()
 
     if user_gif:
