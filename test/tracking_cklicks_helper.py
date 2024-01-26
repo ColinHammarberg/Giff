@@ -8,7 +8,7 @@ def track_gif_click():
     gif_id = data.get('gif_id')
     print('gif_id', gif_id)
     print('data', data)
-    user_gif = UserGif.query.filter_by(id=gif_id).first()
+    user_gif = UserGif.query.filter_by(resourceId=gif_id).first()
 
     if user_gif:
         # Increment the click count
