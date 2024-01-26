@@ -1,0 +1,23 @@
+.gif-validator {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Staatliches';
+    font-size: 30px;
+    color: #F4149B;
+    .typing-cursor {
+        display: inline-block;
+        width: 10px;
+        height: 20px;
+        background-color: black;
+        margin-left: 5px;
+        animation: blink 1s step-start infinite;
+      }
+      
+      @keyframes blink {
+        50% {
+          background-color: transparent;
+        }
+      }
+}

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DownloadIcon from '@mui/icons-material/Download';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
@@ -12,13 +11,13 @@ import LightTooltip from '../overall/LightToolTip';
 function GifBoxes({
   name,
   onClickMore,
-  color,
   gifUrl,
   onMouseEnter,
   onClickDownload,
   index,
   onNameChange,
   onNameSubmit,
+  totalClicks,
 }) {
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState(name);
@@ -43,11 +42,14 @@ function GifBoxes({
   return (
     <div onMouseEnter={onMouseEnter}>
       <div className="gif-header" style={{ backgroundColor: '#3F3F3F' }}>
-        <div>
-          <IconButton>
-            <StarBorderIcon />
-          </IconButton>
-        </div>
+        <LightTooltip
+          title={`This gif has been clicked on a total of ${
+            totalClicks || 0
+          } times in your email communications.`}
+          placement="top"
+        >
+          <div className="gif-clicks-count">{totalClicks || 0}</div>
+        </LightTooltip>
         <div className="name">
           {editingName ? (
             <>
