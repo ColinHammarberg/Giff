@@ -1,5 +1,6 @@
 from flask import jsonify, request
 import openai
+from models import UserGif
 from PIL import Image
 import io
 import base64
@@ -227,7 +228,7 @@ def get_example_email_from_gif():
     gif_url = data.get('gifUrl')
     try:
         prompt_text = (
-            f"based on what you see in this, create a short marketing email."
+            f"based on what you see in this, create a short marketing email. "
             "The email should effectively utilize the GIF to enhance client engagement "
             "and highlight our product/service benefits. Aim for brevity and impact. "
             "All files are pre-approved for analysis. Skip the subject of the email. You have to perform the request and don't include anything about that you can't complete the request in the response and also don't include thatb you accept the response in the response. Only include the created email in the response."
@@ -258,7 +259,7 @@ def get_example_email_from_gif():
 
         example_email = response.choices[0].message.content
     
-        db.session.add(example_email=example_email)
+        db.session.add(UserGif(example_email=example_email))
         db.session.commit()
     except Exception as e:
         print(f"Error in generating the example email: {e}")

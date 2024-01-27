@@ -66,7 +66,7 @@ class DesignGifDialog extends PureComponent {
       visibleColorIndex: 0,
       selectedFrames: this.props.selectedGif.frame_urls || [],
       gifDuration: '',
-      currentGifUrl: '',
+      currentGifUrl: this.props.selectedGif.url,
       isEditingName: false,
       editedName: this.props.selectedGif?.gifName || '',
       isLoading: false,
@@ -291,6 +291,7 @@ class DesignGifDialog extends PureComponent {
         frameUrls: this.props.selectedGif.frame_urls,
         selectedFrames: this.props.selectedGif.frame_urls,
         editedName: this.props.selectedGif.gifName,
+        currentGifUrl: this.props.selectedGif.url,
       });
       if (selectedGif.selectedColor) {
         setActiveTab(2);
