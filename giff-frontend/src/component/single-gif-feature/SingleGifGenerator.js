@@ -21,7 +21,6 @@ const SingleGifGenerator = forwardRef(
       handleCreateGifClick,
       setGifGenerated,
       setIsLoading,
-      sectorType,
     },
     ref
   ) => {
@@ -56,7 +55,6 @@ const SingleGifGenerator = forwardRef(
                     ref={ref}
                     handleCreateGifClick={handleCreateGifClick}
                     generateSingleGif={generateSingleGif}
-                    sectorType={sectorType}
                   />
                   <span className="seperator">OR</span>
                   <LightTooltip

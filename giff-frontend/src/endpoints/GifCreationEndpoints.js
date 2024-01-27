@@ -12,14 +12,14 @@ if (
   Api = 'https://gift-server-eu-1.azurewebsites.net'; // azure
 }
 
-export async function GenerateSingleGif(url, sectorType) {
+export async function GenerateSingleGif(url) {
   console.log('url', url);
   const token = localStorage.getItem('access_token'); // Retrieve the token from local storage
 
   try {
     const response = await axios.post(
       `${Api}/generate-single-gif`,
-      { url, sectorType },
+      { url },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -34,11 +34,11 @@ export async function GenerateSingleGif(url, sectorType) {
   }
 }
 
-export async function GeneratePdfGifs(url, sectorType) {
+export async function GeneratePdfGifs(url) {
   const access_token = localStorage.getItem('access_token');
   const response = await axios.post(
     `${Api}/generate-pdf-gif`,
-    { url, sectorType },
+    { url },
     {
       headers: {
         // Keep the Authorization header if you need it for other routes
@@ -114,12 +114,10 @@ export async function GenerateMultiplePdfGifs(gifData) {
   return response;
 }
 
-export async function UploadPdfThenCreateGif(pdf, sectorType) {
+export async function UploadPdfThenCreateGif(pdf) {
   const access_token = localStorage.getItem('access_token');
   const formData = new FormData();
-  console.log('sectorType', sectorType);
-  formData.append('pdf', pdf); // Assuming 'pdf' is a File object
-  formData.append('sectorType', sectorType);
+  formData.append('pdf', pdf);
 
   try {
     const response = await axios.post(

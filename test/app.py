@@ -11,7 +11,7 @@ from reset_password_helper import request_reset_password, reset_user_password
 from tag_management_helper import assign_tag_relationship_gif, fetch_user_tags, add_user_tag, delete_user_tag, remove_tag_from_gif
 from edit_exiting_gif_helper import update_example_email
 from gif_count_helper import get_gif_count
-from gpt_helper import get_example_email_from_gif
+from gpt_helper import get_example_email_from_gif, enhance_email_with_gif
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name, update_gif_duration, update_gif_frames
 from include_ai_helper import include_ai_in_gifs, include_ai_email
@@ -99,6 +99,10 @@ def delete_gif_frames_after_creation():
 @app.route('/update-gif-email', methods=['POST'])
 def update_gif_email():
     return update_example_email()
+
+@app.route('/enhance_email_with_gif', methods=['POST'])
+def enhance_email_gif():
+    return enhance_email_with_gif()
 
 @app.route('/update_selected_color', methods=['POST'])
 def update_gif_color():

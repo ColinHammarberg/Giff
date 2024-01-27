@@ -5,9 +5,11 @@ import GeneratedGif from './GeneratedGif';
 import GifError from '../error-handling/GifError';
 import { GiftContext } from '../../context/GiftContextProvider';
 import VerifyAccountDialog from '../authorization/VerifyAccountDialog';
-import { GeneratePdfGifs, GenerateSingleGif } from '../../endpoints/GifCreationEndpoints';
+import {
+  GeneratePdfGifs,
+  GenerateSingleGif,
+} from '../../endpoints/GifCreationEndpoints';
 import useFetchUser from '../../queries/useUserDataQuery';
-import SectorTypeDialog from './SectorTypeDialog';
 
 function GifLanding() {
   const [gifGenerated, setGifGenerated] = useState(false);
@@ -19,13 +21,6 @@ function GifLanding() {
   const { user } = useFetchUser();
   const formRef = useRef();
   const isActive = user?.is_active;
-  const isEmailCreationActive = user?.include_example_email;
-  const [sectorType, setSectorType] = useState('');
-  const [isSectorDialogOpen, setSectorDialogOpen] = useState(false);
-
-  const handleSectorSubmit = () => {
-    setSectorDialogOpen(false);
-  };
 
   const handleOnChangeUrl = (value) => {
     setUrl(value);
@@ -40,11 +35,7 @@ function GifLanding() {
   };
 
   const handleCreateGifClick = () => {
-    if (!sectorType && isEmailCreationActive) {
-      setSectorDialogOpen(true);
-    } else {
-      formRef.current.submit(sectorType);
-    }
+    formRef.current.submit();
   };
 
   const generateSingleGif = async () => {
@@ -55,52 +46,60 @@ function GifLanding() {
         return;
       }
     } else {
-      if (!sectorType && isEmailCreationActive) {
-        setSectorDialogOpen(true);
-      } else {
-          setIsLoading(true);
-          try {
-            setIsLoading(true);
-            const newUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
-            const response = await (newUrl.endsWith('.pdf') ? GeneratePdfGifs(newUrl, sectorType) : GenerateSingleGif(newUrl, sectorType));
-            console.log('response', response);
-            if (response?.data?.error) {
-              handleErrors(response.data.error);
-            } else if (response.data.message === 'GIF generated and uploaded!') {
-              const responseData = response.data;
-              setGifGenerated(responseData.data);
-            }
-            setIsLoading(false);
-          } catch (error) {
-            handleErrors('general error')
-            setIsLoading(false);
-          }
+      // if (!sectorType && isEmailCreationActive) {
+      //   setSectorDialogOpen(true);
+      // } else {
+      setIsLoading(true);
+      try {
+        setIsLoading(true);
+        const newUrl =
+          url.startsWith('http://') || url.startsWith('https://')
+            ? url
+            : `https://${url}`;
+        const response = await (newUrl.endsWith('.pdf')
+          ? GeneratePdfGifs(newUrl)
+          : GenerateSingleGif(newUrl));
+        console.log('response', response);
+        if (response?.data?.error) {
+          handleErrors(response.data.error);
+        } else if (response.data.message === 'GIF generated and uploaded!') {
+          const responseData = response.data;
+          setGifGenerated(responseData.data);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        handleErrors('general error');
         setIsLoading(false);
       }
+      setIsLoading(false);
     }
+    // }
   };
 
   if (error) {
     return (
       <div className="gif-landing">
-        <GifError setGifGenerated={setGifGenerated} variant={error} setError={setError} />
+        <GifError
+          setGifGenerated={setGifGenerated}
+          variant={error}
+          setError={setError}
+        />
       </div>
-    )
+    );
   }
 
   return (
     <div className="gif-landing">
       {isLoading || gifGenerated ? (
-        <GeneratedGif key={gifGenerated} url={url} gifGenerated={gifGenerated} isLoading={isLoading} onDownload={handleDownloadClick} />
+        <GeneratedGif
+          key={gifGenerated}
+          url={url}
+          gifGenerated={gifGenerated}
+          isLoading={isLoading}
+          onDownload={handleDownloadClick}
+        />
       ) : (
         <>
-          <SectorTypeDialog 
-            sectorType={sectorType} 
-            setSectorType={setSectorType} 
-            handleSectorSubmit={handleSectorSubmit} 
-            isSectorDialogOpen={isSectorDialogOpen} 
-            setSectorDialogOpen={setSectorDialogOpen} 
-          />
           <SingleGifGenerator
             onChange={handleOnChangeUrl}
             generateSingleGif={generateSingleGif}
@@ -111,7 +110,6 @@ function GifLanding() {
             setGifGenerated={setGifGenerated}
             setSelectedFile={setSelectedFile}
             handlePdfChange={handlePdfChange}
-            sectorType={sectorType}
             ref={formRef}
           />
         </>
@@ -120,7 +118,15 @@ function GifLanding() {
         <Box className="bottom-content">
           {gifGenerated && (
             <Box className="go-back-content">
-              Want to create another gif? <span className="back-btn" onClick={() => { setGifGenerated(null); }}>Go back to home page here</span>
+              Want to create another gif?{' '}
+              <span
+                className="back-btn"
+                onClick={() => {
+                  setGifGenerated(null);
+                }}
+              >
+                Go back to home page here
+              </span>
             </Box>
           )}
         </Box>

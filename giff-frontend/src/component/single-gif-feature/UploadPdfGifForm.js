@@ -10,7 +10,6 @@ const UploadPdfGifForm = forwardRef(
       setSelectedFile,
       setIsLoading,
       setGifGenerated,
-      sectorType,
     },
     ref
   ) => {
@@ -68,7 +67,7 @@ const UploadPdfGifForm = forwardRef(
       try {
         let response;
         if (selectedFile.type === 'application/pdf') {
-          response = await UploadPdfThenCreateGif(selectedFile, sectorType);
+          response = await UploadPdfThenCreateGif(selectedFile);
         }
         else if (selectedFile.type.startsWith('video/')) {
           response = await UploadVideoThenCreateGif(selectedFile);
