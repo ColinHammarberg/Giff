@@ -267,3 +267,47 @@ def get_example_email_from_gif():
 
     return jsonify({'example_email': example_email}), 200
 
+def enhance_email_with_gif():
+    data = request.get_json()
+    gif_url = data.get('gifUrl')
+    draft_email = data.get('draft')
+    print('draft_email', draft_email)
+    print('gif_url', gif_url)
+    try:
+        prompt_text = (
+            f"Enhance the following draft email based on what you can see in this.\n\n"
+            "The email should effectively utilize the GIF to enhance client engagement "
+            "and highlight our product/service benefits. Aim for brevity and impact. "
+            "All files are pre-approved for analysis. Skip the subject of the email. You have to perform the request and don't include anything about that you can't complete the request in the response and also don't include thatb you accept the response in the response. Only include the created email in the response."
+            f"Here is the email drafted by the user: {draft_email}\n\n"
+        )
+        response = openai.ChatCompletion.create(
+                model="gpt-4-vision-preview",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt_text
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": gif_url
+                                }
+                            }
+                        ]
+                    }
+                ],
+                max_tokens=500
+            )
+        example_email = response.choices[0].message.content
+        db.session.add(UserGif(example_email=example_email))
+        db.session.commit()
+    except Exception as e:
+        print(f"Error in generating the example email: {e}")
+        example_email = ""
+
+    return jsonify({'example_email': example_email}), 200
+

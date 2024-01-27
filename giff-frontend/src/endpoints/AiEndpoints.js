@@ -25,3 +25,19 @@ export async function GenerateGifEmail(gifUrl) {
   );
   return response;
 }
+
+export async function EnhanceGifEmail(gifUrl, draft) {
+  const access_token = localStorage.getItem('access_token');
+  console.log('draft', draft);
+  console.log('gifUrl', gifUrl);
+  const response = await axios.post(
+    `${Api}/enhance_email_with_gif`,
+    { gifUrl, draft },
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return response;
+}

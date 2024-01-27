@@ -51,7 +51,7 @@ import {
 import TagsActionDialog from '../gif-library/TagsActionDialog';
 import EditEmail from './EditEmail';
 import LoadingGif from '../../resources/loading-gif.png';
-import { GenerateGifEmail } from '../../endpoints/AiEndpoints';
+import { GenerateGifEmail, EnhanceGifEmail } from '../../endpoints/AiEndpoints';
 
 class DesignGifDialog extends PureComponent {
   constructor(props) {
@@ -469,6 +469,24 @@ class DesignGifDialog extends PureComponent {
     }
   };
 
+  handleEnhanceEmail = async () => {
+    const { currentGifUrl, exampleEmail } = this.state;
+    try {
+      this.setState({ isLoadingEmail: true });
+      console.log('currentGifUrl', currentGifUrl);
+      const response = await EnhanceGifEmail(currentGifUrl, exampleEmail);
+      console.log('response', response);
+      this.setState({
+        exampleEmail: response.data.example_email,
+        isLoadingEmail: false,
+      });
+    } catch (error) {
+      console.error('Error generating email:', error);
+      this.setState({ isLoading: false });
+      showNotification('error', 'Failed to generate email.');
+    }
+  }
+
   handleSaveEditedName = async () => {
     this.setState({ isEditingName: false });
   };
@@ -556,7 +574,7 @@ class DesignGifDialog extends PureComponent {
     } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
-    console.log('selectedGif', selectedGif);
+    console.log('exampleEmail', exampleEmail);
 
     // const filteredFrames = this.getFilteredFrames();
 
@@ -847,18 +865,23 @@ class DesignGifDialog extends PureComponent {
               {activeTab === 3 && (
                 <div className="container">
                   <EditEmail
-                    defaultEmail={
-                      exampleEmail ||
-                      'You currently have no email text attached to this email...No worries! Just start typing one right now or use our ai feature to generate your message based on the gifs content and your intended target audience.'
-                    }
+                    defaultEmail={exampleEmail}
+                    placeholder="You currently have no email text attached to this email...No worries! Just start typing one right now or use our ai feature to generate your message based on the gifs content and your intended target audience."
                     onEmailChange={this.handleEmailChange}
                   />
-                  {!exampleEmail && (
+                  {!exampleEmail ? (
                     <Button onClick={this.handleGenerateEmail}>
                       <SmartToyIcon />
                       {this.state.isLoadingEmail
                         ? 'Processing'
-                        : 'Ai generate an email'}
+                        : 'Ai generate an email draft'}
+                    </Button>
+                  ) : (
+                    <Button onClick={this.handleEnhanceEmail}>
+                      <SmartToyIcon />
+                      {this.state.isLoadingEmail
+                        ? 'Processing'
+                        : 'Enhance your email draft'}
                     </Button>
                   )}
                 </div>
