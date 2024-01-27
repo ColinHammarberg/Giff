@@ -1050,9 +1050,9 @@ def upload_video_gif():
 
         # Receive and save the uploaded video file
         video_file = request.files['video']
-        temp_storage_path = 'path_to_temp_storage'
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        temp_storage_path = os.path.join(project_root, 'temp_videos')
         os.makedirs(temp_storage_path, exist_ok=True)
-
         video_path = os.path.join(temp_storage_path, secure_filename(video_file.filename))
         video_file.save(video_path)
 
