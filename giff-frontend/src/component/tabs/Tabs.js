@@ -25,19 +25,26 @@ export const useTabs = (initialTabs) => {
   };
 };
 
-const Tabs = ({ tabs, onChange, variant, className, disabled, gifLibrary, selectedGif }) => {
+const Tabs = ({
+  tabs,
+  onChange,
+  variant,
+  className,
+  disabled,
+  gifLibrary,
+  selectedGif,
+}) => {
   return (
     <ul className={`tabs ${variant} `}>
       {tabs?.map((tab, i) => (
         <LightTooltip
-        disableHoverListener={!disabled[i]}
-        title={
-          i === 1 && selectedGif?.selectedColor
-            ? "Selected color already selected"
-            : (gifLibrary
-                ? "Currently cutting frames is not available in edit mode."
-                : "There is no example email available for this gif.")
-        }
+          disableHoverListener={!disabled[i]}
+          title={
+            i === 1 && selectedGif?.selectedColor
+              ? 'Selected color already selected'
+              : gifLibrary &&
+                'Currently cutting frames is not available in edit mode.'
+          }
         >
           <li
             key={i}
