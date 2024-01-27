@@ -294,7 +294,7 @@ class DesignGifDialog extends PureComponent {
       });
       if (selectedGif.selectedColor) {
         setActiveTab(2);
-      } else if (selectedGif.frame_urls.length === 0 || gifLibrary) {
+      } else if (selectedGif?.frame_urls?.length === 0 || gifLibrary) {
         setActiveTab(1);
       } else {
         setActiveTab(0);
