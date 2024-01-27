@@ -14,7 +14,7 @@ function GifLanding() {
   const [url, setUrl] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedPdf, setSelectedPdf] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const { handleDownloadClick } = useContext(GiftContext);
   const { user } = useFetchUser();
   const formRef = useRef();
@@ -36,7 +36,7 @@ function GifLanding() {
   };
 
   const handlePdfChange = (e) => {
-    setSelectedPdf(e.target.files[0]);
+    setSelectedFile(e.target.files[0]);
   };
 
   const handleCreateGifClick = () => {
@@ -106,10 +106,10 @@ function GifLanding() {
             generateSingleGif={generateSingleGif}
             handleCreateGifClick={handleCreateGifClick}
             gifGenerated={gifGenerated}
-            selectedPdf={selectedPdf}
+            selectedFile={selectedFile}
             setIsLoading={setIsLoading}
             setGifGenerated={setGifGenerated}
-            setSelectedPdf={setSelectedPdf}
+            setSelectedFile={setSelectedFile}
             handlePdfChange={handlePdfChange}
             sectorType={sectorType}
             ref={formRef}

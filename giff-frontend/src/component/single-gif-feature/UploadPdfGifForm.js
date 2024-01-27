@@ -1,11 +1,17 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { showNotification } from '../notification/Notification';
-import { UploadPdfThenCreateGif } from '../../endpoints/GifCreationEndpoints';
+import { UploadPdfThenCreateGif, UploadVideoThenCreateGif } from '../../endpoints/GifCreationEndpoints';
 
 const UploadPdfGifForm = forwardRef(
   (
-    { selectedPdf, setSelectedPdf, setIsLoading, setGifGenerated, sectorType },
+    {
+      selectedFile,
+      setSelectedFile,
+      setIsLoading,
+      setGifGenerated,
+      sectorType,
+    },
     ref
   ) => {
     const [dragOver, setDragOver] = useState(false);
@@ -29,47 +35,71 @@ const UploadPdfGifForm = forwardRef(
       e.preventDefault();
       setDragOver(false);
       const file = e.dataTransfer.files[0];
-      if (file && file.type === 'application/pdf') {
-        setSelectedPdf(file);
+      if (
+        (file && file.type === 'application/pdf') ||
+        file.type.startsWith('video/')
+      ) {
+        setSelectedFile(file);
       }
     };
 
     const handlePdfChange = (e) => {
       e.preventDefault();
       const file = e.target.files[0];
-      if (file && file.type === 'application/pdf') {
-        setSelectedPdf(file);
+      if (
+        file &&
+        (file.type === 'application/pdf' || file.type.startsWith('video/'))
+      ) {
+        setSelectedFile(file);
       }
     };
 
     const handleFormSubmit = async (e) => {
       e.preventDefault();
-      if (selectedPdf) {
-        setIsLoading(true);
-        try {
-          const response = await UploadPdfThenCreateGif(
-            selectedPdf,
-            sectorType
-          );
-          if (response.data.message === 'PDF uploaded and GIF generated!') {
-            const responseData = response.data;
-            setGifGenerated(responseData.data);
-            showNotification('success', 'PDF uploaded and GIF generated!');
-          } else {
-            showNotification(
-              'error',
-              'Failed to generate GIF from PDF. Please try again.'
-            );
-          }
-        } catch (error) {
+      console.log('selectedFile', selectedFile);
+      if (!selectedFile) {
+        showNotification(
+          'error',
+          'No file selected. Please choose a file to upload.'
+        );
+        return;
+      }
+      setIsLoading(true);
+      try {
+        let response;
+        if (selectedFile.type === 'application/pdf') {
+          response = await UploadPdfThenCreateGif(selectedFile, sectorType);
+        }
+        else if (selectedFile.type.startsWith('video/')) {
+          response = await UploadVideoThenCreateGif(selectedFile);
+        } else {
+          setIsLoading(false);
           showNotification(
             'error',
-            'An error occurred while processing your request. Please try again later.'
+            'Unsupported file type. Please upload a PDF or a video.'
           );
-        } finally {
-          setIsLoading(false);
-          setSelectedPdf(null);
+          return;
         }
+        console.log('response', response);
+        if (response.data.message === 'GIF generated and uploaded!') {
+          const responseData = response.data;
+          setGifGenerated(responseData.data);
+          showNotification('success', 'GIF generated successfully!');
+        } else {
+          showNotification(
+            'error',
+            'Failed to generate GIF. Please try again.'
+          );
+        }
+      } catch (error) {
+        showNotification(
+          'error',
+          'An error occurred while processing your request. Please try again later.'
+        );
+        console.error('Error:', error);
+      } finally {
+        setIsLoading(false);
+        setSelectedFile(null);
       }
     };
 
@@ -93,7 +123,7 @@ const UploadPdfGifForm = forwardRef(
           }}
         >
           <FileUploadIcon />
-          <span className="drag">Drag and drop a pdf</span>
+          <span className="drag">Drag and drop a pdf or video</span>
           <label htmlFor="pdf-file" className="custom-button">
             Click here
           </label>
@@ -120,7 +150,7 @@ const UploadPdfGifForm = forwardRef(
             type="file"
             id="pdf-file"
             name="pdf"
-            accept=".pdf"
+            accept=".pdf,video/*"
             onChange={handlePdfChange}
             style={{ display: 'none' }}
           />

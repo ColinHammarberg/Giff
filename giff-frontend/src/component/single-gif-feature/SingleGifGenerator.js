@@ -15,8 +15,8 @@ const SingleGifGenerator = forwardRef(
       gifGenerated,
       onKeyPress,
       generateSingleGif,
-      selectedPdf,
-      setSelectedPdf,
+      selectedFile,
+      setSelectedFile,
       handlePdfChange,
       handleCreateGifClick,
       setGifGenerated,
@@ -50,8 +50,8 @@ const SingleGifGenerator = forwardRef(
                   <UploadPdfGifForm
                     setIsLoading={setIsLoading}
                     setGifGenerated={setGifGenerated}
-                    setSelectedPdf={setSelectedPdf}
-                    selectedPdf={selectedPdf}
+                    setSelectedFile={setSelectedFile}
+                    selectedFile={selectedFile}
                     handlePdfChange={handlePdfChange}
                     ref={ref}
                     handleCreateGifClick={handleCreateGifClick}
@@ -61,8 +61,8 @@ const SingleGifGenerator = forwardRef(
                   <span className="seperator">OR</span>
                   <LightTooltip
                     title="You have already uploaded a file!"
-                    disableHoverListener={!selectedPdf}
-                    disableFocusListener={!selectedPdf}
+                    disableHoverListener={!selectedFile}
+                    disableFocusListener={!selectedFile}
                   >
                     <div className="url">
                       <div className="box">Url</div>
@@ -73,18 +73,18 @@ const SingleGifGenerator = forwardRef(
                             onKeyPress(event);
                           }
                         }}
-                        disabled={selectedPdf}
+                        disabled={selectedFile}
                         placeholder="https://spce.com"
                       />
                     </div>
                   </LightTooltip>
                 </div>
                 <span className="uploaded-pdf">
-                  {selectedPdf
-                    ? selectedPdf.name
+                  {selectedFile
+                    ? selectedFile.name
                     : 'Uploaded files will be displayed here'}
-                  {selectedPdf && (
-                    <DeleteIcon onClick={() => setSelectedPdf(null)} />
+                  {selectedFile && (
+                    <DeleteIcon onClick={() => setSelectedFile(null)} />
                   )}
                 </span>
               </Box>
@@ -125,7 +125,7 @@ const SingleGifGenerator = forwardRef(
               {!gifGenerated && (
                 <OfficialButton
                   onClick={
-                    selectedPdf ? handleCreateGifClick : generateSingleGif
+                    selectedFile ? handleCreateGifClick : generateSingleGif
                   }
                   label="Create GIF"
                   variant="yellow"

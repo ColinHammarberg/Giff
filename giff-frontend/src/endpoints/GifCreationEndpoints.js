@@ -139,6 +139,29 @@ export async function UploadPdfThenCreateGif(pdf, sectorType) {
   }
 }
 
+export async function UploadVideoThenCreateGif(video) {
+  const access_token = localStorage.getItem('access_token');
+  const formData = new FormData();
+  formData.append('video', video);
+
+  try {
+    const response = await axios.post(
+      `${Api}/upload_video_gif`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
 export async function DeleteGif(selectedGif) {
   const access_token = localStorage.getItem('access_token');
   console.log('DeleteGif selectedGif:', selectedGif);

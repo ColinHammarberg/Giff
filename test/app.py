@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from extensions import db
 from flask_cors import CORS
 from s3_helper import fetch_user_gifs, get_multiple_gifs, fetch_logo, delete_logo, upload_logo, delete_gif, delete_gif_frames
-from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list
+from gif_helper import generate_pdf_gif, generate_pdf_gifs_from_list, download_all_gifs, download_all_library_gifs, update_selected_color, download_individual_gif, upload_pdf_and_generate_gif, generate_video_gif, update_selected_frame, generate_gif, generate_gifs_from_list, upload_video_gif
 from routes import signin, signout, signup, fetch_user_info, delete_user_profile, update_password, keep_access_alive, update_email, include_logo_in_gifs, update_additional_profile
 from chrome_extension_helper import generate_extension_pdf_gif, generate_extension_gif
 from reset_password_helper import request_reset_password, reset_user_password
@@ -71,6 +71,10 @@ def google_signup():
 @app.route('/track-gif-click', methods=['POST'])
 def track_gif_click_count():
     return track_gif_click()
+
+@app.route('/upload_video_gif', methods=['POST'])
+def upload_video_gif_manually():
+    return upload_video_gif()
 
 @app.route('/google_signin', methods=['POST'])
 def google_signin():
