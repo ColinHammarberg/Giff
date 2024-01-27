@@ -57,15 +57,6 @@ function GifLibrary() {
   );
   const { tabs, changeTab, activeTab, setActiveTab } = useTabs(tabsData, 0);
 
-  console.log('gifs', gifs);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLoading(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
   const showDeletePopover = (index) => {
     setDeletePopoverAnchorEl(imageRefs.current[index]);
     setCurrentGifIndex(index);
@@ -80,6 +71,7 @@ function GifLibrary() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setShowLoading(true);
       const response = await FetchUserGifs();
       if (response.data) {
         const sortedGifs = response.data.sort((a, b) => {
@@ -97,6 +89,7 @@ function GifLibrary() {
         });
         setGifs(sortedGifs);
       }
+      setShowLoading(false);
     };
     fetchData();
   }, [designChanges]);
@@ -439,7 +432,7 @@ function GifLibrary() {
               );
             })
           ) : (
-            <div style={{ color: '#fff' }}>No GIFs with that tag available</div>
+            <div style={{ color: '#fff' }}>No GIFs available</div>
           )}
         </Box>
       </Box>
