@@ -57,6 +57,8 @@ function GifLibrary() {
   );
   const { tabs, changeTab, activeTab, setActiveTab } = useTabs(tabsData, 0);
 
+  console.log('gifs', gifs);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoading(false);
@@ -287,6 +289,7 @@ function GifLibrary() {
       setDeletePopoverAnchorEl(null);
     }
   }
+
   const handleOpenDesign = () => {
     setIsDesignOpen(true);
   };
@@ -401,6 +404,7 @@ function GifLibrary() {
                     <GifBoxes
                       name={item.name}
                       color={item.selectedColor}
+                      totalClicks={item.clicks}
                       gifUrl={item.url}
                       index={index}
                       onClickMore={handleOpenActionMenu}
