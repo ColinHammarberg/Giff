@@ -724,7 +724,7 @@ def generate_video_gif(data, user_id):
             }
             print('gif_data', gif_data)
             db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                                   gif_url=output_path, resourceId=resource_id, source=URL, base64_string=base64_string))
+                                   gif_url=output_path, resourceId=resource_id, source=URL, base64_string=base64_string, resourcetype=resourceType))
             db.session.commit()
 
         return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
@@ -1121,7 +1121,7 @@ def upload_video_gif():
                 }
                 print('gif_data', gif_data)
                 db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                                    gif_url=output_path, resourceId=resource_id, base64_string=base64_string))
+                                    gif_url=output_path, resourceId=resource_id, base64_string=base64_string, resourcetype=resourceType))
                 db.session.commit()
             return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
 

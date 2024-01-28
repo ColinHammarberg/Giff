@@ -124,10 +124,14 @@ class DesignGifDialog extends PureComponent {
     const { selectedGif } = this.props;
     this.setState({ gifDuration: newValue, isLoading: true });
 
+    let durationMultiplier =
+      selectedGif?.resourceType === 'video' ? 1000 : 1000;
+    let duration = newValue * durationMultiplier;
+
     try {
       const response = await UpdateGifDuration(
         selectedGif.resourceId,
-        newValue * 1000
+        duration
       );
       if (response && response.data && response.data.new_gif_url) {
         setTimeout(() => {
@@ -485,7 +489,7 @@ class DesignGifDialog extends PureComponent {
       this.setState({ isLoading: false });
       showNotification('error', 'Failed to generate email.');
     }
-  }
+  };
 
   handleSaveEditedName = async () => {
     this.setState({ isEditingName: false });
@@ -701,23 +705,25 @@ class DesignGifDialog extends PureComponent {
                   </>
                 )}
               </div>
-              <div className="slider-container">
-                <span>Adjust GIF Duration:</span>
-                <div className="slider">
-                  <span>Slow</span>
-                  <Slider
-                    value={this.state.gifDuration}
-                    onChange={this.handleDurationChange}
-                    min={1}
-                    max={5}
-                    step={1}
-                    valueLabelDisplay="auto"
-                    aria-labelledby="duration-slider"
-                    marks={this.sliderMarks}
-                  />
-                  <span>Fast</span>
+              {!selectedGif?.resourceType === 'video' && (
+                <div className="slider-container">
+                  <span>Adjust GIF Duration:</span>
+                  <div className="slider">
+                    <span>Slow</span>
+                    <Slider
+                      value={this.state.gifDuration}
+                      onChange={this.handleDurationChange}
+                      min={1}
+                      max={5}
+                      step={1}
+                      valueLabelDisplay="auto"
+                      aria-labelledby="duration-slider"
+                      marks={this.sliderMarks}
+                    />
+                    <span>Fast</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             <div className="right-content">
               <div className="top-right-content">
@@ -866,7 +872,7 @@ class DesignGifDialog extends PureComponent {
                 <div className="container">
                   <EditEmail
                     defaultEmail={exampleEmail}
-                    placeholder="You currently have no email text attached to this email...No worries! Just start typing one right now or use our ai feature to generate your message based on the gifs content and your intended target audience."
+                    placeholder="You currently have no email text attached to this email... No worries! Just start typing one right now or use our ai feature to generate your message based on the gifs content and your intended target audience."
                     onEmailChange={this.handleEmailChange}
                   />
                   {!exampleEmail ? (

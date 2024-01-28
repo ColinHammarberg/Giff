@@ -144,6 +144,7 @@ def get_multiple_gifs():
             "ai_description": gif.ai_description,
             "duration": gif.duration,
             "example_email": gif.example_email,
+            "resourceType": gif.resourcetype,
         }
 
         gifs_list.append(gif_data)

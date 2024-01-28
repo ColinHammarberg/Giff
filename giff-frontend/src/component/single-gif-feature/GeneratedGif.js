@@ -111,6 +111,7 @@ function GeneratedGif(props) {
         resourceId: resourceId,
         selectedColor: selectedColor,
         selectedFrame: selectedFrame,
+        resourceType: resourceType,
         tags: tags,
         exampleEmail: exampleEmail,
         frame_urls: frameUrls,
@@ -158,7 +159,7 @@ function GeneratedGif(props) {
             console.error(error);
           }
         } else {
-          navigate('/gif-library')
+          navigate('/gif-library');
         }
       }
     };
