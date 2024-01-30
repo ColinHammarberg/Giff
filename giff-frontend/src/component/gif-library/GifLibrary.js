@@ -25,6 +25,7 @@ import GifBoxes from './GifBoxes';
 import ActionMenu from './ActionMenu';
 import LoadingGif from '../../resources/loading-gif.png';
 import { tabsData } from '../tabs/TabsData';
+import PreviewSelectedGif from './PreviewSelectedGif';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -35,6 +36,7 @@ function GifLibrary() {
   const [showLoading, setShowLoading] = useState(true);
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
+  const [previewGif, setPreviewGif] = useState({});
   const { isMobile } = useMobileQuery();
   const navigate = useNavigate();
   // const [imageDimensions, setImageDimensions] = useState({
@@ -136,8 +138,8 @@ function GifLibrary() {
   // };
 
   const handleDownloadIndividualGifs = async (index) => {
-    if (selectedGif !== null) {
-      const hoveredGif = gifs[index];
+    if (selectedGif !== null || previewGif) {
+      const hoveredGif = gifs[index] || previewGif;
       let selectedResolution = user?.userInfo?.resolution;
 
       if (!selectedResolution && !hoveredGif.resourceType === 'pdf') {
@@ -234,8 +236,8 @@ function GifLibrary() {
   };
 
   const handleEditButtonClick = () => {
-    if (selectedGif !== null) {
-      const hoveredGif = gifs[currentGifIndex];
+    if (selectedGif !== null || previewGif) {
+      const hoveredGif = gifs[currentGifIndex] || previewGif;
       if (hoveredGif) {
         editGif(
           hoveredGif.url,
@@ -287,6 +289,12 @@ function GifLibrary() {
     setIsDesignOpen(true);
   };
 
+  const handlePreviewClick = (event, item) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setPreviewGif(item);
+  };
+
   const handleCloseDesign = () => {
     setIsDesignOpen(false);
   };
@@ -330,6 +338,14 @@ function GifLibrary() {
           onCancel={() => setDeletePopoverAnchorEl(null)}
         />
       )}
+      <PreviewSelectedGif
+        isOpen={!!Object.keys(previewGif).length}
+        previewGif={previewGif}
+        setPreviewGif={setPreviewGif}
+        handleOnDownload={handleDownloadIndividualGifs}
+        handleEditGif={handleEditButtonClick}
+        isMobile={isMobile}
+      />
       <DesignGifDialog
         isOpen={isDesignOpen}
         selectedGif={selectedDesignGif}
@@ -400,6 +416,7 @@ function GifLibrary() {
                       totalClicks={item.clicks}
                       gifUrl={item.url}
                       index={index}
+                      onClickGif={(event) => handlePreviewClick(event, item)}
                       onClickMore={handleOpenActionMenu}
                       onClickDownload={handleDownloadIndividualGifs}
                       onNameChange={(newName) =>

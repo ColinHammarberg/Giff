@@ -11,6 +11,7 @@ import LightTooltip from '../overall/LightToolTip';
 function GifBoxes({
   name,
   onClickMore,
+  onClickGif,
   gifUrl,
   onMouseEnter,
   onClickDownload,
@@ -40,7 +41,7 @@ function GifBoxes({
   };
 
   return (
-    <div onMouseEnter={onMouseEnter}>
+    <div onMouseEnter={onMouseEnter} onClick={onClickGif}>
       <div className="gif-header" style={{ backgroundColor: '#3F3F3F' }}>
         <LightTooltip
           title={`This gif has been clicked on a total of ${
@@ -81,7 +82,12 @@ function GifBoxes({
           )}
         </div>
         <div>
-          <IconButton onClick={(e) => onClickMore(e)}>
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onClickMore(e);
+            }}
+          >
             <MoreVertIcon />
           </IconButton>
         </div>
