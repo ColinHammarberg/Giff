@@ -285,6 +285,19 @@ function GifLibrary() {
     }
   }
 
+  const onChangePreview = (direction) => {
+    let newIndex = currentGifIndex + (direction === 'next' ? 1 : -1);
+
+    if (newIndex >= gifs.length) {
+      newIndex = 0;
+    } else if (newIndex < 0) {
+      newIndex = gifs.length - 1;
+    }
+
+    setCurrentGifIndex(newIndex);
+    setPreviewGif(gifs[newIndex]);
+  };
+
   const handleOpenDesign = () => {
     setIsDesignOpen(true);
   };
@@ -341,6 +354,7 @@ function GifLibrary() {
       <PreviewSelectedGif
         isOpen={!!Object.keys(previewGif).length}
         previewGif={previewGif}
+        onChangePreview={onChangePreview}
         setPreviewGif={setPreviewGif}
         handleOnDownload={handleDownloadIndividualGifs}
         handleEditGif={handleEditButtonClick}

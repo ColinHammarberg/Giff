@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import DownloadIcon from '@mui/icons-material/Download';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import './PreviewSelectedGif.scss';
@@ -26,6 +28,13 @@ class PreviewSelectedGif extends PureComponent {
   componentDidUpdate(prevProps) {
     console.log('###componentDidUpdate');
     this.setState({ previewGif: this.props.previewGif });
+  }
+
+  navigateGif(direction) {
+    const { onChangePreview } = this.props;
+    if (onChangePreview) {
+      onChangePreview(direction);
+    }
   }
 
   componentWillUnmount() {
@@ -59,7 +68,13 @@ class PreviewSelectedGif extends PureComponent {
             </div>
           </div>
           <div className="showcase">
+            <IconButton onClick={() => this.navigateGif('prev')}>
+              <ArrowBackIosIcon />
+            </IconButton>
             <img src={previewGif.url} alt="" />
+            <IconButton onClick={() => this.navigateGif('next')}>
+              <ArrowForwardIosIcon />
+            </IconButton>
           </div>
           <div className="bottom-actions">
             <img src={Logo} alt="" />

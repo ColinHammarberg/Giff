@@ -23,16 +23,22 @@ function GifBoxes({
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState(name);
 
-  const handleEditName = () => {
+  const handleEditName = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     setEditingName(true);
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     setEditingName(false);
     setNewName(name);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     setEditingName(false);
     if (newName !== name) {
       onNameChange(newName);
