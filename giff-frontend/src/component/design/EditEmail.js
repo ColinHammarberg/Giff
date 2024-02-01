@@ -12,6 +12,7 @@ function EditEmail({ defaultEmail, onEmailChange, placeholder }) {
           onChange={(e) => onEmailChange(e.target.value)}
           className="email-textarea"
           rows={15}
+          style={{ outline: 'none' }}
         />
       </div>
     </div>
