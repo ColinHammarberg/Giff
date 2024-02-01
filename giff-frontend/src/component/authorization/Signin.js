@@ -119,6 +119,7 @@ function UserSignin() {
   return (
     <div className="authorization">
       <Header nonAuthenticated />
+      <div className="welcome">Welcome to gif-t</div>
       <Box className="user-authentication">
         <Box className="user-title">
           {isEmailEntered && (
