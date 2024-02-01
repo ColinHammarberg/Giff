@@ -67,6 +67,10 @@ const SingleGifGenerator = forwardRef(
                       <TextField
                         onChange={(event) => handleOnChangeUrl(event)}
                         onKeyPress={(event) => {
+                          if (event.key === 'Enter') {
+                            event.preventDefault();
+                            generateSingleGif();
+                          }
                           if (onKeyPress) {
                             onKeyPress(event);
                           }

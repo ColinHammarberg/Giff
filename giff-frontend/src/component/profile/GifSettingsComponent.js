@@ -2,7 +2,6 @@ import { Button, FormControl, MenuItem, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import './EditProfileComponent.scss';
-import { SaveUserResolution } from '../../endpoints/UserEndpoints';
 import { showNotification } from '../notification/Notification';
 import BackButton from './BackButton';
 import LightTooltip from '../overall/LightToolTip';
@@ -11,16 +10,16 @@ import {
   ToggleIncludeAI,
 } from '../../endpoints/GifCreationEndpoints';
 
-const ResolutionOptions = [
-  { id: 9, value: '100x100' },
-  { id: 10, value: '300x300' },
-  { id: 14, value: '600x600' },
-  { id: 15, value: '700x700' },
-  { id: 16, value: '800x800' },
-  { id: 18, value: '1000x1000' },
-  { id: 24, value: '1280x1000' },
-  { id: 14, value: 'unset' },
-];
+// const ResolutionOptions = [
+//   { id: 9, value: '100x100' },
+//   { id: 10, value: '300x300' },
+//   { id: 14, value: '600x600' },
+//   { id: 15, value: '700x700' },
+//   { id: 16, value: '800x800' },
+//   { id: 18, value: '1000x1000' },
+//   { id: 24, value: '1280x1000' },
+//   { id: 14, value: 'unset' },
+// ];
 
 const AIOptions = [
   { id: 'none', label: 'No AI Feature' },
@@ -29,7 +28,7 @@ const AIOptions = [
 ];
 
 function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }) {
-  const [resolution, setResolution] = useState(user?.resolution || '');
+  // const [resolution, setResolution] = useState(user?.resolution || '');
   const [selectedAI, setSelectedAI] = useState(
     user?.include_ai
       ? 'describe_gif'
@@ -38,16 +37,16 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
       : 'none'
   );
 
-  const handleResolutionChange = (event) => {
-    setResolution(event.target.value);
-  };
+  // const handleResolutionChange = (event) => {
+  //   setResolution(event.target.value);
+  // };
   const handleAIChange = (event) => {
     setSelectedAI(event.target.value);
   };
 
   // Store initial values to check for changes
   const [initialValues, setInitialValues] = useState({
-    resolution: user?.resolution || '',
+    // resolution: user?.resolution || '',
     selectedAI: user?.include_ai
       ? 'describe_gif'
       : user?.include_example_email
@@ -57,7 +56,7 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
 
   useEffect(() => {
     setInitialValues({
-      resolution: user?.resolution || '',
+      // resolution: user?.resolution || '',
       selectedAI: user?.include_ai
         ? 'describe_gif'
         : user?.include_example_email
@@ -70,10 +69,10 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
     let updated = false;
 
     // Save resolution if it's changed
-    if (resolution !== initialValues.resolution) {
-      await SaveUserResolution(resolution);
-      updated = true;
-    }
+    // if (resolution !== initialValues.resolution) {
+    //   await SaveUserResolution(resolution);
+    //   updated = true;
+    // }
 
     // Save AI settings based on selectedAI value
     if (selectedAI !== initialValues.selectedAI) {
@@ -92,7 +91,7 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
 
     if (updated) {
       showNotification('success', 'Your settings were successfully updated!');
-      setInitialValues({ resolution, selectedAI });
+      setInitialValues({ selectedAI });
       setChangeUserDetails(true);
     }
   };
@@ -147,7 +146,7 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
               </FormControl>
             </div>
           </div>
-          <div classname="group">
+          {/* <div classname="group">
             <div className="resolution">
               <div className="info">
                 Gif resolution{' '}
@@ -174,7 +173,7 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
                 </Select>
               </FormControl>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="action-save">
