@@ -7,6 +7,8 @@ import { GiftContext } from '../../context/GiftContextProvider';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
 import {
+  DeleteGif,
+  DeleteGifFrames,
   DownloadIndividualDesignedGifs,
   GetMultipleGifs,
 } from '../../endpoints/GifCreationEndpoints';
@@ -15,6 +17,7 @@ import {
 // import ExampleEmailPopover from './EmailExamplePopover';
 import { tabsData } from '../tabs/TabsData';
 import { useNavigate } from 'react-router-dom';
+import { showNotification } from '../notification/Notification';
 
 function GeneratedGif(props) {
   const { gifGenerated, isLoading, key } = props;
@@ -90,6 +93,36 @@ function GeneratedGif(props) {
   const handleCloseDesign = () => {
     setIsDesignOpen(false);
   };
+
+  async function handleOnDeleteGif() {
+    console.log('selectedDesignGif', selectedDesignGif);
+    if (selectedDesignGif !== null) {
+      const gifData = {
+        name: selectedDesignGif.gifName,
+        resourceId: selectedDesignGif.resourceId,
+      };
+      try {
+        const deleteFrames = await DeleteGifFrames(gifData);
+        if (deleteFrames?.data?.message) {
+          const response = await DeleteGif(gifData);
+          console.log('deleteFrames', deleteFrames);
+          if (response.data) {
+            navigate('/choose-option-create');
+            showNotification(
+              'success',
+              "Your gif has been terminated. Let's create another one!"
+            );
+          }
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          showNotification('error', 'Oh no! Please try that again.');
+        } else {
+          showNotification('error', 'Oh no! Please try that again.');
+        }
+      }
+    }
+  }
 
   const editGif = useCallback(
     (
@@ -334,6 +367,7 @@ function GeneratedGif(props) {
             selectedGif={selectedDesignGif}
             gifCreationFlow
             tabs={tabs}
+            onDelete={handleOnDeleteGif}
             navigate={navigate}
             isMobile={isMobile}
             changeTab={changeTab}

@@ -667,6 +667,11 @@ class DesignGifDialog extends PureComponent {
                     alt="Selected Frame"
                   />
                 )}
+                {this.props.gifCreationFlow && (
+                  <IconButton className="delete" onClick={this.props.onDelete}>
+                    <CloseIcon />
+                  </IconButton>
+                )}
               </div>
               <div className="gif-name-section">
                 {isEditingName ? (
@@ -705,22 +710,22 @@ class DesignGifDialog extends PureComponent {
               {!selectedGif?.resourceType === 'video' ||
                 (selectedGif?.resourceType === null && (
                   <div className="slider-container">
-                  <span>Adjust GIF Duration:</span>
-                  <div className="slider">
-                    <span>Fast</span>
-                    <Slider
-                      value={this.state.gifDuration}
-                      onChange={this.handleDurationChange}
-                      min={1}
-                      max={5}
-                      step={1}
-                      valueLabelDisplay="auto"
-                      aria-labelledby="duration-slider"
-                      marks={this.sliderMarks}
-                    />
-                    <span>Slow</span>
+                    <span>Adjust GIF Duration:</span>
+                    <div className="slider">
+                      <span>Fast</span>
+                      <Slider
+                        value={this.state.gifDuration}
+                        onChange={this.handleDurationChange}
+                        min={1}
+                        max={5}
+                        step={1}
+                        valueLabelDisplay="auto"
+                        aria-labelledby="duration-slider"
+                        marks={this.sliderMarks}
+                      />
+                      <span>Slow</span>
+                    </div>
                   </div>
-                </div>
                 ))}
             </div>
             <div className="right-content">

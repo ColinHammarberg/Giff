@@ -276,6 +276,7 @@
                 .image-frame-container {
                     display: flex;
                     justify-content: center;
+                    position: relative;
 
                     .loading-spinner {
                         height: 250px;
@@ -290,6 +291,20 @@
                             top: 0;
                             left: 0;
                             z-index: 10;
+                        }
+                    }
+
+                    .delete {
+                        position: absolute;
+                        right: 0;
+                        width: 18px;
+                        background-color: #FE6B01;
+                        width: 20px;
+                        height: 20px;
+
+                        svg {
+                            color: #000;
+                            font-size: 16px;
                         }
                     }
                 }
