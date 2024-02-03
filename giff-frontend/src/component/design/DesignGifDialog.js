@@ -124,8 +124,7 @@ class DesignGifDialog extends PureComponent {
     const { selectedGif } = this.props;
     this.setState({ gifDuration: newValue, isLoading: true });
 
-    let durationMultiplier =
-      selectedGif?.resourceType === 'video' ? 1000 : 1000;
+    let durationMultiplier = 1000;
     let duration = newValue * durationMultiplier;
 
     try {
@@ -578,8 +577,6 @@ class DesignGifDialog extends PureComponent {
     } = this.state;
     const { selectedGif, isOpen, tabs, activeTab, isMobile } = this.props;
 
-    console.log('exampleEmail', exampleEmail);
-
     // const filteredFrames = this.getFilteredFrames();
 
     const visibleColors = isMobile
@@ -705,11 +702,12 @@ class DesignGifDialog extends PureComponent {
                   </>
                 )}
               </div>
-              {!selectedGif?.resourceType === 'video' && (
-                <div className="slider-container">
+              {!selectedGif?.resourceType === 'video' ||
+                (selectedGif?.resourceType === null && (
+                  <div className="slider-container">
                   <span>Adjust GIF Duration:</span>
                   <div className="slider">
-                    <span>Slow</span>
+                    <span>Fast</span>
                     <Slider
                       value={this.state.gifDuration}
                       onChange={this.handleDurationChange}
@@ -720,10 +718,10 @@ class DesignGifDialog extends PureComponent {
                       aria-labelledby="duration-slider"
                       marks={this.sliderMarks}
                     />
-                    <span>Fast</span>
+                    <span>Slow</span>
                   </div>
                 </div>
-              )}
+                ))}
             </div>
             <div className="right-content">
               <div className="top-right-content">

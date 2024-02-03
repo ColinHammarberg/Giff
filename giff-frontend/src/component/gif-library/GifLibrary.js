@@ -92,6 +92,7 @@ function GifLibrary() {
         setGifs(sortedGifs);
       }
       setShowLoading(false);
+      setDesignChanges(false);
     };
     fetchData();
   }, [designChanges]);
@@ -230,6 +231,7 @@ function GifLibrary() {
       selectedFrame: selectedFrame,
       tags: tags,
       exampleEmail: exampleEmail,
+      resourceType: resourceType,
       frame_urls: frameUrls,
       gifName: gifName,
     });
@@ -252,7 +254,7 @@ function GifLibrary() {
           hoveredGif.name
         );
       }
-      setDesignChanges(false);
+      // setDesignChanges(false);
     }
   };
 

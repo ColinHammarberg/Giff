@@ -23,7 +23,6 @@ def fetch_filter_url(selected_filter):
 
 
 def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
-    print('file_name', file_name)
     try:
         s3.upload_file(
             file_name,
@@ -34,12 +33,10 @@ def upload_to_s3(file_name, bucket, object_name=None, resource_id=None):
             }
         )
     except Exception as e:
-        print(f"Upload Failed: {e}")
         return False
     return True
 
 def upload_frame_to_s3(frame_data, bucket, object_name=None, resource_id=None):
-    print('Uploading frame to:', object_name)
     try:
         s3.put_object(
             Body=frame_data,
@@ -48,7 +45,6 @@ def upload_frame_to_s3(frame_data, bucket, object_name=None, resource_id=None):
             Metadata={'resourceId': resource_id} if resource_id else {}
         )
     except Exception as e:
-        print(f"Upload Failed: {e}")
         return False
     return True
 
@@ -62,21 +58,18 @@ def upload_pdf_frame_to_s3(file_path, bucket, object_name, resource_id):
                 ExtraArgs={'Metadata': {'resourceId': resource_id}}
             )
     except Exception as e:
-        print(f"Upload Failed: {e}")
         return False
     return True
 
 @jwt_required()
 def fetch_user_gifs():
     user_id = get_jwt_identity()
-    print('user_id', user_id)
     if user_id is None:
         return jsonify({'error': 'User not authenticated'}), 401
 
     # Fetch user GIFs from the database in descending order of creation date
     user_gifs = UserGif.query.filter_by(
         user_id=user_id).order_by(UserGif.created_at.desc()).all()
-    print('user_gifs', user_gifs)
     s3_client = s3
     bucket_name = 'gift-resources'
 
@@ -89,7 +82,7 @@ def fetch_user_gifs():
         gif_tags = [{'id': tag.id, 'value': tag.tag_value, 'color': tag.color} for tag in gif.tags]
         gifs_list.append({"name": gif.gif_name, "url": presigned_url, "resourceId": gif.resourceId,
                           "selectedColor": gif.selectedColor, "created_at": gif.created_at, 
-                          "selectedFrame": gif.selectedFrame, "source": gif.source, "tags": gif_tags, "base64": gif.base64_string, "example_email": gif.example_email, "duration": gif.duration, "frame_urls": gif.frame_urls,  "clicks": gif.click_count})
+                          "selectedFrame": gif.selectedFrame, "source": gif.source, "tags": gif_tags, "base64": gif.base64_string, "example_email": gif.example_email, "duration": gif.duration, "frame_urls": gif.frame_urls,  "clicks": gif.click_count, "resourceType": gif.resourcetype })
 
     return jsonify({'message': 'Success', 'data': gifs_list}), 200
 
@@ -102,7 +95,6 @@ def get_multiple_gifs():
         return jsonify({'error': 'User not authenticated'}), 401
 
     data = request.get_json()
-    print('data', data)
     gif_requests = data.get('gifs', [])
 
     if not gif_requests:
@@ -314,7 +306,6 @@ def delete_gif():
         return jsonify({'message': 'GIF successfully deleted', 'updatedGifs': gifs_list}), 200
 
     except Exception as e:
-        print(f"Server Error: {e}")
         return jsonify({'error': 'Internal Server Error'}), 500
     
 
@@ -341,8 +332,6 @@ def delete_gif_frames():
         bucket_name = 'gif-frames'
         frame_folder_name = f"{user_id}/{gif_name}/"
 
-        print('frame_folder_name', frame_folder_name)
-
         # List all objects in the frame folder
         objects_to_delete = s3.list_objects_v2(Bucket=bucket_name, Prefix=frame_folder_name)
 
@@ -358,5 +347,4 @@ def delete_gif_frames():
         return jsonify({'message': 'GIF frames successfully deleted'}), 200
 
     except Exception as e:
-        print(f"Server Error: {e}")
         return jsonify({'error': 'Internal Server Error'}), 500
