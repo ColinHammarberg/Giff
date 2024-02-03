@@ -222,7 +222,6 @@ function GifLibrary() {
     frameUrls,
     gifName
   ) => {
-    console.log('duration', duration, resourceType);
     setIsDesignOpen(true);
     setSelectedDesignGif({
       url: gifUrl,
@@ -232,6 +231,7 @@ function GifLibrary() {
       tags: tags,
       exampleEmail: exampleEmail,
       resourceType: resourceType,
+      duration: duration,
       frame_urls: frameUrls,
       gifName: gifName,
     });

@@ -65,7 +65,7 @@ class DesignGifDialog extends PureComponent {
       selectedFilter: null,
       visibleColorIndex: 0,
       selectedFrames: this.props.selectedGif.frame_urls || [],
-      gifDuration: '',
+      gifDuration: 1,
       currentGifUrl: this.props.selectedGif.url,
       isEditingName: false,
       editedName: this.props.selectedGif?.gifName || '',
@@ -287,10 +287,11 @@ class DesignGifDialog extends PureComponent {
 
   componentDidUpdate(prevProps) {
     const { selectedGif, setActiveTab, gifLibrary } = this.props;
+    console.log('this.props.selectedGif.duration', this.props.selectedGif);
     if (this.props.selectedGif.url !== prevProps.selectedGif.url) {
       this.setState({
         selectedFrame: null,
-        gifDuration: this.props.selectedGif.duration,
+        gifDuration: this.props.selectedGif.duration || 1,
         frameUrls: this.props.selectedGif.frame_urls,
         selectedFrames: this.props.selectedGif.frame_urls,
         editedName: this.props.selectedGif.gifName,
@@ -527,11 +528,15 @@ class DesignGifDialog extends PureComponent {
   };
 
   sliderMarks = [
+    { value: 0.33, label: '0.33s' },
+    { value: 0.66, label: '0.66s' },
     { value: 1, label: '1s' },
+    { value: 1.33, label: '1.33s' },
+    { value: 1.66, label: '1.66s' },
     { value: 2, label: '2s' },
+    { value: 2.33, label: '2.33s' },
+    { value: 2.66, label: '2.66s' },
     { value: 3, label: '3s' },
-    { value: 4, label: '4s' },
-    { value: 5, label: '5s' },
   ];
 
   renderTitles = {
@@ -716,9 +721,10 @@ class DesignGifDialog extends PureComponent {
                       <Slider
                         value={this.state.gifDuration}
                         onChange={this.handleDurationChange}
-                        min={1}
-                        max={5}
-                        step={1}
+                        min={0.33}
+                        defaultValue={1}
+                        max={3}
+                        step={0.33}
                         valueLabelDisplay="auto"
                         aria-labelledby="duration-slider"
                         marks={this.sliderMarks}
