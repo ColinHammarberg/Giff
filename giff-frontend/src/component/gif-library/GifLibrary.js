@@ -254,6 +254,7 @@ function GifLibrary() {
           hoveredGif.name
         );
       }
+      setPreviewGif({});
       // setDesignChanges(false);
     }
   };

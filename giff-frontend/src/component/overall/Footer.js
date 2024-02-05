@@ -5,7 +5,7 @@ import './Footer.scss';
 function Footer() {
   return (
     <Box className="footer-container">
-      <Box className="gift">© Gif-t, 2023</Box>
+      <Box className="gift">© Gif-t, 2024</Box>
       <Box
         className="rights"
         onClick={() => window.open('https://gif-t.io/rights-privacy-1')}

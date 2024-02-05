@@ -57,7 +57,6 @@ class PreviewSelectedGif extends PureComponent {
         open={isOpen}
       >
         <div className="background">
-          <img src={Logo} alt="" />
         </div>
         <div className="content">
           <div className="header">
