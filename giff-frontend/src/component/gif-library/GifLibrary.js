@@ -13,7 +13,7 @@ import ChooseResolutionDialog from './ChooseResolutionDialog';
 import { GiftContext } from '../../context/GiftContextProvider';
 import {
   DeleteGif,
-  DownloadAllLibraryGifs,
+  // DownloadAllLibraryGifs,
   DownloadIndividualDesignedGifs,
   UpdateGifName,
 } from '../../endpoints/GifCreationEndpoints';
@@ -32,7 +32,7 @@ function GifLibrary() {
   const [selectedGif, setSelectedGif] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
   const { user } = useContext(GiftContext);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
@@ -183,32 +183,32 @@ function GifLibrary() {
     }
   };
 
-  const handleDownloadLibraryGifs = async () => {
-    if (!gifs) {
-      return;
-    }
-    const gifData = gifs.map((gif) => ({
-      url: gif.url,
-      name: gif.name,
-      selectedColor: gif.selectedColor,
-      selectedFrame: gif.selectedFrame,
-    }));
-    setIsLoading(true);
-    try {
-      const response = await DownloadAllLibraryGifs(gifData);
-      const blob = new Blob([response.data], { type: 'application/zip' });
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = 'your-gift-bag.zip';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading ZIP file:', error);
-    }
-    setIsLoading(false);
-  };
+  // const handleDownloadLibraryGifs = async () => {
+  //   if (!gifs) {
+  //     return;
+  //   }
+  //   const gifData = gifs.map((gif) => ({
+  //     url: gif.url,
+  //     name: gif.name,
+  //     selectedColor: gif.selectedColor,
+  //     selectedFrame: gif.selectedFrame,
+  //   }));
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await DownloadAllLibraryGifs(gifData);
+  //     const blob = new Blob([response.data], { type: 'application/zip' });
+  //     const downloadUrl = window.URL.createObjectURL(blob);
+  //     const a = document.createElement('a');
+  //     a.href = downloadUrl;
+  //     a.download = 'your-gift-bag.zip';
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     document.body.removeChild(a);
+  //   } catch (error) {
+  //     console.error('Error downloading ZIP file:', error);
+  //   }
+  //   setIsLoading(false);
+  // };
 
   const editGif = (
     gifUrl,
@@ -383,31 +383,25 @@ function GifLibrary() {
       <Box className="gif-showcase">
         <Box className="gif-showcase-info">
           <Box className="title">
-            <>
-              <span>This is your library. </span>
-              Download all gifs at once
-              <span> or </span>
-              {isMobile ? 'click on' : 'hover over'} the gif you want to
-              download.
-            </>
+            <div className="main-title">
+              <span>Welcome to your </span>
+              <span>gif library!</span>
+            </div>
+            <div className="sub-title">
+              <span>here you can find and </span>
+              manage all your gifs
+            </div>
           </Box>
           <div className="library-actions">
-            <Box className="download">
-              {gifs?.length > 0 ? (
-                <OfficialButton
-                  onClick={handleDownloadLibraryGifs}
-                  isProcessing={isLoading}
-                  label="Download all gifs"
-                  variant="yellow"
-                />
-              ) : (
+            {gifs?.length === 0 && (
+              <Box className="create">
                 <OfficialButton
                   onClick={() => navigate('/choose-option-create')}
                   label="Create gifs"
                   variant="yellow"
                 />
-              )}
-            </Box>
+              </Box>
+            )}
           </div>
         </Box>
         <Filter tags={tags} onTagSelectionChange={setSelectedTags} />

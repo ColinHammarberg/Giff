@@ -44,19 +44,41 @@
             }
 
             .title {
-                font-size: 25px;
-                color: #fff;
-                text-align: center;
-                margin-bottom: 50px;
-                width: 380px;
+                width: 500px;
                 margin: auto;
+                text-align: center;
 
-                span {
-                    color: rgba(255, 255, 255, 0.5);
+                .main-title {
+                    font-size: 45px;
+                    margin-bottom: 20px;
+
+                    :first-child {
+                        background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        font-family: 'Staatliches';
+                        -webkit-text-fill-color: transparent;
+                        text-transform: uppercase;
+                    }
+
+                    span {
+                        color: #F4149B;
+                    }
+                }
+
+                .sub-title {
+                    font-size: 25px;
+                    color: #fff;
+                    text-align: center;
+                    margin-bottom: 50px;
+
+                    span {
+                        color: rgba(255, 255, 255, 0.5);
+                    }
                 }
             }
 
-            .download {
+            .create {
                 width: 100%;
                 margin: auto;
                 display: flex;
@@ -95,6 +117,7 @@
         .gif-wrapper {
             .gif-box {
                 width: 30%; // 3 GIFs per row
+
                 @media (max-width: 1024px) {
                     width: calc(100% / 2); // 2 GIFs per row
                 }
