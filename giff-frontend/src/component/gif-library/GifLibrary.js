@@ -19,13 +19,14 @@ import {
 } from '../../endpoints/GifCreationEndpoints';
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
 import useFetchUserTags from '../../queries/useUserTagsQuery';
-import Filter from './Filter';
+// import Filter from './Filter';
 import DeleteGifPopover from './DeleteGifPopover';
 import GifBoxes from './GifBoxes';
 import ActionMenu from './ActionMenu';
 import LoadingGif from '../../resources/loading-gif.png';
 import { tabsData } from '../tabs/TabsData';
 import PreviewSelectedGif from './PreviewSelectedGif';
+import Tag from '../overall/Tag';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -105,6 +106,32 @@ function GifLibrary() {
   const handleCloseActionMenu = () => {
     setAnchorEl(null);
   };
+
+  const handleTagClick = (clickedTag) => {
+    setSelectedTags((prevSelectedTags) => {
+      const isTagAlreadySelected = prevSelectedTags.some(tag => tag.value === clickedTag.value);
+      if (isTagAlreadySelected) {
+        return prevSelectedTags.filter(tag => tag.value !== clickedTag.value);
+      } else {
+        return [...prevSelectedTags, clickedTag];
+      }
+    });
+  };
+
+  function renderUserTags() {
+    return tags?.map((tag, index) => {
+      const isSelected = selectedTags.some(selectedTag => selectedTag.value === tag.value);
+      return (
+        <Tag
+          label={tag.value}
+          key={index}
+          color={tag.color}
+          selected={isSelected}
+          onClick={() => handleTagClick(tag)}
+        />
+      );
+    });
+  }
 
   const handleActionSelect = (action) => {
     switch (action) {
@@ -404,8 +431,10 @@ function GifLibrary() {
             )}
           </div>
         </Box>
-        <Filter tags={tags} onTagSelectionChange={setSelectedTags} />
+        {/* <Filter tags={tags} onTagSelectionChange={setSelectedTags} /> */}
+        <div className="tags-list-description">Press a tag to only display gifs assigned with that tag</div>
         <Divider />
+        <div className="tags-list">{renderUserTags()}</div>
         <Box className="gif-wrapper">
           {filteredGifs.length > 0 ? (
             filteredGifs.map((item, index) => {

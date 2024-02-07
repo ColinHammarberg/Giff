@@ -33,6 +33,50 @@
             margin-top: 20px;
         }
 
+        .tags-list-description {
+            display: flex;
+            justify-content: left;
+            width: 80%;
+            font-family: 'Roboto';
+            font-size: 13px;
+            margin: auto;
+            color: #808080;
+        }
+
+        .tags-list {
+            display: flex;
+            justify-content: left;
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+            gap: 8px;
+
+            .tag {
+                height: 25px;
+                width: 90px;
+                font-size: 12px;
+                position: relative;
+
+                .selected {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 14px;
+                    background-color: #83CEF8;
+                    border-radius: 0px 2px 0px 0px;
+
+                    svg {
+                        font-size: 12px;
+                        color: #F4149B;
+                    }
+                }
+            }
+        }
+
         .gif-showcase-info {
             max-width: 859px;
             margin: auto;
@@ -217,7 +261,7 @@
                                 }
 
                                 &.edit {
-                                    background-color: rgba(185, 241, 64, 1);
+                                    background-color: #b9f140;
                                 }
                             }
                         }
