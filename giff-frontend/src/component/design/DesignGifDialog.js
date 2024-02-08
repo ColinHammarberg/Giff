@@ -52,6 +52,7 @@ import TagsActionDialog from '../gif-library/TagsActionDialog';
 import EditEmail from './EditEmail';
 import LoadingGif from '../../resources/loading-gif.png';
 import { GenerateGifEmail, EnhanceGifEmail } from '../../endpoints/AiEndpoints';
+import { colorSelection, getRandomColor } from './Utils';
 
 class DesignGifDialog extends PureComponent {
   constructor(props) {
@@ -86,24 +87,6 @@ class DesignGifDialog extends PureComponent {
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePrevColors = this.handlePrevColors.bind(this);
     this.handleNextColors = this.handleNextColors.bind(this);
-    this.colorSelection = [
-      { color: '#FEC901' },
-      { color: '#B9F140' },
-      { color: '#ffffff' },
-      { color: '#FD95A7' },
-      { color: '#F4149B' },
-      { color: '#FD3333' },
-      { color: '#0157FE' },
-      { color: '#52DE68' },
-      { color: '#83CEF8' },
-      { color: '#5BFDAF' },
-      { color: '#0E0B80' },
-      { color: '#110946' },
-      { color: '#626262' },
-      { color: '#1B1A19' },
-      { color: '#F5F5F5' },
-      { color: '#FA6CC1' },
-    ];
     this.frameSelection = [
       { name: 'alien', frame: Frame1, icon: AlienIcon },
       { name: 'chicken', frame: Frame2, icon: ChickenIcon },
@@ -181,7 +164,7 @@ class DesignGifDialog extends PureComponent {
       if (newTag.trim() !== '') {
         const tagDetails = {
           tagValue: newTag,
-          color: this.getRandomColor(),
+          color: getRandomColor(),
         };
 
         try {
@@ -205,11 +188,6 @@ class DesignGifDialog extends PureComponent {
       );
     }
   };
-
-  getRandomColor() {
-    const randomIndex = Math.floor(Math.random() * this.colorSelection?.length);
-    return this.colorSelection[randomIndex].color;
-  }
 
   handleRemoveTagFromGif = async (tag) => {
     const { selectedGif } = this.props;
@@ -251,7 +229,7 @@ class DesignGifDialog extends PureComponent {
         showNotification('error', 'Oh no! Please try that again');
       }
     } else {
-      if (this.state.tags?.length < 3) {
+      if (this.state.tags?.length < 2) {
         try {
           const response = await AssignTagToGif(tagDetails);
           const updatedTags = response.data.tags;
@@ -421,7 +399,7 @@ class DesignGifDialog extends PureComponent {
     const { visibleColorIndex } = this.state;
     const nextIndex = Math.min(
       visibleColorIndex + 4,
-      this.colorSelection.length - 4
+      colorSelection.length - 4
     );
     this.setState({ visibleColorIndex: nextIndex });
   }
@@ -585,8 +563,8 @@ class DesignGifDialog extends PureComponent {
     // const filteredFrames = this.getFilteredFrames();
 
     const visibleColors = isMobile
-      ? this.colorSelection.slice(visibleColorIndex, visibleColorIndex + 4)
-      : this.colorSelection;
+      ? colorSelection.slice(visibleColorIndex, visibleColorIndex + 4)
+      : colorSelection;
 
     const gifTags =
       Array.isArray(tags) && tags.length > 0 ? tags : selectedGif.tags || [];

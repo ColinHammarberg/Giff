@@ -1,0 +1,43 @@
+.add-tags-dialog {
+    .MuiPaper-root {
+        width: 300px;
+        height: 150px;
+        background-color: #1B1A19;
+        padding: 12px;
+        font-family: 'Staatliches';
+    }
+
+    .dialog-content {
+        padding: 14px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .add-tags-title {
+        font-size: 30px;
+        color: #fff;
+        font-family: 'Staatliches';
+        text-align: center;
+        height: 40px;
+        margin-bottom: 20px;
+    }
+
+    .tags-input {
+
+        .MuiFormControl-root {
+            background-color: #fff;
+            border-radius: 6px;
+
+            .MuiOutlinedInput-notchedOutline {
+                border-color: transparent;
+            }
+
+            .MuiInputBase-root {
+                height: 45px;
+                font-family: 'Staatliches';
+            }
+        }
+    }
+}

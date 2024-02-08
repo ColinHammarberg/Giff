@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
 import { Box, Divider } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useNavigate } from 'react-router-dom';
 import DesignGifDialog from '../design/DesignGifDialog';
 import { useTabs } from '../tabs/Tabs';
@@ -27,6 +28,8 @@ import LoadingGif from '../../resources/loading-gif.png';
 import { tabsData } from '../tabs/TabsData';
 import PreviewSelectedGif from './PreviewSelectedGif';
 import Tag from '../overall/Tag';
+import AddTagsDialog from './AddTagsDialog';
+import LightTooltip from '../overall/LightToolTip';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -48,9 +51,10 @@ function GifLibrary() {
   const [currentGifIndex, setCurrentGifIndex] = useState(null);
   const imageRefs = useRef({});
   const access_token = localStorage.getItem('access_token');
-  const { tags } = useFetchUserTags(isDesignOpen);
+  const { tags, refetch: refetchTags } = useFetchUserTags(isDesignOpen);
   const [selectedTags, setSelectedTags] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  const userTagsLimit = tags?.length === 12;
   const filteredGifs = gifs?.filter(
     (gif) =>
       selectedTags.length === 0 ||
@@ -109,9 +113,11 @@ function GifLibrary() {
 
   const handleTagClick = (clickedTag) => {
     setSelectedTags((prevSelectedTags) => {
-      const isTagAlreadySelected = prevSelectedTags.some(tag => tag.value === clickedTag.value);
+      const isTagAlreadySelected = prevSelectedTags.some(
+        (tag) => tag.value === clickedTag.value
+      );
       if (isTagAlreadySelected) {
-        return prevSelectedTags.filter(tag => tag.value !== clickedTag.value);
+        return prevSelectedTags.filter((tag) => tag.value !== clickedTag.value);
       } else {
         return [...prevSelectedTags, clickedTag];
       }
@@ -120,7 +126,9 @@ function GifLibrary() {
 
   function renderUserTags() {
     return tags?.map((tag, index) => {
-      const isSelected = selectedTags.some(selectedTag => selectedTag.value === tag.value);
+      const isSelected = selectedTags.some(
+        (selectedTag) => selectedTag.value === tag.value
+      );
       return (
         <Tag
           label={tag.value}
@@ -358,6 +366,22 @@ function GifLibrary() {
     }
   };
 
+  const openAddTagsDialog = () => {
+    if (!userTagsLimit) {
+      AddTagsDialog.show().then((result) => {
+        if (result.hasConfirmed) {
+          refetchTags()
+            .then(() => {
+              console.log('### Tag added');
+            })
+            .catch((error) => {
+              console.error('Failed to refetch tags:', error);
+            });
+        }
+      });
+    }
+  };
+
   if (showLoading) {
     return (
       <>
@@ -432,9 +456,35 @@ function GifLibrary() {
           </div>
         </Box>
         {/* <Filter tags={tags} onTagSelectionChange={setSelectedTags} /> */}
-        <div className="tags-list-description">Press a tag to only display gifs assigned with that tag</div>
+        <div className="tags-list-description">
+          Press a tag to only display gifs assigned with that tag
+          {selectedTags.length > 0 && (
+            <Tag
+              label="clear filter"
+              color="#ffffff"
+              onClick={() => {
+                setSelectedTags([]);
+              }}
+            />
+          )}
+        </div>
         <Divider />
-        <div className="tags-list">{renderUserTags()}</div>
+        <div className="tags-list">
+          {renderUserTags()}
+          <LightTooltip
+            title="You have added the maximum number of tags"
+            disableHoverListener={!userTagsLimit}
+          >
+            <div>
+              <Tag
+                label={<AddCircleIcon />}
+                color="#ffffff"
+                onClick={openAddTagsDialog}
+                disabled={userTagsLimit}
+              />
+            </div>
+          </LightTooltip>
+        </div>
         <Box className="gif-wrapper">
           {filteredGifs.length > 0 ? (
             filteredGifs.map((item, index) => {

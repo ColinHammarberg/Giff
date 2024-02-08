@@ -1,23 +1,20 @@
 import React from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CheckIcon from '@mui/icons-material/Check';
 import './Tag.scss';
 import { IconButton } from '@mui/material';
 
-function Tag({ label, variant, color, onClick, onRemove, selected }) {
+function Tag({ label, variant, color, onClick, onRemove, selected, disabled }) {
   console.log('selected', selected);
   return (
     <span
-      className={`tag ${variant}`}
-      style={{ border: `2px solid ${color}` }}
+      className={`tag ${variant} ${disabled && 'disabled'}`}
+      style={{
+        border: `2px solid ${color}`,
+        backgroundColor: selected ? color : '',
+      }}
       onClick={onClick}
     >
       {label}
-      {selected && (
-        <div className="selected">
-          <CheckIcon className="confirm" />
-        </div>
-      )}
       {onRemove && (
         <IconButton onClick={onRemove}>
           <DeleteIcon />

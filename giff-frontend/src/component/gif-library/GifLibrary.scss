@@ -36,6 +36,8 @@
         .tags-list-description {
             display: flex;
             justify-content: left;
+            align-items: center;
+            gap: 16px;
             width: 80%;
             font-family: 'Roboto';
             font-size: 13px;
@@ -276,6 +278,22 @@
 @media (max-width: 600px) {
     .gif-library {
         .gif-showcase {
+            .tags-list-description {
+                gap: 8px;
+                font-size: 12px;
+
+                .tag {
+                    font-size: 8px;
+                    width: 50px;
+                }
+            }
+
+            .tags-list {
+                flex-wrap: wrap;
+                display: flex;
+                justify-content: center;
+            }
+
             .gif-showcase-info {
                 padding: 24px;
                 display: flex;
