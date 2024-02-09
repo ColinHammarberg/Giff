@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
 import { Box, Divider } from '@mui/material';
@@ -30,6 +30,7 @@ import PreviewSelectedGif from './PreviewSelectedGif';
 import Tag from '../overall/Tag';
 import AddTagsDialog from './AddTagsDialog';
 import LightTooltip from '../overall/LightToolTip';
+import SortGifs from './SortGifs';
 
 function GifLibrary() {
   const [gifs, setGifs] = useState([]);
@@ -52,6 +53,7 @@ function GifLibrary() {
   const imageRefs = useRef({});
   const access_token = localStorage.getItem('access_token');
   const { tags, refetch: refetchTags } = useFetchUserTags(isDesignOpen);
+  const [sortCriteria, setSortCriteria] = useState('alphabetical');
   const [selectedTags, setSelectedTags] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const userTagsLimit = tags?.length === 12;
@@ -75,6 +77,16 @@ function GifLibrary() {
       navigate(`/?returnUrl=${encodeURIComponent(returnUrl)}`);
     }
   }, [access_token, navigate]);
+
+  const sortedAndFilteredGifs = useMemo(() => {
+    const sortedGifs = [...filteredGifs];
+    if (sortCriteria === 'alphabetical') {
+      sortedGifs.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortCriteria === 'clickCount') {
+      sortedGifs.sort((a, b) => b.clicks - a.clicks);
+    }
+    return sortedGifs;
+  }, [filteredGifs, sortCriteria]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -455,18 +467,27 @@ function GifLibrary() {
             )}
           </div>
         </Box>
-        {/* <Filter tags={tags} onTagSelectionChange={setSelectedTags} /> */}
-        <div className="tags-list-description">
-          Press a tag to only display gifs assigned with that tag
-          {selectedTags.length > 0 && (
-            <Tag
-              label="clear filter"
-              color="#ffffff"
-              onClick={() => {
-                setSelectedTags([]);
-              }}
-            />
-          )}
+        <div className="actions-section">
+          <div className="tags">
+            {tags?.length > 0 && (
+              <span>
+                Press a tag to only display gifs assigned with that tag
+              </span>
+            )}
+            {selectedTags.length > 0 && (
+              <Tag
+                label="clear filter"
+                color="#ffffff"
+                onClick={() => {
+                  setSelectedTags([]);
+                }}
+              />
+            )}
+          </div>
+          <SortGifs
+            setSortCriteria={setSortCriteria}
+            sortCriteria={sortCriteria}
+          />
         </div>
         <Divider />
         <div className="tags-list">
@@ -486,8 +507,8 @@ function GifLibrary() {
           </LightTooltip>
         </div>
         <Box className="gif-wrapper">
-          {filteredGifs.length > 0 ? (
-            filteredGifs.map((item, index) => {
+          {sortedAndFilteredGifs.length > 0 ? (
+            sortedAndFilteredGifs.map((item, index) => {
               return (
                 <Box
                   className="gif-box"

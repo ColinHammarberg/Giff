@@ -5,6 +5,14 @@
     }
 }
 
+.MuiPopover-paper {
+    .MuiList-root {
+        .MuiMenuItem-root {
+            font-family: 'Staatliches';
+        }
+    }
+}
+
 .loading-gifs-container {
     display: flex;
     justify-content: center;
@@ -24,6 +32,12 @@
 .gif-library {
     font-family: 'Staatliches';
     overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    .header-content {
+        height: 100px;
+    }
 
     .gif-showcase {
         .MuiDivider-root {
@@ -33,9 +47,9 @@
             margin-top: 20px;
         }
 
-        .tags-list-description {
+        .actions-section {
             display: flex;
-            justify-content: left;
+            justify-content: space-between;
             align-items: center;
             gap: 16px;
             width: 80%;
@@ -43,6 +57,33 @@
             font-size: 13px;
             margin: auto;
             color: #808080;
+
+            .tags {
+                display: flex;
+                gap: 16px;
+            }
+
+            .sort-selection {
+                .MuiFormLabel-root {
+                    color: #fff;
+                    padding-bottom: 10px;
+                }
+
+                .MuiOutlinedInput-notchedOutline {
+                    border-color: #000;
+                }
+
+                legend {
+                    display: none;
+                }
+
+                .MuiInputBase-root {
+                    border-radius: 6px;
+                    height: 45px;
+                    background-color: #808080;
+                    font-family: 'Staatliches';
+                }
+            }
         }
 
         .tags-list {
@@ -175,9 +216,9 @@
         }
 
         .gif-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -278,7 +319,7 @@
 @media (max-width: 600px) {
     .gif-library {
         .gif-showcase {
-            .tags-list-description {
+            .actions-section {
                 gap: 8px;
                 font-size: 12px;
 
