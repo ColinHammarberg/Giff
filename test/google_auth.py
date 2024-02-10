@@ -14,10 +14,21 @@ def login_with_email():
     # Check if user already exists
     user = User.query.filter_by(email=user_email).first()
     if user:
+        # User exists, generate a token
         access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token, status="Login successful"), 200
     else:
-        return jsonify({"status": "User does not exist"}), 200
+        # User doesn't exist, create a new one
+        try:
+            user = User(email=user_email, is_active=True)
+            db.session.add(user)
+            db.session.commit()
+
+            access_token = create_access_token(identity=user.id)
+            return jsonify(access_token=access_token, status="Login successful"), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"status": "Error creating user", "message": str(e)}), 500
 
 def get_user_email():
     data = request.get_json()
