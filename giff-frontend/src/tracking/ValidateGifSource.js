@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { trackGifClick } from './useValidateGifQuery';
 import './ValidateGifSource.scss';
+import LoadingGif from '../resources/gif-t-logo.png';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -10,7 +11,8 @@ function useQuery() {
 function ValidateGifSource() {
   const query = useQuery();
   const gif_id = query.get('gif_id');
-  const baseText = 'We are validating the gif';
+  const baseText =
+    'This content preview was created by Gif-t and we are now validating your link';
   const [loadingText, setLoadingText] = useState(baseText);
 
   console.log('gif_id', gif_id);
@@ -34,8 +36,11 @@ function ValidateGifSource() {
 
   return (
     <div className="gif-validator">
-      {loadingText}
-      <span className="typing-cursor"></span>
+      <img src={LoadingGif} alt="" />
+      <div className="wrapper">
+        <span className="loading-text">{loadingText}</span>
+        <span className="typing-cursor"></span>
+      </div>
     </div>
   );
 }

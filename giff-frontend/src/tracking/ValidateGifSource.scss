@@ -1,23 +1,36 @@
 .gif-validator {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Staatliches';
-    font-size: 30px;
-    color: #F4149B;
-    .typing-cursor {
-        display: inline-block;
-        width: 10px;
-        height: 20px;
-        background-color: black;
-        margin-left: 5px;
-        animation: blink 1s step-start infinite;
-      }
-      
-      @keyframes blink {
-        50% {
-          background-color: transparent;
-        }
-      }
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Staatliches';
+  background-color: #fff;
+  font-size: 30px;
+  gap: 24px;
+  color: #F4149B;
+
+  .wrapper {
+    max-width: 500px;
+    text-align: center;
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    margin-left: 2px; // Small space between the text and cursor
+    width: 2px;
+    height: 1em; // Match the line height of your text
+    background-color: currentColor; // Use the text color
+    animation: blink-animation 1s infinite;
+  }
+
+  img {
+    width: 100px;
+  }
+
+  @keyframes blink-animation {
+    50% {
+      opacity: 0;
+    }
+  }
 }
