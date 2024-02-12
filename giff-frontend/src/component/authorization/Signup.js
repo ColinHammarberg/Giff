@@ -153,18 +153,19 @@ function UserSignup() {
               marketing, and newsletters.
             </div>
           </Box>
+          <OfficialButton
+            onClick={signUpUserCredentials}
+            label="Sign Up"
+            className="sign-up"
+            variant="pink"
+            isProcessing={isLoading}
+          />
           <div className="divider-container">
             <div className="divider"></div>
             <div>Or</div>
             <div className="divider"></div>
           </div>
           <div className="buttons">
-            <OfficialButton
-              onClick={signUpUserCredentials}
-              label="Sign Up"
-              variant="pink"
-              isProcessing={isLoading}
-            />
             <OutlookSignInButton
               checked={checked}
               setError={setError}
