@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { trackGifClick } from './useValidateGifQuery';
 import './ValidateGifSource.scss';
-import LoadingGif from '../resources/gif-t-logo.png';
+import LoadingGif from '../resources/logo-gradient-border.png';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -11,8 +11,7 @@ function useQuery() {
 function ValidateGifSource() {
   const query = useQuery();
   const gif_id = query.get('gif_id');
-  const baseText =
-    'This content preview was created by Gif-t and we are now validating your link';
+  const baseText = 'we are now validating your link';
   const [loadingText, setLoadingText] = useState(baseText);
 
   console.log('gif_id', gif_id);
@@ -36,10 +35,24 @@ function ValidateGifSource() {
 
   return (
     <div className="gif-validator">
-      <img src={LoadingGif} alt="" />
+    <div className="rectangle-third"></div>
+    <div className="rectangle-secondary"></div>
+    <div className="rectangle-primary"></div>
+    <div className="rectangle-success"></div>
       <div className="wrapper">
-        <span className="loading-text">{loadingText}</span>
-        <span className="typing-cursor"></span>
+        <div className="main-title">
+          <span>This content preview was created by gif-t</span>
+        </div>
+        <div>
+          <span className="loading-text">{loadingText}</span>
+          <span className="typing-cursor"></span>
+        </div>
+        <img src={LoadingGif} alt="" />
+        <div className="bottom">
+          <span>
+            Worry less, click more - our link validation has you covered.
+          </span>
+        </div>
       </div>
     </div>
   );

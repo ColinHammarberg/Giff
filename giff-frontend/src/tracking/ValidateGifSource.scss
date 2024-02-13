@@ -4,33 +4,130 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow: hidden;
   font-family: 'Staatliches';
-  background-color: #fff;
   font-size: 30px;
   gap: 24px;
   color: #F4149B;
+  background: linear-gradient(135deg,
+      rgb(244, 20, 155),
+      rgb(254, 201, 1),
+      rgb(131, 206, 248),
+      rgb(185, 241, 64));
+  position: relative;
+
+  .rectangle-success {
+    position: absolute;
+    width: 35vw;
+    height: 316px;
+    left: -21px;
+    top: 91px;
+    background: #B9F140;
+    filter: blur(250px);
+  }
+
+  .rectangle-primary {
+    position: absolute;
+    width: 20vw;
+    height: 858px;
+    right: -21px; // Adjusted from left to right for the rotation
+    top: -23px;
+    background: #FEC901;
+    filter: blur(250px);
+    transform: rotate(90deg);
+  }
+
+  .rectangle-third {
+    position: absolute;
+    width: 25vw;
+    height: 1227px;
+    left: 422px;
+    bottom: -23px; // Adjusted from top for the rotation
+    background: #83CEF8;
+    filter: blur(300px);
+    transform: rotate(-90deg);
+  }
+
+  .rectangle-secondary {
+    position: absolute;
+    width: 40vw;
+    height: 672px;
+    left: 314px;
+    top: 138px;
+    background: #F4149B;
+    filter: blur(350px);
+  }
 
   .wrapper {
-    max-width: 500px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    z-index: 1399;
+  }
+
+  .loading-text {
+    font-size: 48px;
+  }
+
+  .bottom {
+    font-size: 30px;
+    margin-top: 30px;
   }
 
   .typing-cursor {
     display: inline-block;
-    margin-left: 2px; // Small space between the text and cursor
+    margin-left: 2px;
     width: 2px;
-    height: 1em; // Match the line height of your text
-    background-color: currentColor; // Use the text color
+    height: 34px;
+    background-color: currentColor;
     animation: blink-animation 1s infinite;
+  }
+
+  span {
+    color: #000;
   }
 
   img {
     width: 100px;
+    margin-top: 10px;
   }
 
   @keyframes blink-animation {
     50% {
       opacity: 0;
+    }
+  }
+}
+
+@media(max-width:600px) {
+  .gif-validator {
+    .loading-text {
+      font-size: 30px;
+    }
+
+    .typing-cursor {
+      height: 20px;
+      padding: 0;
+    }
+
+    .bottom {
+      display: flex;
+      justify-content: center;
+
+      span {
+        font-size: 18px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        width: 80%;
+      }
+    }
+
+    span {
+      font-size: 20px;
+      padding: 8px;
     }
   }
 }
