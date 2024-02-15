@@ -37,7 +37,7 @@ client = SecretClient(vault_url=KVUri, credential=credential)
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://giftadmin:La47rnCz3MNjjxkVhnZWpcBAULzxEnQu@gift-db.postgres.database.azure.com/gift_user_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://colinhammarberg:Grym123!@localhost/gift_user_db'
 
 # Initialize database with the app
 db.init_app(app)
