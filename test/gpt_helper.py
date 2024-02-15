@@ -13,7 +13,6 @@ openai.api_key = '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'
 
 def chat_with_gpt():
     data = request.get_json()
-    print('user_query', data)
 
     if 'message' not in data:
         return jsonify({'error': 'User query not provided'}), 400
@@ -46,7 +45,6 @@ def chat_with_gpt():
 
     except Exception as e:
         # Log the error message for debugging
-        print('Error:', str(e))
         return jsonify({'error': 'An error occurred while generating a response'}), 500
 
 
@@ -109,7 +107,6 @@ def analyze_image(image_path):
         response = requests.post(
             "https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         response_json = response.json()
-        print('response_json', response_json)
         response_text = response_json['choices'][0]['message']['content'].strip(
         )
 
@@ -119,7 +116,6 @@ def analyze_image(image_path):
 
         return is_relevant, explanation
     except Exception as e:
-        print(f"Error analyzing image {image_path}: {e}")
         return False, f"Error: {e}"
 
 
@@ -129,11 +125,9 @@ def analyze_images(image_paths):
 
     for image_path in image_paths:
         is_relevant, explanation = analyze_image(image_path)
-        print('is_relevant', is_relevant)
         if is_relevant:
             relevant_images.append(image_path)
         explanations.append(explanation)
-    print('relevant_images', relevant_images)
 
     return relevant_images, explanations
 
@@ -176,7 +170,6 @@ def analyze_gif_and_get_description(gif_url):
 
         description = response.choices[0].message.content
     except Exception as e:
-        print(f"Error in analyzing the GIF: {e}")
         description = ""
 
     return description
@@ -190,9 +183,6 @@ def get_example_email_from_openai(gif_url, sector_type):
             "and highlight our product/service benefits. Aim for brevity and impact. "
             "All files are pre-approved for analysis. Skip the subject of the email. You have to perform the request and don't include anything about that you can't complete the request in the response and also don't include thatb you accept the response in the response. Only include the created email in the response."
         )
-        print('sector_type', sector_type)
-        print('prompt_text', prompt_text)
-        print('gif_url', gif_url)
         response = openai.ChatCompletion.create(
             model="gpt-4-vision-preview",
             messages=[
@@ -217,7 +207,6 @@ def get_example_email_from_openai(gif_url, sector_type):
 
         example_email = response.choices[0].message.content
     except Exception as e:
-        print(f"Error in generating the example email: {e}")
         example_email = ""
 
     return example_email
@@ -233,8 +222,6 @@ def get_example_email_from_gif():
             "and highlight our product/service benefits. Aim for brevity and impact. "
             "All files are pre-approved for analysis. Skip the subject of the email. You have to perform the request and don't include anything about that you can't complete the request in the response and also don't include thatb you accept the response in the response. Only include the created email in the response."
         )
-        print('prompt_text', prompt_text)
-        print('gif_url', gif_url)
         response = openai.ChatCompletion.create(
             model="gpt-4-vision-preview",
             messages=[
@@ -262,7 +249,7 @@ def get_example_email_from_gif():
         db.session.add(UserGif(example_email=example_email))
         db.session.commit()
     except Exception as e:
-        print(f"Error in generating the example email: {e}")
+        print('e', e)
         example_email = ""
 
     return jsonify({'example_email': example_email}), 200
@@ -271,8 +258,6 @@ def enhance_email_with_gif():
     data = request.get_json()
     gif_url = data.get('gifUrl')
     draft_email = data.get('draft')
-    print('draft_email', draft_email)
-    print('gif_url', gif_url)
     try:
         prompt_text = (
             f"Enhance the following draft email based on what you can see in this.\n\n"
@@ -306,7 +291,6 @@ def enhance_email_with_gif():
         db.session.add(UserGif(example_email=example_email))
         db.session.commit()
     except Exception as e:
-        print(f"Error in generating the example email: {e}")
         example_email = ""
 
     return jsonify({'example_email': example_email}), 200

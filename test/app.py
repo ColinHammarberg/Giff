@@ -14,7 +14,7 @@ from gif_count_helper import get_gif_count
 from gpt_helper import get_example_email_from_gif, enhance_email_with_gif
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name, update_gif_duration, update_gif_frames
-from include_ai_helper import include_ai_in_gifs, include_ai_email
+from include_ai_helper import include_ai_in_gifs, include_ai_email, add_watermark
 from google_auth import google_user_signup, google_user_signin, outlook_user_signin_or_signup, login_with_email, get_user_email
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
@@ -37,7 +37,7 @@ client = SecretClient(vault_url=KVUri, credential=credential)
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://colinhammarberg:Grym123!@localhost/gift_user_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://giftadmin:La47rnCz3MNjjxkVhnZWpcBAULzxEnQu@gift-db.postgres.database.azure.com/gift_user_db'
 
 # Initialize database with the app
 db.init_app(app)
@@ -143,6 +143,10 @@ def toggle_include_logo():
 @app.route('/toggle_include_ai', methods=['POST'])
 def toggle_include_ai():
     return include_ai_in_gifs()
+
+@app.route('/add_watermark', methods=['POST'])
+def include_watermark_in_gifs():
+    return add_watermark()
 
 @app.route('/toggle_email_ai', methods=['POST'])
 def include_email_ai():

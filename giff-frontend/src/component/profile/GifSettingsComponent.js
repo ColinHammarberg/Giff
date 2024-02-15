@@ -8,6 +8,7 @@ import LightTooltip from '../overall/LightToolTip';
 import {
   ToggleEmailAI,
   ToggleIncludeAI,
+  ToggleIncludeWatermark,
 } from '../../endpoints/GifCreationEndpoints';
 
 // const ResolutionOptions = [
@@ -27,7 +28,16 @@ const AIOptions = [
   { id: 'example_email', label: 'Use AI for Example Email' },
 ];
 
-function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }) {
+const WatermarkOptions = [
+  { id: 'false', label: 'Hide watermark' },
+  { id: 'true', label: 'Add watermark' },
+];
+
+function GifSettingsComponent({
+  user,
+  setActiveComponent,
+  setChangeUserDetails,
+}) {
   // const [resolution, setResolution] = useState(user?.resolution || '');
   const [selectedAI, setSelectedAI] = useState(
     user?.include_ai
@@ -37,11 +47,17 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
       : 'none'
   );
 
+  const [addWatermark, setAddWatermark] = useState(user?.watermark);
+
   // const handleResolutionChange = (event) => {
   //   setResolution(event.target.value);
   // };
   const handleAIChange = (event) => {
     setSelectedAI(event.target.value);
+  };
+
+  const handleWatermarkChange = (event) => {
+    setAddWatermark(event.target.value);
   };
 
   // Store initial values to check for changes
@@ -56,12 +72,12 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
 
   useEffect(() => {
     setInitialValues({
-      // resolution: user?.resolution || '',
       selectedAI: user?.include_ai
         ? 'describe_gif'
         : user?.include_example_email
         ? 'example_email'
         : 'none',
+      addWatermark: user?.watermark,
     });
   }, [user]);
 
@@ -75,6 +91,10 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
     // }
 
     // Save AI settings based on selectedAI value
+    if (addWatermark !== initialValues.addWatermark) {
+      await ToggleIncludeWatermark(addWatermark === 'true');
+      updated = true;
+    }
     if (selectedAI !== initialValues.selectedAI) {
       updated = true;
 
@@ -91,7 +111,7 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
 
     if (updated) {
       showNotification('success', 'Your settings were successfully updated!');
-      setInitialValues({ selectedAI });
+      setInitialValues({ selectedAI, addWatermark });
       setChangeUserDetails(true);
     }
   };
@@ -138,6 +158,34 @@ function GifSettingsComponent({ user, setActiveComponent, setChangeUserDetails }
                   onChange={handleAIChange}
                 >
                   {AIOptions.map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+          <div className="group">
+            <div className="ai-option">
+              <div className="info">
+                Watermark settings{' '}
+                <LightTooltip
+                  title="Choose if you would like to add the watermark to your gifs."
+                  placement="right"
+                >
+                  <InfoIcon />
+                </LightTooltip>
+              </div>
+              <FormControl fullWidth>
+                <Select
+                  labelId="watermark-option-select-label"
+                  id="watermark-option-select"
+                  value={addWatermark}
+                  label="Apply watermark"
+                  onChange={handleWatermarkChange}
+                >
+                  {WatermarkOptions.map((option) => (
                     <MenuItem key={option.id} value={option.id}>
                       {option.label}
                     </MenuItem>

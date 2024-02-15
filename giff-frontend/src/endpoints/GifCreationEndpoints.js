@@ -329,6 +329,24 @@ export async function ToggleIncludeLogo() {
   }
 }
 
+export async function ToggleIncludeWatermark(addWatermark) {
+  const access_token = localStorage.getItem('access_token');
+  try {
+    const response = await axios.post(
+      `${Api}/add_watermark`,
+      { add_watermark: addWatermark },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    return { status: error.response?.status, data: error.response?.data };
+  }
+}
+
 export async function ToggleIncludeAI(includeAI) {
   const access_token = localStorage.getItem('access_token');
   try {

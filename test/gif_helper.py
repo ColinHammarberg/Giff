@@ -266,10 +266,12 @@ def upload_pdf_and_generate_gif():
             image_list = page.get_pixmap()
             img = Image.frombytes(
                 "RGB", [image_list.width, image_list.height], image_list.samples)
-            img_with_watermark = overlay_watermark(img)
             img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
-            img_with_watermark.save(img_path, 'PNG')
-            img.save(img_path, 'PNG')
+            if current_user.watermark:
+                img_with_watermark = overlay_watermark(img)
+                img_with_watermark.save(img_path, 'PNG')
+            else:
+                img.save(img_path, 'PNG')
             frame_duration = 1.0
             frame_durations.append(int(frame_duration * 1000))
             img_path = os.path.join(images_dir, f'page_{page_number + 1}.png')
@@ -643,6 +645,7 @@ def generate_video_gif(data, user_id):
             'name', f'{resource_id}.gif') if user_id else f"{resource_id}.gif"
         start_frame = data.get('start_frame', 0)
         end_frame = data.get('end_frame', 300)
+        current_user = User.query.get(user_id)
 
         # Determine video source and download video
         yt = YouTube(URL)
@@ -663,8 +666,9 @@ def generate_video_gif(data, user_id):
             if ret:
                 rgb_frame = cvtColor(frame, COLOR_BGR2RGB)
                 pil_img = Image.fromarray(rgb_frame)
-                watermarked_frame = overlay_watermark(pil_img)
-                frames.append(watermarked_frame)
+                if current_user.watermark:
+                    pil_img = overlay_watermark(pil_img)
+                frames.append(pil_img)
 
         frame_durations = [1] * len(frames)
         if len(frames) > 0:
@@ -754,8 +758,8 @@ def generate_gif():
     options.add_argument('--disable-gpu')
     options.add_argument("--disable-notifications")
     options.add_argument("disable-infobars")
-    service = Service(executable_path="/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=options)
+    # service = Service(executable_path="/usr/bin/chromedriver")
+    driver = webdriver.Chrome(options=options)
     driver.get(URL)
 
     try:
@@ -790,10 +794,12 @@ def generate_gif():
         driver.execute_script(f"window.scrollTo(0, {i})")
         screenshot = driver.get_screenshot_as_png()
         frame = Image.open(BytesIO(screenshot))
-        img_with_watermark = overlay_watermark(frame)
         bytes_io = BytesIO()
+        if current_user.watermark:
+            img_with_watermark = overlay_watermark(frame)
+            img_with_watermark.save(bytes_io, format='PNG')
+        frame.save(bytes_io, format='PNG')
         screenshots.append(bytes_io)
-        img_with_watermark.save(bytes_io, format='PNG')
         bytes_io.seek(0)  # Reset the pointer to the start of the bytes_io stream
         
         # Prepare for S3 upload
@@ -922,8 +928,8 @@ def generate_space_gif(data, user_id):
     options.add_argument('--disable-gpu')
     options.add_argument("--disable-notifications")
     options.add_argument("disable-infobars")
-    service = Service(executable_path="/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=options)
+    # service = Service(executable_path="/usr/bin/chromedriver")
+    driver = webdriver.Chrome(options=options)
     driver.get(URL)
 
     try:
@@ -968,9 +974,13 @@ def generate_space_gif(data, user_id):
 
         screenshot = driver.get_screenshot_as_png()
         frame = Image.open(BytesIO(screenshot))
-        img_with_watermark = overlay_watermark(frame)
         bytes_io = BytesIO()
-        img_with_watermark.save(bytes_io, format='PNG')
+        print('current_user', current_user.watermark)
+        if current_user.watermark:
+            img_with_watermark = overlay_watermark(frame)
+            img_with_watermark.save(bytes_io, format='PNG')
+        frame.save(bytes_io, format='PNG')
+        screenshots.append(bytes_io)
         bytes_io.seek(0)
         screenshots.append(bytes_io)
         frame_number += 1

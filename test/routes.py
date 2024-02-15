@@ -37,6 +37,7 @@ def fetch_user_info():
             resolution=current_user.selected_resolution,
             is_active=current_user.is_active,
             logo_url=presigned_url,
+            watermark=current_user.watermark,
             has_logo=current_user.has_logo,
             organization=current_user.organization,
             country=current_user.country,
@@ -53,9 +54,7 @@ def signin():
     data = request.get_json()
     if 'email' not in data or 'password' not in data:
         return jsonify({"status": "Missing required fields"}), 400
-    print('Email:', data['email'])
     user = User.query.filter_by(email=data['email']).first()
-    print('User:', user)
     if user and check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token, status="Login successful"), 200
@@ -102,7 +101,6 @@ def signout():
         # Invalidate token on client-side.
         return jsonify({"status": "Signed out"}), 200
     except Exception as e:
-        print(f"Error occurred: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
 
 # Delete user endpoint
@@ -133,7 +131,6 @@ def delete_user_profile():
 
         return jsonify({"status": "Profile and associated GIFs deleted"}), 200
     except Exception as e:
-        print(f"Error occurred: {e}")
         db.session.rollback()
         return jsonify({"status": "Internal Server Error"}), 500
 
@@ -143,18 +140,15 @@ def update_password():
     data = request.get_json()
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
-    print(f"Current user: {current_user.password}")
     try:
         if not check_password_hash(current_user.password, data['currentPassword']):
             return jsonify({"status": "Incorrect current password"}), 401
         # Fallback to 'sha256'
         new_password_hash = generate_password_hash(data['newPassword'], method='sha256')
-        print('new_password_hash', new_password_hash)
         current_user.password = new_password_hash
         db.session.commit()
         return jsonify({"status": "Password updated successfully"}), 200
     except Exception as e:
-        print(f"Exception: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
     
 @jwt_required()
@@ -176,7 +170,6 @@ def update_email():
     data = request.get_json()
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
-    print(f"Current user: {current_user.email}")
     try:
         new_email = data['newEmail']
         current_user.email = new_email
@@ -184,7 +177,6 @@ def update_email():
         return jsonify({"status": "Email updated successfully"}), 200
         
     except Exception as e:
-        print(f"Exception: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
     
 @jwt_required()
@@ -203,5 +195,4 @@ def update_additional_profile():
         return jsonify({"status": "Profile updated successfully"}), 200
         
     except Exception as e:
-        print(f"Exception: {e}")
         return jsonify({"status": "Internal Server Error"}), 500

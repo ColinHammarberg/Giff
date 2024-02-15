@@ -91,7 +91,7 @@ function UserSignup() {
   };
 
   const handleSignUpResponse = (response) => {
-    if (response.data.status === 'Signup successful') {
+    if (response?.data?.status === 'Signup successful') {
       localStorage.setItem('access_token', response.data.access_token);
       setIsLoading(false);
       navigate('/choose-option-create');
@@ -100,7 +100,7 @@ function UserSignup() {
       setIsLoading(false);
       showNotification(
         'error',
-        response.data.message || 'Signup failed for some reason'
+        response?.data?.message || 'Signup failed for some reason'
       );
     }
   };
