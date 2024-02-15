@@ -195,11 +195,11 @@ def generate_pdf_gifs_from_list():
 def select_watermark_url(frame_width):
     """Select the appropriate watermark URL based on frame width."""
     if frame_width > 1200:
-        return 'https://gift-general-resources.s3.eu-north-1.amazonaws.com/larger-verified.png'
+        return 'https://gift-general-resources.s3.eu-north-1.amazonaws.com/large.png'
     elif 842 < frame_width <= 1200:
-        return 'https://gift-general-resources.s3.eu-north-1.amazonaws.com/medium-verified.png'
+        return 'https://gift-general-resources.s3.eu-north-1.amazonaws.com/large.png'
     else:
-        return 'https://gift-general-resources.s3.eu-north-1.amazonaws.com/verified.png'
+        return 'https://gift-general-resources.s3.eu-north-1.amazonaws.com/large.png'
 
 def overlay_watermark(frame):
     """Overlay watermark on the bottom right of the frame with 4px padding."""
