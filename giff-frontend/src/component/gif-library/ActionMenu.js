@@ -42,12 +42,6 @@ function ActionMenuPopover({ anchorEl, onClose, onSelect, isMobile }) {
             <DownloadIcon />
           </span>
         </ListItem> */}
-        <ListItem onClick={() => onSelect('Share')}>
-          Share{' '}
-          <span>
-            <IosShareIcon />
-          </span>
-        </ListItem>
       </div>
     </Popover>
   );
