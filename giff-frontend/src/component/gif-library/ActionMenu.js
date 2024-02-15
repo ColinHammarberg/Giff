@@ -2,7 +2,6 @@ import React from 'react';
 import { Popover, ListItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 // import DownloadIcon from '@mui/icons-material/Download';
-import IosShareIcon from '@mui/icons-material/IosShare';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './ActionMenu.scss';
 
