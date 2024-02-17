@@ -15,7 +15,7 @@ from gpt_helper import get_example_email_from_gif, enhance_email_with_gif
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name, update_gif_duration, update_gif_frames
 from include_ai_helper import include_ai_in_gifs, include_ai_email, add_watermark
-from google_auth import google_user_signup, google_user_signin, outlook_user_signin_or_signup, login_with_email, get_user_email
+from google_auth import google_user_signup, google_user_signin, outlook_user_signin_or_signup, login_with_email, get_user_email, oauth_signin
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -59,6 +59,10 @@ def count_currently_created_gifs():
 @app.route('/update_gif_duration', methods=['POST'])
 def update_duration_gif():
     return update_gif_duration()
+
+@app.route('/oauth_signin', methods=['POST'])
+def oauth_signin_comment():
+    return oauth_signin()
 
 @app.route('/send_verification_email', methods=['GET'])
 def send_verification_email():
@@ -196,11 +200,10 @@ def keep_user_access_alive():
     return keep_access_alive()
 
 
-@app.route('/signup', methods=['POST'])
+app.route('/signup', methods=['POST'])
 def signup_user():
     print('generate')
     return signup()
-
 
 @app.route('/update-email', methods=['POST'])
 def update_email_address():
