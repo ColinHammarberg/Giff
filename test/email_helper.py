@@ -22,9 +22,7 @@ def send_email():
     try:
         dynamic_template_id = 'd-f56806a93be04440b772bd40029cbd82'
         sendgrid_api_key = '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'
-        print('sendgrid_api_key', sendgrid_api_key)
         sg = SendGridAPIClient(sendgrid_api_key)
-        print('attached', attachment_file)
 
         # Read the file content
         with open(attachment_file, 'rb') as file:
@@ -47,20 +45,14 @@ def send_email():
 
         message.subject = global_substitutions
 
-        print('message', message)
-
         # Send the email
         response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
 
         # Email sent successfully, return a success response
-        return jsonify({'message': 'Email sent successfully'}), 200
+        return jsonify({'message': 'Email sent successfully', 'data': response}), 200
     except Exception as e:
         if hasattr(e, 'body') and e.body:
             error_message = e.body.decode()
-            print(error_message)
             # Return an error response with the error message
             # 500 is the HTTP status code for Internal Server Error
             return jsonify({'error': error_message}), 500
