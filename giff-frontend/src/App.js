@@ -106,6 +106,10 @@ function App() {
                 element={<SendViaOwnEmail />}
               />
               <Route
+                path={`${REACT_APP_BASEURL}/oauth`}
+                element={<AuthRedirect />}
+              />
+              <Route
                 path={`${REACT_APP_BASEURL}/multiple-gif-creation`}
                 element={<MultipleGifLanding />}
               />
