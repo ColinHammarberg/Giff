@@ -26,6 +26,7 @@ import NewPassword from './component/authorization/NewPassword';
 import { msalInstance } from './component/authorization/OutlookSignup';
 import GifCounter from './counter/GifCounter';
 import ValidateGifSource from './tracking/ValidateGifSource';
+import AuthRedirect from './component/AuthRedirect';
 
 function Navigator() {
   const navigate = useNavigate();
