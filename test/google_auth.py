@@ -29,6 +29,19 @@ def login_with_email():
         except Exception as e:
             db.session.rollback()
             return jsonify({"status": "Error creating user", "message": str(e)}), 500
+        
+def login_with_email_outlook():
+    data = request.get_json()
+    user_email = data.get('email')
+    # Check if user already exists
+    user = User.query.filter_by(email=user_email).first()
+    if user:
+        # User exists, generate a token
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token, status="Login successful"), 200
+    else:
+        # User doesn't exist, send exception
+        return jsonify(access_token=access_token, status="Login unsuccessful"), 200
 
 def exchange_code_for_token(code):
     token_endpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
