@@ -30,7 +30,7 @@ def login_with_email():
             db.session.rollback()
             return jsonify({"status": "Error creating user", "message": str(e)}), 500
         
-def login_with_email_outlook():
+def signin_with_email_outlook():
     data = request.get_json()
     user_email = data.get('email')
     print("user_email", user_email)
