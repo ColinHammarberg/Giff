@@ -33,11 +33,12 @@ def login_with_email():
 def login_with_email_outlook():
     data = request.get_json()
     user_email = data.get('email')
+    print("user_email", user_email)
     # Check if user already exists
     user = User.query.filter_by(email=user_email).first()
+    print("user", user)
     try:
         if user:
-            # User exists, generate a token
             access_token = create_access_token(identity=user.id)
             return jsonify(access_token=access_token, status="Login successful"), 200
     except Exception as e:
