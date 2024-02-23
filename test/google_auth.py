@@ -42,7 +42,7 @@ def signin_with_email_outlook():
             access_token = create_access_token(identity=user.id)
             return jsonify(access_token=access_token, status="Login successful"), 200
     except Exception as e:
-        # User doesn't exist, send exception
+        # User doesn't exist , send exception
         return jsonify({"status": "Error login user", "message": str(e)}), 500
 
 def exchange_code_for_token(code):
