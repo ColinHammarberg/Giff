@@ -33,7 +33,7 @@ def login_with_email():
 def signin_with_email_outlook():
     data = request.get_json()
     user_email = data.get('email')
-    print("user_email", user_email)
+    print("user_email ", user_email)
     # Check if user already exists 
     user = User.query.filter_by(email=user_email).first()
     print("user", user)
