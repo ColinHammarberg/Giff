@@ -39,7 +39,7 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = client.get_secret("gift-db-connectionstring").value
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://colinhammarberg:Grym123!@localhost/gift_user_db'
 
-# Initialize database with the app
+# Initialize database with the app 
 db.init_app(app)
 
 app.secret_key = 'gift_secret_key_123'
