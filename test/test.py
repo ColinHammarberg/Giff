@@ -32,7 +32,6 @@ output_path = 'scrolling_animation.gif'
 screenshots = sorted(os.listdir(screenshots_dir))
 frames = [imageio.imread(os.path.join(screenshots_dir, screenshot)) for screenshot in screenshots]
 imageio.mimsave(output_path, frames, duration=0.6)
-print(f"GIF saved at {output_path}")
 
 # Clean up: Delete individual screenshots
 for screenshot in screenshots:
