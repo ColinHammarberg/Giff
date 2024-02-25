@@ -21,5 +21,4 @@ def save_user_resolution():
         return jsonify({"status": "Settings updated successfully"}), 200
 
     except Exception as e:
-        print(f"Error updating user settings: {e}")
         return jsonify({"status": "Internal Server Error"}), 500
