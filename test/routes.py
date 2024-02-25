@@ -23,7 +23,7 @@ def signup_new_user():
     if existing_user:
         return jsonify({"status": "Email already exists"}), 409
     
-    hashed_password = hashpw(data["password"].encode(), gensalt())
+    hashed_password = generate_password_hash(data['password'], method='sha256')
     verify_account_code = secrets.token_urlsafe(16)
     new_user = User(email=data['email'], password=hashed_password, verify_account_code=verify_account_code)
     db.session.add(new_user)
@@ -84,6 +84,7 @@ def signin():
     if 'email' not in data or 'password' not in data:
         return jsonify({"status": "Missing required fields"}), 400
     user = User.query.filter_by(email=data['email']).first()
+    print('user', data['email'])
     if user and check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity=user.id)
         return jsonify(access_token=access_token, status="Login successful"), 200
