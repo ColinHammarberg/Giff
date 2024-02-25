@@ -25,5 +25,5 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-         docker build . -f test/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/gift-core:${{ github.sha }}
-         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/gift-core:${{ github.sha }}
+         docker build . -f test/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/giftcontainers/gift-core:${{ github.sha }}
+         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/giftcontainers/gift-core:${{ github.sha }}
