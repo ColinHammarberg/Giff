@@ -15,6 +15,7 @@ azure-keyvault-secrets==4.7.0
 azure-monitor-opentelemetry==1.0.0
 azure-monitor-opentelemetry-exporter==1.0.0b17
 blinker==1.6.2
+bcrypt==4.1.2
 boto3==1.28.57
 botocore==1.31.57
 cachetools==5.3.1

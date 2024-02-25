@@ -12,22 +12,23 @@ SENDGRID_API_KEY = 'SG.RU_Pj2xlTSixO_4Vchtbdg.NMLj_xMH3pwk7IWMn-15w1Cqdye4GBIjmN
 
 def send_verification_email(email, verify_account_code):
     verification_link = f"{VERIFICATION_URL}?code={verify_account_code}"
-    TEMPLATE_ID = 'd-3b5e54e9b21448168495f8b68919a8fa'
     message = Mail(
         from_email='hello@gif-t.io',
-        to_emails=email,
+        to_emails=email
     )
-    message.template_id = TEMPLATE_ID
+    message.template_id = 'd-3b5e54e9b21448168495f8b68919a8fa'
     message.dynamic_template_data = {
         'gift_verification_link': verification_link
     }
+
     try:
         sg = SendGridAPIClient(SENDGRID_API_KEY)
         response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
+        print(f"Verification email sent to {email}")
+        return True
     except Exception as e:
-        print(str(e))
-
+        print(f"Verification email failed: {e}")
+        raise Exception("Failed to send verification email.") from e
 
 def verify():
     verify_account_code = request.args.get('code')
@@ -61,5 +62,4 @@ def send_verification_email_again():
         send_verification_email(current_user.email, verify_account_code)
         return jsonify({"status": "Sent new email verification link"}), 200
     except Exception as e:
-        print(e)
-        return jsonify({"status": "Failed to send verification email"}), 500
+        return jsonify({"status": "Failed to send verification email", 'data': e}), 500

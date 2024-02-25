@@ -3,6 +3,7 @@ from extensions import db
 from models import User, UserLogo
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
+from bcrypt import hashpw, gensalt
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from verify_account_helper import send_verification_email
 import secrets
@@ -12,6 +13,34 @@ import boto3
 
 s3 = boto3.client('s3', aws_access_key_id='AKIA4WDQ522RD3AQ7FG4',
                   aws_secret_access_key='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', region_name='eu-north-1')
+
+def signup_new_user():
+    data = request.get_json()
+    if 'email' not in data or 'password' not in data:
+        return jsonify({"status": "Missing required fields"}), 400
+    
+    existing_user = User.query.filter_by(email=data['email']).first()
+    if existing_user:
+        return jsonify({"status": "Email already exists"}), 409
+    
+    hashed_password = hashpw(data["password"].encode(), gensalt())
+    verify_account_code = secrets.token_urlsafe(16)
+    new_user = User(email=data['email'], password=hashed_password, verify_account_code=verify_account_code)
+    db.session.add(new_user)
+    
+    try:
+        db.session.commit()
+        # Attempt to send the verification email
+        send_verification_email(new_user.email, verify_account_code)
+        access_token = create_access_token(identity=new_user.id)  # Assuming this function correctly generates an access token
+        # Return a successful signup response
+        return jsonify(access_token=access_token, status="Signup successful"), 200
+    except Exception as e:
+        db.session.rollback()
+        # If an exception occurs, log it and return a generic error message
+        error_message = f"Signup failed due to an internal error: {str(e)}"
+        print(error_message)
+        return jsonify({"status": "Signup failed", "message": "An internal error occurred. Please try again."}), 500
 
 @jwt_required()
 def fetch_user_info():
@@ -67,32 +96,8 @@ def keep_access_alive():
     new_access_token = create_access_token(identity=current_user)
     return jsonify(access_token=new_access_token), 200
 
-# Signup endpoint
 VERIFICATION_URL = 'https://giveagif-t.com/verify'
 SENDGRID_API_KEY = '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'
-
-def signup():
-    data = request.get_json()
-    if 'email' not in data or 'password' not in data:
-        return jsonify({"status": "Missing required fields"}), 400
-    
-    existing_user = User.query.filter_by(email=data['email']).first()
-    if existing_user:
-        return jsonify({"status": "Email already exists"}), 409
-    
-    hashed_password = generate_password_hash(data['password'], method='sha256')
-    verify_account_code = secrets.token_urlsafe(16)
-    new_user = User(email=data['email'], password=hashed_password, verify_account_code=verify_account_code)
-    db.session.add(new_user)
-    
-    try:
-        db.session.commit()
-        send_verification_email(new_user.email, verify_account_code)
-        access_token = create_access_token(identity=new_user.id)
-        return jsonify(access_token=access_token, status="Signup successful"), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"status": "Signup failed", "message": str(e)}), 500
 
 # Signout user endpoint
 
