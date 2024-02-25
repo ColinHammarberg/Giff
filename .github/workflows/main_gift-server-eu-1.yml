@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: giftcontainers.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_1fb9835cd8b1416e99300465ddc3a22d }}/gift-core:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./test/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
