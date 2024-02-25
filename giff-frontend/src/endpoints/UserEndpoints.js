@@ -205,9 +205,10 @@ export async function UpdateAdditionalUserDetails(country, company) {
 
 export async function Signup(newUserCredentials) {
   try {
-    const response = await axios.post(`${Api}/signup_new_user`, {
-      newUserCredentials,
-    });
+    const response = await axios.post(
+      `${Api}/signup_new_user`,
+      newUserCredentials
+    );
     console.log('response', response);
     return response;
   } catch (error) {
