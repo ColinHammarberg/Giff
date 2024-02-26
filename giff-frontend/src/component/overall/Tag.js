@@ -7,7 +7,7 @@ function Tag({ label, variant, color, onClick, onRemove, selected, disabled }) {
   console.log('selected', selected);
   return (
     <span
-      className={`tag ${variant} ${disabled && 'disabled'}`}
+      className={`tag ${variant} ${disabled && 'disabled'} `}
       style={{
         border: `2px solid ${color}`,
         backgroundColor: selected ? color : '',
