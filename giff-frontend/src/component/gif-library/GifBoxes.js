@@ -12,10 +12,10 @@ function GifBoxes({
   name,
   onClickMore,
   onClickGif,
+  resourceId,
   gifUrl,
   onMouseEnter,
   onClickDownload,
-  index,
   onNameChange,
   onNameSubmit,
   totalClicks,
@@ -103,7 +103,7 @@ function GifBoxes({
         <LightTooltip title={`Download ${name}`} placement="bottom-start">
           <IconButton
             className="download-icon"
-            onClick={() => onClickDownload(index)}
+            onClick={(event) => onClickDownload(event, resourceId)}
           >
             <DownloadIcon />
           </IconButton>

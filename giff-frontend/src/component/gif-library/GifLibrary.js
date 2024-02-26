@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './GifLibrary.scss';
 import Header from '../overall/Header';
 import { Box, Divider } from '@mui/material';
@@ -9,9 +9,7 @@ import { useTabs } from '../tabs/Tabs';
 import OfficialButton from '../buttons/OfficialButton';
 import useMobileQuery from '../../queries/useMobileQuery';
 import { showNotification } from '../notification/Notification';
-import ChooseResolutionDialog from './ChooseResolutionDialog';
 // import { getSelectedFramePath } from './GifLibraryUtils';
-import { GiftContext } from '../../context/GiftContextProvider';
 import {
   DeleteGif,
   // DownloadAllLibraryGifs,
@@ -36,8 +34,6 @@ function GifLibrary() {
   const [gifs, setGifs] = useState([]);
   const [selectedGif, setSelectedGif] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const { user } = useContext(GiftContext);
-  // const [isLoading, setIsLoading] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
@@ -50,6 +46,7 @@ function GifLibrary() {
   // });
   const [deletePopoverAnchorEl, setDeletePopoverAnchorEl] = useState(null);
   const [currentGifIndex, setCurrentGifIndex] = useState(null);
+  const [selectedGifId, setSelectedGifId] = useState(null);
   const imageRefs = useRef({});
   const access_token = localStorage.getItem('access_token');
   const { tags, refetch: refetchTags } = useFetchUserTags(isDesignOpen);
@@ -114,9 +111,9 @@ function GifLibrary() {
     fetchData();
   }, [designChanges]);
 
-  const handleOpenActionMenu = (event) => {
+  const handleOpenActionMenu = (event, item) => {
     setAnchorEl(event.currentTarget);
-    setCurrentGifIndex(selectedGif);
+    setSelectedGifId(item.resourceId);
   };
 
   const handleCloseActionMenu = () => {
@@ -161,16 +158,20 @@ function GifLibrary() {
       case 'Delete':
         handleOnOpenDeletePopover(currentGifIndex);
         break;
-      // case 'Download':
-      //   handleDownloadIndividualGifs(index);
-      //   break;
-      case 'Share':
-        // Handle the Share action
+      case 'ShareOutlook':
+        window.open(
+          'https://appsource.microsoft.com/en-us/product/office/WA200006594?ref=producthunt'
+        );
+        break;
+      case 'ShareGmail':
+        window.open(
+          'https://workspace.google.com/marketplace/app/gift/537947018056?ref=producthunt'
+        );
         break;
       default:
         break;
     }
-    setAnchorEl(null);
+    setAnchorEl(null); // Close the action menu
   };
 
   // const handleImageLoad = (index) => {
@@ -185,77 +186,45 @@ function GifLibrary() {
   //   }
   // };
 
-  const handleDownloadIndividualGifs = async (index) => {
-    if (selectedGif !== null || previewGif) {
-      const hoveredGif = gifs[index] || previewGif;
-      let selectedResolution = user?.userInfo?.resolution;
+  const handleDownloadIndividualGifs = async (event, gifId) => {
+    console.log('gifId', gifId);
+    event.preventDefault();
+    event.stopPropagation();
 
-      if (!selectedResolution && !hoveredGif.resourceType === 'pdf') {
-        const resolutionDialogResult = await ChooseResolutionDialog.show();
-        if (!resolutionDialogResult.hasConfirmed) {
-          return;
-        }
-        selectedResolution = resolutionDialogResult.selectedResolution;
-      }
+    const hoveredGif =
+      gifs.find((gif) => gif.resourceId === gifId) || previewGif;
 
-      const gifData = {
-        url: hoveredGif.url,
-        name: hoveredGif.name,
-        selectedColor: hoveredGif.selectedColor,
-        selectedFrame: hoveredGif.selectedFrame,
-        resolution: selectedResolution,
-      };
+    if (!hoveredGif) return;
 
-      try {
-        const response = await DownloadIndividualDesignedGifs(
-          JSON.stringify(gifData)
-        );
-        const blob = new Blob([response.data], { type: 'image/gif' });
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = downloadUrl;
-        a.download = `${hoveredGif.name}`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(downloadUrl);
-        document.body.removeChild(a);
-      } catch (error) {
-        console.error('Error downloading individual GIF:', error);
-        showNotification(
-          'error',
-          'Ohhh no! Something went wrong downloading your GIF. Please try again champ!'
-        );
-      }
+    const gifData = {
+      url: hoveredGif.url,
+      name: hoveredGif.name,
+      selectedColor: hoveredGif.selectedColor,
+      selectedFrame: hoveredGif.selectedFrame,
+    };
+
+    try {
+      const response = await DownloadIndividualDesignedGifs(
+        JSON.stringify(gifData)
+      );
+      const blob = new Blob([response.data], { type: 'image/gif' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = downloadUrl;
+      a.download = `${hoveredGif.name}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(downloadUrl);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading individual GIF:', error);
+      showNotification(
+        'error',
+        'Ohhh no! Something went wrong downloading your GIF. Please try again champ!'
+      );
     }
   };
-
-  // const handleDownloadLibraryGifs = async () => {
-  //   if (!gifs) {
-  //     return;
-  //   }
-  //   const gifData = gifs.map((gif) => ({
-  //     url: gif.url,
-  //     name: gif.name,
-  //     selectedColor: gif.selectedColor,
-  //     selectedFrame: gif.selectedFrame,
-  //   }));
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await DownloadAllLibraryGifs(gifData);
-  //     const blob = new Blob([response.data], { type: 'application/zip' });
-  //     const downloadUrl = window.URL.createObjectURL(blob);
-  //     const a = document.createElement('a');
-  //     a.href = downloadUrl;
-  //     a.download = 'your-gift-bag.zip';
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     document.body.removeChild(a);
-  //   } catch (error) {
-  //     console.error('Error downloading ZIP file:', error);
-  //   }
-  //   setIsLoading(false);
-  // };
 
   const editGif = (
     gifUrl,
@@ -285,8 +254,11 @@ function GifLibrary() {
   };
 
   const handleEditButtonClick = () => {
-    if (selectedGif !== null || previewGif) {
-      const hoveredGif = gifs[currentGifIndex] || previewGif;
+    const isPreviewGifNotEmpty = Object.keys(previewGif).length > 0;
+    if (selectedGif !== null || isPreviewGifNotEmpty) {
+      const hoveredGif = isPreviewGifNotEmpty
+            ? previewGif
+            : sortedAndFilteredGifs.find((gif) => gif.resourceId === selectedGifId);
       if (hoveredGif) {
         editGif(
           hoveredGif.url,
@@ -524,11 +496,12 @@ function GifLibrary() {
                     <GifBoxes
                       name={item.name}
                       color={item.selectedColor}
+                      resourceId={item.resourceId}
                       totalClicks={item.clicks}
                       gifUrl={item.url}
                       index={index}
                       onClickGif={(event) => handlePreviewClick(event, item)}
-                      onClickMore={handleOpenActionMenu}
+                      onClickMore={(event) => handleOpenActionMenu(event, item)}
                       onClickDownload={handleDownloadIndividualGifs}
                       onNameChange={(newName) =>
                         handleNameChange(index, newName)
