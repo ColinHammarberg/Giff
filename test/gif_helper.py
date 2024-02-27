@@ -763,13 +763,13 @@ def generate_gif():
     driver.get(URL)
 
     try:
-        WebDriverWait(driver, 4).until(
+        WebDriverWait(driver, 2).until(
             EC.presence_of_element_located((By.XPATH, "//button | //a"))
         )
         cookie_elements = driver.find_elements(By.XPATH, "//button[contains(., 'Accept') or contains(., 'Agree') or contains(., 'Godkänn') or contains(., 'OK') or contains(., 'Continue') or contains(., 'Fortsätt') or contains(., 'Jag godkänner') or contains(., 'Okej') or contains(., 'Accept All Cookies')] | //a[contains(., 'Accept') or contains(., 'Agree') or contains(., 'OK') or contains(., 'Godkänn') or contains(., 'Continue') or contains(., 'Fortsätt') or contains(., 'Jag godkänner' or contains(., 'Okej') or contains(., 'Accept All Cookies'))]")
         for element in cookie_elements:
             try:
-                WebDriverWait(driver, 2).until(EC.element_to_be_clickable(element))
+                WebDriverWait(driver, 1).until(EC.element_to_be_clickable(element))
                 ActionChains(driver).move_to_element(element).perform()
                 element.click()
                 break
@@ -1061,7 +1061,6 @@ def upload_video_gif():
         resourceType = 'video'
         NAME = f'{resource_id}.gif'
 
-        # Receive and save the uploaded video file
         video_file = request.files['video']
         project_root = os.path.dirname(os.path.abspath(__file__))
         temp_storage_path = os.path.join(project_root, 'temp_videos')
@@ -1072,74 +1071,62 @@ def upload_video_gif():
         cap = cv2.VideoCapture(video_path)
         frames = []
         frame_step = 5
-    
-        while True:
-            success, frame = cap.read()
-            if not success:
-                break
+        frame_rate = cap.get(cv2.CAP_PROP_FPS)
+        print('frame_rate', frame_rate)
 
-            # Extract every 'frame_step' frames
-            if int(cap.get(cv2.CAP_PROP_POS_FRAMES)) % frame_step == 0:
+        # Calculate duration for each frame to maintain video speed in GIF
+        duration_per_frame = int((1 / frame_rate) * frame_step * 1000)  # Duration in milliseconds
+        print('duration_per_frame', duration_per_frame)
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+            frame_id = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+            if frame_id % frame_step == 0:
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                pil_img = Image.fromarray(rgb_frame)
-                frames.append(pil_img)
+                frames.append(Image.fromarray(rgb_frame))
 
         cap.release()
 
-        if len(frames) > 0:
-            gifs_frontend_folder = os.path.join(os.path.dirname(
-                os.path.abspath(__file__)), '..', 'giff-frontend', 'src', 'gifs')
-            backend_gifs_folder = os.path.join(os.path.dirname(
-                os.path.abspath(__file__)), 'gifs')
-            os.makedirs(gifs_frontend_folder, exist_ok=True)
-            os.makedirs(backend_gifs_folder, exist_ok=True)
-
-            output_path = os.path.join(gifs_frontend_folder, NAME)
-            backend_output_path = os.path.join(backend_gifs_folder, NAME)
-
-            frames[0].save(
-                output_path,
-                save_all=True,
-                append_images=frames[1:],
-                duration=100,
-                loop=0
-            )
-            frames[0].save(
-                backend_output_path,
-                save_all=True,
-                append_images=frames[1:],
-                duration=100,
-                loop=0
-            )
-
-            if user_id:
-                folder_name = f"{user_id}/"
-                upload_to_s3(output_path, 'gift-resources',
-                            f"{folder_name}{NAME}", resource_id)
-                presigned_url = s3_client.generate_presigned_url('get_object',
-                                                            Params={'Bucket': 'gift-resources',
-                                                                        'Key': f"{user_id}/{NAME}"},
-                                                            ExpiresIn=3600)
-                
-                with open(output_path, "rb") as gif_file:
-                    gif_content = gif_file.read()
-                    base64_string = b64encode(gif_content).decode('utf-8')
-
-                gif_data = {
-                    "name": NAME,
-                    "resourceId": resource_id,
-                    "resourceType": resourceType,
-                    "presigned_url": presigned_url
-                }
-                db.session.add(UserGif(user_id=user_id, gif_name=NAME,
-                                    gif_url=output_path, resourceId=resource_id, base64_string=base64_string, resourcetype=resourceType))
-                db.session.commit()
-            return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
-
-        else:
-            os.remove(video_path)
+        if not frames:
+            os.remove(video_path)  # Clean up the temporary file
             logging.error("Not enough frames to create a GIF.")
             return jsonify({'error': 'Not enough frames to create a GIF'}), 500
+
+        output_path = os.path.join(project_root, 'gifs', NAME)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+        frames[0].save(
+            output_path,
+            save_all=True,
+            append_images=frames[1:],
+            duration=duration_per_frame,  # Use dynamically calculated duration
+            loop=0
+        )
+
+        if user_id:
+            upload_to_s3(output_path, 'gift-resources', f"{user_id}/{NAME}", resource_id)
+            presigned_url = s3_client.generate_presigned_url('get_object',
+                                                             Params={'Bucket': 'gift-resources',
+                                                                     'Key': f"{user_id}/{NAME}"},
+                                                             ExpiresIn=3600)
+
+            with open(output_path, "rb") as gif_file:
+                gif_content = gif_file.read()
+                base64_string = b64encode(gif_content).decode('utf-8')
+
+            gif_data = {
+                "name": NAME,
+                "resourceId": resource_id,
+                "resourceType": resourceType,
+                "presigned_url": presigned_url
+            }
+            db.session.add(UserGif(user_id=user_id, gif_name=NAME,
+                                gif_url=output_path, resourceId=resource_id, base64_string=base64_string, resourcetype=resourceType))
+            db.session.commit()
+
+        return jsonify({'message': 'GIF generated and uploaded!', "name": NAME, 'data': [gif_data]})
 
     except Exception as e:
         logging.error(f"Error in upload_video_gif: {e}")
