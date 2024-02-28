@@ -38,7 +38,7 @@ backend_gifs_folder = os.path.join(os.path.dirname(
 
 
 def is_video_url(URL):
-    return "youtube" in URL or "vimeo" in URL
+    return "youtube" in URL or "youtu" in URL
 
 def is_space_instance(URL):
     return "spce" in URL
