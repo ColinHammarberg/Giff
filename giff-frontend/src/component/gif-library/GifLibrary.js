@@ -50,7 +50,7 @@ function GifLibrary() {
   const imageRefs = useRef({});
   const access_token = localStorage.getItem('access_token');
   const { tags, refetch: refetchTags } = useFetchUserTags(isDesignOpen);
-  const [sortCriteria, setSortCriteria] = useState('alphabetical');
+  const [sortCriteria, setSortCriteria] = useState('createdDate');
   const [selectedTags, setSelectedTags] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const userTagsLimit = tags?.length === 12;
@@ -77,7 +77,13 @@ function GifLibrary() {
 
   const sortedAndFilteredGifs = useMemo(() => {
     const sortedGifs = [...filteredGifs];
-    if (sortCriteria === 'alphabetical') {
+    if (sortCriteria === 'createdDate') {
+      sortedGifs.sort((a, b) => {
+        const dateA = new Date(a.created_at);
+        const dateB = new Date(b.created_at);
+        return dateB - dateA;
+      });
+    } else if (sortCriteria === 'alphabetical') {
       sortedGifs.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortCriteria === 'clickCount') {
       sortedGifs.sort((a, b) => b.clicks - a.clicks);

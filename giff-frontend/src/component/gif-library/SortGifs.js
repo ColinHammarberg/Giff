@@ -12,6 +12,7 @@ function SortGifs({ setSortCriteria, sortCriteria }) {
           label="Sort By"
           onChange={(e) => setSortCriteria(e.target.value)}
         >
+          <MenuItem value="createdDate">Created Date</MenuItem>
           <MenuItem value="alphabetical">Alphabetical</MenuItem>
           <MenuItem value="clickCount">Click Count</MenuItem>
         </Select>
