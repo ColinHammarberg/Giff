@@ -34,7 +34,7 @@ def signup_new_user():
         send_verification_email(new_user.email, verify_account_code)
         access_token = create_access_token(identity=new_user.id)  # Assuming this function correctly generates an access token
         # Return a successful signup response
-        return jsonify(access_token=access_token, status="Signup successful"), 200
+        return jsonify(access_token=access_token, status="Signin successful"), 200
     except Exception as e:
         db.session.rollback()
         # If an exception occurs, log it and return a generic error message
