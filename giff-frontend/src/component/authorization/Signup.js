@@ -7,7 +7,7 @@ import { showNotification } from '../notification/Notification';
 import Header from '../overall/Header';
 import { isValidEmail } from '../../utils/utils';
 import OfficialButton from '../buttons/OfficialButton';
-import { GoogleSignUp, Signup } from '../../endpoints/UserEndpoints';
+import { GoogleSignIn, Signup } from '../../endpoints/UserEndpoints';
 import GoogleSignInButton from './GoogleSignInButton';
 import OutlookSignInButton from './OutlookSignin';
 import BackButton from '../profile/BackButton';
@@ -30,7 +30,7 @@ function UserSignup() {
   const handleGoogleResponse = useCallback(async (response) => {
     try {
       setIsLoading(true);
-      const googleResponse = await GoogleSignUp({ token: response.credential });
+      const googleResponse = await GoogleSignIn({ token: response.credential });
       handleSignUpResponse(googleResponse);
     } catch (error) {
       showNotification('error', 'Google signup failed');
@@ -91,8 +91,8 @@ function UserSignup() {
   };
 
   const handleSignUpResponse = (response) => {
-    if (response?.data?.status === 'Signin successful') {
-      localStorage.setItem('access_token', response.data.access_token);
+    if (response?.status === 'Signin successful' || response?.data?.status === 'Signup successful') {
+      localStorage.setItem('access_token', response?.access_token || response?.data?.access_token);
       setIsLoading(false);
       navigate('/choose-option-create');
       showNotification('success', 'Successfully signed up');
