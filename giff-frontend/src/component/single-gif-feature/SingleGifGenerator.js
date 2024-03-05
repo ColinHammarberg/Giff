@@ -76,7 +76,7 @@ const SingleGifGenerator = forwardRef(
                           }
                         }}
                         disabled={selectedFile}
-                        placeholder="https://spce.com"
+                        placeholder="Paste your url here"
                       />
                     </div>
                   </LightTooltip>

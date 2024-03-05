@@ -77,7 +77,7 @@
                     flex-direction: column;
                     text-align: left;
                     color: #fff;
-                    font-family: "Staatliches";
+                    font-family: "Roboto";
                     gap: 24px;
                     font-size: 14px;
                     width: 326px;
@@ -144,7 +144,7 @@
                         }
 
                         .drag {
-                            font-family: 'Staatliches';
+                            font-family: 'Roboto';
                             font-size: 14px;
                             font-style: normal;
                             font-weight: 400;
@@ -152,7 +152,7 @@
                         }
 
                         .MuiOutlinedInput-input {
-                            font-family: "Staatliches";
+                            font-family: "Roboto";
                         }
 
                         .text {
@@ -161,7 +161,7 @@
                                 width: 450px;
                                 height: 84px;
                                 border: 1px solid #B9F140;
-                                font-family: "Staatliches";
+                                font-family: "Roboto";
                                 display: flex;
                                 justify-content: center;
                                 align-items: center;
@@ -180,7 +180,7 @@
                             border: 1px solid #808080;
                             background-color: #3F3F3F;
                             cursor: pointer;
-                            font-family: "Staatliches";
+                            font-family: "Roboto";
                             display: flex;
                             align-items: center;
                             justify-content: center;
@@ -211,10 +211,11 @@
                             width: 31px;
                             height: 30px;
                             flex-shrink: 0;
+                            font-size: 12px;
                             border-radius: 6px 0px 0px 6px;
-                            background-color: #F4149B;
-                            border: 1px solid #F4149B;
-                            font-family: "Staatliches";
+                            background-color: #83CEF8;
+                            font-family: "Roboto";
+                            text-transform: uppercase;
                             display: flex;
                             align-items: center;
                             justify-content: center;
@@ -225,13 +226,12 @@
                         }
 
                         .MuiOutlinedInput-input {
-                            font-family: "Staatliches";
+                            font-family: "Roboto";
                         }
 
                         .MuiFormControl-root {
                             width: 215px;
                             height: 30px;
-                            border: 1px solid #F4149B;
                         }
 
                         .MuiInputBase-root {
@@ -243,7 +243,7 @@
                 }
 
                 .uploaded-pdf {
-                    font-family: 'Staatliches';
+                    font-family: 'Roboto';
                     color: #808080;
                     font-size: 14px;
                     display: flex;
