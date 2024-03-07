@@ -27,6 +27,7 @@ import { msalInstance } from './component/authorization/OutlookSignup';
 import GifCounter from './counter/GifCounter';
 import ValidateGifSource from './tracking/ValidateGifSource';
 import AuthRedirect from './component/AuthRedirect';
+import Tutorial from './component/learn/Tutorial';
 
 function Navigator() {
   const navigate = useNavigate();
@@ -92,6 +93,10 @@ function App() {
               <Route
                 path={`${REACT_APP_BASEURL}/gif-library`}
                 element={<GifLibrary />}
+              />
+              <Route
+                path={`${REACT_APP_BASEURL}/tutorial`}
+                element={<Tutorial />}
               />
               <Route path={`${REACT_APP_BASEURL}/gift`} element={<Landing />} />
               <Route

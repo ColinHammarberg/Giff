@@ -5,18 +5,15 @@ import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import OfficialButton from '../buttons/OfficialButton';
+import useMobileQuery from '../../queries/useMobileQuery';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
+  const { isMobile } = useMobileQuery();
 
-  // const infoButtonText = [
-  //   {
-  //     text: 'Create several gifs at once to download a catalog of gifs to share. It’s an awesome way to save time if you have a couple of pages, blog posts or whitepapers that you want to share with different people.',
-  //   },
-  //   {
-  //     text: 'Create one gif if you have something specific you want to share with someone right away. If you want, our friendly AI Mrs. Gif-t can even help you with your emails.',
-  //   },
-  // ];
+  function handleOnNavigateTutorial() {
+    navigate('/tutorial');
+  }
   return (
     <div className="choose-option-create">
       <Header menu />
@@ -41,6 +38,11 @@ function ChooseOptionCreate() {
             />
             {/* <OfficialButton onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} label="Create several gifs" variant="pink" /> */}
           </Box>
+          {!isMobile && (
+            <div className="tutorial" onClick={handleOnNavigateTutorial}>
+              How to use Gif-t
+            </div>
+          )}
         </Box>
       </div>
       <Footer />
