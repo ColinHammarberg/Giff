@@ -61,7 +61,7 @@ function GifLanding() {
           : GenerateSingleGif(newUrl));
         console.log('response', response);
         if (response?.data?.error) {
-          handleErrors(response.data.error);
+          handleErrors('general error');
         } else if (response.data.message === 'GIF generated and uploaded!') {
           const responseData = response.data;
           setGifGenerated(responseData.data);
