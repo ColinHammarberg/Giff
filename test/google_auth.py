@@ -43,7 +43,7 @@ def login_with_gmail_email():
     else:
         # User doesn't exist, create a new one
         try:
-            return jsonify(status="Login unsuccessful"), 500
+            return jsonify(status="Login unsuccessful"), 200
         except Exception as e:
             db.session.rollback()
             return jsonify({"status": "Error creating user", "message": str(e)}), 500
