@@ -15,7 +15,7 @@ from gpt_helper import get_example_email_from_gif, enhance_email_with_gif
 from verify_account_helper import send_verification_email_again, verify
 from edit_exiting_gif_helper import update_gif_name, update_gif_duration, update_gif_frames
 from include_ai_helper import include_ai_in_gifs, include_ai_email, add_watermark
-from google_auth import google_user_signup, google_user_signin, outlook_user_signin_or_signup, login_with_email, get_user_email, oauth_signin, signin_with_email_outlook
+from google_auth import google_user_signup, google_user_signin, outlook_user_signin_or_signup, login_with_email, get_user_email, oauth_signin, signin_with_email_outlook, login_with_gmail_email
 from email_helper import send_email
 from gpt_helper import chat_with_gpt
 from settings_helper import save_user_resolution
@@ -87,6 +87,10 @@ def google_signin():
 @app.route('/login_with_email', methods=['POST'])
 def google_login_with_email():
     return login_with_email()
+
+@app.route('/login_with_gmail_email', methods=['POST'])
+def login_gmail_addon():
+    return login_with_gmail_email()
 
 @app.route('/get_user_email', methods=['POST'])
 def google_get_user_email():

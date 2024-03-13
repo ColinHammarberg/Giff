@@ -30,6 +30,24 @@ def login_with_email():
             db.session.rollback()
             return jsonify({"status": "Error creating user", "message": str(e)}), 500
         
+def login_with_gmail_email():
+    data = request.get_json()
+    user_email = data.get('email')
+
+    # Check if user already exists
+    user = User.query.filter_by(email=user_email).first()
+    if user:
+        # User exists, generate a token
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token, status="Login successful"), 200
+    else:
+        # User doesn't exist, create a new one
+        try:
+            return jsonify(status="Login unsuccessful"), 500
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"status": "Error creating user", "message": str(e)}), 500
+        
 def signin_with_email_outlook():
     data = request.get_json()
     user_email = data.get('email')
