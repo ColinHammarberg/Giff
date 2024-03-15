@@ -34,7 +34,8 @@ function GifLibrary() {
   const [gifs, setGifs] = useState([]);
   const [selectedGif, setSelectedGif] = useState(null);
   const [designChanges, setDesignChanges] = useState(false);
-  const [showLoading, setShowLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
+  const [downloading, setDownloading] = useState(null);
   const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [selectedDesignGif, setSelectedDesignGif] = useState({});
   const [previewGif, setPreviewGif] = useState({});
@@ -207,9 +208,11 @@ function GifLibrary() {
       name: hoveredGif.name,
       selectedColor: hoveredGif.selectedColor,
       selectedFrame: hoveredGif.selectedFrame,
+      resourceType: hoveredGif.resourceType,
     };
 
     try {
+      setDownloading(gifId);
       const response = await DownloadIndividualDesignedGifs(
         JSON.stringify(gifData)
       );
@@ -223,6 +226,7 @@ function GifLibrary() {
       a.click();
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
+      setDownloading(null);
     } catch (error) {
       console.error('Error downloading individual GIF:', error);
       showNotification(
@@ -502,6 +506,7 @@ function GifLibrary() {
                     <GifBoxes
                       name={item.name}
                       color={item.selectedColor}
+                      downloading={downloading === item.resourceId}
                       resourceId={item.resourceId}
                       totalClicks={item.clicks}
                       gifUrl={item.url}

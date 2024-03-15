@@ -588,6 +588,7 @@ def download_individual_gif():
     try:
         gif_data = request.get_json()
         selected_color = gif_data.get('selectedColor')
+        resourceType = gif_data.get('resourceType')
         selected_frame = gif_data.get('selectedFrame')
         gif_url = gif_data.get('url')
         gif_name = gif_data.get('name')
@@ -596,14 +597,20 @@ def download_individual_gif():
 
         if gif_url is None:
             return "Invalid GIF URL", 400
+        
+        default_video_resolution = "1280x720"
+        target_resolution = user.selected_resolution if user.selected_resolution and resourceType == 'video' else default_video_resolution
 
         response = requests.get(gif_url)
-
-        if response.status_code == 200:
-            gif_bytes_io = io.BytesIO(response.content)
+        if response.status_code != 200:
+            return "An error occurred with the GIF URL", 400
+        
+        gif_bytes_io = io.BytesIO(response.content)
+        if resourceType == 'video' and not selected_color:
+            resized_gif_bytes_io = resize_gif(gif_bytes_io, target_resolution)
+            modified_gif_bytes_io = resized_gif_bytes_io
+        else:
             original_gif = Image.open(gif_bytes_io)
-
-            # Determine the original dimensions
             original_width, original_height = original_gif.size
             selected_resolution = user.selected_resolution if user.selected_resolution else f"{original_width}x{original_height}"
             is_portrait = original_height > original_width
@@ -629,9 +636,6 @@ def download_individual_gif():
                 download_name=f'{gif_name}.gif',
                 mimetype='image/gif'
             )
-        else:
-            return "An error occurred with the GIF URL", 400
-
     except Exception as e:
         return "An error occurred", 500
 

@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, TextField } from '@mui/material';
 import './GifBoxes.scss';
 import LightTooltip from '../overall/LightToolTip';
+import LoadingGif from '../../resources/loading-gif.png';
 
 function GifBoxes({
   name,
@@ -19,6 +20,7 @@ function GifBoxes({
   onNameChange,
   onNameSubmit,
   totalClicks,
+  downloading
 }) {
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState(name);
@@ -99,7 +101,7 @@ function GifBoxes({
         </div>
       </div>
       <div className="frame">
-        <img src={gifUrl} alt="" />
+        <img src={downloading ? LoadingGif : gifUrl} alt="" />
         <LightTooltip title={`Download ${name}`} placement="bottom-start">
           <IconButton
             className="download-icon"
