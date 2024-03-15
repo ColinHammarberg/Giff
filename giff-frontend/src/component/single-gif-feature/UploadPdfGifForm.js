@@ -3,6 +3,8 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { showNotification } from '../notification/Notification';
 import { UploadPdfThenCreateGif, UploadVideoThenCreateGif } from '../../endpoints/GifCreationEndpoints';
 
+const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
 const UploadPdfGifForm = forwardRef(
   (
     {
@@ -14,6 +16,17 @@ const UploadPdfGifForm = forwardRef(
     ref
   ) => {
     const [dragOver, setDragOver] = useState(false);
+    const validateFileSize = (file) => file.size <= MAX_FILE_SIZE;
+
+    const handleValidateFileSize = (file) => {
+      if (!validateFileSize(file)) {
+        showNotification('error', 'File size must be below 20MB. You can also enter a youtube link to your video.');
+        return false;
+      }
+      console.log('file', file);
+      setSelectedFile(file);
+      return true;
+    };
 
     const handleDragOver = (e) => {
       e.preventDefault();
@@ -35,8 +48,9 @@ const UploadPdfGifForm = forwardRef(
       setDragOver(false);
       const file = e.dataTransfer.files[0];
       if (
-        (file && file.type === 'application/pdf') ||
-        file.type.startsWith('video/')
+        file &&
+        ((file.type === 'application/pdf') || file.type.startsWith('video/')) &&
+        handleValidateFileSize(file)
       ) {
         setSelectedFile(file);
       }
@@ -47,7 +61,8 @@ const UploadPdfGifForm = forwardRef(
       const file = e.target.files[0];
       if (
         file &&
-        (file.type === 'application/pdf' || file.type.startsWith('video/'))
+        ((file.type === 'application/pdf' || file.type.startsWith('video/'))) &&
+        handleValidateFileSize(file)
       ) {
         setSelectedFile(file);
       }
