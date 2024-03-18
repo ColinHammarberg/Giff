@@ -233,6 +233,7 @@ function GifLibrary() {
         'error',
         'Ohhh no! Something went wrong downloading your GIF. Please try again champ!'
       );
+      setDownloading(null);
     }
   };
 
