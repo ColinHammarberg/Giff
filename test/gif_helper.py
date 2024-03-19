@@ -1080,11 +1080,14 @@ def upload_video_gif():
         frames = []
         frame_step = 5
         frame_rate = cap.get(cv2.CAP_PROP_FPS)
-        print('frame_rate', frame_rate)
-
-        # Calculate duration for each frame to maintain video speed in GIF
-        duration_per_frame = int((1 / frame_rate) * frame_step * 1000)  # Duration in milliseconds
-        print('duration_per_frame', duration_per_frame)
+        
+        target_width = 580
+        ret, frame = cap.read()
+        if not ret:
+            return jsonify({'error': 'Failed to read video file'}), 500
+        height, width = frame.shape[:2]
+        resize_ratio = target_width / width
+        target_height = int(height * resize_ratio)
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -1092,7 +1095,8 @@ def upload_video_gif():
                 break
             frame_id = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
             if frame_id % frame_step == 0:
-                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                resized_frame = cv2.resize(frame, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                rgb_frame = cv2.cvtColor(resized_frame, cv2.COLOR_BGR2RGB)
                 frames.append(Image.fromarray(rgb_frame))
 
         cap.release()
@@ -1102,6 +1106,8 @@ def upload_video_gif():
             logging.error("Not enough frames to create a GIF.")
             return jsonify({'error': 'Not enough frames to create a GIF'}), 500
 
+        duration_per_frame = int((1 / frame_rate) * frame_step * 1000)
+
         output_path = os.path.join(project_root, 'gifs', NAME)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -1109,8 +1115,10 @@ def upload_video_gif():
             output_path,
             save_all=True,
             append_images=frames[1:],
-            duration=duration_per_frame,  # Use dynamically calculated duration
-            loop=0
+            duration=duration_per_frame,
+            loop=0,
+            optimize=True,
+            quality=20
         )
 
         if user_id:
