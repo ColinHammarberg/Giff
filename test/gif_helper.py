@@ -598,22 +598,25 @@ def download_individual_gif():
         if gif_url is None:
             return "Invalid GIF URL", 400
         
-        default_video_resolution = "1280x720"
-        target_resolution = user.selected_resolution if user.selected_resolution and resourceType == 'video' else default_video_resolution
-
         response = requests.get(gif_url)
         if response.status_code != 200:
             return "An error occurred with the GIF URL", 400
         
         gif_bytes_io = io.BytesIO(response.content)
-        if resourceType == 'video' and not selected_color:
-            resized_gif_bytes_io = resize_gif(gif_bytes_io, target_resolution)
-            modified_gif_bytes_io = resized_gif_bytes_io
+        original_gif = Image.open(gif_bytes_io)
+        original_width, original_height = original_gif.size
+        is_portrait = original_height > original_width
+        selected_resolution = user.selected_resolution if user.selected_resolution else f"{original_width}x{original_height}"
+
+        if resourceType == 'video':
+            if not selected_color:
+                resized_gif_bytes_io = resize_gif(gif_bytes_io, selected_resolution)
+                modified_gif_bytes_io = resized_gif_bytes_io
+            else:
+                resized_gif_bytes_io = resize_gif(gif_bytes_io, selected_resolution)
+                modified_gif_bytes_io = add_border_to_gif(
+                    resized_gif_bytes_io, selected_color)
         else:
-            original_gif = Image.open(gif_bytes_io)
-            original_width, original_height = original_gif.size
-            selected_resolution = user.selected_resolution if user.selected_resolution else f"{original_width}x{original_height}"
-            is_portrait = original_height > original_width
             resized_gif_bytes_io = resize_gif(
                 gif_bytes_io, f"{original_width}x{original_height}" if is_portrait else selected_resolution)
 
@@ -630,12 +633,12 @@ def download_individual_gif():
             else:
                 modified_gif_bytes_io = resized_gif_bytes_io
 
-            return send_file(
-                modified_gif_bytes_io,
-                as_attachment=True,
-                download_name=f'{gif_name}.gif',
-                mimetype='image/gif'
-            )
+        return send_file(
+            modified_gif_bytes_io,
+            as_attachment=True,
+            download_name=f'{gif_name}.gif',
+            mimetype='image/gif'
+        )
     except Exception as e:
         return "An error occurred", 500
 
