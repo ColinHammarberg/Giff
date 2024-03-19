@@ -19,7 +19,6 @@ import {
 import { FetchUserGifs } from '../../endpoints/UserEndpoints';
 import useFetchUserTags from '../../queries/useUserTagsQuery';
 // import Filter from './Filter';
-import DeleteGifPopover from './DeleteGifPopover';
 import GifBoxes from './GifBoxes';
 import ActionMenu from './ActionMenu';
 import LoadingGif from '../../resources/loading-gif.png';
@@ -45,7 +44,6 @@ function GifLibrary() {
   //   width: null,
   //   height: null,
   // });
-  const [deletePopoverAnchorEl, setDeletePopoverAnchorEl] = useState(null);
   const [currentGifIndex, setCurrentGifIndex] = useState(null);
   const [selectedGifId, setSelectedGifId] = useState(null);
   const imageRefs = useRef({});
@@ -63,11 +61,6 @@ function GifLibrary() {
       )
   );
   const { tabs, changeTab, activeTab, setActiveTab } = useTabs(tabsData, 0);
-
-  const showDeletePopover = (index) => {
-    setDeletePopoverAnchorEl(imageRefs.current[index]);
-    setCurrentGifIndex(index);
-  };
 
   useEffect(() => {
     if (!access_token) {
@@ -163,7 +156,7 @@ function GifLibrary() {
         handleEditButtonClick();
         break;
       case 'Delete':
-        handleOnOpenDeletePopover(currentGifIndex);
+        handleOnDeleteGif();
         break;
       case 'ShareOutlook':
         window.open(
@@ -285,18 +278,12 @@ function GifLibrary() {
         );
       }
       setPreviewGif({});
-      // setDesignChanges(false);
     }
   };
 
-  function handleOnOpenDeletePopover(index) {
-    setCurrentGifIndex(index);
-    showDeletePopover(index);
-  }
-
-  async function handleOnDeleteGif() {
-    if (currentGifIndex !== null) {
-      const hoveredGif = gifs[currentGifIndex];
+ async function handleOnDeleteGif() {
+    const hoveredGif = sortedAndFilteredGifs.find((gif) => gif.resourceId === selectedGifId);
+    if (hoveredGif !== null) {
       const gifData = {
         name: hoveredGif.name,
         resourceId: hoveredGif.resourceId,
@@ -314,7 +301,6 @@ function GifLibrary() {
           showNotification('error', 'Oh no! Please try that again.');
         }
       }
-      setDeletePopoverAnchorEl(null);
     }
   }
 
@@ -391,15 +377,6 @@ function GifLibrary() {
   return (
     <div className="gif-library">
       <Header menu />
-      {deletePopoverAnchorEl && (
-        <DeleteGifPopover
-          anchorEl={deletePopoverAnchorEl}
-          open={deletePopoverAnchorEl}
-          onConfirm={() => handleOnDeleteGif()}
-          onClose={() => setDeletePopoverAnchorEl(null)}
-          onCancel={() => setDeletePopoverAnchorEl(null)}
-        />
-      )}
       <PreviewSelectedGif
         isOpen={!!Object.keys(previewGif).length}
         previewGif={previewGif}
