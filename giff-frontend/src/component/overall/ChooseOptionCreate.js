@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ChooseOptionCreate.scss';
 import Header from './Header';
 import { Box } from '@mui/material';
@@ -6,14 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import OfficialButton from '../buttons/OfficialButton';
 import useMobileQuery from '../../queries/useMobileQuery';
+import Tutorials from '../learn/Tutorials';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
   const { isMobile } = useMobileQuery();
-
-  function handleOnNavigateTutorial() {
-    navigate('/tutorial');
-  }
+  const [displayTutorial, setDisplayTutorial] = useState(false);
+  
   return (
     <div className="choose-option-create">
       <Header menu />
@@ -39,11 +38,14 @@ function ChooseOptionCreate() {
             {/* <OfficialButton onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} label="Create several gifs" variant="pink" /> */}
           </Box>
           {!isMobile && (
-            <div className="tutorial" onClick={handleOnNavigateTutorial}>
+            <div className="tutorial" onClick={() => setDisplayTutorial(true)}>
               How to use Gif-t
             </div>
           )}
         </Box>
+        {displayTutorial && (
+          <Tutorials setDisplayTutorial={setDisplayTutorial} />
+        )}
       </div>
       <Footer />
     </div>
