@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import FirstStep from '../../resources/firststep.jpeg';
 import OutlookFirstStep from '../../resources/outlook.jpeg';
+import OutlookSecondStep from '../../resources/Use_outlook.jpeg';
 import GmailFirstStep from '../../resources/googleaddon.jpeg';
 import MicrosoftLogo from '../../resources/Microsoft_logo.png';
 import GoogleLogo from '../../resources/Gmail_Logo.png';
@@ -32,12 +33,12 @@ class Tutorials extends PureComponent {
     const emailProvider = this.getEmailProvider(this.props.userEmail);
 
     if (emailProvider === 'Microsoft') {
-      steps.push(OutlookFirstStep);
+      steps.push(OutlookFirstStep, OutlookSecondStep);
     } else if (emailProvider === 'Google') {
       steps.push(GmailFirstStep);
     } else {
       // Default case: Show both if the email doesn't match Gmail or Outlook
-      steps.push(OutlookFirstStep, GmailFirstStep);
+      steps.push(OutlookFirstStep, OutlookSecondStep, GmailFirstStep);
     }
 
     return steps;
@@ -61,7 +62,7 @@ class Tutorials extends PureComponent {
   }
 
   handleNavigateNextStep = () => {
-    if (this.state.currentStepIndex === 2) {
+    if (this.state.currentStepIndex === 3) {
       this.props.setDisplayTutorial(false);
     }
     this.setState((prevState) => ({
@@ -82,6 +83,9 @@ class Tutorials extends PureComponent {
   render() {
     const { isOpen, isMobile } = this.props;
     const { currentStepIndex } = this.state;
+    const showOutlookButton =
+      this.state.steps[this.state.currentStepIndex] === OutlookFirstStep ||
+      this.state.steps[this.state.currentStepIndex] === OutlookSecondStep;
 
     return (
       <DialogWrapper
@@ -109,8 +113,7 @@ class Tutorials extends PureComponent {
             />
           </div>
           <div className="bottom-actions">
-            {this.state.steps[this.state.currentStepIndex] ===
-              OutlookFirstStep && (
+            {showOutlookButton && (
               <Button
                 className="addon-btn"
                 onClick={() =>
