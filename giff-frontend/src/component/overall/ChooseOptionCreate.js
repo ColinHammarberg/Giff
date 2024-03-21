@@ -15,6 +15,15 @@ function ChooseOptionCreate() {
   const [displayTutorial, setDisplayTutorial] = useState(false);
   const { user } = useFetchUser();
 
+  function handleOnClickRequestDemo() {
+    const email = 'hello@gif-t.io';
+    const subject = encodeURIComponent('Request for Demo');
+    const emailBody = encodeURIComponent(
+      "Hello, I'm interested in a demo. Please get in touch with me."
+    );
+    window.location.href = `mailto:${email}?subject=${subject}&body=${emailBody}`;
+  }
+
   return (
     <div className="choose-option-create">
       <Header menu />
@@ -37,11 +46,18 @@ function ChooseOptionCreate() {
               label="Go to library"
               variant="pink"
             />
-            {/* <OfficialButton onClick={(() => setTimeout(() => navigate('/multiple-gif-creation')))} label="Create several gifs" variant="pink" /> */}
           </Box>
           {!isMobile && (
-            <div className="tutorial" onClick={() => setDisplayTutorial(true)}>
-              How to use Gif-t
+            <div className="help">
+              <div
+                className="tutorial"
+                onClick={() => setDisplayTutorial(true)}
+              >
+                How to use Gif-t
+              </div>
+              <div className="tutorial" onClick={handleOnClickRequestDemo}>
+                Request a demo
+              </div>
             </div>
           )}
         </Box>
