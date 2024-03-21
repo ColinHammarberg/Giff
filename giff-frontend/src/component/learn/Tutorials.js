@@ -8,15 +8,47 @@ import CloseIcon from '@mui/icons-material/Close';
 import FirstStep from '../../resources/firststep.jpeg';
 import OutlookFirstStep from '../../resources/outlook.jpeg';
 import GmailFirstStep from '../../resources/googleaddon.jpeg';
-
-const steps = [FirstStep, OutlookFirstStep, GmailFirstStep];
+import MicrosoftLogo from '../../resources/Microsoft_logo.png';
+import GoogleLogo from '../../resources/Gmail_Logo.png';
 
 class Tutorials extends PureComponent {
+  getEmailProvider = (email) => {
+    if (!email) return 'Unknown';
+
+    const domain = email.split('@')[1];
+    switch (domain.toLowerCase()) {
+      case 'gmail.com':
+        return 'Google';
+      case 'outlook.com':
+      case 'hotmail.com':
+        return 'Microsoft';
+      default:
+        return 'Other';
+    }
+  };
+
+  getStepsBasedOnEmailProvider = () => {
+    const steps = [FirstStep];
+    const emailProvider = this.getEmailProvider(this.props.userEmail);
+
+    if (emailProvider === 'Microsoft') {
+      steps.push(OutlookFirstStep);
+    } else if (emailProvider === 'Google') {
+      steps.push(GmailFirstStep);
+    } else {
+      // Default case: Show both if the email doesn't match Gmail or Outlook
+      steps.push(OutlookFirstStep, GmailFirstStep);
+    }
+
+    return steps;
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       isOpen: true,
       currentStepIndex: 0,
+      steps: this.getStepsBasedOnEmailProvider(),
     };
   }
 
@@ -32,22 +64,24 @@ class Tutorials extends PureComponent {
     if (this.state.currentStepIndex === 2) {
       this.props.setDisplayTutorial(false);
     }
-    this.setState(prevState => ({
-      currentStepIndex: (prevState.currentStepIndex + 1) % steps.length,
+    this.setState((prevState) => ({
+      currentStepIndex:
+        (prevState.currentStepIndex + 1) % this.state.steps.length,
     }));
   };
 
   handleNavigatePrevStep = () => {
-    this.setState(prevState => ({
-      currentStepIndex: prevState.currentStepIndex === 0 ? steps.length - 1 : prevState.currentStepIndex - 1,
+    this.setState((prevState) => ({
+      currentStepIndex:
+        prevState.currentStepIndex === 0
+          ? this.state.steps.length - 1
+          : prevState.currentStepIndex - 1,
     }));
   };
 
   render() {
     const { isOpen, isMobile } = this.props;
     const { currentStepIndex } = this.state;
-
-    console.log('currentStepIndex', currentStepIndex);
 
     return (
       <DialogWrapper
@@ -61,16 +95,49 @@ class Tutorials extends PureComponent {
         <div className="content">
           <div className="header">
             <div className="branding">GIF-T</div>
-            <div className="close" onClick={() => this.props.setDisplayTutorial(false)}>
+            <div
+              className="close"
+              onClick={() => this.props.setDisplayTutorial(false)}
+            >
               <CloseIcon />
             </div>
           </div>
           <div className="showcase">
-            <img src={steps[currentStepIndex]} alt={`Step ${currentStepIndex + 1}`} />
+            <img
+              src={this.state.steps[currentStepIndex]}
+              alt={`Step ${currentStepIndex + 1}`}
+            />
           </div>
           <div className="bottom-actions">
-            <Button onClick={this.handleNavigatePrevStep} className="prev-btn">Prev</Button>
-            <Button onClick={this.handleNavigateNextStep} className="next-btn">Next</Button>
+            {this.state.steps[this.state.currentStepIndex] ===
+              OutlookFirstStep && (
+              <Button
+                className="addon-btn"
+                onClick={() =>
+                  window.open(
+                    'https://appsource.microsoft.com/en-us/product/office/WA200006594'
+                  )
+                }
+              >
+                <img src={MicrosoftLogo} alt="Microsoft logo" /> To Microsoft
+              </Button>
+            )}
+            {this.state.steps[this.state.currentStepIndex] ===
+              GmailFirstStep && (
+              <Button
+                className="addon-btn"
+                onClick={() =>
+                  window.open(
+                    'https://workspace.google.com/marketplace/app/gift/537947018056?'
+                  )
+                }
+              >
+                <img src={GoogleLogo} alt="Google logo" /> To Google
+              </Button>
+            )}
+            <Button onClick={this.handleNavigateNextStep} className="next-btn">
+              Next Step
+            </Button>
           </div>
         </div>
       </DialogWrapper>

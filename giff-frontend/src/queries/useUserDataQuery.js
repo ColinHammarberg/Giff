@@ -3,7 +3,7 @@ import { FetchUserInfo } from '../endpoints/UserEndpoints';
 
 const fetchUser = async (access_token) => {
   try {
-     if (access_token) {
+    if (access_token) {
       const userInfoResponse = await FetchUserInfo();
       if (userInfoResponse.data) {
         const userObj = {
@@ -21,6 +21,9 @@ const fetchUser = async (access_token) => {
 
 const useFetchUser = (changeUserDetails) => {
   const access_token = localStorage.getItem('access_token');
+  const sessionUser = sessionStorage.getItem('user')
+    ? JSON.parse(sessionStorage.getItem('user'))
+    : null;
 
   const getUserData = useQuery(
     ['userData', access_token, changeUserDetails],
@@ -28,6 +31,8 @@ const useFetchUser = (changeUserDetails) => {
     {
       retry: 1,
       retryDelay: 3000,
+      enabled: Boolean(!sessionUser || changeUserDetails),
+      initialData: sessionUser ? sessionUser : undefined,
     }
   );
 

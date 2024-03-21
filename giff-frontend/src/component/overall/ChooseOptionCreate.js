@@ -7,12 +7,14 @@ import Footer from './Footer';
 import OfficialButton from '../buttons/OfficialButton';
 import useMobileQuery from '../../queries/useMobileQuery';
 import Tutorials from '../learn/Tutorials';
+import useFetchUser from '../../queries/useUserDataQuery';
 
 function ChooseOptionCreate() {
   const navigate = useNavigate();
   const { isMobile } = useMobileQuery();
   const [displayTutorial, setDisplayTutorial] = useState(false);
-  
+  const { user } = useFetchUser();
+
   return (
     <div className="choose-option-create">
       <Header menu />
@@ -44,7 +46,10 @@ function ChooseOptionCreate() {
           )}
         </Box>
         {displayTutorial && (
-          <Tutorials setDisplayTutorial={setDisplayTutorial} />
+          <Tutorials
+            userEmail={user?.email}
+            setDisplayTutorial={setDisplayTutorial}
+          />
         )}
       </div>
       <Footer />

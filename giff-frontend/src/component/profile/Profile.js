@@ -17,23 +17,9 @@ import LightTooltip from '../overall/LightToolTip';
 import GifSettingsComponent from './GifSettingsComponent';
 
 function Profile() {
-  // const navigate = useNavigate();
-  // const [anchorEl, setAnchorEl] = useState(null);
   const [changeUserDetails, setChangeUserDetails] = useState(null);
-  // const { isMobile } = useMobileQuery();
   const { user } = useFetchUser(changeUserDetails);
-  // const [showOptions, setShowOptions] = useState(false);
-  // const { userLogoSrc } = useFetchUserLogo();
-  console.log('user.include_ai', user?.include_ai);
-  // const [logoChecked, setLogoChecked] = useState(user?.include_ai);
-
-  // const [aiChecked, setAiChecked] = useState(user?.include_ai);
   const [activeComponent, setActiveComponent] = useState(null);
-  // const [aiEmailChecked, setAiEmailChecked] = useState(
-  //   user?.include_example_email
-  // );
-  // const isActive = user?.is_active;
-
   const handleActionClick = (action) => {
     switch (action) {
       case 'Edit profile':

@@ -109,11 +109,28 @@
                     background-color: rgba(254, 201, 1, 1);
                     color: #000;
                     border-radius: 50px;
-                    width: 100px;
+                    height: 50px;
+                        color: #fff;
+                        width: 174px;
+                        display: flex;
+                        gap: 8px;
                     font-family: 'Staatliches';
                     &.next-btn {
                         background-color: #F4149B;
                     }
+                }
+               
+                    .addon-btn {
+                        background-color: #000;
+                        border: 1px solid #fff;
+                        height: 50px;
+                        color: #fff;
+                        width: 174px;
+                        display: flex;
+                        gap: 8px;
+                        img {
+                            width: 20px;
+                        }
                 }
             }
         }
