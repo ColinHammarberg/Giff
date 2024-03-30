@@ -5,7 +5,6 @@ import DialogWrapper from '../DialogWrapper';
 import { Button } from '@mui/material';
 // Import your step GIFs here
 import CloseIcon from '@mui/icons-material/Close';
-import FirstStep from '../../resources/firststep.jpeg';
 import OutlookFirstStep from '../../resources/outlook.jpeg';
 import OutlookSecondStep from '../../resources/Use_outlook.jpeg';
 import GmailFirstStep from '../../resources/googleaddon.jpeg';
@@ -29,16 +28,29 @@ class Tutorials extends PureComponent {
   };
 
   getStepsBasedOnEmailProvider = () => {
-    const steps = [FirstStep];
+    const steps = [
+      'https://player.vimeo.com/video/929117565?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+    ];
     const emailProvider = this.getEmailProvider(this.props.userEmail);
 
     if (emailProvider === 'Microsoft') {
-      steps.push(OutlookFirstStep, OutlookSecondStep);
+      steps.push(
+        'https://player.vimeo.com/video/929104892?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+        'https://player.vimeo.com/video/929104845?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'
+      );
     } else if (emailProvider === 'Google') {
-      steps.push(GmailFirstStep);
+      steps.push(
+        'https://player.vimeo.com/video/929105019?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+        'https://player.vimeo.com/video/929116900?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'
+      );
+      steps.push('https://www.youtube.com/watch?v=aIpQF4_4_Rw');
     } else {
-      // Default case: Show both if the email doesn't match Gmail or Outlook
-      steps.push(OutlookFirstStep, OutlookSecondStep, GmailFirstStep);
+      steps.push(
+        'https://player.vimeo.com/video/929104892?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+        'https://player.vimeo.com/video/929104845?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+        'https://player.vimeo.com/video/929105019?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+        'https://player.vimeo.com/video/929116900?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'
+      );
     }
 
     return steps;
@@ -62,7 +74,7 @@ class Tutorials extends PureComponent {
   }
 
   handleNavigateNextStep = () => {
-    if (this.state.currentStepIndex === 3) {
+    if (this.state.currentStepIndex === 4) {
       this.props.setDisplayTutorial(false);
     }
     this.setState((prevState) => ({
@@ -87,6 +99,11 @@ class Tutorials extends PureComponent {
       this.state.steps[this.state.currentStepIndex] === OutlookFirstStep ||
       this.state.steps[this.state.currentStepIndex] === OutlookSecondStep;
 
+    console.log(
+      'this.state.steps[currentStepIndex]',
+      this.state.steps[currentStepIndex]
+    );
+
     return (
       <DialogWrapper
         modal
@@ -107,10 +124,15 @@ class Tutorials extends PureComponent {
             </div>
           </div>
           <div className="showcase">
-            <img
-              src={this.state.steps[currentStepIndex]}
-              alt={`Step ${currentStepIndex + 1}`}
-            />
+            <iframe
+              src={this.state.steps[this.state.currentStepIndex]}
+              width="640"
+              height="360"
+              frameborder="0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              title="Tutorials"
+              allowfullscreen
+            ></iframe>
           </div>
           <div className="bottom-actions">
             {showOutlookButton && (
