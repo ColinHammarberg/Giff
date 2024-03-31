@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import './Tutorials.scss';
 import DialogWrapper from '../DialogWrapper';
 import { Button } from '@mui/material';
-// Import your step GIFs here
 import CloseIcon from '@mui/icons-material/Close';
 import OutlookFirstStep from '../../resources/outlook.jpeg';
 import OutlookSecondStep from '../../resources/Use_outlook.jpeg';
@@ -96,13 +95,8 @@ class Tutorials extends PureComponent {
     const { isOpen, isMobile } = this.props;
     const { currentStepIndex } = this.state;
     const showOutlookButton =
-      this.state.steps[this.state.currentStepIndex] === OutlookFirstStep ||
-      this.state.steps[this.state.currentStepIndex] === OutlookSecondStep;
-
-    console.log(
-      'this.state.steps[currentStepIndex]',
-      this.state.steps[currentStepIndex]
-    );
+      this.state.steps[currentStepIndex] === OutlookFirstStep ||
+      this.state.steps[currentStepIndex] === OutlookSecondStep;
 
     return (
       <DialogWrapper
