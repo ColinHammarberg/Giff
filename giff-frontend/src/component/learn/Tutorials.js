@@ -9,6 +9,7 @@ import OutlookSecondStep from '../../resources/Use_outlook.jpeg';
 import GmailFirstStep from '../../resources/googleaddon.jpeg';
 import MicrosoftLogo from '../../resources/Microsoft_logo.png';
 import GoogleLogo from '../../resources/Gmail_Logo.png';
+import EmailClientPopover from './EmailClientPopover';
 
 class Tutorials extends PureComponent {
   getEmailProvider = (email) => {
@@ -26,29 +27,20 @@ class Tutorials extends PureComponent {
     }
   };
 
-  getStepsBasedOnEmailProvider = () => {
-    const steps = [
-      'https://player.vimeo.com/video/929117565?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
+  getStepsBasedOnEmailProvider = (emailProvider) => {
+    let steps = [
+      'https://player.vimeo.com/video/929117565?badge=0&autopause=0&player_id=0&app_id=58479',
     ];
-    const emailProvider = this.getEmailProvider(this.props.userEmail);
 
-    if (emailProvider === 'Microsoft') {
+    if (emailProvider === 'Outlook') {
       steps.push(
-        'https://player.vimeo.com/video/929104892?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
-        'https://player.vimeo.com/video/929104845?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'
+        'https://player.vimeo.com/video/929104892?badge=0&autopause=0&player_id=0&app_id=58479',
+        'https://player.vimeo.com/video/929104845?badge=0&autopause=0&player_id=0&app_id=58479'
       );
-    } else if (emailProvider === 'Google') {
+    } else if (emailProvider === 'Gmail') {
       steps.push(
-        'https://player.vimeo.com/video/929105019?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
-        'https://player.vimeo.com/video/929116900?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'
-      );
-      steps.push('https://www.youtube.com/watch?v=aIpQF4_4_Rw');
-    } else {
-      steps.push(
-        'https://player.vimeo.com/video/929104892?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
-        'https://player.vimeo.com/video/929104845?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
-        'https://player.vimeo.com/video/929105019?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479',
-        'https://player.vimeo.com/video/929116900?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'
+        'https://player.vimeo.com/video/929105019?badge=0&autopause=0&player_id=0&app_id=58479',
+        'https://player.vimeo.com/video/929116900?badge=0&autopause=0&player_id=0&app_id=58479'
       );
     }
 
@@ -61,6 +53,8 @@ class Tutorials extends PureComponent {
       isOpen: true,
       currentStepIndex: 0,
       steps: this.getStepsBasedOnEmailProvider(),
+      showEmailClientPopover: false,
+      anchorEl: null,
     };
   }
 
@@ -72,8 +66,13 @@ class Tutorials extends PureComponent {
     window.removeEventListener('popstate', this.handleCancel);
   }
 
-  handleNavigateNextStep = () => {
-    if (this.state.currentStepIndex === 4) {
+  handleNavigateNextStep = (event) => {
+    if (this.state.currentStepIndex === 0) {
+      this.setState({ anchorEl: event.target });
+      this.setState({ showEmailClientPopover: true });
+      return;
+    }
+    if (this.state.currentStepIndex === 2) {
       this.props.setDisplayTutorial(false);
     }
     this.setState((prevState) => ({
@@ -91,9 +90,19 @@ class Tutorials extends PureComponent {
     }));
   };
 
+  handleSelectEmailClient = (client) => {
+    const newSteps = this.getStepsBasedOnEmailProvider(client);
+
+    this.setState({
+      steps: newSteps,
+      currentStepIndex: 1,
+      showEmailClientPopover: false,
+    });
+  };
+
   render() {
     const { isOpen, isMobile } = this.props;
-    const { currentStepIndex } = this.state;
+    const { currentStepIndex, anchorEl } = this.state;
     const showOutlookButton =
       this.state.steps[currentStepIndex] === OutlookFirstStep ||
       this.state.steps[currentStepIndex] === OutlookSecondStep;
@@ -128,6 +137,13 @@ class Tutorials extends PureComponent {
               allowfullscreen
             ></iframe>
           </div>
+          <EmailClientPopover
+            open={this.state.showEmailClientPopover}
+            onClose={() => this.setState({ showEmailClientPopover: false })}
+            anchorEl={anchorEl}
+            onSelectGoogle={() => this.handleSelectEmailClient('Gmail')}
+            onSelectOutlook={() => this.handleSelectEmailClient('Outlook')}
+          />
           <div className="bottom-actions">
             {showOutlookButton && (
               <Button
